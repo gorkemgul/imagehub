@@ -3,7 +3,7 @@
 Ağırlığı açık görsel üretim mimarileri için, tek bir API altında, yalnızca PyTorch ile yeniden
 yazılmış inference kütüphanesi. **Tek zorunlu çalışma bağımlılığı PyTorch'tur.** Her model,
 özgün uygulamayla aynı çıktıyı verdiği kanıtlanarak eklenir ([doğrulama](docs/validation.md)).
-CPU çıktıları diffusers ile birebir aynıdır (bit düzeyinde özdeş görseller); ayrıntılar
+CPU'da float32 çıktıları diffusers ile birebir aynıdır (bit düzeyinde özdeş görseller); ayrıntılar
 [doğrulama](docs/validation.md) sayfasındadır.
 Mimariler [awesome-text-to-image-architectures](https://github.com/gorkemgul/awesome-text-to-image-architectures)
 kataloğuna bağlıdır.
@@ -12,19 +12,25 @@ kataloğuna bağlıdır.
 
 ## Kurulum
 
-    pip install imagehub            # yalnızca torch
-    pip install "imagehub[image]"   # Image.to_pil() için Pillow
+```bash
+pip install imagehub            # yalnızca torch
+pip install "imagehub[image]"   # Image.to_pil() için Pillow
+```
 
 ## Kullanım
 
-    python -m imagehub.pretrained sd-v1-5 checkpoints/sd-v1-5
+```bash
+python -m imagehub.pretrained sd-v1-5 checkpoints/sd-v1-5
+```
 
-    from imagehub import pipeline
+```python
+from imagehub import pipeline
 
-    with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5") as pipe:
-        result = pipe("a photograph of an astronaut riding a horse", seed=42)
-    result.images[0].save("astronot.png")
-    print(result.metadata)
+with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5") as pipe:
+    result = pipe("a photograph of an astronaut riding a horse", seed=42)
+result.images[0].save("astronot.png")
+print(result.metadata)
+```
 
 İndirme yalnızca `imagehub.pretrained` ile ve açıkça yapılır: doğrulanmış commit sabitlenir,
 her dosyanın sha256'sı kontrol edilir, `imagehub_snapshot.json` makbuzu yazılır. `pipeline()` hiçbir
@@ -41,13 +47,17 @@ zaman ağa çıkmaz.
 
 ## Geliştirme
 
-    uv venv -p 3.13 .venv && uv pip install --python .venv -e ".[dev,image]"
-    .venv/bin/python -m pytest
+```bash
+uv venv -p 3.13 .venv && uv pip install --python .venv -e ".[dev,image]"
+.venv/bin/python -m pytest
+```
 
 Referans karşılaştırmaları isteğe bağlıdır ve hiçbir şey indirmez:
 
-    uv pip install --python .venv -e ".[dev,image,reference]"
-    IMAGEHUB_REFERENCE_TESTS=1 IMAGEHUB_SD_V1_5=checkpoints/sd-v1-5 .venv/bin/python -m pytest tests/reference
+```bash
+uv pip install --python .venv -e ".[dev,image,reference]"
+IMAGEHUB_REFERENCE_TESTS=1 IMAGEHUB_SD_V1_5=checkpoints/sd-v1-5 .venv/bin/python -m pytest tests/reference
+```
 
 ## Lisans
 
