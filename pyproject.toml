@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.25"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
@@ -17,6 +17,22 @@ dependencies = ["torch>=2.2"]
 image = ["pillow>=10"]
 reference = ["diffusers==0.40.0", "transformers==5.18.0"]
 dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.9", "mypy>=1.13", "build>=1.2"]
+
+[tool.hatch.build.targets.sdist]
+only-include = [
+  "src",
+  "tests",
+  "LICENSE",
+  "THIRD_PARTY_NOTICES.md",
+  "licenses",
+  "README.md",
+  "pyproject.toml",
+  "docs/catalog.md",
+  "docs/models.md",
+  "docs/validation.md",
+  "docs/validation.json",
+  "examples",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/imagehub"]
