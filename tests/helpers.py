@@ -53,3 +53,34 @@ def max_diff(actual: torch.Tensor, expected: torch.Tensor) -> dict[str, float]:
         "max_abs": float(d.max()),
         "max_rel": float((d / e.abs().clamp_min(1e-12)).max()),
     }
+
+
+FIXTURES = Path(__file__).parent / "fixtures"
+
+TINY_TEXT_CONFIG = {
+    "vocab_size": TINY_VOCAB_SIZE,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 4,
+    "max_position_embeddings": 77,
+}
+
+
+def published_shapes(component: str) -> dict[str, list[int]]:
+    data = json.loads((FIXTURES / "sd1_tensor_shapes.json").read_text(encoding="utf-8"))
+    return {name: entry["shape"] for name, entry in data[component].items()}
+
+
+def meta_shapes(model_cls, config) -> dict[str, list[int]]:
+    with torch.device("meta"):
+        model = model_cls(config)
+    return {name: list(t.shape) for name, t in model.state_dict().items()}
+
+
+def text_state_for_ours(ref_state: dict) -> dict:
+    """transformers 5 CLIPTextModel state -> published-file names (``text_model.`` prefix)."""
+    return {
+        (name if name.startswith("text_model.") else "text_model." + name): value
+        for name, value in ref_state.items()
+    }
