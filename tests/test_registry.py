@@ -1,13 +1,16 @@
 import pytest
 
 from imagehub.backends.stable_diffusion import StableDiffusionBackend
+from imagehub.backends.stable_diffusion_xl import StableDiffusionXLBackend
 from imagehub.registry import BackendRegistry, available_backends, backend_registry
 
 
 def test_family_and_model_aliases_are_registered():
     names = available_backends("t2i")["t2i"]
     assert "stable-diffusion" in names
+    assert "stable-diffusion-xl" in names
     assert {"sd-v1-1", "sd-v1-5"} <= set(names)
+    assert "sdxl-base-1.0" in names
 
 
 def test_registration_rules():
@@ -28,6 +31,12 @@ def test_catalog_alias_passes_model_id_but_family_does_not(tmp_path):
     family = backend_registry.create("t2i", "stable-diffusion", model=tmp_path)
     assert isinstance(alias, StableDiffusionBackend) and alias.model_id == "sd-v1-4"
     assert family.model_id is None
+
+    xl_alias = backend_registry.create("t2i", "sdxl-base-1.0", model=tmp_path)
+    xl_family = backend_registry.create("t2i", "stable-diffusion-xl", model=tmp_path)
+    assert isinstance(xl_alias, StableDiffusionXLBackend)
+    assert xl_alias.model_id == "sdxl-base-1.0"
+    assert xl_family.model_id is None
 
 
 def test_alias_registration_passes_model_id_to_any_factory(tmp_path):

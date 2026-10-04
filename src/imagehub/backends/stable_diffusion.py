@@ -12,7 +12,7 @@ import secrets
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 import torch
 from torch import Tensor
@@ -155,12 +155,16 @@ def denoise(
 
 
 @torch.inference_mode()
-def decode_latents(components: StableDiffusionComponents, latents: Tensor) -> Tensor:
+def decode_latents(components: _VAEComponents, latents: Tensor) -> Tensor:
     """Decode final latents to uint8 images of shape (batch, height, width, 3) on CPU."""
     vae = components.vae
     image = vae.decode(latents / vae.scaling_factor)
     image = (image / 2 + 0.5).clamp(0, 1).permute(0, 2, 3, 1).float().cpu()
     return (image * 255).round().to(torch.uint8)
+
+
+class _VAEComponents(Protocol):
+    vae: AutoencoderKL
 
 
 def _positive_int(options: dict[str, Any], name: str) -> None:

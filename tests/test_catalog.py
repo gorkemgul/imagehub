@@ -7,8 +7,10 @@ from imagehub.types import Task
 
 
 def test_catalog_contents():
-    assert available_models() == {"t2i": ("sd-v1-1", "sd-v1-2", "sd-v1-3", "sd-v1-4", "sd-v1-5")}
-    for spec in MODEL_CATALOG.values():
+    assert available_models() == {
+        "t2i": ("sd-v1-1", "sd-v1-2", "sd-v1-3", "sd-v1-4", "sd-v1-5", "sdxl-base-1.0")
+    }
+    for spec in (value for value in MODEL_CATALOG.values() if value.family == "stable-diffusion"):
         assert spec.task is Task.T2I
         assert spec.family == "stable-diffusion"
         assert spec.catalog_id == "stable-diffusion-1"
@@ -20,6 +22,17 @@ def test_catalog_contents():
         assert not any(
             name.startswith(("safety_checker/", "feature_extractor/")) for name in spec.files
         )
+
+    sdxl = model_info("sdxl-base-1.0")
+    assert sdxl.task is Task.T2I
+    assert sdxl.family == "stable-diffusion-xl"
+    assert sdxl.repo_id == "stabilityai/stable-diffusion-xl-base-1.0"
+    assert sdxl.revision == "462165984030d82259a11f4367a4eed129e94a7b"
+    assert sdxl.provenance == "author"
+    assert sdxl.catalog_id == "sdxl"
+    assert sdxl.format == "diffusers"
+    assert sdxl.license == "CreativeML-OpenRAIL++-M"
+    assert len(set(sdxl.files)) == len(sdxl.files) == 18
 
 
 def test_provenance_and_formats():
