@@ -68,12 +68,15 @@ def download_pretrained(
             )
             if progress is not None:
                 progress(name)
+            lfs_sha256 = (entry.get("lfs") or {}).get("sha256")
             files[name] = download.fetch(
                 url,
                 staging / relative,
                 headers,
-                sha256=(entry.get("lfs") or {}).get("sha256"),
+                sha256=lfs_sha256,
                 size=entry.get("size"),
+                # For LFS files blobId is the pointer file's sha, not the content's.
+                git_sha1=None if lfs_sha256 else entry.get("blobId"),
             )
         manifest = {
             "model_id": spec.id,
@@ -102,7 +105,8 @@ def read_snapshot(directory: str | os.PathLike[str]) -> dict[str, Any] | None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m imagehub.pretrained",
-        description="Download a catalog model as a pinned, sha256-verified local snapshot.",
+        description="Download a catalog model as a pinned, verified local snapshot "
+        "(weights: Hub sha256; other files: git blob sha1; all at one commit).",
     )
     parser.add_argument("model_id", help="catalog id, e.g. sd-v1-5")
     parser.add_argument("destination", type=Path, help="empty or missing directory")

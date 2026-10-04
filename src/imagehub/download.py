@@ -107,14 +107,28 @@ def safe_relative(name: str) -> Path:
 
 
 def fetch(
-    url: str, target: Path, headers: dict[str, str], *, sha256: str | None, size: int | None
+    url: str,
+    target: Path,
+    headers: dict[str, str],
+    *,
+    sha256: str | None,
+    size: int | None,
+    git_sha1: str | None = None,
 ) -> str:
-    """Download ``url`` to ``target`` atomically; verify size and sha256 when published."""
+    """Download ``url`` to ``target`` atomically and return its sha256.
+
+    Verifies the size when published, the sha256 (Hub LFS files) and the git blob sha1
+    (the Hub's ``blobId`` of non-LFS files). At least one checksum is required.
+    """
     if not url.startswith("https://"):
         raise DownloadError("Model downloads require HTTPS")
-    if sha256 is None and size is None:
+    if sha256 is None and git_sha1 is None:
         raise DownloadError(
-            f"Cannot verify {target.name}: the Hub published neither size nor sha256"
+            f"Cannot verify {target.name}: the Hub published neither sha256 nor git blob sha1"
+        )
+    if git_sha1 is not None and size is None:
+        raise DownloadError(
+            f"Cannot verify {target.name}: its size is needed for the git blob sha1"
         )
     target.parent.mkdir(parents=True, exist_ok=True)
     temporary: str | None = None
@@ -124,11 +138,14 @@ def fetch(
         ) as sink:
             temporary = sink.name
             digest = hashlib.sha256()
+            blob = hashlib.sha1(b"blob %d\0" % size, usedforsecurity=False) if git_sha1 else None
             received = 0
             with _open(url, headers) as response:
                 while data := response.read(1 << 20):
                     sink.write(data)
                     digest.update(data)
+                    if blob is not None:
+                        blob.update(data)
                     received += len(data)
         if size is not None and received != size:
             raise DownloadError(
@@ -136,6 +153,8 @@ def fetch(
             )
         if sha256 is not None and digest.hexdigest() != sha256:
             raise DownloadError(f"Checksum mismatch for {target.name}")
+        if blob is not None and blob.hexdigest() != git_sha1:
+            raise DownloadError(f"Checksum mismatch for {target.name} (git blob sha1)")
         os.replace(temporary, target)
         temporary = None
         return digest.hexdigest()

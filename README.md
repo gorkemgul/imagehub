@@ -32,8 +32,9 @@ result.images[0].save("astronot.png")
 print(result.metadata)
 ```
 
-İndirme yalnızca `imagehub.pretrained` ile ve açıkça yapılır: doğrulanmış commit sabitlenir,
-her dosyanın sha256'sı kontrol edilir, `imagehub_snapshot.json` makbuzu yazılır. `pipeline()` hiçbir
+İndirme yalnızca `imagehub.pretrained` ile ve açıkça yapılır: doğrulanmış commit sabitlenir;
+ağırlık dosyaları Hub'ın yayımladığı sha256 ile, diğer dosyalar git blob sha1 (`blobId`) ile ve
+hepsi boyutuyla kontrol edilir; `imagehub_snapshot.json` makbuzu yazılır. `pipeline()` hiçbir
 zaman ağa çıkmaz.
 
 ## Modeller

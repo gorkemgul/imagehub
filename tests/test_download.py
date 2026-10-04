@@ -17,6 +17,10 @@ from imagehub.pretrained import SNAPSHOT_FILE, download_pretrained, main, read_s
 SPEC = model_info("sd-v1-5")
 
 
+def git_blob_sha1(data):
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
 def fake_hub(monkeypatch, *, commit=SPEC.revision, corrupt=None, short=None, drop=None):
     contents = {name: f"content of {name}".encode() for name in SPEC.files}
     siblings = []
@@ -26,6 +30,9 @@ def fake_hub(monkeypatch, *, commit=SPEC.revision, corrupt=None, short=None, dro
         entry = {"rfilename": name, "size": len(data)}
         if name.endswith((".safetensors", ".bin")):
             entry["lfs"] = {"sha256": hashlib.sha256(data).hexdigest()}
+            entry["blobId"] = "f" * 40  # the LFS pointer's sha, which is never the content's
+        else:
+            entry["blobId"] = git_blob_sha1(data)
         siblings.append(entry)
     siblings.append({"rfilename": "safety_checker/model.safetensors", "size": 1})
     calls = []
@@ -89,6 +96,7 @@ def test_missing_artifact_fails_before_downloading(monkeypatch, tmp_path):
     ("kwargs", "message"),
     [
         ({"corrupt": "unet/diffusion_pytorch_model.safetensors"}, "Checksum"),
+        ({"corrupt": "model_index.json"}, "Checksum"),
         ({"short": "model_index.json"}, "Incomplete"),
     ],
 )
@@ -158,9 +166,31 @@ def test_python_files_are_never_downloaded(monkeypatch, tmp_path):
 
 def test_fetch_refuses_unverifiable_file(monkeypatch, tmp_path):
     monkeypatch.setattr(download, "_open", lambda url, headers: io.BytesIO(b"data"))
-    with pytest.raises(DownloadError, match="neither size nor sha256"):
-        download.fetch("https://h/x", tmp_path / "x", {}, sha256=None, size=None)
+    with pytest.raises(DownloadError, match="neither sha256 nor git blob sha1"):
+        download.fetch("https://h/x", tmp_path / "x", {}, sha256=None, size=4)
     assert list(tmp_path.iterdir()) == []
+
+
+def test_fetch_git_sha1_requires_size(monkeypatch, tmp_path):
+    monkeypatch.setattr(download, "_open", lambda url, headers: io.BytesIO(b"data"))
+    with pytest.raises(DownloadError, match="size"):
+        download.fetch(
+            "https://h/x",
+            tmp_path / "x",
+            {},
+            sha256=None,
+            size=None,
+            git_sha1=git_blob_sha1(b"data"),
+        )
+
+
+def test_fetch_verifies_git_blob_sha1(monkeypatch, tmp_path):
+    monkeypatch.setattr(download, "_open", lambda url, headers: io.BytesIO(b"data"))
+    good = git_blob_sha1(b"data")
+    download.fetch("https://h/x", tmp_path / "x", {}, sha256=None, size=4, git_sha1=good)
+    with pytest.raises(DownloadError, match="Checksum mismatch"):
+        download.fetch("https://h/x", tmp_path / "y", {}, sha256=None, size=4, git_sha1="0" * 40)
+    assert [p.name for p in tmp_path.iterdir()] == ["x"]
 
 
 def test_null_lfs_entry_with_size_downloads(monkeypatch, tmp_path):
@@ -172,6 +202,7 @@ def test_null_lfs_entry_with_size_downloads(monkeypatch, tmp_path):
         {},
         sha256=(entry.get("lfs") or {}).get("sha256"),
         size=entry.get("size"),
+        git_sha1=git_blob_sha1(b"data"),
     )
     assert digest == hashlib.sha256(b"data").hexdigest()
 
@@ -244,7 +275,7 @@ def test_stream_oserror_becomes_download_error(monkeypatch, tmp_path):
 
     monkeypatch.setattr(download, "_open", lambda url, headers: Broken())
     with pytest.raises(DownloadError, match="x.bin"):
-        download.fetch("https://h/x.bin", tmp_path / "x.bin", {}, sha256=None, size=4)
+        download.fetch("https://h/x.bin", tmp_path / "x.bin", {}, sha256="0" * 64, size=4)
     assert list(tmp_path.iterdir()) == []
 
 
