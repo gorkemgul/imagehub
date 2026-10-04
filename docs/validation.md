@@ -46,6 +46,38 @@ For each of the five checkpoints, the tensor names and shapes of three component
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
 
+## SDXL
+
+Validated on CPU on October 5, 2026, in the same environment as above. One checkpoint, `full`:
+`sdxl-base-1.0`. The published tensors were loaded strictly. A 1024×1024 generation from the same
+initial noise was compared against diffusers.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tokenizer token ids (2 tokenizers, 18 prompts) | sdxl-base-1.0 | identical | identical |
+| CLIP ViT-L/14 text encoder (penultimate layer) | sdxl-base-1.0 | 0 | 0 |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | sdxl-base-1.0 | 0 / 0 | 0 / 0 |
+| U-Net single step (t = 999, 500, 1) | sdxl-base-1.0 | 0 | 0 |
+| VAE decode / encode | sdxl-base-1.0 | 0 / 0 | 0 |
+| Euler timesteps / sigmas (50 and 30 steps) | sdxl-base-1.0 | 0 / 0 | 0 |
+| End to end: final latent / pixels | sdxl-base-1.0 | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | sdxl-base-1.0 | 0 | 0 |
+
+The observed difference in every comparison is **exactly 0**: on CPU in float32, the local
+implementation produces a bit-identical image to the one diffusers produces. The same tolerance
+rule applies: since every measurement came out 0, no tolerance needed to be loosened.
+
+End-to-end test settings: prompt "a photograph of an astronaut riding a horse", 1024×1024,
+guidance 5.0, initial noise `seed=1234` (the seed 42 run uses the same settings). 30 steps are
+used instead of the default 50 to keep CPU runtime reasonable.
+
+For `sdxl-base-1.0`, the same header-only tensor check covered the four components
+(`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
+missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -60,7 +92,7 @@ Record: `tensor_header_check`, [validation.json](validation.json).
   the difference from CPU. There is no parity claim on these devices.
 - There is no parity claim for float16 or bfloat16.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
-- Only the PNDM (PLMS) scheduler published with the checkpoints is implemented.
+- Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x and Euler for SDXL.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
@@ -82,3 +114,12 @@ could not show. Both were fixed and are guarded by permanent fuzz tests:
    registers special tokens one after another and the last registration takes effect.
 2. **Splitting of sequences not recognized as special tokens.** These sequences are split into three
    pieces, `<|`, `endoftext`, `|>`, as in the reference pre-tokenizer.
+
+The SDXL validation found two more differences:
+
+3. **Memory-mapped safetensors files.** CPU BLAS picked a different summation order for
+   differently aligned weights, so a 4.8e-7 difference in the pooled text embedding grew to a
+   29-pixel difference over sampling. Safetensors files are now memory-mapped, so the weights are
+   read from the file at their published alignment.
+4. **`null` for disabled options.** The published SDXL config uses `null` for disabled options,
+   for example `class_embed_type` and `cross_attention_norm` in the U-Net config.
