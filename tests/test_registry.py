@@ -1,6 +1,7 @@
 import pytest
 
-from imagehub.registry import BackendRegistry, available_backends
+from imagehub.backends.stable_diffusion import StableDiffusionBackend
+from imagehub.registry import BackendRegistry, available_backends, backend_registry
 
 
 def test_family_and_model_aliases_are_registered():
@@ -20,3 +21,25 @@ def test_registration_rules():
         registry.register("t2i", "z", 42)
     with pytest.raises(ValueError, match="Available: x"):
         registry.create("t2i", "missing")
+
+
+def test_catalog_alias_passes_model_id_but_family_does_not(tmp_path):
+    alias = backend_registry.create("t2i", "sd-v1-4", model=tmp_path)
+    family = backend_registry.create("t2i", "stable-diffusion", model=tmp_path)
+    assert isinstance(alias, StableDiffusionBackend) and alias.model_id == "sd-v1-4"
+    assert family.model_id is None
+
+
+def test_alias_registration_passes_model_id_to_any_factory(tmp_path):
+    seen = []
+
+    def factory(**options):
+        seen.append(options)
+        return StableDiffusionBackend(tmp_path)
+
+    registry = BackendRegistry()
+    registry.register("t2i", "family", factory)
+    registry.register("t2i", "alias", factory, model_id="alias")
+    registry.create("t2i", "family", device="cpu")
+    registry.create("t2i", "alias", device="cpu")
+    assert seen == [{"device": "cpu"}, {"model_id": "alias", "device": "cpu"}]

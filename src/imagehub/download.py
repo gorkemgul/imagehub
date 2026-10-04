@@ -138,7 +138,11 @@ def fetch(
         ) as sink:
             temporary = sink.name
             digest = hashlib.sha256()
-            blob = hashlib.sha1(b"blob %d\0" % size, usedforsecurity=False) if git_sha1 else None
+            blob = (
+                hashlib.sha1(b"blob %d\0" % size, usedforsecurity=False)
+                if git_sha1 is not None and size is not None
+                else None
+            )
             received = 0
             with _open(url, headers) as response:
                 while data := response.read(1 << 20):

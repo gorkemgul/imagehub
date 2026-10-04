@@ -87,6 +87,42 @@ def test_snapshot_metadata(tiny_sd, tmp_path):
     assert result.metadata["revision"] == "f" * 40
 
 
+def test_missing_snapshot_hint_names_selected_model(tmp_path):
+    pipe = pipeline("t2i", backend="sd-v1-4", model=tmp_path / "nowhere")
+    with pytest.raises(CheckpointError, match=r"imagehub\.pretrained sd-v1-4 "):
+        pipe("a cat")
+
+
+def test_missing_file_without_filename_still_explains(tiny_sd, tmp_path, monkeypatch):
+    import shutil
+
+    from imagehub.backends import stable_diffusion
+
+    copy = shutil.copytree(tiny_sd, tmp_path / "copy")
+
+    def broken(*args, **kwargs):
+        raise FileNotFoundError("no such thing")
+
+    monkeypatch.setattr(stable_diffusion.UNet2DConditionModel, "from_pretrained", broken)
+    with pytest.raises(CheckpointError, match="no such thing is missing"):
+        StableDiffusionBackend(copy, model_id="sd-v1-2").load()
+
+
+def test_selected_model_differing_from_snapshot_warns(tiny_sd, tmp_path):
+    import shutil
+
+    copy = shutil.copytree(tiny_sd, tmp_path / "copy")
+    (copy / SNAPSHOT_FILE).write_text(json.dumps({"model_id": "sd-v1-5", "revision": "f" * 40}))
+    with pytest.warns(UserWarning, match="sd-v1-5.*sd-v1-4"):
+        StableDiffusionBackend(copy, model_id="sd-v1-4").load()
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        StableDiffusionBackend(copy, model_id="sd-v1-5").load()
+        StableDiffusionBackend(copy).load()
+
+
 def test_device_and_dtype_validation(tiny_sd):
     with pytest.raises(ValueError, match="Available: cpu"):
         resolve_device("quantum")

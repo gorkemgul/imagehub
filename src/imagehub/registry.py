@@ -16,6 +16,7 @@ BackendFactory = Callable[..., Any]
 @dataclass(frozen=True)
 class _Registration:
     factory: BackendFactory | str
+    model_id: str | None = None
 
 
 class BackendRegistry:
@@ -23,9 +24,19 @@ class BackendRegistry:
         self._entries: dict[tuple[Task, str], _Registration] = {}
 
     def register(
-        self, task: Task | str, name: str, factory: BackendFactory | str, *, replace: bool = False
+        self,
+        task: Task | str,
+        name: str,
+        factory: BackendFactory | str,
+        *,
+        replace: bool = False,
+        model_id: str | None = None,
     ) -> None:
-        """Register a callable or ``module:class`` import path; no model is loaded."""
+        """Register a callable or ``module:class`` import path; no model is loaded.
+
+        ``model_id`` marks the entry as a catalog model alias: ``create`` then passes
+        ``model_id=<id>`` to the factory.
+        """
         if not name or name.strip() != name:
             raise ValueError("Backend name must be nonempty and have no surrounding whitespace")
         key = (Task(task), name)
@@ -36,23 +47,28 @@ class BackendRegistry:
                 raise ValueError("Lazy backend paths must use 'module:class'")
         elif not callable(factory):
             raise TypeError("Backend factory must be callable or a 'module:class' string")
-        self._entries[key] = _Registration(factory)
+        self._entries[key] = _Registration(factory, model_id)
 
     def names(self, task: Task | str) -> tuple[str, ...]:
         selected = Task(task)
         return tuple(sorted(name for (kind, name) in self._entries if kind == selected))
 
-    def factory(self, task: Task | str, name: str) -> BackendFactory | str:
-        selected = Task(task)
-        entry = self._entries.get((selected, name))
+    def _entry(self, task: Task, name: str) -> _Registration:
+        entry = self._entries.get((task, name))
         if entry is None:
-            available = ", ".join(self.names(selected)) or "none"
-            raise ValueError(f"Unknown {selected.value} backend {name!r}. Available: {available}")
-        return entry.factory
+            available = ", ".join(self.names(task)) or "none"
+            raise ValueError(f"Unknown {task.value} backend {name!r}. Available: {available}")
+        return entry
+
+    def factory(self, task: Task | str, name: str) -> BackendFactory | str:
+        return self._entry(Task(task), name).factory
 
     def create(self, task: Task | str, name: str, **options: Any) -> Any:
         selected = Task(task)
-        factory = self.factory(selected, name)
+        entry = self._entry(selected, name)
+        factory = entry.factory
+        if entry.model_id is not None:
+            options = {"model_id": entry.model_id} | options
         # Imported here: backends depend on the registry's package, not the other way round.
         from imagehub.backends.base import Backend
 
@@ -76,7 +92,10 @@ for _task, _name, _path in (
 for _spec in MODEL_CATALOG.values():
     if _spec.id not in backend_registry.names(_spec.task):
         backend_registry.register(
-            _spec.task, _spec.id, backend_registry.factory(_spec.task, _spec.family)
+            _spec.task,
+            _spec.id,
+            backend_registry.factory(_spec.task, _spec.family),
+            model_id=_spec.id,
         )
 
 

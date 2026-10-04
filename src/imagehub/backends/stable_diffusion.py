@@ -9,6 +9,7 @@ from __future__ import annotations
 import math
 import os
 import secrets
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -66,8 +67,8 @@ def initial_latents(seed: int, shape: tuple[int, ...]) -> Tensor:
     return torch.randn(shape, generator=generator, dtype=torch.float32)
 
 
-def _hint(root: Path) -> str:
-    return f"Download a snapshot with: python -m imagehub.pretrained sd-v1-5 {root}"
+def _hint(root: Path, model_id: str | None) -> str:
+    return f"Download a snapshot with: python -m imagehub.pretrained {model_id or 'sd-v1-5'} {root}"
 
 
 @dataclass
@@ -80,14 +81,19 @@ class StableDiffusionComponents:
 
     @classmethod
     def load(
-        cls, directory: str | os.PathLike[str], *, device: torch.device, dtype: torch.dtype
+        cls,
+        directory: str | os.PathLike[str],
+        *,
+        device: torch.device,
+        dtype: torch.dtype,
+        model_id: str | None = None,
     ) -> StableDiffusionComponents:
         root = Path(directory)
         missing = [name for name in COMPONENTS if not (root / name).is_dir()]
         if missing:
             raise CheckpointError(
                 f"{root} is not a Stable Diffusion snapshot (missing {', '.join(missing)}). "
-                + _hint(root)
+                + _hint(root, model_id)
             )
         try:
             return cls(
@@ -102,7 +108,9 @@ class StableDiffusionComponents:
                 scheduler_config=read_json(root / "scheduler" / "scheduler_config.json"),
             )
         except FileNotFoundError as error:
-            raise CheckpointError(f"{error.filename} is missing. " + _hint(root)) from error
+            raise CheckpointError(
+                f"{error.filename or error} is missing. " + _hint(root, model_id)
+            ) from error
 
 
 @torch.inference_mode()
@@ -168,9 +176,11 @@ class StableDiffusionBackend(TextToImageBackend):
         *,
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
+        model_id: str | None = None,
     ) -> None:
         super().__init__()
         self.source = Path(model)
+        self.model_id = model_id
         self.device = resolve_device(device)
         self.dtype = dtype or torch.float32
         if self.dtype not in _DTYPES:
@@ -223,9 +233,17 @@ class StableDiffusionBackend(TextToImageBackend):
 
     def _load(self) -> None:
         self.components = StableDiffusionComponents.load(
-            self.source, device=self.device, dtype=self.dtype
+            self.source, device=self.device, dtype=self.dtype, model_id=self.model_id
         )
         self.snapshot = read_snapshot(self.source)
+        recorded = (self.snapshot or {}).get("model_id")
+        if recorded is not None and self.model_id is not None and recorded != self.model_id:
+            warnings.warn(
+                f"{self.source} is a snapshot of {recorded!r} but {self.model_id!r} was "
+                "selected; both share the Stable Diffusion 1.x architecture, so it was loaded",
+                UserWarning,
+                stacklevel=2,
+            )
 
     def _unload(self) -> None:
         self.components = None
