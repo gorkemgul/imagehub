@@ -8,3 +8,6 @@ build/
 .mypy_cache/
 .ruff_cache/
 /checkpoints/
+
+# Local research notes (not published)
+/docs/research/
