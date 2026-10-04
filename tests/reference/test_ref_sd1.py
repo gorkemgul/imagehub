@@ -39,7 +39,11 @@ def load_pair(version):
     root = checkpoint_dir(version)
     ours = StableDiffusionComponents.load(root, device=CPU, dtype=torch.float32)
     ref = diffusers.StableDiffusionPipeline.from_pretrained(
-        root, safety_checker=None, requires_safety_checker=False, local_files_only=True
+        root,
+        safety_checker=None,
+        feature_extractor=None,
+        requires_safety_checker=False,
+        local_files_only=True,
     )
     ref.set_progress_bar_config(disable=True)
     return root, ours, ref

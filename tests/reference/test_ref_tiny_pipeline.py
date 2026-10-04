@@ -45,7 +45,11 @@ pytest.importorskip("transformers")
 def test_tiny_snapshot_generation_matches_diffusers(tmp_path, case):
     root = write_tiny_sd(tmp_path / "tiny")
     ref = diffusers.StableDiffusionPipeline.from_pretrained(
-        root, safety_checker=None, requires_safety_checker=False, local_files_only=True
+        root,
+        safety_checker=None,
+        feature_extractor=None,
+        requires_safety_checker=False,
+        local_files_only=True,
     )
     ref.set_progress_bar_config(disable=True)
     h, w = case["hw"]
