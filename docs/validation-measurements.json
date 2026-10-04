@@ -1,0 +1,153 @@
+{
+  "e2e_sd-v1-1": {
+    "guidance": 7.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      512,
+      512
+    ],
+    "steps": 50,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "e2e_sd-v1-2": {
+    "guidance": 7.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      512,
+      512
+    ],
+    "steps": 50,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "e2e_sd-v1-3": {
+    "guidance": 7.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      512,
+      512
+    ],
+    "steps": 50,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "e2e_sd-v1-4": {
+    "guidance": 7.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      512,
+      512
+    ],
+    "steps": 50,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "e2e_sd-v1-5": {
+    "guidance": 7.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      512,
+      512
+    ],
+    "steps": 50,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "environment": {
+    "torch_threads": 12
+  },
+  "seed_e2e_sd-v1-5": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42
+  },
+  "seed_noise": {
+    "exact": true
+  },
+  "smoke_mps": {
+    "device_name": "arm",
+    "latents": {
+      "max_abs": 0.002741515636444092,
+      "max_rel": 0.8088963859262309
+    },
+    "pixels_max_abs": 1,
+    "psnr_db": 72.79150735315933,
+    "steps": 20
+  },
+  "text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "tokenizer": {
+    "mismatches": 0,
+    "prompts": 14,
+    "tolerance": "exact"
+  },
+  "unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      981,
+      501,
+      1
+    ],
+    "tolerance": 0.0
+  },
+  "vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  }
+}

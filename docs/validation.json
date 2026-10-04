@@ -1,0 +1,294 @@
+{
+  "version": "0.1.0",
+  "date": "2026-10-04",
+  "environment": {
+    "python": "3.13.11",
+    "torch": "2.14.1",
+    "diffusers": "0.40.0",
+    "transformers": "5.18.0",
+    "machine": "Apple M2 Max, 96 GB unified memory",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "torch_threads": 12
+  },
+  "models": [
+    {
+      "model_id": "sd-v1-1",
+      "repo_id": "CompVis/stable-diffusion-v1-1",
+      "revision": "574555a657f0c8d6e970a02c7e095e9d4220dcbf",
+      "provenance": "author",
+      "catalog_id": "stable-diffusion-1",
+      "license": "CreativeML-OpenRAIL-M",
+      "status": "full",
+      "files": {
+        "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
+        "scheduler/scheduler_config.json": "21be27b343bf5d9d12f34b23954ae3062fbfb6f4955d704902d205684666fea4",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "e5911e65af085b35e59f036db5bc1d10359d808f45710e5dc2bab1afa0195a09",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "d99677f852e939374f058507cb605386d48068faef30b39d492d0feb9bfb80ac",
+        "unet/config.json": "6f9796c9ec037f5ac93e02ad43eb442e4e8e36c852f956569c30691db3b761cb",
+        "vae/config.json": "e0a671550ce3aa4b71a6463e51dadd22bca6858d1213f40d5f5df47e6ca5c762",
+        "text_encoder/pytorch_model.bin": "770a47a9ffdcfda0b05506a7888ed714d06131d60267e6cf52765d61cf59fd67",
+        "unet/diffusion_pytorch_model.bin": "e1b7658d2a2da153182bef9401ed67f719e559e3b4e994019573c101c8864504",
+        "vae/diffusion_pytorch_model.bin": "1b134cded8eb78b184aefb8805b6b572f36fa77b255c483665dda931fa0130c5"
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      }
+    },
+    {
+      "model_id": "sd-v1-2",
+      "repo_id": "CompVis/stable-diffusion-v1-2",
+      "revision": "f519eebf1372598b85ab317ec273a63ebeddd5eb",
+      "provenance": "author",
+      "catalog_id": "stable-diffusion-1",
+      "license": "CreativeML-OpenRAIL-M",
+      "status": "full",
+      "files": {
+        "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
+        "scheduler/scheduler_config.json": "21be27b343bf5d9d12f34b23954ae3062fbfb6f4955d704902d205684666fea4",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "d3eea2df2579e6e7092b1f2bbc5e7204a5df1e84e11d41ee05cf1a5e403dd77f",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "7eae472cf1749e073c3866e6dd46b0024dccfef09bf841bcef20277619945a6c",
+        "unet/config.json": "07c7e047f3f02dd4f6ec1ef3a479854a74b0e8e09a71eb9ec0950247b4061db7",
+        "vae/config.json": "5c1aec04eb3aec462dfce26cf3aadb6fe87ccd35c48ea19477b5fad2f6a949d4",
+        "text_encoder/pytorch_model.bin": "770a47a9ffdcfda0b05506a7888ed714d06131d60267e6cf52765d61cf59fd67",
+        "unet/diffusion_pytorch_model.bin": "7a384564518f48c9a4fe1ac08a7eb5db9e2bf4ca12c5fd4e03190712bcbc8feb",
+        "vae/diffusion_pytorch_model.bin": "1b134cded8eb78b184aefb8805b6b572f36fa77b255c483665dda931fa0130c5"
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      }
+    },
+    {
+      "model_id": "sd-v1-3",
+      "repo_id": "CompVis/stable-diffusion-v1-3",
+      "revision": "159f26fccae6e3ea26c797ad24c5e7033da5b1ee",
+      "provenance": "author",
+      "catalog_id": "stable-diffusion-1",
+      "license": "CreativeML-OpenRAIL-M",
+      "status": "full",
+      "files": {
+        "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
+        "scheduler/scheduler_config.json": "21be27b343bf5d9d12f34b23954ae3062fbfb6f4955d704902d205684666fea4",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "233d800e8391ddde1d7b57a31034c51ab55f9e6e5b680cf9307e10d1ab271c94",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "7befb7ed2215d9ec589022b8f05c9bc61d45818d2143169acb06d19dbecaa0c2",
+        "unet/config.json": "34f71731b753bf8bfe0e8e5d9ed19111b60e0fcd7850bbc8f4d83858bbf848b7",
+        "vae/config.json": "481cee36ec5b3e0c7538f41be3491e2802af9511ecfbca5a4d6f8bbdebcca1ff",
+        "text_encoder/pytorch_model.bin": "485096afb4482023ec75c414a5373ba300aa91a4cc2ab534074b5748d6b91ee8",
+        "unet/diffusion_pytorch_model.bin": "f50cd2983628c53eec5b56702630e042376f2de298dfdc47c0c6bbb6d0d8a80b",
+        "vae/diffusion_pytorch_model.bin": "f506c519bca6fcb25f695b94364422f7b2f534d52ded3decbcd6674a5101b500"
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      }
+    },
+    {
+      "model_id": "sd-v1-4",
+      "repo_id": "CompVis/stable-diffusion-v1-4",
+      "revision": "133a221b8aa7292a167afc5127cb63fb5005638b",
+      "provenance": "author",
+      "catalog_id": "stable-diffusion-1",
+      "license": "CreativeML-OpenRAIL-M",
+      "status": "full",
+      "files": {
+        "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
+        "scheduler/scheduler_config.json": "8335df29b53da12e9aeca35b1c2e60d88b23eae4cc5ad3d07efdcd7f003cc343",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "00439066fcba73de57644cf41e4e3b9f2dbb09d7f3fc2005898ba52399045882",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "aa210e6d6abd239a466af57a1dadb62d5ced63295064d295a549e08a6c4a2020",
+        "unet/config.json": "d6749baad843798f21da6c2d3dd9d642e5ebb73455ade4763158f5c6d3e95b03",
+        "vae/config.json": "0e5966d4d52c8077648754ffd2c14ab5e0b26a4bdfa6af1d207c27550fa6d2af",
+        "text_encoder/model.safetensors": "7b3a12df205cb3c74dd4eae4354d93f606ae6b3bc29d5d06fd97921cb9ad8a81",
+        "unet/diffusion_pytorch_model.safetensors": "145a07e0f05ec5bbe6e2e9faf608bdb311caf708895cac8c8ed713c59864e1e8",
+        "vae/diffusion_pytorch_model.safetensors": "a2b5134f4dbc140d9c11f11cba3233099e00af40f262f136c691fb7d38d2194c"
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      }
+    },
+    {
+      "model_id": "sd-v1-5",
+      "repo_id": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "revision": "451f4fe16113bff5a5d2269ed5ad43b0592e9a14",
+      "provenance": "community-mirror",
+      "catalog_id": "stable-diffusion-1",
+      "license": "CreativeML-OpenRAIL-M",
+      "status": "full",
+      "files": {
+        "model_index.json": "e2f6f22e274374010aec30c79eb2d6e53fff4a36ac0225523a92cb2d41a83347",
+        "scheduler/scheduler_config.json": "699cce92eb7c122e2eb7dfdea78e6187fda76a5ed4a8e42319b85610e620e091",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "00439066fcba73de57644cf41e4e3b9f2dbb09d7f3fc2005898ba52399045882",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "845df614cb9327ae7bbea027316246fae917827407da6df13572e41b5f93b4cc",
+        "unet/config.json": "78f474de6bab3d893868f37be97b636ae65c0df3073ed3256ca458ff599b5f96",
+        "vae/config.json": "786a7d21647ddea6a04b9675c03d3cb45e90a2f3c6da5fbda2c54ade040036de",
+        "text_encoder/model.safetensors": "d008943c017f0092921106440254dbbe00b6a285f7883ec8ba160c3faad88334",
+        "unet/diffusion_pytorch_model.safetensors": "19da7aaa4b880e59d56843f1fcb4dd9b599c28a1d9d9af7c1143057c8ffae9f1",
+        "vae/diffusion_pytorch_model.safetensors": "a2b5134f4dbc140d9c11f11cba3233099e00af40f262f136c691fb7d38d2194c"
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      }
+    }
+  ],
+  "components": {
+    "seed_noise": {
+      "exact": true
+    },
+    "text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "tokenizer": {
+      "mismatches": 0,
+      "prompts": 14,
+      "tolerance": "exact"
+    },
+    "unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        981,
+        501,
+        1
+      ],
+      "tolerance": 0.0
+    },
+    "vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
+  "seed_end_to_end": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42
+  },
+  "devices": {
+    "smoke_mps": {
+      "device_name": "arm",
+      "latents": {
+        "max_abs": 0.002741515636444092,
+        "max_rel": 0.8088963859262309
+      },
+      "pixels_max_abs": 1,
+      "psnr_db": 72.79150735315933,
+      "steps": 20
+    }
+  },
+  "limits": [
+    "Parity is claimed only on CPU in float32 against diffusers 0.40.0 and transformers 5.18.0.",
+    "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
+    "No float16 or bfloat16 parity.",
+    "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
+    "Only the PNDM (PLMS) scheduler shipped with the checkpoints is implemented.",
+    "No image-quality benchmark (FID, CLIP score).",
+    "Text-to-image only; SD 1.x img2img is not implemented."
+  ],
+  "tests": {
+    "reference_summary": "34 passed, 2 deselected"
+  }
+}
