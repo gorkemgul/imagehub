@@ -72,6 +72,11 @@ def published_shapes(component: str) -> dict[str, list[int]]:
     return {name: entry["shape"] for name, entry in data[component].items()}
 
 
+def sdxl_published_shapes(component: str) -> dict[str, list[int]]:
+    data = json.loads((FIXTURES / "sdxl_tensor_shapes.json").read_text(encoding="utf-8"))
+    return {name: entry["shape"] for name, entry in data[component].items()}
+
+
 def meta_shapes(model_cls, config) -> dict[str, list[int]]:
     with torch.device("meta"):
         model = model_cls(config)
@@ -81,7 +86,9 @@ def meta_shapes(model_cls, config) -> dict[str, list[int]]:
 def text_state_for_ours(ref_state: dict) -> dict:
     """transformers 5 CLIPTextModel state -> published-file names (``text_model.`` prefix)."""
     return {
-        (name if name.startswith("text_model.") else "text_model." + name): value
+        (
+            name if name.startswith(("text_model.", "text_projection.")) else "text_model." + name
+        ): value
         for name, value in ref_state.items()
     }
 
@@ -100,6 +107,18 @@ SD1_SCHEDULER = {
     "steps_offset": 1,
     "trained_betas": None,
     "clip_sample": False,
+}
+
+SDXL_SCHEDULER = {
+    "beta_start": 0.00085,
+    "beta_end": 0.012,
+    "beta_schedule": "scaled_linear",
+    "num_train_timesteps": 1000,
+    "steps_offset": 1,
+    "timestep_spacing": "leading",
+    "prediction_type": "epsilon",
+    "interpolation_type": "linear",
+    "use_karras_sigmas": False,
 }
 
 
@@ -133,6 +152,23 @@ SD1_UNET = {
     "flip_sin_to_cos": True,
     "freq_shift": 0,
     "sample_size": 64,
+}
+SDXL_UNET = {
+    "in_channels": 4,
+    "out_channels": 4,
+    "block_out_channels": [320, 640, 1280],
+    "down_block_types": ["DownBlock2D", "CrossAttnDownBlock2D", "CrossAttnDownBlock2D"],
+    "up_block_types": ["CrossAttnUpBlock2D", "CrossAttnUpBlock2D", "UpBlock2D"],
+    "transformer_layers_per_block": [1, 2, 10],
+    "attention_head_dim": [5, 10, 20],
+    "cross_attention_dim": 2048,
+    "use_linear_projection": True,
+    "addition_embed_type": "text_time",
+    "addition_time_embed_dim": 256,
+    "projection_class_embeddings_input_dim": 2816,
+    "layers_per_block": 2,
+    "norm_num_groups": 32,
+    "sample_size": 128,
 }
 TINY_UNET_CONFIG = SD1_UNET | {
     "block_out_channels": [32, 64, 64, 64],

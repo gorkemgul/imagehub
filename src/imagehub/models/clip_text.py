@@ -20,6 +20,8 @@ CLIP_TEXT_DEFAULTS: dict[str, Any] = {
     "max_position_embeddings": 77,
     "layer_norm_eps": 1e-5,
     "hidden_act": "quick_gelu",
+    "projection_dim": 512,
+    "eos_token_id": 49407,
 }
 
 
@@ -43,14 +45,19 @@ class CLIPAttention(nn.Module):
 
 
 class CLIPMLP(nn.Module):
-    def __init__(self, dim: int, inner: int) -> None:
+    def __init__(self, dim: int, inner: int, activation: str) -> None:
         super().__init__()
+        self.activation = activation
         self.fc1 = nn.Linear(dim, inner)
         self.fc2 = nn.Linear(inner, dim)
 
     def forward(self, x: Tensor) -> Tensor:
         x = self.fc1(x)
-        return self.fc2(x * torch.sigmoid(1.702 * x))  # quick_gelu
+        if self.activation == "gelu":
+            x = F.gelu(x)
+        else:
+            x = x * torch.sigmoid(1.702 * x)
+        return self.fc2(x)
 
 
 class CLIPEncoderLayer(nn.Module):
@@ -59,7 +66,7 @@ class CLIPEncoderLayer(nn.Module):
         dim, eps = cfg["hidden_size"], cfg["layer_norm_eps"]
         self.self_attn = CLIPAttention(dim, cfg["num_attention_heads"])
         self.layer_norm1 = nn.LayerNorm(dim, eps=eps)
-        self.mlp = CLIPMLP(dim, cfg["intermediate_size"])
+        self.mlp = CLIPMLP(dim, cfg["intermediate_size"], cfg["hidden_act"])
         self.layer_norm2 = nn.LayerNorm(dim, eps=eps)
 
     def forward(self, x: Tensor) -> Tensor:
@@ -91,17 +98,24 @@ class CLIPTextTransformer(nn.Module):
         self.encoder = CLIPEncoder(cfg)
         self.final_layer_norm = nn.LayerNorm(cfg["hidden_size"], eps=cfg["layer_norm_eps"])
 
-    def forward(self, input_ids: Tensor) -> Tensor:
+    def forward(
+        self, input_ids: Tensor, *, output_hidden_states: bool = False
+    ) -> Tensor | tuple[Tensor, tuple[Tensor, ...]]:
         x = self.embeddings(input_ids)
+        hidden_states = [x]
         for layer in self.encoder.layers:
             x = layer(x)
-        return self.final_layer_norm(x)
+            hidden_states.append(x)
+        x = self.final_layer_norm(x)
+        if output_hidden_states:
+            return x, tuple(hidden_states)
+        return x
 
 
 class CLIPTextModel(NativeModel):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(CLIP_TEXT_DEFAULTS | dict(config))
-        if self.config["hidden_act"] != "quick_gelu":
+        if self.config["hidden_act"] not in ("quick_gelu", "gelu"):
             raise ValueError(f"Unsupported CLIP activation {self.config['hidden_act']!r}")
         self.text_model = CLIPTextTransformer(self.config)
 
@@ -111,6 +125,42 @@ class CLIPTextModel(NativeModel):
         state.pop("text_model.embeddings.position_ids", None)
         return state
 
-    def forward(self, input_ids: Tensor) -> Tensor:
+    def forward(
+        self, input_ids: Tensor, *, output_hidden_states: bool = False
+    ) -> Tensor | tuple[Tensor, tuple[Tensor, ...]]:
         """Return ``last_hidden_state`` of shape (batch, tokens, hidden_size)."""
-        return self.text_model(input_ids)
+        return self.text_model(input_ids, output_hidden_states=output_hidden_states)
+
+
+class CLIPTextModelWithProjection(NativeModel):
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__(CLIP_TEXT_DEFAULTS | dict(config))
+        if self.config["hidden_act"] not in ("quick_gelu", "gelu"):
+            raise ValueError(f"Unsupported CLIP activation {self.config['hidden_act']!r}")
+        self.text_model = CLIPTextTransformer(self.config)
+        self.text_projection = nn.Linear(
+            self.config["hidden_size"], self.config["projection_dim"], bias=False
+        )
+
+    def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
+        state = dict(state)
+        state.pop("text_model.embeddings.position_ids", None)
+        return state
+
+    def forward(
+        self, input_ids: Tensor, *, output_hidden_states: bool = False
+    ) -> tuple[Tensor, Tensor] | tuple[Tensor, Tensor, tuple[Tensor, ...]]:
+        last_hidden_state, hidden_states = self.text_model(input_ids, output_hidden_states=True)
+        if self.config["eos_token_id"] == 2:
+            positions = input_ids.to(dtype=torch.int).argmax(dim=-1)
+        else:
+            positions = (
+                (input_ids.to(dtype=torch.int) == self.config["eos_token_id"]).int().argmax(dim=-1)
+            )
+        pooled = last_hidden_state[
+            torch.arange(last_hidden_state.shape[0], device=last_hidden_state.device), positions
+        ]
+        text_embeds = self.text_projection(pooled)
+        if output_hidden_states:
+            return text_embeds, last_hidden_state, hidden_states
+        return text_embeds, last_hidden_state
