@@ -14,6 +14,9 @@ PROMPTS = [
     "numbers 12345 3.14 1e-5 ½ ² Ⅷ ٣",
     "punct!!! ??? ... --- (a) [b] {c} <d> @#$%^&*",
     "x!<|endoftext|>y <|startoftext|> mid",
+    "x <|ENDOFTEXT|> y",
+    "<|StartOfText|>hi",
+    "a b\u3000c d e",
     "Ünïcödé NFC é ﬁ ligature Ωmega ΣΟΦΟΣ",
     "日本語のテキストと中文和한국어",
     "word " * 100,
@@ -27,6 +30,15 @@ def test_tiny_tokenizer_matches_transformers(tmp_path):
     ref = transformers.CLIPTokenizer.from_pretrained(path, model_max_length=8)
     for text in ["hi cat", "cats", "Hi CAT!", "a b c d e f g h", ""]:
         expected = ref(text, padding="max_length", max_length=8, truncation=True)["input_ids"]
+        assert ours(text) == expected, text
+
+
+def test_tiny_tokenizer_special_case_matches_transformers(tmp_path):
+    path = write_tiny_tokenizer(tmp_path)
+    ours = CLIPTokenizer(path, max_length=40)
+    ref = transformers.CLIPTokenizer.from_pretrained(path, model_max_length=40)
+    for text in ["x <|ENDOFTEXT|> y", "<|StartOfText|>hi", "x<|endoftext|>y"]:
+        expected = ref(text, padding="max_length", max_length=40, truncation=True)["input_ids"]
         assert ours(text) == expected, text
 
 

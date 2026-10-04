@@ -1,8 +1,9 @@
 """Native CLIP byte-level BPE tokenizer matching transformers' ``CLIPTokenizer``.
 
-The reference normalizes with NFC, collapses Unicode whitespace runs to one space and
-lowercases character by character, then splits with the pattern
-``<|startoftext|>|<|endoftext|>|'s|'t|'re|'ve|'m|'ll|'d|[\\p{L}]+|[\\p{N}]|[^\\s\\p{L}\\p{N}]+``.
+The reference first splits the raw text on exact-case ``<|startoftext|>`` / ``<|endoftext|>``
+(case variants are ordinary text). Every other segment is normalized (NFC, Unicode whitespace
+runs collapsed to one space, per-character lowercase) and split with the pattern
+``'s|'t|'re|'ve|'m|'ll|'d|[\\p{L}]+|[\\p{N}]|[^\\s\\p{L}\\p{N}]+``.
 Python's ``re`` has no ``\\p{..}`` classes, so the split is an explicit scanner.
 """
 
@@ -10,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import unicodedata
 from functools import lru_cache
 from pathlib import Path
@@ -18,6 +20,7 @@ from pathlib import Path
 _WHITESPACE = frozenset("\t\n\x0b\x0c\r \x85\xa0                　")
 _CONTRACTIONS = ("'s", "'t", "'re", "'ve", "'m", "'ll", "'d")
 BOS, EOS = "<|startoftext|>", "<|endoftext|>"
+_SPECIAL_SPLIT = re.compile(f"({re.escape(BOS)}|{re.escape(EOS)})")
 
 
 @lru_cache(maxsize=1)
@@ -63,18 +66,16 @@ def normalize(text: str) -> str:
 
 
 def pretokenize(text: str) -> list[str]:
-    """Split like the reference regex: specials | contractions | letters+ | one digit | other+."""
+    """Split like the reference regex: contractions | letters+ | one digit | other+.
+
+    Special tokens are not handled here; ``CLIPTokenizer.tokenize`` splits them off the raw text.
+    """
     pieces: list[str] = []
     i, n = 0, len(text)
     while i < n:
         ch = text[i]
         if ch in _WHITESPACE:
             i += 1
-            continue
-        special = next((s for s in (BOS, EOS) if text.startswith(s, i)), None)
-        if special is not None:
-            pieces.append(special)
-            i += len(special)
             continue
         contraction = next((c for c in _CONTRACTIONS if text.startswith(c, i)), None)
         if contraction is not None:
@@ -87,11 +88,7 @@ def pretokenize(text: str) -> list[str]:
                 j += 1
         elif not _is_number(ch):
             while j < n and not (
-                text[j] in _WHITESPACE
-                or _is_letter(text[j])
-                or _is_number(text[j])
-                or text.startswith(BOS, j)
-                or text.startswith(EOS, j)
+                text[j] in _WHITESPACE or _is_letter(text[j]) or _is_number(text[j])
             ):
                 j += 1
         pieces.append(text[i:j])
@@ -138,12 +135,13 @@ class CLIPTokenizer:
     def tokenize(self, text: str) -> list[int]:
         """Content token ids without BOS/EOS, padding or truncation."""
         ids: list[int] = []
-        for piece in pretokenize(normalize(text)):
-            if piece in (BOS, EOS):
-                ids.append(self.encoder[piece])
+        for k, segment in enumerate(_SPECIAL_SPLIT.split(text)):
+            if k % 2:  # odd items are the captured exact-case specials
+                ids.append(self.encoder[segment])
                 continue
-            mapped = "".join(self.byte_encoder[b] for b in piece.encode("utf-8"))
-            ids.extend(self.encoder[symbol] for symbol in self._bpe(mapped))
+            for piece in pretokenize(normalize(segment)):
+                mapped = "".join(self.byte_encoder[b] for b in piece.encode("utf-8"))
+                ids.extend(self.encoder[symbol] for symbol in self._bpe(mapped))
         return ids
 
     def __call__(self, text: str) -> list[int]:
