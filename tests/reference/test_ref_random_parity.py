@@ -3,6 +3,7 @@
 import pytest
 import torch
 from helpers import (
+    SD1_SCHEDULER,
     SD1_UNET,
     TINY_TEXT_CONFIG,
     TINY_UNET_CONFIG,
@@ -14,6 +15,7 @@ from helpers import (
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.pndm import PNDMScheduler
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
@@ -85,3 +87,22 @@ def test_unet_random_weights(config, sizes):
         for t in (torch.tensor(981), torch.tensor(1)):
             with torch.inference_mode():
                 exact(ours(sample, t, context), ref(sample, t, context).sample)
+
+
+def test_pndm_matches_diffusers():
+    ref = diffusers.PNDMScheduler.from_config(SD1_SCHEDULER)
+    ours = PNDMScheduler(SD1_SCHEDULER)
+    for steps in (50, 25, 7, 1):
+        ref.set_timesteps(steps)
+        ours.set_timesteps(steps)
+        assert torch.equal(ref.timesteps, ours.timesteps), steps
+    torch.manual_seed(0)
+    x = torch.randn(2, 4, 8, 8)
+    x_ref = x.clone()
+    ref.set_timesteps(50)
+    ours.set_timesteps(50)
+    for t in ref.timesteps:
+        eps = torch.randn(2, 4, 8, 8)
+        x_ref = ref.step(eps, t, x_ref).prev_sample
+        x = ours.step(eps, t, x)
+    exact(x, x_ref)

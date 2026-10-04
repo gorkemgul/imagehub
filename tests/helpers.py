@@ -88,6 +88,20 @@ def text_state_for_ours(ref_state: dict) -> dict:
 
 TINY_VAE_CONFIG = {"block_out_channels": [32, 32, 64, 64], "norm_num_groups": 8}
 
+SD1_SCHEDULER = {
+    "_class_name": "PNDMScheduler",
+    "_diffusers_version": "0.6.0",
+    "beta_end": 0.012,
+    "beta_schedule": "scaled_linear",
+    "beta_start": 0.00085,
+    "num_train_timesteps": 1000,
+    "set_alpha_to_one": False,
+    "skip_prk_steps": True,
+    "steps_offset": 1,
+    "trained_betas": None,
+    "clip_sample": False,
+}
+
 
 def legacy_vae_state(ref_state: dict) -> dict:
     """diffusers AutoencoderKL state -> the legacy attention names used by published files."""
