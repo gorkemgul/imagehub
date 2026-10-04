@@ -8,7 +8,7 @@ CPU'da float32 çıktıları diffusers ile birebir aynıdır (bit düzeyinde öz
 Mimariler [awesome-text-to-image-architectures](https://github.com/gorkemgul/awesome-text-to-image-architectures)
 kataloğuna bağlıdır.
 
-![sd-v1-5, seed 42](artifacts/sd-v1-5-seed42.png)
+![sd-v1-5, seed 42](https://raw.githubusercontent.com/gorkemgul/imagehub/main/artifacts/sd-v1-5-seed42.png)
 
 ## Kurulum
 
