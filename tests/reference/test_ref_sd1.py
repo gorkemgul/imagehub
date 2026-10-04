@@ -74,6 +74,7 @@ def test_unet_single_step(sd14, record):
     with torch.inference_mode():
         context = ref.text_encoder(ids)[0]
         worst = None
+        pairs = []
         for t in (981, 501, 1):
             timestep = torch.tensor(t)
             actual = ours.unet(sample, timestep, context)
@@ -81,8 +82,10 @@ def test_unet_single_step(sd14, record):
             measured = max_diff(actual, expected)
             if worst is None or measured["max_abs"] > worst["max_abs"]:
                 worst = measured
-            torch.testing.assert_close(actual, expected, atol=TOLERANCES["unet"], rtol=0)
+            pairs.append((actual, expected))
     record("unet", **worst, tolerance=TOLERANCES["unet"], timesteps=[981, 501, 1])
+    for actual, expected in pairs:
+        torch.testing.assert_close(actual, expected, atol=TOLERANCES["unet"], rtol=0)
 
 
 def test_vae(sd14, record):
@@ -91,20 +94,12 @@ def test_vae(sd14, record):
     latents = torch.randn(1, 4, 64, 64, generator=g)
     image = torch.rand(1, 3, 512, 512, generator=g) * 2 - 1
     with torch.inference_mode():
-        check(
-            record,
-            "vae_decode",
-            ours.vae.decode(latents),
-            ref.vae.decode(latents).sample,
-            "vae_decode",
-        )
-        check(
-            record,
-            "vae_encode",
-            ours.vae.encode(image),
-            ref.vae.encode(image).latent_dist.mean,
-            "vae_encode",
-        )
+        decode = (ours.vae.decode(latents), ref.vae.decode(latents).sample)
+        encode = (ours.vae.encode(image), ref.vae.encode(image).latent_dist.mean)
+    for name, (actual, expected) in (("vae_decode", decode), ("vae_encode", encode)):
+        record(name, **max_diff(actual, expected), tolerance=TOLERANCES[name])
+    for name, (actual, expected) in (("vae_decode", decode), ("vae_encode", encode)):
+        torch.testing.assert_close(actual, expected, atol=TOLERANCES[name], rtol=0)
 
 
 def test_seed_noise(record):
