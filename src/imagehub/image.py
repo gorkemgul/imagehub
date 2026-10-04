@@ -62,7 +62,11 @@ def _unfilter(raw: bytes, width: int, height: int, channels: int) -> bytearray:
 
 
 class Image:
-    """An 8-bit RGB or RGBA image stored as a (height, width, channels) uint8 tensor."""
+    """An 8-bit RGB or RGBA image stored as a (height, width, channels) uint8 tensor.
+
+    The image owns a detached CPU copy, so later in-place edits to the caller's tensor do not
+    change it and tensors produced under ``torch.inference_mode`` become ordinary tensors.
+    """
 
     __slots__ = ("tensor",)
 
@@ -71,7 +75,7 @@ class Image:
             raise TypeError("Image expects a uint8 tensor")
         if tensor.ndim != 3 or tensor.shape[2] not in (3, 4) or min(tensor.shape[:2]) < 1:
             raise ValueError("Image tensor must have shape (height, width, 3 or 4)")
-        self.tensor = tensor.detach().cpu().contiguous()
+        self.tensor = tensor.detach().cpu().clone(memory_format=torch.contiguous_format)
 
     @property
     def height(self) -> int:
@@ -138,7 +142,7 @@ class Image:
             raise ValueError("PNG image data has the wrong size")
         pixels = _unfilter(raw, width, height, channels)
         tensor = torch.frombuffer(pixels, dtype=torch.uint8).reshape(height, width, channels)
-        return cls(tensor.clone())
+        return cls(tensor)
 
     @classmethod
     def open(cls, path: str | os.PathLike[str]) -> Image:

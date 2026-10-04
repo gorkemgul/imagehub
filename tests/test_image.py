@@ -61,3 +61,15 @@ def test_to_pil_without_pillow(monkeypatch):
     monkeypatch.setitem(sys.modules, "PIL", None)
     with pytest.raises(MissingDependencyError, match=r"imagehub\[image\]"):
         Image(random_image()).to_pil()
+
+
+def test_image_owns_a_detached_copy():
+    pixels = random_image()
+    image = Image(pixels)
+    pixels.zero_()
+    assert image.tensor.sum() > 0
+    with torch.inference_mode():
+        produced = random_image(seed=2)
+    owned = Image(produced)
+    assert not owned.tensor.is_inference()
+    assert not owned.tensor.requires_grad
