@@ -1,83 +1,84 @@
-# Doğrulama — imagehub 0.1
+# Validation — imagehub 0.1
 
-4 Ekim 2026'da CPU üzerinde doğrulandı. Ortam: Python 3.13.11 / PyTorch 2.14.1.
-Referans: diffusers 0.40.0, transformers 5.18.0. Makine: Apple M2 Max, 96 GB birleşik bellek,
-12 CPU thread'i. Kaynaklar, commit'ler ve dosya parmak izleri [validation.json](validation.json) dosyasındadır.
+Validated on CPU on October 4, 2026. Environment: Python 3.13.11 / PyTorch 2.14.1.
+Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB unified memory,
+12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
 
-## Kapsam
+## Scope
 
-- **5 checkpoint, tam ağırlık (`full`):** `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`.
-  Yayımlanmış tensörler strict yüklendi. Aynı başlangıç gürültüsüyle 50 adımlık üretim diffusers ile
-  karşılaştırıldı.
-- Bütün karşılaştırmalarda gözlenen fark **tam olarak 0**. Yerel uygulama, CPU'da float32 ile
-  diffusers'ın ürettiği görselin bit düzeyinde aynısını üretiyor.
-- Bu ifade bir kalite benchmark'ı anlamına gelmez.
+- **5 checkpoints, `full`:** `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`.
+  The published tensors were loaded strictly. A 50-step generation from the same initial noise was
+  compared against diffusers.
+- The observed difference in every comparison is **exactly 0**. On CPU in float32, the local
+  implementation produces a bit-identical image to the one diffusers produces.
+- This statement is not a quality benchmark.
 
-## Karşılaştırmalar (CPU, float32)
+## Comparisons (CPU, float32)
 
-| Karşılaştırma | Checkpoint | Gözlenen en büyük fark | Tolerans |
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
 | --- | --- | --- | --- |
-| Tokenizer token id'leri | v1.4 (14 prompt) ve v1.1–v1.5 (her biri 1.000 rastgele prompt) | birebir | birebir |
-| CLIP metin kodlayıcı | v1.4 | 0 | 0 |
-| U-Net tek adım (t = 981, 501, 1) | v1.4 | 0 | 0 |
+| Tokenizer token ids | v1.4 (14 prompts) and v1.1–v1.5 (1,000 random prompts each) | identical | identical |
+| CLIP text encoder | v1.4 | 0 | 0 |
+| U-Net single step (t = 981, 501, 1) | v1.4 | 0 | 0 |
 | VAE decode / encode | v1.4 | 0 / 0 | 0 |
-| Seed'den başlangıç gürültüsü | — | birebir | birebir |
-| Uçtan uca: son latent / piksel | v1.1 | 0 / 0 | 0 / 0 |
-| Uçtan uca: son latent / piksel | v1.2 | 0 / 0 | 0 / 0 |
-| Uçtan uca: son latent / piksel | v1.3 | 0 / 0 | 0 / 0 |
-| Uçtan uca: son latent / piksel | v1.4 | 0 / 0 | 0 / 0 |
-| Uçtan uca: son latent / piksel | v1.5 | 0 / 0 | 0 / 0 |
-| Uçtan uca, seed 42 (piksel) | v1.5 | 0 | 0 |
+| Initial noise from seed | — | identical | identical |
+| End to end: final latent / pixels | v1.1 | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels | v1.2 | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels | v1.3 | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels | v1.4 | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels | v1.5 | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | v1.5 | 0 | 0 |
 
-Uçtan uca testlerin ayarları: prompt "a photograph of an astronaut riding a horse", 50 adım,
-guidance 7.5, 512×512, başlangıç gürültüsü `seed=1234`. diffusers tarafında `safety_checker=None`
-ve `feature_extractor=None` kullanıldı.
+End-to-end test settings: prompt "a photograph of an astronaut riding a horse", 50 steps,
+guidance 7.5, 512×512, initial noise `seed=1234`. On the diffusers side, `safety_checker=None`
+and `feature_extractor=None` were used.
 
-Toleranslar şu kuralla belirlenir: ölçülen fark 0 ise tolerans 0, değilse bir üst onluk basamak.
-Bütün ölçümler 0 çıktığı için hiçbir toleransın gevşetilmesi gerekmedi.
+Tolerances are set by this rule: if the measured difference is 0, the tolerance is 0; otherwise it
+is the next order of magnitude up. Since every measurement came out 0, no tolerance needed to be
+loosened.
 
-## Tensör başlığı kontrolü
+## Tensor header check
 
-Beş checkpoint'in her biri için üç bileşenin (`text_encoder`, `unet`, `vae`) tensör adları ve şekilleri,
-ağırlıklar belleğe alınmadan (safetensors için yalnızca başlık, `.bin` için `map_location="meta"`)
-okunup `prepare_state_dict` sonrası modelin `state_dict`'iyle karşılaştırıldı. 5 × 3 bileşenin
-hepsinde eksik, fazla ve şekil uyuşmazlığı **0**. Tensör sayıları: 196 / 686 / 248
-(`text_model.embeddings.position_ids` düşürüldükten sonra). Kayıt: `tensor_header_check`,
-[validation.json](validation.json).
+For each of the five checkpoints, the tensor names and shapes of three components (`text_encoder`,
+`unet`, `vae`) were read without loading the weights into memory (header only for safetensors,
+`map_location="meta"` for `.bin`) and compared with the model's `state_dict` after
+`prepare_state_dict`. Across all 5 × 3 components, missing, extra and shape-mismatched tensors are
+**0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
+Record: `tensor_header_check`, [validation.json](validation.json).
 
-## Cihaz duman testleri (parity iddiası yok)
+## Device smoke tests (no parity claim)
 
-| Cihaz | Sonuç | CPU'ya göre en büyük latent farkı | En büyük piksel farkı | PSNR |
+| Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
 | --- | --- | --- | --- | --- |
-| MPS (Apple M2 Max) | sonlu, 512×512, 20 adım | 2,7e-3 | 1 | 72,8 dB |
-| CUDA | henüz çalıştırılmadı | | | |
+| MPS (Apple M2 Max) | finite, 512×512, 20 steps | 2.7e-3 | 1 | 72.8 dB |
+| CUDA | not run yet | | | |
 
-## Sınırlar
+## Limits
 
-- Parity iddiası yalnızca CPU'da float32 için, diffusers 0.40.0 ve transformers 5.18.0'a karşıdır.
-- MPS ve CUDA çalıştırmaları duman testidir: sonlu çıktı ve doğru boyut kontrol edilir, CPU'ya göre
-  fark kaydedilir. Bu cihazlarda parity iddiası yoktur.
-- float16 ve bfloat16 için parity iddiası yoktur.
-- Safety checker ve invisible watermark yoktur. Referans `safety_checker=None` ile çalıştırıldı.
-- Yalnızca checkpoint'lerle yayımlanan PNDM (PLMS) zamanlayıcısı uygulanmıştır.
-- Görsel kalite benchmark'ı (FID, CLIP score) yapılmadı.
-- Yalnızca metinden görsel üretimi desteklenir. SD 1.x'in img2img kullanımı uygulanmadı.
+- The parity claim holds only for float32 on CPU, against diffusers 0.40.0 and transformers 5.18.0.
+- MPS and CUDA runs are smoke tests: they check for finite output and the correct size, and record
+  the difference from CPU. There is no parity claim on these devices.
+- There is no parity claim for float16 or bfloat16.
+- There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
+- Only the PNDM (PLMS) scheduler published with the checkpoints is implemented.
+- No image quality benchmark (FID, CLIP score) was run.
+- Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
-## Otomatik testler
+## Automated tests
 
-- Normal testler: 133 geçti, 36 atlandı (atlananlar isteğe bağlı referans testleridir). Testler ağdan
-  model indirmez.
-- Referans testleri (CPU): 34 geçti. Bunlara rastgele ağırlıklı yapısal parity, küçük modelle
-  uçtan uca parity, gerçek checkpoint parity'si ve tokenizer fuzz testleri dahildir.
-- MPS duman testi: 1 geçti.
+- Regular tests: 133 passed, 36 skipped (the skipped ones are the optional reference tests). Tests do
+  not download models from the network.
+- Reference tests (CPU): 34 passed. These include structural parity with random weights, end-to-end
+  parity with a small model, real-checkpoint parity and tokenizer fuzz tests.
+- MPS smoke test: 1 passed.
 
-## Doğrulama sırasında bulunan ve düzeltilen farklar
+## Differences found and fixed during validation
 
-Gerçek checkpoint'lerle yapılan ilk koşu, rastgele ağırlıklı testlerin gösteremediği iki tokenizer
-farkını ortaya çıkardı. İkisi de düzeltildi ve kalıcı fuzz testleriyle korunuyor:
+The first run with real checkpoints exposed two tokenizer differences that tests with random weights
+could not show. Both were fixed and are guarded by permanent fuzz tests:
 
-1. **Özel token'ların `normalized` bayrağı.** `<|startoftext|>` normalize edilmiş metinde eşleşir,
-   `<|endoftext|>` ise yalnızca ham metindeki tam yazımıyla eşleşir. Bunun sebebi, transformers'ın
-   özel token'ları sırayla kaydetmesi ve son kaydın geçerli olmasıdır.
-2. **Özel token olarak tanınmayan dizilerin bölünmesi.** Bu diziler, referans ön ayırıcıdaki gibi
-   `<|`, `endoftext`, `|>` biçiminde üçe bölünür.
+1. **The `normalized` flag of special tokens.** `<|startoftext|>` matches in normalized text, while
+   `<|endoftext|>` matches only as its exact spelling in the raw text. This is because transformers
+   registers special tokens one after another and the last registration takes effect.
+2. **Splitting of sequences not recognized as special tokens.** These sequences are split into three
+   pieces, `<|`, `endoftext`, `|>`, as in the reference pre-tokenizer.
