@@ -1,5 +1,10 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
+The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
+measurements. SDXL measurements are grouped under ``components_sdxl``, and each model entry may
+also contain its own ``seed_end_to_end`` measurement. Missing model directories are errors unless
+``--allow-missing`` is passed, in which case they are omitted with a warning.
+
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
       --checkpoints checkpoints --machine "Apple M2 Max, 96 GB" \
@@ -28,7 +33,7 @@ LIMITS = [
     "no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the PNDM (PLMS) scheduler shipped with the checkpoints is implemented.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x and Euler for SDXL.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -53,6 +58,7 @@ def main() -> None:
     parser.add_argument("--machine", required=True)
     parser.add_argument("--tests-log", type=Path, required=True)
     parser.add_argument("--output", type=Path, default=Path("docs/validation.json"))
+    parser.add_argument("--allow-missing", action="store_true")
     args = parser.parse_args()
 
     import diffusers
@@ -61,10 +67,18 @@ def main() -> None:
     measured = json.loads(args.measurements.read_text(encoding="utf-8"))
     models = []
     for spec in MODEL_CATALOG.values():
-        snapshot = read_snapshot(args.checkpoints / spec.id)
+        snapshot_dir = args.checkpoints / spec.id
+        if not snapshot_dir.is_dir():
+            message = f"{spec.id}: snapshot directory is missing: {snapshot_dir}"
+            if args.allow_missing:
+                print(f"warning: {message}; skipping", file=sys.stderr)
+                continue
+            sys.exit(message)
+        snapshot = read_snapshot(snapshot_dir)
         if snapshot is None or snapshot["revision"] != spec.revision:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
         e2e = measured.get(f"e2e_{spec.id}")
+        seed_e2e = measured.get(f"seed_e2e_{spec.id}")
         header = measured.get(f"header_{spec.id}")
         models.append(
             {
@@ -78,6 +92,7 @@ def main() -> None:
                 "files": snapshot["files"],
                 "tensor_header_check": header_check(header),
                 "end_to_end": e2e,
+                "seed_end_to_end": seed_e2e,
             }
         )
     summary = re.findall(r"=+ (.+) in [\d.]+s", args.tests_log.read_text(encoding="utf-8"))
@@ -99,6 +114,20 @@ def main() -> None:
             for key, value in measured.items()
             if key
             in ("tokenizer", "text_encoder", "unet", "vae_decode", "vae_encode", "seed_noise")
+        },
+        "components_sdxl": {
+            key: value
+            for key, value in measured.items()
+            if key
+            in (
+                "sdxl_tokenizers",
+                "sdxl_text_encoder",
+                "sdxl_text_encoder_2",
+                "sdxl_unet",
+                "sdxl_vae_decode",
+                "sdxl_vae_encode",
+                "sdxl_scheduler",
+            )
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},

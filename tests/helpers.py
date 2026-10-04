@@ -45,6 +45,16 @@ def checkpoint_dir(version: int) -> Path:
     return Path(value)
 
 
+def snapshot_dir(model_id: str) -> Path:
+    """Local model snapshot from IMAGEHUB_SNAPSHOT_<MODEL_ID>, or skip the test."""
+    key = "".join(character if character.isalnum() else "_" for character in model_id.upper())
+    variable = f"IMAGEHUB_SNAPSHOT_{key}"
+    value = os.environ.get(variable)
+    if not value:
+        pytest.skip(f"Set {variable} to a local {model_id} snapshot")
+    return Path(value)
+
+
 def max_diff(actual: torch.Tensor, expected: torch.Tensor) -> dict[str, float]:
     a = actual.detach().cpu().double()
     e = expected.detach().cpu().double()

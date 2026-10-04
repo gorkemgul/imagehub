@@ -1,4 +1,4 @@
-"""Tensor-header check of every published SD 1.x snapshot, without materializing weights.
+"""Tensor-header check of every published SD 1.x and SDXL snapshot without loading weights.
 
 For each component the model is built on the meta device from the snapshot's config.json, and
 the checkpoint's tensor names and shapes are compared with the model's state dict after
@@ -12,11 +12,11 @@ from pathlib import Path
 
 import pytest
 import torch
-from helpers import checkpoint_dir
+from helpers import checkpoint_dir, snapshot_dir
 
 from imagehub.checkpoints import read_json
 from imagehub.models.autoencoder_kl import AutoencoderKL
-from imagehub.models.clip_text import CLIPTextModel
+from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
 from imagehub.models.unet_2d import UNet2DConditionModel
 
 pytestmark = pytest.mark.reference
@@ -26,6 +26,7 @@ COMPONENTS = {
     "unet": UNet2DConditionModel,
     "vae": AutoencoderKL,
 }
+SDXL_COMPONENTS = COMPONENTS | {"text_encoder_2": CLIPTextModelWithProjection}
 WEIGHT_FILES = (
     "model.safetensors",
     "diffusion_pytorch_model.safetensors",
@@ -47,11 +48,9 @@ def checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
     return {name: tuple(t.shape) for name, t in state.items()}
 
 
-@pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
-def test_published_tensor_headers_match_models(version, record):
-    root = checkpoint_dir(version)
+def _header_result(root, components):
     result = {}
-    for component, cls in COMPONENTS.items():
+    for component, cls in components.items():
         with torch.device("meta"):
             model = cls(read_json(root / component / "config.json"))
         shapes = checkpoint_shapes(root / component)
@@ -70,8 +69,24 @@ def test_published_tensor_headers_match_models(version, record):
             ),
             "tensors": len(got),
         }
-    record(f"header_sd-v1-{version}", **result)
+    return result
+
+
+def _assert_headers_match(result):
     for component, entry in result.items():
         assert not entry["missing"], (component, entry["missing"][:5])
         assert not entry["extra"], (component, entry["extra"][:5])
         assert not entry["mismatch"], (component, entry["mismatch"][:5])
+
+
+@pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
+def test_published_tensor_headers_match_models(version, record):
+    result = _header_result(checkpoint_dir(version), COMPONENTS)
+    record(f"header_sd-v1-{version}", **result)
+    _assert_headers_match(result)
+
+
+def test_sdxl_published_tensor_headers_match_models(record):
+    result = _header_result(snapshot_dir("sdxl-base-1.0"), SDXL_COMPONENTS)
+    record("header_sdxl-base-1.0", **result)
+    _assert_headers_match(result)
