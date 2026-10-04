@@ -19,8 +19,9 @@ OutputT = TypeVar("OutputT")
 class Pipeline(ABC, Generic[InputT, PreparedT, OutputT]):
     """Reusable task orchestration independent of the model's runtime.
 
-    Call options override ``default_options`` with a shallow merge. Model construction
-    options belong to the backend, never to the request defaults.
+    Precedence, lowest first: ``default_options``, the request's own parameters, call
+    options (shallow merges; see ``with_defaults``). Model construction options belong to the
+    backend, never to the request defaults.
     """
 
     task: Task
@@ -43,6 +44,18 @@ class Pipeline(ABC, Generic[InputT, PreparedT, OutputT]):
     def preprocess(self, inputs: InputT) -> PreparedT:
         """Validate and normalize public inputs without loading a model."""
 
+    def with_defaults(self, prepared: PreparedT) -> PreparedT:
+        """Place ``default_options`` beneath settings carried by the prepared input.
+
+        Pipelines whose input has its own settings override this together with
+        ``call_options``; the generic rule is ``default_options | call options``.
+        """
+        return prepared
+
+    def call_options(self, options: dict[str, Any]) -> dict[str, Any]:
+        """Options passed to the backend for a call; they win over everything else."""
+        return self.default_options | options
+
     def forward(self, inputs: PreparedT, **options: Any) -> OutputT:
         return self.backend.infer(inputs, **options)
 
@@ -55,8 +68,8 @@ class Pipeline(ABC, Generic[InputT, PreparedT, OutputT]):
         return output
 
     def run(self, inputs: InputT, **options: Any) -> OutputT:
-        prepared = self.preprocess(inputs)
-        result = self.forward(prepared, **(self.default_options | options))
+        prepared = self.with_defaults(self.preprocess(inputs))
+        result = self.forward(prepared, **self.call_options(options))
         return self.postprocess(result)
 
     def __call__(self, inputs: InputT, **options: Any) -> OutputT:
@@ -64,8 +77,8 @@ class Pipeline(ABC, Generic[InputT, PreparedT, OutputT]):
 
     def batch(self, inputs: Iterable[InputT], **options: Any) -> list[OutputT]:
         """Materialize one batch; requests run sequentially inside one backend session."""
-        prepared = [self.preprocess(item) for item in inputs]
-        outputs = self.backend.infer_batch(prepared, **(self.default_options | options))
+        prepared = [self.with_defaults(self.preprocess(item)) for item in inputs]
+        outputs = self.backend.infer_batch(prepared, **self.call_options(options))
         return [self.postprocess(output) for output in outputs]
 
     def map(self, inputs: Iterable[InputT], **options: Any) -> Iterator[OutputT]:

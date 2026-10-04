@@ -47,8 +47,18 @@ def test_run_with_backend_instance_and_option_precedence():
     assert isinstance(pipe, TextToImagePipeline)
     assert pipe("a cat").metadata == {"prompt": "a cat", "seed": 5}
     assert pipe("a cat", seed=6).metadata["seed"] == 6
-    assert pipe(T2IRequest("a dog", {"seed": 7})).metadata["seed"] == 5
+    assert pipe(T2IRequest("a dog", {"seed": 7})).metadata["seed"] == 7
+    assert pipe(T2IRequest("a dog", {"seed": 7}), seed=8).metadata["seed"] == 8
     assert backend.loads == 1
+
+
+def test_batch_option_precedence():
+    backend = Recording()
+    pipe = pipeline("t2i", backend=backend, options={"seed": 5})
+    requests = [T2IRequest("a", {"seed": 7}), "b", T2IRequest("c", {"seed": 9})]
+    assert [r.metadata["seed"] for r in pipe.batch(requests)] == [7, 5, 9]
+    assert [r.metadata["seed"] for r in pipe.batch(requests, seed=1)] == [1, 1, 1]
+    assert pipe.batch([]) == []
 
 
 def test_options_are_validated_before_loading():

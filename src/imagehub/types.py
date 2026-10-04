@@ -17,7 +17,8 @@ class Task(StrEnum):
 @dataclass(frozen=True, slots=True)
 class T2IRequest:
     prompt: str
-    # Request-level generation settings. Options passed to a pipeline call override them.
+    # Request-level generation settings: they override a pipeline's default options, and
+    # options passed to a pipeline call override them.
     parameters: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
