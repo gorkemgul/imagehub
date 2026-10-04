@@ -33,6 +33,16 @@
         "unet/diffusion_pytorch_model.bin": "e1b7658d2a2da153182bef9401ed67f719e559e3b4e994019573c101c8864504",
         "vae/diffusion_pytorch_model.bin": "1b134cded8eb78b184aefb8805b6b572f36fa77b255c483665dda931fa0130c5"
       },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 686,
+          "vae": 248
+        }
+      },
       "end_to_end": {
         "guidance": 7.5,
         "latents": {
@@ -75,6 +85,16 @@
         "text_encoder/pytorch_model.bin": "770a47a9ffdcfda0b05506a7888ed714d06131d60267e6cf52765d61cf59fd67",
         "unet/diffusion_pytorch_model.bin": "7a384564518f48c9a4fe1ac08a7eb5db9e2bf4ca12c5fd4e03190712bcbc8feb",
         "vae/diffusion_pytorch_model.bin": "1b134cded8eb78b184aefb8805b6b572f36fa77b255c483665dda931fa0130c5"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 686,
+          "vae": 248
+        }
       },
       "end_to_end": {
         "guidance": 7.5,
@@ -119,6 +139,16 @@
         "unet/diffusion_pytorch_model.bin": "f50cd2983628c53eec5b56702630e042376f2de298dfdc47c0c6bbb6d0d8a80b",
         "vae/diffusion_pytorch_model.bin": "f506c519bca6fcb25f695b94364422f7b2f534d52ded3decbcd6674a5101b500"
       },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 686,
+          "vae": 248
+        }
+      },
       "end_to_end": {
         "guidance": 7.5,
         "latents": {
@@ -162,6 +192,16 @@
         "unet/diffusion_pytorch_model.safetensors": "145a07e0f05ec5bbe6e2e9faf608bdb311caf708895cac8c8ed713c59864e1e8",
         "vae/diffusion_pytorch_model.safetensors": "a2b5134f4dbc140d9c11f11cba3233099e00af40f262f136c691fb7d38d2194c"
       },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 686,
+          "vae": 248
+        }
+      },
       "end_to_end": {
         "guidance": 7.5,
         "latents": {
@@ -204,6 +244,16 @@
         "text_encoder/model.safetensors": "d008943c017f0092921106440254dbbe00b6a285f7883ec8ba160c3faad88334",
         "unet/diffusion_pytorch_model.safetensors": "19da7aaa4b880e59d56843f1fcb4dd9b599c28a1d9d9af7c1143057c8ffae9f1",
         "vae/diffusion_pytorch_model.safetensors": "a2b5134f4dbc140d9c11f11cba3233099e00af40f262f136c691fb7d38d2194c"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 686,
+          "vae": 248
+        }
       },
       "end_to_end": {
         "guidance": 7.5,

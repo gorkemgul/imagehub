@@ -34,6 +34,18 @@ LIMITS = [
 ]
 
 
+def header_check(header: dict | None) -> dict | None:
+    """Merge per-component header records into missing/extra/mismatch lists and counts."""
+    if header is None:
+        return None
+    merged: dict = {"missing": [], "extra": [], "mismatch": [], "tensors": {}}
+    for component, entry in header.items():
+        for key in ("missing", "extra", "mismatch"):
+            merged[key] += [f"{component}.{item}" for item in entry[key]]
+        merged["tensors"][component] = entry["tensors"]
+    return merged
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--measurements", type=Path, required=True)
@@ -53,6 +65,7 @@ def main() -> None:
         if snapshot is None or snapshot["revision"] != spec.revision:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
         e2e = measured.get(f"e2e_{spec.id}")
+        header = measured.get(f"header_{spec.id}")
         models.append(
             {
                 "model_id": spec.id,
@@ -63,6 +76,7 @@ def main() -> None:
                 "license": spec.license,
                 "status": "full" if e2e and e2e.get("passed") else "experimental",
                 "files": snapshot["files"],
+                "tensor_header_check": header_check(header),
                 "end_to_end": e2e,
             }
         )

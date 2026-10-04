@@ -36,6 +36,15 @@ ve `feature_extractor=None` kullanıldı.
 Toleranslar şu kuralla belirlenir: ölçülen fark 0 ise tolerans 0, değilse bir üst onluk basamak.
 Bütün ölçümler 0 çıktığı için hiçbir toleransın gevşetilmesi gerekmedi.
 
+## Tensör başlığı kontrolü
+
+Beş checkpoint'in her biri için üç bileşenin (`text_encoder`, `unet`, `vae`) tensör adları ve şekilleri,
+ağırlıklar belleğe alınmadan (safetensors için yalnızca başlık, `.bin` için `map_location="meta"`)
+okunup `prepare_state_dict` sonrası modelin `state_dict`'iyle karşılaştırıldı. 5 × 3 bileşenin
+hepsinde eksik, fazla ve şekil uyuşmazlığı **0**. Tensör sayıları: 196 / 686 / 248
+(`text_model.embeddings.position_ids` düşürüldükten sonra). Kayıt: `tensor_header_check`,
+[validation.json](validation.json).
+
 ## Cihaz duman testleri (parity iddiası yok)
 
 | Cihaz | Sonuç | CPU'ya göre en büyük latent farkı | En büyük piksel farkı | PSNR |
