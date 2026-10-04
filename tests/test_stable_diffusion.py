@@ -131,3 +131,66 @@ def test_device_and_dtype_validation(tiny_sd):
             StableDiffusionBackend(tiny_sd, device="cuda")
     with pytest.raises(ValueError, match="dtype"):
         StableDiffusionBackend(tiny_sd, dtype=torch.int8)
+
+
+def run(pipe, prompt="a cat", **options):
+    options = {"steps": 3, "width": 32, "height": 32} | options
+    return pipe(prompt, **options)
+
+
+def same(a, b):
+    return len(a.images) == len(b.images) and all(
+        torch.equal(x.tensor, y.tensor) for x, y in zip(a.images, b.images, strict=True)
+    )
+
+
+def test_requests_do_not_leak_into_each_other(tiny_sd):
+    pipe = pipeline("t2i", backend="stable-diffusion", model=tiny_sd)
+    first = run(pipe, seed=1)
+    other = run(
+        pipe, "a hi cat", seed=2, negative_prompt="blurry", num_images=2, steps=4, guidance=3.0
+    )
+    again = run(pipe, seed=1)
+    assert len(other.images) == 2
+    assert same(first, again)
+    assert not same(first, other)
+
+
+def test_independent_pipelines_interleaved_match_solo_runs(tiny_sd):
+    a_solo = run(pipeline("t2i", backend="stable-diffusion", model=tiny_sd), seed=1)
+    b_solo = run(pipeline("t2i", backend="stable-diffusion", model=tiny_sd), "hi", seed=2, steps=5)
+    one = pipeline("t2i", backend="stable-diffusion", model=tiny_sd)
+    two = pipeline("t2i", backend="stable-diffusion", model=tiny_sd)
+    a = run(one, seed=1)
+    b = run(two, "hi", seed=2, steps=5)
+    a_after = run(one, seed=1)
+    b_after = run(two, "hi", seed=2, steps=5)
+    assert same(a, a_solo) and same(a_after, a_solo)
+    assert same(b, b_solo) and same(b_after, b_solo)
+
+
+def test_result_does_not_depend_on_earlier_steps_or_sizes(tiny_sd):
+    fresh = run(pipeline("t2i", backend="stable-diffusion", model=tiny_sd), seed=7, steps=4)
+    pipe = pipeline("t2i", backend="stable-diffusion", model=tiny_sd)
+    run(pipe, seed=1, steps=7, width=64, height=32)
+    run(pipe, seed=2, steps=2, width=32, height=48, num_images=2)
+    run(pipe, seed=3, steps=1)
+    assert same(run(pipe, seed=7, steps=4), fresh)
+    run(pipe, seed=7, steps=9)
+    assert same(run(pipe, seed=7, steps=4), fresh)
+
+
+@pytest.mark.parametrize("grad_before", [True, False])
+def test_callers_autograd_mode_is_restored(tiny_sd, grad_before):
+    pipe = pipeline("t2i", backend="stable-diffusion", model=tiny_sd)
+    previous = torch.is_grad_enabled()
+    try:
+        torch.set_grad_enabled(grad_before)
+        result = run(pipe, num_images=2, seed=1)
+        assert torch.is_grad_enabled() is grad_before
+        assert not torch.is_inference_mode_enabled()
+        assert all(not image.tensor.requires_grad for image in result.images)
+        run(pipe, seed=1)
+        assert torch.is_grad_enabled() is grad_before
+    finally:
+        torch.set_grad_enabled(previous)
