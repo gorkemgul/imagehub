@@ -2,10 +2,18 @@
 
 import pytest
 import torch
-from helpers import TINY_TEXT_CONFIG, TINY_VAE_CONFIG, legacy_vae_state, text_state_for_ours
+from helpers import (
+    SD1_UNET,
+    TINY_TEXT_CONFIG,
+    TINY_UNET_CONFIG,
+    TINY_VAE_CONFIG,
+    legacy_vae_state,
+    text_state_for_ours,
+)
 
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel
+from imagehub.models.unet_2d import UNet2DConditionModel
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
@@ -57,3 +65,23 @@ def test_vae_random_weights(config, latent_hw):
     with torch.inference_mode():
         exact(ours.decode(z), ref.decode(z).sample)
         exact(ours.encode(image), ref.encode(image).latent_dist.mean)
+
+
+@pytest.mark.parametrize(
+    ("config", "sizes"),
+    [(TINY_UNET_CONFIG, [(16, 16), (13, 9)]), (SD1_UNET, [(64, 64), (65, 47)])],
+    ids=["tiny", "sd1"],
+)
+def test_unet_random_weights(config, sizes):
+    torch.manual_seed(0)
+    ref = diffusers.UNet2DConditionModel.from_config(config).eval()
+    for p in ref.parameters():
+        p.data.normal_(0, 0.02)
+    ours = UNet2DConditionModel(config).eval()
+    ours.load_checkpoint(ref.state_dict())
+    context = torch.randn(2, 77, config["cross_attention_dim"])
+    for hw in sizes:
+        sample = torch.randn(2, 4, *hw)
+        for t in (torch.tensor(981), torch.tensor(1)):
+            with torch.inference_mode():
+                exact(ours(sample, t, context), ref(sample, t, context).sample)

@@ -103,3 +103,26 @@ def legacy_vae_state(ref_state: dict) -> dict:
                 name = name.replace(f".{new}.", f".{old}.")
         renamed[name] = value
     return renamed
+
+
+SD1_UNET = {
+    "in_channels": 4,
+    "out_channels": 4,
+    "block_out_channels": [320, 640, 1280, 1280],
+    "down_block_types": ["CrossAttnDownBlock2D"] * 3 + ["DownBlock2D"],
+    "up_block_types": ["UpBlock2D"] + ["CrossAttnUpBlock2D"] * 3,
+    "layers_per_block": 2,
+    "attention_head_dim": 8,
+    "cross_attention_dim": 768,
+    "norm_num_groups": 32,
+    "norm_eps": 1e-5,
+    "flip_sin_to_cos": True,
+    "freq_shift": 0,
+    "sample_size": 64,
+}
+TINY_UNET_CONFIG = SD1_UNET | {
+    "block_out_channels": [32, 64, 64, 64],
+    "cross_attention_dim": 32,
+    "attention_head_dim": 2,
+    "norm_num_groups": 8,
+}
