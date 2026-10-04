@@ -1,3 +1,4 @@
+import json
 import random
 
 import pytest
@@ -40,6 +41,25 @@ def test_tiny_tokenizer_special_case_matches_transformers(tmp_path):
     ours = CLIPTokenizer(path, max_length=40)
     ref = transformers.CLIPTokenizer.from_pretrained(path, model_max_length=40)
     for text in ["x <|ENDOFTEXT|> y", "<|StartOfText|>hi", "x<|endoftext|>y"]:
+        expected = ref(text, padding="max_length", max_length=40, truncation=True)["input_ids"]
+        assert ours(text) == expected, text
+
+
+def test_tiny_tokenizer_configured_pad_matches_transformers(tmp_path):
+    path = write_tiny_tokenizer(tmp_path)
+    config = {
+        "unk_token": "<|endoftext|>",
+        "bos_token": "<|startoftext|>",
+        "eos_token": "<|endoftext|>",
+        "pad_token": "!",
+        "model_max_length": 40,
+        "do_lower_case": True,
+    }
+    (path / "tokenizer_config.json").write_text(json.dumps(config), encoding="utf-8")
+    (path / "special_tokens_map.json").unlink()
+    ours = CLIPTokenizer(path, max_length=40)
+    ref = transformers.CLIPTokenizer.from_pretrained(path, model_max_length=40)
+    for text in ["hi!!! cat", "a!b", "!!", "x <|endoftext|> y!", "Hi CAT!"]:
         expected = ref(text, padding="max_length", max_length=40, truncation=True)["input_ids"]
         assert ours(text) == expected, text
 
