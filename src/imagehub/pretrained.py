@@ -72,7 +72,7 @@ def download_pretrained(
                 url,
                 staging / relative,
                 headers,
-                sha256=entry.get("lfs", {}).get("sha256"),
+                sha256=(entry.get("lfs") or {}).get("sha256"),
                 size=entry.get("size"),
             )
         manifest = {
@@ -110,13 +110,17 @@ def main(argv: list[str] | None = None) -> int:
         "--revision", default=None, help="branch, tag or commit (default: validated commit)"
     )
     args = parser.parse_args(argv)
-    path = download_pretrained(
-        args.model_id,
-        args.destination,
-        revision=args.revision,
-        token=os.environ.get("HF_TOKEN"),
-        progress=lambda name: print(f"downloading {name}", file=sys.stderr, flush=True),
-    )
+    try:
+        path = download_pretrained(
+            args.model_id,
+            args.destination,
+            revision=args.revision,
+            token=os.environ.get("HF_TOKEN"),
+            progress=lambda name: print(f"downloading {name}", file=sys.stderr, flush=True),
+        )
+    except (DownloadError, FileExistsError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
     print(path.resolve())
     return 0
 

@@ -16,6 +16,7 @@ from typing import Any
 
 from imagehub.exceptions import DownloadError
 
+_PYTHON_SUFFIXES = frozenset({".py", ".pyc", ".pyo", ".pyw"})
 USER_AGENT = "imagehub/0.1"
 _SSL_HINT = (
     "TLS certificate verification failed. On python.org builds for macOS run "
@@ -48,10 +49,21 @@ def _open(url: str, headers: dict[str, str]) -> Any:
     opener = urllib.request.build_opener(_Redirect())
     try:
         return opener.open(urllib.request.Request(url, headers=headers), timeout=30)
+    except urllib.error.HTTPError as error:
+        if error.code in (401, 403):
+            raise DownloadError(
+                f"Access denied (HTTP {error.code}) for {url}. The repository may be gated: "
+                "accept its terms on huggingface.co and set HF_TOKEN."
+            ) from error
+        if error.code == 404:
+            raise DownloadError(f"File not found (HTTP 404): {url}") from error
+        raise DownloadError(f"HTTP {error.code} for {url}") from error
     except urllib.error.URLError as error:
         if isinstance(error.reason, ssl.SSLCertVerificationError):
             raise DownloadError(_SSL_HINT) from error
-        raise
+        raise DownloadError(f"Network error for {url}: {error.reason}") from error
+    except TimeoutError as error:
+        raise DownloadError(f"Network error for {url}: timed out") from error
 
 
 def _read_json(url: str, headers: dict[str, str]) -> dict[str, Any]:
@@ -89,6 +101,8 @@ def safe_relative(name: str) -> Path:
     path = Path(name)
     if not name or path.is_absolute() or ".." in path.parts:
         raise DownloadError(f"Unsafe path in model snapshot: {name!r}")
+    if path.suffix.lower() in _PYTHON_SUFFIXES:
+        raise DownloadError(f"Refusing to download Python code: {name!r}")
     return path
 
 
@@ -98,6 +112,10 @@ def fetch(
     """Download ``url`` to ``target`` atomically; verify size and sha256 when published."""
     if not url.startswith("https://"):
         raise DownloadError("Model downloads require HTTPS")
+    if sha256 is None and size is None:
+        raise DownloadError(
+            f"Cannot verify {target.name}: the Hub published neither size nor sha256"
+        )
     target.parent.mkdir(parents=True, exist_ok=True)
     temporary: str | None = None
     try:
@@ -121,6 +139,8 @@ def fetch(
         os.replace(temporary, target)
         temporary = None
         return digest.hexdigest()
+    except OSError as error:
+        raise DownloadError(f"Failed to download {target.name}: {error}") from error
     finally:
         if temporary is not None:
             Path(temporary).unlink(missing_ok=True)

@@ -4,10 +4,11 @@ import json
 import ssl
 import urllib.error
 import urllib.request
+from dataclasses import replace
 
 import pytest
 
-from imagehub import download
+from imagehub import download, pretrained
 from imagehub.catalog import model_info
 from imagehub.download import _Redirect, safe_relative
 from imagehub.exceptions import DownloadError
@@ -102,7 +103,10 @@ def test_read_snapshot_missing(tmp_path):
     assert read_snapshot(tmp_path) is None
 
 
-@pytest.mark.parametrize("name", ["../escape", "/abs/path", ""])
+@pytest.mark.parametrize(
+    "name",
+    ["../escape", "/abs/path", "", "modeling.py", "a/b.PY", "x.pyc", "x.pyo", "x.pyw", "m.Py"],
+)
 def test_safe_relative_rejects(name):
     with pytest.raises(DownloadError):
         safe_relative(name)
@@ -141,3 +145,111 @@ def test_main_prints_destination(monkeypatch, tmp_path, capsys):
     assert out.out.strip() == str((tmp_path / "sd15").resolve())
     assert "unet/diffusion_pytorch_model.safetensors" in out.err
     assert (tmp_path / "sd15" / SNAPSHOT_FILE).is_file()
+
+
+def test_python_files_are_never_downloaded(monkeypatch, tmp_path):
+    _, calls = fake_hub(monkeypatch)
+    patched = replace(SPEC, files=(*SPEC.files, "modeling.py"))
+    monkeypatch.setattr(pretrained, "model_info", lambda model_id: patched)
+    with pytest.raises(DownloadError, match="modeling.py"):
+        download_pretrained("sd-v1-5", tmp_path / "sd15")
+    assert not any("/resolve/" in url for url, _ in calls)
+
+
+def test_fetch_refuses_unverifiable_file(monkeypatch, tmp_path):
+    monkeypatch.setattr(download, "_open", lambda url, headers: io.BytesIO(b"data"))
+    with pytest.raises(DownloadError, match="neither size nor sha256"):
+        download.fetch("https://h/x", tmp_path / "x", {}, sha256=None, size=None)
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_null_lfs_entry_with_size_downloads(monkeypatch, tmp_path):
+    monkeypatch.setattr(download, "_open", lambda url, headers: io.BytesIO(b"data"))
+    entry = {"rfilename": "x", "size": 4, "lfs": None}
+    digest = download.fetch(
+        "https://h/x",
+        tmp_path / "x",
+        {},
+        sha256=(entry.get("lfs") or {}).get("sha256"),
+        size=entry.get("size"),
+    )
+    assert digest == hashlib.sha256(b"data").hexdigest()
+
+
+def test_null_lfs_in_download_pretrained(monkeypatch, tmp_path):
+    fake_hub(monkeypatch)
+    real = download.resolve_revision
+
+    def patched(repo_id, revision, headers):
+        commit, siblings = real(repo_id, revision, headers)
+        for entry in siblings.values():
+            if entry.get("lfs") is None:
+                entry["lfs"] = None
+        return commit, siblings
+
+    monkeypatch.setattr(download, "resolve_revision", patched)
+    download_pretrained("sd-v1-5", tmp_path / "sd15")
+
+
+def _failing_opener(monkeypatch, error):
+    class Opener:
+        def open(self, request, timeout):
+            raise error
+
+    monkeypatch.setattr(urllib.request, "build_opener", lambda *handlers: Opener())
+
+
+def _http_error(code):
+    return urllib.error.HTTPError("https://huggingface.co/x", code, "msg", {}, None)
+
+
+@pytest.mark.parametrize("code", [401, 403])
+def test_auth_errors_mention_gated(monkeypatch, code):
+    _failing_opener(monkeypatch, _http_error(code))
+    with pytest.raises(DownloadError, match="gated") as info:
+        download._open("https://huggingface.co/x", {})
+    assert "HF_TOKEN" in str(info.value)
+
+
+def test_not_found_error(monkeypatch):
+    _failing_opener(monkeypatch, _http_error(404))
+    with pytest.raises(DownloadError, match="not found") as info:
+        download._open("https://huggingface.co/x", {})
+    assert "https://huggingface.co/x" in str(info.value)
+
+
+def test_other_http_error_has_code(monkeypatch):
+    _failing_opener(monkeypatch, _http_error(500))
+    with pytest.raises(DownloadError, match="500"):
+        download._open("https://huggingface.co/x", {})
+
+
+@pytest.mark.parametrize("error", [urllib.error.URLError("dns failure"), TimeoutError("timed out")])
+def test_network_errors_are_download_errors(monkeypatch, error):
+    _failing_opener(monkeypatch, error)
+    with pytest.raises(DownloadError, match="Network error"):
+        download._open("https://huggingface.co/x", {})
+
+
+def test_stream_oserror_becomes_download_error(monkeypatch, tmp_path):
+    class Broken:
+        def read(self, n):
+            raise ConnectionResetError("reset")
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    monkeypatch.setattr(download, "_open", lambda url, headers: Broken())
+    with pytest.raises(DownloadError, match="x.bin"):
+        download.fetch("https://h/x.bin", tmp_path / "x.bin", {}, sha256=None, size=4)
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_main_reports_errors_without_traceback(tmp_path, capsys):
+    (tmp_path / "occupied").mkdir()
+    (tmp_path / "occupied" / "f").write_text("x")
+    assert main(["sd-v1-5", str(tmp_path / "occupied")]) == 1
+    assert capsys.readouterr().err.startswith("error:")
