@@ -1,8 +1,13 @@
+import json
+from pathlib import Path
+
 import pytest
 import torch
 from helpers import TINY_TEXT_CONFIG, meta_shapes, published_shapes, sdxl_published_shapes
 
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
+
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def test_matches_published_tensor_layout():
@@ -26,6 +31,32 @@ def test_matches_sdxl_text_encoder_layouts():
     assert meta_shapes(CLIPTextModelWithProjection, second_config) == sdxl_published_shapes(
         "text_encoder_2"
     )
+
+
+@pytest.mark.parametrize(
+    ("model_cls", "config_path", "component", "family"),
+    [
+        (CLIPTextModel, "sdxl_configs/text_encoder.json", "text_encoder", "sdxl"),
+        (
+            CLIPTextModelWithProjection,
+            "sdxl_configs/text_encoder_2.json",
+            "text_encoder_2",
+            "sdxl",
+        ),
+        (CLIPTextModel, "sd1_configs/v1-5/text_encoder.json", "text_encoder", "sd1"),
+        (CLIPTextModel, "sd1_configs/v1-1/text_encoder.json", "text_encoder", "sd1"),
+    ],
+)
+def test_real_release_configs_match_published_tensor_layout(
+    model_cls, config_path, component, family
+):
+    config = json.loads((FIXTURES / config_path).read_text(encoding="utf-8"))
+    if family == "sdxl":
+        expected = sdxl_published_shapes(component)
+    else:
+        expected = published_shapes(component)
+        expected.pop("text_model.embeddings.position_ids")
+    assert meta_shapes(model_cls, config) == expected
 
 
 def test_forward_shape_and_causality():

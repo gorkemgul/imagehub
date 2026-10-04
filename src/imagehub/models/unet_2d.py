@@ -361,6 +361,8 @@ class UNet2DConditionModel(NativeModel):
         ):
             raise ValueError("Unsupported U-Net block type")
         for key, default in _UNSUPPORTED_DEFAULTS.items():
+            if key == "upcast_attention" and not cfg[key]:
+                continue
             if cfg[key] != default:
                 raise ValueError(f"Unsupported U-Net setting {key}={cfg[key]!r}")
         if cfg["addition_embed_type"] not in (None, "text_time"):

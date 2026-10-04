@@ -42,6 +42,12 @@ _REQUIRED = {
     "rescale_betas_zero_snr": False,
     "final_sigmas_type": "zero",
 }
+_IGNORED_COMPATIBILITY_KEYS = {
+    "clip_sample",
+    "sample_max_value",
+    "set_alpha_to_one",
+    "skip_prk_steps",
+}
 
 
 class EulerDiscreteScheduler:
@@ -49,7 +55,11 @@ class EulerDiscreteScheduler:
 
     def __init__(self, config: Mapping[str, Any]) -> None:
         unknown = sorted(
-            key for key in config if not key.startswith("_") and key not in EULER_DEFAULTS
+            key
+            for key in config
+            if not key.startswith("_")
+            and key not in EULER_DEFAULTS
+            and key not in _IGNORED_COMPATIBILITY_KEYS
         )
         if unknown:
             raise ValueError(f"Unsupported Euler setting {unknown[0]}")

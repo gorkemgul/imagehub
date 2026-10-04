@@ -1,4 +1,6 @@
+import json
 import math
+from pathlib import Path
 
 import pytest
 import torch
@@ -13,6 +15,8 @@ from helpers import (
 from imagehub.models.layers import timestep_embedding
 from imagehub.models.unet_2d import UNet2DConditionModel
 
+FIXTURES = Path(__file__).parent / "fixtures"
+
 
 def test_matches_published_tensor_layout():
     assert meta_shapes(UNet2DConditionModel, {}) == published_shapes("unet")
@@ -20,6 +24,20 @@ def test_matches_published_tensor_layout():
 
 def test_matches_sdxl_published_tensor_layout():
     assert meta_shapes(UNet2DConditionModel, SDXL_UNET) == sdxl_published_shapes("unet")
+
+
+@pytest.mark.parametrize(
+    ("config_path", "family"),
+    [
+        ("sdxl_configs/unet.json", "sdxl"),
+        ("sd1_configs/v1-5/unet.json", "sd1"),
+        ("sd1_configs/v1-1/unet.json", "sd1"),
+    ],
+)
+def test_real_release_configs_match_published_tensor_layout(config_path, family):
+    config = json.loads((FIXTURES / config_path).read_text(encoding="utf-8"))
+    expected = sdxl_published_shapes("unet") if family == "sdxl" else published_shapes("unet")
+    assert meta_shapes(UNet2DConditionModel, config) == expected
 
 
 def test_timestep_embedding_closed_form():
@@ -79,6 +97,7 @@ def test_text_time_conditioning_requires_both_inputs():
         {"num_class_embeds": 10},
         {"addition_embed_type": "text"},
         {"only_cross_attention": True},
+        {"upcast_attention": True},
         {"center_input_sample": True},
         {"act_fn": "gelu"},
         {"conv_in_kernel": 5},

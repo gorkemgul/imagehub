@@ -1,8 +1,45 @@
+import json
+from pathlib import Path
+
 import pytest
 import torch
 from helpers import SDXL_SCHEDULER
 
 from imagehub.schedulers.euler import EulerDiscreteScheduler
+from imagehub.schedulers.pndm import PNDMScheduler
+
+FIXTURES = Path(__file__).parent / "fixtures"
+
+
+@pytest.mark.parametrize(
+    ("scheduler_cls", "config_path", "training_tensor"),
+    [
+        (EulerDiscreteScheduler, "sdxl_configs/scheduler.json", "_training_sigmas"),
+        (PNDMScheduler, "sd1_configs/v1-5/scheduler.json", "alphas_cumprod"),
+        (PNDMScheduler, "sd1_configs/v1-1/scheduler.json", "alphas_cumprod"),
+    ],
+)
+def test_real_release_configs_construct_matching_scheduler(
+    scheduler_cls, config_path, training_tensor
+):
+    config = json.loads((FIXTURES / config_path).read_text(encoding="utf-8"))
+    scheduler = scheduler_cls(config)
+    assert getattr(scheduler, training_tensor).shape == (config["num_train_timesteps"],)
+
+
+@pytest.mark.parametrize(
+    "option",
+    [
+        {"clip_sample": True},
+        {"sample_max_value": -1.0},
+        {"set_alpha_to_one": True},
+        {"skip_prk_steps": False},
+    ],
+)
+def test_ignores_legacy_diffusers_options(option):
+    scheduler = EulerDiscreteScheduler(SDXL_SCHEDULER | option)
+    expected = EulerDiscreteScheduler(SDXL_SCHEDULER)
+    torch.testing.assert_close(scheduler._training_sigmas, expected._training_sigmas)
 
 
 def test_requires_supported_release_settings():
