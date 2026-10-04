@@ -46,9 +46,13 @@ _INDEX_FILES = (
 
 
 def read_json(path: str | os.PathLike[str]) -> dict[str, Any]:
-    value = json.loads(Path(path).read_text(encoding="utf-8"))
+    file_path = Path(path)
+    try:
+        value = json.loads(file_path.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise CheckpointError(f"Invalid JSON in {file_path}") from error
     if not isinstance(value, dict):
-        raise CheckpointError(f"Expected a JSON object in {path}")
+        raise CheckpointError(f"Expected a JSON object in {file_path}")
     return value
 
 
@@ -63,7 +67,10 @@ def load_safetensors(path: str | os.PathLike[str]) -> dict[str, Tensor]:
         header_length = struct.unpack("<Q", prefix)[0]
         if not 2 <= header_length <= min(100_000_000, size - 8):
             raise CheckpointError("Invalid safetensors header length")
-        header = json.loads(source.read(header_length))
+        try:
+            header = json.loads(source.read(header_length))
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise CheckpointError("Invalid safetensors header") from error
         if not isinstance(header, dict):
             raise CheckpointError("Invalid safetensors header")
         payload_start = 8 + header_length
@@ -71,7 +78,9 @@ def load_safetensors(path: str | os.PathLike[str]) -> dict[str, Tensor]:
         for name, entry in header.items():
             if name == "__metadata__":
                 continue
-            dtype = _DTYPES.get(entry.get("dtype"))
+            if not isinstance(entry, dict) or not isinstance(entry.get("dtype"), str):
+                raise CheckpointError(f"Invalid tensor descriptor: {name}")
+            dtype = _DTYPES.get(entry["dtype"])
             shape, offsets = entry.get("shape"), entry.get("data_offsets")
             if dtype is None or not isinstance(shape, list) or not isinstance(offsets, list):
                 raise CheckpointError(f"Invalid tensor descriptor: {name}")
@@ -135,7 +144,7 @@ def save_safetensors(tensors: Mapping[str, Tensor], path: str | os.PathLike[str]
 def _load_pickle(source: Path) -> dict[str, Tensor]:
     try:
         state = torch.load(source, map_location="cpu", weights_only=True)
-    except (pickle.UnpicklingError, RuntimeError) as error:
+    except (pickle.UnpicklingError, EOFError, RuntimeError) as error:
         raise CheckpointError(
             f"{source} is not a tensor-only checkpoint and was not loaded: {error}"
         ) from error
@@ -155,17 +164,33 @@ def load_weights(path: str | os.PathLike[str]) -> dict[str, Tensor]:
         for name in _INDEX_FILES:
             index_path = source / name
             if index_path.is_file():
-                index = read_json(index_path)["weight_map"]
+                weight_map = read_json(index_path).get("weight_map")
+                if not isinstance(weight_map, dict) or not all(
+                    isinstance(tensor_name, str) and isinstance(shard_name, str)
+                    for tensor_name, shard_name in weight_map.items()
+                ):
+                    raise CheckpointError(f"Invalid weight_map in {index_path}")
                 result: dict[str, Tensor] = {}
-                for filename in sorted(set(index.values())):
-                    shard = (source / filename).resolve()
-                    if not shard.is_relative_to(source.resolve()):
-                        raise CheckpointError("Checkpoint shard escapes its model directory")
+                for shard_name in sorted(set(weight_map.values())):
+                    if (
+                        not shard_name
+                        or shard_name == "."
+                        or Path(shard_name).is_absolute()
+                        or ".." in Path(shard_name).parts
+                    ):
+                        raise CheckpointError(
+                            f"Invalid checkpoint shard path {shard_name!r} in {index_path}"
+                        )
+                    shard = source / shard_name
+                    if not shard.is_file():
+                        raise CheckpointError(
+                            f"Checkpoint shard {shard} listed in {index_path} is missing"
+                        )
                     values = load_weights(shard)
                     if result.keys() & values.keys():
                         raise CheckpointError("Duplicate tensor names across checkpoint shards")
                     result.update(values)
-                if set(result) != set(index):
+                if set(result) != set(weight_map):
                     raise CheckpointError("Checkpoint index does not match its shards")
                 return result
         for name in WEIGHT_FILES:

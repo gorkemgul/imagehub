@@ -9,6 +9,7 @@ from imagehub.checkpoints import (
     NativeModel,
     load_safetensors,
     load_weights,
+    read_json,
     save_safetensors,
 )
 from imagehub.exceptions import CheckpointError
@@ -120,3 +121,134 @@ def test_from_pretrained(tmp_path):
     assert model.linear.weight.dtype == torch.float64
     assert model.config["width"] == 4
     torch.testing.assert_close(model.linear.weight.float(), weights["linear.weight"])
+
+
+def test_sharded_index_loads_and_merges(tmp_path):
+    shard_one = {"alpha": torch.arange(4, dtype=torch.float32), "beta": torch.ones(2)}
+    shard_two = {"gamma": torch.zeros(1, 3, dtype=torch.float64)}
+    save_safetensors(shard_one, tmp_path / "model-00001-of-00002.safetensors")
+    save_safetensors(shard_two, tmp_path / "model-00002-of-00002.safetensors")
+    index = {
+        "weight_map": {
+            "alpha": "model-00001-of-00002.safetensors",
+            "beta": "model-00001-of-00002.safetensors",
+            "gamma": "model-00002-of-00002.safetensors",
+        },
+        "metadata": {"format": "pt"},
+    }
+    (tmp_path / "model.safetensors.index.json").write_text(json.dumps(index))
+    weights = load_weights(tmp_path)
+    assert set(weights) == {"alpha", "beta", "gamma"}
+    for name, value in shard_one.items():
+        torch.testing.assert_close(weights[name], value, rtol=0, atol=0)
+    torch.testing.assert_close(weights["gamma"], shard_two["gamma"], rtol=0, atol=0)
+
+
+def test_sharded_index_follows_symlinked_blobs(tmp_path):
+    blobs = tmp_path / "blobs"
+    blobs.mkdir()
+    snapshot = tmp_path / "snapshot"
+    snapshot.mkdir()
+    shards = {
+        "model-00001-of-00002.safetensors": {"one": torch.ones(2, 2)},
+        "model-00002-of-00002.safetensors": {"two": torch.full((3,), 7.0, dtype=torch.float64)},
+    }
+    weight_map: dict[str, str] = {}
+    for number, (filename, tensors) in enumerate(shards.items(), start=1):
+        staging = snapshot / f"staging-{number}.safetensors"
+        save_safetensors(tensors, staging)
+        blob = blobs / f"blob{number}"
+        blob.write_bytes(staging.read_bytes())
+        staging.unlink()
+        (snapshot / filename).symlink_to(blob)
+        for name in tensors:
+            weight_map[name] = filename
+    (snapshot / "model.safetensors.index.json").write_text(json.dumps({"weight_map": weight_map}))
+    weights = load_weights(snapshot)
+    for tensors in shards.values():
+        for tensor_name, value in tensors.items():
+            torch.testing.assert_close(weights[tensor_name], value, rtol=0, atol=0)
+
+
+def test_sharded_index_rejects_escaping_shard_path(tmp_path):
+    save_safetensors({"alpha": torch.zeros(1)}, tmp_path / "model-00001-of-00002.safetensors")
+    index = {"weight_map": {"alpha": "../escape.safetensors"}}
+    (tmp_path / "model.safetensors.index.json").write_text(json.dumps(index))
+    with pytest.raises(CheckpointError, match="Invalid checkpoint shard path"):
+        load_weights(tmp_path)
+
+
+def test_sharded_index_rejects_duplicate_tensor_names(tmp_path):
+    save_safetensors(
+        {"shared": torch.zeros(1), "only_one": torch.zeros(1)}, tmp_path / "one.safetensors"
+    )
+    save_safetensors(
+        {"shared": torch.ones(1), "only_two": torch.zeros(1)}, tmp_path / "two.safetensors"
+    )
+    index = {
+        "weight_map": {
+            "shared": "one.safetensors",
+            "only_one": "one.safetensors",
+            "only_two": "two.safetensors",
+        }
+    }
+    (tmp_path / "model.safetensors.index.json").write_text(json.dumps(index))
+    with pytest.raises(CheckpointError, match="Duplicate tensor names"):
+        load_weights(tmp_path)
+
+
+def test_sharded_index_must_match_shards(tmp_path):
+    save_safetensors({"alpha": torch.zeros(1)}, tmp_path / "model.safetensors")
+    index = {"weight_map": {"alpha": "model.safetensors", "ghost": "model.safetensors"}}
+    (tmp_path / "model.safetensors.index.json").write_text(json.dumps(index))
+    with pytest.raises(CheckpointError, match="index does not match"):
+        load_weights(tmp_path)
+
+
+@pytest.mark.parametrize("weight_map", [None, {"alpha": 1}])
+def test_sharded_index_requires_valid_weight_map(tmp_path, weight_map):
+    save_safetensors({"alpha": torch.zeros(1)}, tmp_path / "model.safetensors")
+    index = {"weight_map": weight_map} if weight_map is not None else {}
+    (tmp_path / "model.safetensors.index.json").write_text(json.dumps(index))
+    with pytest.raises(CheckpointError, match="weight_map"):
+        load_weights(tmp_path)
+
+
+@pytest.mark.parametrize(
+    "header_bytes",
+    [b"{not valid json  ", b"\xff\xfe\xfa\xfb\xfc\xfd\xfe\xff"],
+)
+def test_safetensors_rejects_invalid_header_bytes(tmp_path, header_bytes):
+    path = tmp_path / "bad.safetensors"
+    path.write_bytes(struct.pack("<Q", len(header_bytes)) + header_bytes)
+    with pytest.raises(CheckpointError, match="Invalid safetensors header"):
+        load_safetensors(path)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        ["F32", [1], [0, 4]],
+        {"dtype": 42, "shape": [1], "data_offsets": [0, 4]},
+    ],
+)
+def test_safetensors_rejects_invalid_descriptor(tmp_path, entry):
+    path = tmp_path / "bad.safetensors"
+    path.write_bytes(_raw({"a": entry}, b"\0" * 4))
+    with pytest.raises(CheckpointError, match="Invalid tensor descriptor: a"):
+        load_safetensors(path)
+
+
+def test_truncated_pickle_raises_checkpoint_error(tmp_path):
+    path = tmp_path / "model.pt"
+    torch.save({"x": torch.ones(1)}, path)
+    path.write_bytes(b"")
+    with pytest.raises(CheckpointError, match="tensor-only"):
+        load_weights(path)
+
+
+def test_read_json_rejects_invalid_json(tmp_path):
+    path = tmp_path / "config.json"
+    path.write_text("{not valid json")
+    with pytest.raises(CheckpointError, match="Invalid JSON"):
+        read_json(path)
