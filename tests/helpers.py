@@ -84,3 +84,22 @@ def text_state_for_ours(ref_state: dict) -> dict:
         (name if name.startswith("text_model.") else "text_model." + name): value
         for name, value in ref_state.items()
     }
+
+
+TINY_VAE_CONFIG = {"block_out_channels": [32, 32, 64, 64], "norm_num_groups": 8}
+
+
+def legacy_vae_state(ref_state: dict) -> dict:
+    """diffusers AutoencoderKL state -> the legacy attention names used by published files."""
+    renamed = {}
+    for name, value in ref_state.items():
+        if ".attentions." in name:
+            for new, old in (
+                ("to_q", "query"),
+                ("to_k", "key"),
+                ("to_v", "value"),
+                ("to_out.0", "proj_attn"),
+            ):
+                name = name.replace(f".{new}.", f".{old}.")
+        renamed[name] = value
+    return renamed

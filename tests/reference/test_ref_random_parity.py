@@ -2,8 +2,9 @@
 
 import pytest
 import torch
-from helpers import TINY_TEXT_CONFIG, text_state_for_ours
+from helpers import TINY_TEXT_CONFIG, TINY_VAE_CONFIG, legacy_vae_state, text_state_for_ours
 
+from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel
 
 pytestmark = pytest.mark.reference
@@ -26,3 +27,33 @@ def test_clip_text_random_weights(config):
     ids = torch.randint(0, ours.config["vocab_size"], (3, 77))
     with torch.inference_mode():
         exact(ours(ids), ref(ids)[0])
+
+
+SD1_VAE = {
+    "block_out_channels": [128, 256, 512, 512],
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "latent_channels": 4,
+    "layers_per_block": 2,
+    "norm_num_groups": 32,
+    "sample_size": 512,
+}
+
+
+@pytest.mark.parametrize(
+    ("config", "latent_hw"),
+    [(SD1_VAE | TINY_VAE_CONFIG, (8, 6)), (SD1_VAE, (64, 64))],
+    ids=["tiny", "sd1"],
+)
+def test_vae_random_weights(config, latent_hw):
+    torch.manual_seed(0)
+    ref = diffusers.AutoencoderKL.from_config(config).eval()
+    for p in ref.parameters():
+        p.data.normal_(0, 0.02)
+    ours = AutoencoderKL(config).eval()
+    ours.load_checkpoint(legacy_vae_state(ref.state_dict()))
+    z = torch.randn(1, 4, *latent_hw)
+    image = torch.rand(1, 3, latent_hw[0] * 8, latent_hw[1] * 8) * 2 - 1
+    with torch.inference_mode():
+        exact(ours.decode(z), ref.decode(z).sample)
+        exact(ours.encode(image), ref.encode(image).latent_dist.mean)
