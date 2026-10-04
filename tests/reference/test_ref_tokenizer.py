@@ -50,3 +50,21 @@ def test_sd1_tokenizer_matches_transformers(record):
         expected = ref(text, padding="max_length", max_length=77, truncation=True)["input_ids"]
         assert ours(text) == expected, text
     record("tokenizer", prompts=len(PROMPTS), mismatches=0, tolerance="exact")
+
+
+SPECIAL_PROMPTS = [
+    "<|StartOfText|>hi",
+    "x <|EndOfText|> y",
+    "<|STARTOFTEXT|><|endoftext|>",
+    "a<|startoftext|>b",
+]
+
+
+@pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
+def test_sd1_tokenizers_match_transformers_exhaustively(version):
+    path = checkpoint_dir(version) / "tokenizer"
+    ours = CLIPTokenizer(path)
+    ref = transformers.CLIPTokenizer.from_pretrained(path)
+    for text in [*PROMPTS, *SPECIAL_PROMPTS]:
+        expected = ref(text, padding="max_length", max_length=77, truncation=True)["input_ids"]
+        assert ours(text) == expected, (version, text)

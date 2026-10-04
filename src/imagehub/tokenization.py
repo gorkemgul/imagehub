@@ -1,8 +1,11 @@
 """Native CLIP byte-level BPE tokenizer matching transformers' ``CLIPTokenizer``.
 
-The reference first splits the raw text on exact-case ``<|startoftext|>`` / ``<|endoftext|>``
-(case variants are ordinary text). Every other segment is normalized (NFC, Unicode whitespace
-runs collapsed to one space, per-character lowercase) and split with the pattern
+Each special token carries a ``normalized`` flag read from the tokenizer config. The reference
+first extracts ``normalized=False`` specials from the raw text by exact (case-sensitive) match.
+The remaining segments are normalized (NFC, Unicode whitespace runs collapsed to one space,
+per-character lowercase); ``normalized=True`` specials are then extracted from the normalized
+text by exact match (so they also match after lowercasing, e.g. ``<|StartOfText|>``). Everything
+else is split with the pattern
 ``'s|'t|'re|'ve|'m|'ll|'d|[\\p{L}]+|[\\p{N}]|[^\\s\\p{L}\\p{N}]+``.
 Python's ``re`` has no ``\\p{..}`` classes, so the split is an explicit scanner.
 """
@@ -20,7 +23,39 @@ from pathlib import Path
 _WHITESPACE = frozenset("\t\n\x0b\x0c\r \x85\xa0                　")
 _CONTRACTIONS = ("'s", "'t", "'re", "'ve", "'m", "'ll", "'d")
 BOS, EOS = "<|startoftext|>", "<|endoftext|>"
-_SPECIAL_SPLIT = re.compile(f"({re.escape(BOS)}|{re.escape(EOS)})")
+_SPECIAL_KEYS = ("unk_token", "bos_token", "eos_token", "pad_token")
+
+
+def _split_on(text: str, tokens: list[str]) -> list[str]:
+    """Split ``text`` on exact occurrences of ``tokens``; odd items of the result are the tokens."""
+    if not tokens:
+        return [text]
+    return re.split("(" + "|".join(re.escape(t) for t in tokens) + ")", text)
+
+
+def special_token_flags(directory: str | os.PathLike[str]) -> dict[str, bool]:
+    """Map ``<|startoftext|>`` / ``<|endoftext|>`` to their ``normalized`` flag.
+
+    Mirrors transformers: the tokens are registered in the order unk, bos, eos, pad from
+    ``tokenizer_config.json`` (``special_tokens_map.json`` as fallback); when several keys share
+    the same content the last registration wins. A plain-string value registers with
+    ``normalized=False``, a dict value with its ``"normalized"`` field. Without any config both
+    specials are ``normalized=False``.
+    """
+    path = Path(directory)
+    config: dict[str, object] = {}
+    for name in ("tokenizer_config.json", "special_tokens_map.json"):
+        if (path / name).is_file():
+            config = json.loads((path / name).read_text(encoding="utf-8"))
+            break
+    flags: dict[str, bool] = {}
+    for key in _SPECIAL_KEYS:
+        value = config.get(key)
+        if isinstance(value, str):
+            flags[value] = False
+        elif isinstance(value, dict) and isinstance(value.get("content"), str):
+            flags[value["content"]] = bool(value.get("normalized", False))
+    return {BOS: flags.get(BOS, False), EOS: flags.get(EOS, False)}
 
 
 @lru_cache(maxsize=1)
@@ -68,7 +103,7 @@ def normalize(text: str) -> str:
 def pretokenize(text: str) -> list[str]:
     """Split like the reference regex: contractions | letters+ | one digit | other+.
 
-    Special tokens are not handled here; ``CLIPTokenizer.tokenize`` splits them off the raw text.
+    Special tokens are not handled here; ``CLIPTokenizer.tokenize`` splits them off first.
     """
     pieces: list[str] = []
     i, n = 0, len(text)
@@ -106,6 +141,9 @@ class CLIPTokenizer:
         self.byte_encoder = bytes_to_unicode()
         self.bos_id, self.eos_id = self.encoder[BOS], self.encoder[EOS]
         self.pad_id = self.eos_id
+        self.special_normalized = special_token_flags(path)
+        self._raw_specials = [t for t, norm in self.special_normalized.items() if not norm]
+        self._normalized_specials = [t for t, norm in self.special_normalized.items() if norm]
         self.max_length = max_length
         self._cache: dict[str, list[str]] = {}
 
@@ -133,15 +171,23 @@ class CLIPTokenizer:
         return word
 
     def tokenize(self, text: str) -> list[int]:
-        """Content token ids without BOS/EOS, padding or truncation."""
+        """Content token ids without BOS/EOS, padding or truncation.
+
+        Specials with ``normalized=False`` are split off the raw text (exact case); each remaining
+        segment is normalized, then split on ``normalized=True`` specials, then pretokenized + BPE.
+        """
         ids: list[int] = []
-        for k, segment in enumerate(_SPECIAL_SPLIT.split(text)):
-            if k % 2:  # odd items are the captured exact-case specials
-                ids.append(self.encoder[segment])
+        for k, raw in enumerate(_split_on(text, self._raw_specials)):
+            if k % 2:
+                ids.append(self.encoder[raw])
                 continue
-            for piece in pretokenize(normalize(segment)):
-                mapped = "".join(self.byte_encoder[b] for b in piece.encode("utf-8"))
-                ids.extend(self.encoder[symbol] for symbol in self._bpe(mapped))
+            for j, segment in enumerate(_split_on(normalize(raw), self._normalized_specials)):
+                if j % 2:
+                    ids.append(self.encoder[segment])
+                    continue
+                for piece in pretokenize(segment):
+                    mapped = "".join(self.byte_encoder[b] for b in piece.encode("utf-8"))
+                    ids.extend(self.encoder[symbol] for symbol in self._bpe(mapped))
         return ids
 
     def __call__(self, text: str) -> list[int]:
