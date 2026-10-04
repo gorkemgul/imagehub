@@ -1,0 +1,44 @@
+import re
+
+import pytest
+
+from imagehub.catalog import MODEL_CATALOG, ModelSpec, available_models, model_info
+from imagehub.types import Task
+
+
+def test_catalog_contents():
+    assert available_models() == {"t2i": ("sd-v1-1", "sd-v1-2", "sd-v1-3", "sd-v1-4", "sd-v1-5")}
+    for spec in MODEL_CATALOG.values():
+        assert spec.task is Task.T2I
+        assert spec.family == "stable-diffusion"
+        assert spec.catalog_id == "stable-diffusion-1"
+        assert re.fullmatch(r"[0-9a-f]{40}", spec.revision)
+        assert spec.source == f"https://huggingface.co/{spec.repo_id}"
+        assert spec.license == "CreativeML-OpenRAIL-M"
+        assert len(set(spec.files)) == len(spec.files) == 12
+        assert not any(name.endswith((".py", ".ckpt")) or "fp16" in name for name in spec.files)
+        assert not any(
+            name.startswith(("safety_checker/", "feature_extractor/")) for name in spec.files
+        )
+
+
+def test_provenance_and_formats():
+    assert model_info("sd-v1-5").provenance == "community-mirror"
+    assert model_info("sd-v1-5").revision == "451f4fe16113bff5a5d2269ed5ad43b0592e9a14"
+    for version in (1, 2, 3, 4):
+        assert model_info(f"sd-v1-{version}").provenance == "author"
+    assert "unet/diffusion_pytorch_model.bin" in model_info("sd-v1-1").files
+    assert "unet/diffusion_pytorch_model.safetensors" in model_info("sd-v1-4").files
+
+
+def test_unknown_model_lists_available():
+    with pytest.raises(ValueError, match="sd-v1-4, sd-v1-5"):
+        model_info("sd-v15")
+
+
+def test_spec_validation():
+    base = model_info("sd-v1-4")
+    with pytest.raises(ValueError, match="revision"):
+        ModelSpec(**{**base.__dict__, "revision": "main"})
+    with pytest.raises(ValueError, match="provenance"):
+        ModelSpec(**{**base.__dict__, "provenance": "unknown"})

@@ -1,0 +1,26 @@
+"""Checks catalog_id links against the sibling awesome-text-to-image-architectures checkout."""
+
+import json
+from pathlib import Path
+
+import pytest
+
+from imagehub.catalog import MODEL_CATALOG
+
+CATALOG = (
+    Path(__file__).resolve().parents[2] / "awesome-text-to-image-architectures/data/models.json"
+)
+
+
+def _norm(value: str) -> str:
+    return value.lower().replace("_", "-").replace(" ", "-")
+
+
+def test_catalog_ids_exist_with_consistent_weight_licenses():
+    if not CATALOG.is_file():
+        pytest.skip(f"Catalog checkout not found at {CATALOG}")
+    entries = {m["id"]: m for m in json.loads(CATALOG.read_text(encoding="utf-8"))["models"]}
+    for spec in MODEL_CATALOG.values():
+        assert spec.catalog_id in entries, spec.id
+        weights = entries[spec.catalog_id]["license"]["weights"]
+        assert _norm(weights) == _norm(spec.license), (spec.id, weights)

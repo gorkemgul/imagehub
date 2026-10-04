@@ -1,8 +1,22 @@
 """imagehub: open-weight image generation architectures in native PyTorch."""
 
+from imagehub.catalog import ModelSpec, available_models, model_info
 from imagehub.image import Image
+from imagehub.registry import BackendRegistry, available_backends, backend_registry
 from imagehub.types import ImageResult, T2IRequest, Task
 
 __version__ = "0.1.0"
 
-__all__ = ["Image", "ImageResult", "T2IRequest", "Task", "__version__"]
+__all__ = [
+    "BackendRegistry",
+    "Image",
+    "ImageResult",
+    "ModelSpec",
+    "T2IRequest",
+    "Task",
+    "__version__",
+    "available_backends",
+    "available_models",
+    "backend_registry",
+    "model_info",
+]
