@@ -2,6 +2,7 @@
 
 import math
 import platform
+import subprocess
 
 import pytest
 import torch
@@ -25,7 +26,19 @@ def _available(device):
 def _name(device):
     if device == "cuda":
         return torch.cuda.get_device_name(0)
-    return platform.processor() or platform.machine()
+    if platform.system() == "Darwin":
+        try:
+            chip = subprocess.run(
+                ["sysctl", "-n", "machdep.cpu.brand_string"],
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+        except (OSError, subprocess.CalledProcessError):
+            chip = ""
+        if chip:
+            return chip
+    return platform.machine()
 
 
 @pytest.mark.parametrize(

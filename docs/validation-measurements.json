@@ -111,7 +111,7 @@
     "exact": true
   },
   "smoke_mps": {
-    "device_name": "arm",
+    "device_name": "Apple M2 Max",
     "latents": {
       "max_abs": 0.002741515636444092,
       "max_rel": 0.8088963859262309
