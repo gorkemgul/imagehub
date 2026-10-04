@@ -152,23 +152,44 @@ def save_safetensors(tensors: Mapping[str, Tensor], path: str | os.PathLike[str]
             out.write(raw)
 
 
-def _load_pickle(source: Path) -> dict[str, Tensor]:
+def _is_tensor_state(value: object) -> bool:
+    return isinstance(value, dict) and all(
+        isinstance(name, str) and isinstance(tensor, Tensor) for name, tensor in value.items()
+    )
+
+
+def _load_pickle(source: Path, container_key: str | None = None) -> dict[str, Tensor]:
     try:
         state = torch.load(source, map_location="cpu", weights_only=True)
     except (pickle.UnpicklingError, EOFError, RuntimeError) as error:
         raise CheckpointError(
             f"{source} is not a tensor-only checkpoint and was not loaded: {error}"
         ) from error
-    if isinstance(state, dict) and "state_dict" in state:
-        state = state["state_dict"]
-    if not isinstance(state, dict) or not all(
-        isinstance(name, str) and isinstance(value, Tensor) for name, value in state.items()
-    ):
+    if container_key is not None:
+        if not isinstance(state, dict) or container_key not in state:
+            raise CheckpointError(f"{source} does not contain container {container_key!r}")
+        state = state[container_key]
+    elif not _is_tensor_state(state):
+        containers = [
+            key
+            for key in ("state_dict", "model", "ema", "module")
+            if isinstance(state, dict) and _is_tensor_state(state.get(key))
+        ]
+        if len(containers) == 1:
+            state = state[containers[0]]
+        elif len(containers) > 1:
+            raise CheckpointError(
+                f"{source} contains multiple tensor-only containers: {', '.join(containers)}; "
+                "pass container_key to select one"
+            )
+    if not _is_tensor_state(state):
         raise CheckpointError(f"{source} must contain a tensor-only state dictionary")
     return state
 
 
-def load_weights(path: str | os.PathLike[str]) -> dict[str, Tensor]:
+def load_weights(
+    path: str | os.PathLike[str], *, container_key: str | None = None
+) -> dict[str, Tensor]:
     """Read safetensors, tensor-only PT/BIN, or a (sharded) model directory."""
     source = Path(path)
     if source.is_dir():
@@ -197,7 +218,7 @@ def load_weights(path: str | os.PathLike[str]) -> dict[str, Tensor]:
                         raise CheckpointError(
                             f"Checkpoint shard {shard} listed in {index_path} is missing"
                         )
-                    values = load_weights(shard)
+                    values = load_weights(shard, container_key=container_key)
                     if result.keys() & values.keys():
                         raise CheckpointError("Duplicate tensor names across checkpoint shards")
                     result.update(values)
@@ -206,13 +227,15 @@ def load_weights(path: str | os.PathLike[str]) -> dict[str, Tensor]:
                 return result
         for name in WEIGHT_FILES:
             if (source / name).is_file():
-                return load_weights(source / name)
+                return load_weights(source / name, container_key=container_key)
         raise CheckpointError(f"No supported checkpoint found in {source}")
     if not source.is_file():
         raise CheckpointError(f"No supported checkpoint found at {source}")
     if source.suffix == ".safetensors":
+        if container_key is not None:
+            raise CheckpointError("container_key is not supported for safetensors files")
         return load_safetensors(source)
-    return _load_pickle(source)
+    return _load_pickle(source, container_key)
 
 
 def _describe(missing: list[str], unexpected: list[str]) -> str:
@@ -234,6 +257,9 @@ class NativeModel(nn.Module):
     def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
         """Override only for documented key conversion or constant buffers to drop."""
         return state
+
+    def init_non_persistent_buffers(self) -> None:
+        """Override to recreate non-persistent buffers on CPU in float32."""
 
     def load_checkpoint(self, state: Mapping[str, Tensor]) -> None:
         prepared = self.prepare_state_dict(dict(state))
@@ -261,11 +287,23 @@ class NativeModel(nn.Module):
         *,
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
+        container_key: str | None = None,
     ) -> Self:
         path = Path(directory)
         config = read_json(path / "config.json")
         with torch.device("meta"):
             model = cls(config)
-        model.load_checkpoint(load_weights(path))
+        model.load_checkpoint(load_weights(path, container_key=container_key))
+        model.init_non_persistent_buffers()
+        meta = [
+            name
+            for name, value in (*model.named_parameters(), *model.named_buffers())
+            if value.device.type == "meta"
+        ]
+        if meta:
+            raise CheckpointError(
+                "Model tensors remain on the meta device after checkpoint loading: "
+                + ", ".join(meta[:20])
+            )
         model.to(device=device, dtype=dtype).eval()
         return model

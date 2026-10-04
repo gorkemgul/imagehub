@@ -26,6 +26,26 @@ class TinyModel(NativeModel):
         return state
 
 
+class TinyBufferModel(NativeModel):
+    def __init__(self, config):
+        super().__init__(config)
+        self.scale = nn.Parameter(torch.ones(1))
+        self.register_buffer("freqs", torch.arange(3, dtype=torch.float32), persistent=False)
+
+    def init_non_persistent_buffers(self):
+        self.freqs = torch.arange(3, dtype=torch.float32)
+
+    def forward(self, value):
+        return value * self.scale + self.freqs
+
+
+class BrokenTinyBufferModel(NativeModel):
+    def __init__(self, config):
+        super().__init__(config)
+        self.scale = nn.Parameter(torch.ones(1))
+        self.register_buffer("freqs", torch.arange(3, dtype=torch.float32), persistent=False)
+
+
 def tensors():
     return {
         "f32": torch.arange(6, dtype=torch.float32).reshape(2, 3),
@@ -121,6 +141,96 @@ def test_from_pretrained(tmp_path):
     assert model.linear.weight.dtype == torch.float64
     assert model.config["width"] == 4
     torch.testing.assert_close(model.linear.weight.float(), weights["linear.weight"])
+
+
+def test_from_pretrained_reinitializes_non_persistent_buffers(tmp_path):
+    (tmp_path / "config.json").write_text("{}")
+    save_safetensors({"scale": torch.tensor([2.0])}, tmp_path / "model.safetensors")
+
+    model = TinyBufferModel.from_pretrained(tmp_path)
+
+    assert model.freqs.device.type == "cpu"
+    assert model.freqs.dtype == torch.float32
+    torch.testing.assert_close(model.freqs, torch.arange(3, dtype=torch.float32))
+    torch.testing.assert_close(model(torch.ones(3)), torch.tensor([2.0, 3.0, 4.0]))
+
+
+def test_from_pretrained_rejects_remaining_meta_tensors(tmp_path):
+    (tmp_path / "config.json").write_text("{}")
+    save_safetensors({"scale": torch.tensor([2.0])}, tmp_path / "model.safetensors")
+
+    with pytest.raises(CheckpointError, match="freqs"):
+        BrokenTinyBufferModel.from_pretrained(tmp_path)
+
+
+@pytest.mark.parametrize("key", ["state_dict", "model", "ema", "module"])
+def test_load_weights_unwraps_single_known_container(tmp_path, key):
+    path = tmp_path / "model.pt"
+    torch.save({key: {"x": torch.ones(1)}, "step": 100}, path)
+
+    assert torch.equal(load_weights(path)["x"], torch.ones(1))
+
+
+def test_load_weights_uses_tensor_only_top_level_as_is(tmp_path):
+    path = tmp_path / "model.pt"
+    torch.save({"model": torch.ones(1), "x": torch.zeros(1)}, path)
+
+    weights = load_weights(path)
+
+    assert set(weights) == {"model", "x"}
+
+
+def test_load_weights_requires_unambiguous_container(tmp_path):
+    path = tmp_path / "model.pt"
+    torch.save({"model": {"x": torch.ones(1)}, "ema": {"x": torch.zeros(1)}}, path)
+
+    with pytest.raises(CheckpointError, match=r"model.*ema.*container_key"):
+        load_weights(path)
+    assert torch.equal(load_weights(path, container_key="ema")["x"], torch.zeros(1))
+
+
+@pytest.mark.parametrize(
+    ("value", "message"),
+    [
+        ({"model": {"x": torch.ones(1)}}, "ema"),
+        ({"model": {"x": torch.ones(1), "step": 100}}, "tensor-only"),
+    ],
+)
+def test_load_weights_validates_explicit_container(tmp_path, value, message):
+    path = tmp_path / "model.pt"
+    torch.save(value, path)
+
+    with pytest.raises(CheckpointError, match=message):
+        load_weights(path, container_key="model" if message == "tensor-only" else "ema")
+
+
+def test_load_weights_rejects_container_key_for_safetensors(tmp_path):
+    path = tmp_path / "model.safetensors"
+    save_safetensors({"x": torch.ones(1)}, path)
+
+    with pytest.raises(CheckpointError, match="container_key"):
+        load_weights(path, container_key="model")
+
+
+def test_load_weights_passes_container_key_through_directory_and_shards(tmp_path):
+    torch.save({"model": {"x": torch.ones(1)}}, tmp_path / "one.bin")
+    torch.save({"model": {"y": torch.zeros(1)}}, tmp_path / "two.bin")
+    index = {"weight_map": {"x": "one.bin", "y": "two.bin"}}
+    (tmp_path / "pytorch_model.bin.index.json").write_text(json.dumps(index))
+
+    weights = load_weights(tmp_path, container_key="model")
+
+    assert set(weights) == {"x", "y"}
+
+
+def test_from_pretrained_forwards_container_key(tmp_path):
+    (tmp_path / "config.json").write_text(json.dumps({"width": 4}))
+    weights = {"linear.weight": torch.randn(2, 4), "linear.bias": torch.randn(2)}
+    torch.save({"model": weights}, tmp_path / "model.pt")
+
+    model = TinyModel.from_pretrained(tmp_path, container_key="model")
+
+    torch.testing.assert_close(model.linear.weight, weights["linear.weight"])
 
 
 def test_sharded_index_loads_and_merges(tmp_path):
