@@ -140,3 +140,73 @@ TINY_UNET_CONFIG = SD1_UNET | {
     "attention_head_dim": 2,
     "norm_num_groups": 8,
 }
+
+
+TINY_TEXT_FILE_CONFIG = TINY_TEXT_CONFIG | {
+    "architectures": ["CLIPTextModel"],
+    "model_type": "clip_text_model",
+    "hidden_act": "quick_gelu",
+    "layer_norm_eps": 1e-5,
+    "bos_token_id": 515,
+    "eos_token_id": 516,
+    "pad_token_id": 516,
+    "projection_dim": 32,
+}
+TINY_VAE_FILE_CONFIG = TINY_VAE_CONFIG | {
+    "_class_name": "AutoencoderKL",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 4,
+    "layers_per_block": 2,
+    "act_fn": "silu",
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "sample_size": 512,
+}
+TINY_UNET_FILE_CONFIG = TINY_UNET_CONFIG | {"_class_name": "UNet2DConditionModel"}
+MODEL_INDEX = {
+    "_class_name": "StableDiffusionPipeline",
+    "feature_extractor": [None, None],
+    "safety_checker": [None, None],
+    "scheduler": ["diffusers", "PNDMScheduler"],
+    "text_encoder": ["transformers", "CLIPTextModel"],
+    "tokenizer": ["transformers", "CLIPTokenizer"],
+    "unet": ["diffusers", "UNet2DConditionModel"],
+    "vae": ["diffusers", "AutoencoderKL"],
+}
+
+
+def write_tiny_sd(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight SD 1.x snapshot in the published diffusers layout (diffusers loads it)."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.clip_text import CLIPTextModel
+    from imagehub.models.unet_2d import UNet2DConditionModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_tokenizer(root / "tokenizer")
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(SD1_SCHEDULER))
+    (root / "model_index.json").write_text(json.dumps(MODEL_INDEX))
+    for name, cls, config, weights in (
+        ("text_encoder", CLIPTextModel, TINY_TEXT_FILE_CONFIG, "model.safetensors"),
+        (
+            "unet",
+            UNet2DConditionModel,
+            TINY_UNET_FILE_CONFIG,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_VAE_FILE_CONFIG, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
