@@ -38,28 +38,44 @@ def _split_on(text: str, tokens: list[str]) -> list[str]:
 
 
 def special_token_flags(directory: str | os.PathLike[str]) -> dict[str, bool]:
-    """Map ``<|startoftext|>`` / ``<|endoftext|>`` to their ``normalized`` flag.
+    """Map configured special-token contents to their ``normalized`` flag.
 
     Mirrors transformers: the tokens are registered in the order unk, bos, eos, pad from
     ``tokenizer_config.json`` (``special_tokens_map.json`` as fallback); when several keys share
     the same content the last registration wins. A plain-string value registers with
     ``normalized=False``, a dict value with its ``"normalized"`` field. Without any config both
-    specials are ``normalized=False``.
+    default specials are ``normalized=False``.
     """
+    return _special_token_config(directory)[0]
+
+
+def _special_token_config(
+    directory: str | os.PathLike[str],
+) -> tuple[dict[str, bool], dict[str, str | None]]:
     path = Path(directory)
     config: dict[str, object] = {}
+    configured = False
     for name in ("tokenizer_config.json", "special_tokens_map.json"):
         if (path / name).is_file():
             config = json.loads((path / name).read_text(encoding="utf-8"))
+            configured = True
             break
-    flags: dict[str, bool] = {}
+    flags = {} if configured else {BOS: False, EOS: False}
+    contents: dict[str, str | None] = {
+        "unk_token": EOS,
+        "bos_token": BOS,
+        "eos_token": EOS,
+        "pad_token": None,
+    }
     for key in _SPECIAL_KEYS:
         value = config.get(key)
         if isinstance(value, str):
+            contents[key] = value
             flags[value] = False
         elif isinstance(value, dict) and isinstance(value.get("content"), str):
+            contents[key] = value["content"]
             flags[value["content"]] = bool(value.get("normalized", False))
-    return {BOS: flags.get(BOS, False), EOS: flags.get(EOS, False)}
+    return flags, contents
 
 
 @lru_cache(maxsize=1)
@@ -152,11 +168,25 @@ class CLIPTokenizer:
         merges = [tuple(line.split()) for line in lines if line and not line.startswith("#version")]
         self.ranks = {pair: rank for rank, pair in enumerate(merges)}
         self.byte_encoder = bytes_to_unicode()
-        self.bos_id, self.eos_id = self.encoder[BOS], self.encoder[EOS]
-        self.pad_id = self.eos_id
-        self.special_normalized = special_token_flags(path)
-        self._raw_specials = [t for t, norm in self.special_normalized.items() if not norm]
-        self._normalized_specials = [t for t, norm in self.special_normalized.items() if norm]
+        self.special_normalized, contents = _special_token_config(path)
+        bos = contents["bos_token"] or BOS
+        eos = contents["eos_token"] or EOS
+        pad = contents["pad_token"] or eos
+        self.bos_id, self.eos_id, self.pad_id = (
+            self.encoder[bos],
+            self.encoder[eos],
+            self.encoder[pad],
+        )
+        self._raw_specials = sorted(
+            (token for token, normalized in self.special_normalized.items() if not normalized),
+            key=len,
+            reverse=True,
+        )
+        self._normalized_specials = sorted(
+            (token for token, normalized in self.special_normalized.items() if normalized),
+            key=len,
+            reverse=True,
+        )
         self.max_length = max_length
         self._cache: dict[str, list[str]] = {}
 

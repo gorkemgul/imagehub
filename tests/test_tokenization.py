@@ -111,7 +111,7 @@ def test_flags_fall_back_to_special_tokens_map_then_default(tmp_path):
     (path / "special_tokens_map.json").write_text(
         json.dumps({"bos_token": {"content": BOS_T, "normalized": True}}), encoding="utf-8"
     )
-    assert special_token_flags(path) == {BOS_T: True, EOS_T: False}
+    assert special_token_flags(path) == {BOS_T: True}
     (path / "special_tokens_map.json").unlink()
     assert special_token_flags(path) == {BOS_T: False, EOS_T: False}
 
@@ -131,3 +131,25 @@ def test_normalized_bos_matches_after_lowercasing(tmp_path):
     # eos stays raw-only: the uppercase variant is ordinary text
     assert 516 not in tok.tokenize("x <|ENDOFTEXT|> y")
     assert tok.tokenize("x<|endoftext|>y") == [343, 516, 344]
+
+
+def test_configured_pad_token_is_special_and_used_for_padding(tmp_path):
+    config = {
+        "unk_token": EOS_T,
+        "bos_token": BOS_T,
+        "eos_token": EOS_T,
+        "pad_token": "!",
+    }
+    path = _tiny_with_config(tmp_path, config)
+    tok = CLIPTokenizer(path, max_length=8)
+
+    assert special_token_flags(path) == {EOS_T: False, BOS_T: False, "!": False}
+    assert tok.pad_id == tok.encoder["!"]
+    assert tok.tokenize("hi!!! cat") == [
+        512,
+        tok.encoder["!"],
+        tok.encoder["!"],
+        tok.encoder["!"],
+        514,
+    ]
+    assert tok("hi") == [515, 512, 516, 0, 0, 0, 0, 0]
