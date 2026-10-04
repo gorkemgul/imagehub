@@ -158,6 +158,21 @@ class AutoencoderKL(NativeModel):
     def scaling_factor(self) -> float:
         return float(self.config["scaling_factor"])
 
+    def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
+        """Convert current diffusers VAE attention names to the legacy SD 1.x names."""
+        renamed = {}
+        for name, value in state.items():
+            if ".attentions." in name:
+                for current, legacy in (
+                    ("to_q", "query"),
+                    ("to_k", "key"),
+                    ("to_v", "value"),
+                    ("to_out.0", "proj_attn"),
+                ):
+                    name = name.replace(f".{current}.", f".{legacy}.")
+            renamed[name] = value
+        return renamed
+
     def encode(self, image: Tensor) -> Tensor:
         """Return the posterior mean (unscaled latents) for images in [-1, 1]."""
         moments = self.quant_conv(self.encoder(image))

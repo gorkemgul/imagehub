@@ -13,7 +13,7 @@ CATALOG = (
 
 
 def _norm(value: str) -> str:
-    return value.lower().replace("_", "-").replace(" ", "-")
+    return value.lower().replace("_", "-").replace(" ", "-").replace("open-rail", "openrail")
 
 
 def test_catalog_ids_exist_with_consistent_weight_licenses():

@@ -5,6 +5,7 @@ from __future__ import annotations
 import ctypes
 import json
 import math
+import mmap
 import os
 import pickle
 import struct
@@ -68,7 +69,11 @@ def read_snapshot(directory: str | os.PathLike[str]) -> dict[str, Any] | None:
 
 
 def load_safetensors(path: str | os.PathLike[str]) -> dict[str, Tensor]:
-    """Read the documented safetensors format using byte buffers and torch.frombuffer."""
+    """Read the documented safetensors format.
+
+    The file is memory-mapped copy-on-write so tensors keep the same file-relative
+    alignment as the reference loader.
+    """
     result: dict[str, Tensor] = {}
     with Path(path).open("rb") as source:
         size = os.fstat(source.fileno()).st_size
@@ -108,15 +113,18 @@ def load_safetensors(path: str | os.PathLike[str]) -> dict[str, Tensor]:
             ):
                 raise CheckpointError(f"Invalid tensor offsets: {name}")
             spans.append((start, end, name, dtype, shape))
+        # Whole file, private copy-on-write
+        mapping = mmap.mmap(source.fileno(), 0, access=mmap.ACCESS_COPY)
         cursor = 0
         for start, end, name, dtype, shape in sorted(spans):
             if start != cursor:
                 raise CheckpointError("Safetensors payload has overlapping or missing data")
-            source.seek(payload_start + start)
-            buffer = bytearray(source.read(end - start))
+            count = math.prod(shape)
             result[name] = (
-                torch.frombuffer(buffer, dtype=dtype).reshape(shape)
-                if buffer
+                torch.frombuffer(
+                    mapping, dtype=dtype, count=count, offset=payload_start + start
+                ).reshape(shape)
+                if count
                 else torch.empty(shape, dtype=dtype)
             )
             cursor = end

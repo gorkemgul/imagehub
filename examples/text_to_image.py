@@ -3,6 +3,7 @@
 python -m imagehub.pretrained sd-v1-5 checkpoints/sd-v1-5
 python examples/text_to_image.py checkpoints/sd-v1-5 "a photograph of an astronaut riding a horse"
 python examples/text_to_image.py checkpoints/sd-v1-4 "a cat" sd-v1-4
+python examples/text_to_image.py checkpoints/sdxl-base-1.0 "a cat" sdxl-base-1.0
 
 The optional third argument is the catalog id (default: sd-v1-5).
 """

@@ -84,6 +84,11 @@ class BackendRegistry:
 backend_registry = BackendRegistry()
 for _task, _name, _path in (
     (Task.T2I, "stable-diffusion", "imagehub.backends.stable_diffusion:StableDiffusionBackend"),
+    (
+        Task.T2I,
+        "stable-diffusion-xl",
+        "imagehub.backends.stable_diffusion_xl:StableDiffusionXLBackend",
+    ),
 ):
     backend_registry.register(_task, _name, _path)
 

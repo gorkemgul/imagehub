@@ -28,10 +28,48 @@ UNET_DEFAULTS: dict[str, Any] = {
     # SD 1.x configs store the number of heads under this historical name.
     "attention_head_dim": 8,
     "cross_attention_dim": 768,
+    "transformer_layers_per_block": 1,
+    "num_attention_heads": None,
+    "use_linear_projection": False,
+    "addition_embed_type": None,
+    "addition_time_embed_dim": None,
+    "projection_class_embeddings_input_dim": None,
+    "sample_size": None,
     "norm_num_groups": 32,
     "norm_eps": 1e-5,
     "flip_sin_to_cos": True,
     "freq_shift": 0,
+}
+_UNSUPPORTED_DEFAULTS: dict[str, Any] = {
+    "center_input_sample": False,
+    "mid_block_type": "UNetMidBlock2DCrossAttn",
+    "only_cross_attention": False,
+    "downsample_padding": 1,
+    "mid_block_scale_factor": 1,
+    "dropout": 0.0,
+    "act_fn": "silu",
+    "dual_cross_attention": False,
+    "class_embed_type": None,
+    "num_class_embeds": None,
+    "upcast_attention": False,
+    "resnet_time_scale_shift": "default",
+    "resnet_skip_time_act": False,
+    "resnet_out_scale_factor": 1.0,
+    "time_embedding_type": "positional",
+    "time_embedding_dim": None,
+    "time_embedding_act_fn": None,
+    "timestep_post_act": None,
+    "time_cond_proj_dim": None,
+    "conv_in_kernel": 3,
+    "conv_out_kernel": 3,
+    "encoder_hid_dim": None,
+    "encoder_hid_dim_type": None,
+    "attention_type": "default",
+    "class_embeddings_concat": False,
+    "mid_block_only_cross_attention": None,
+    "cross_attention_norm": None,
+    "addition_embed_type_num_heads": 64,
+    "reverse_transformer_layers_per_block": None,
 }
 
 
@@ -87,30 +125,65 @@ class TransformerBlock(nn.Module):
 
 
 class SpatialTransformer(nn.Module):
-    """diffusers ``Transformer2DModel`` with 1x1 convolution projections (SD 1.x)."""
+    """The continuous-input path of diffusers ``Transformer2DModel``."""
 
-    def __init__(self, channels: int, context_dim: int, heads: int, groups: int) -> None:
+    def __init__(
+        self,
+        channels: int,
+        context_dim: int,
+        heads: int,
+        groups: int,
+        layers: int,
+        linear_projection: bool,
+    ) -> None:
         super().__init__()
+        self.linear_projection = linear_projection
         self.norm = nn.GroupNorm(groups, channels, eps=1e-6)
-        self.proj_in = nn.Conv2d(channels, channels, 1)
-        self.transformer_blocks = nn.ModuleList([TransformerBlock(channels, context_dim, heads)])
-        self.proj_out = nn.Conv2d(channels, channels, 1)
+        projection = nn.Linear if linear_projection else lambda x, y: nn.Conv2d(x, y, 1)
+        self.proj_in = projection(channels, channels)
+        self.transformer_blocks = nn.ModuleList(
+            TransformerBlock(channels, context_dim, heads) for _ in range(layers)
+        )
+        self.proj_out = projection(channels, channels)
 
     def forward(self, x: Tensor, context: Tensor) -> Tensor:
         b, c, h, w = x.shape
         residual = x
-        x = self.proj_in(self.norm(x))
-        x = x.permute(0, 2, 3, 1).reshape(b, h * w, c)
+        x = self.norm(x)
+        if self.linear_projection:
+            x = x.permute(0, 2, 3, 1).reshape(b, h * w, c)
+            x = self.proj_in(x)
+        else:
+            x = self.proj_in(x)
+            x = x.permute(0, 2, 3, 1).reshape(b, h * w, c)
         for block in self.transformer_blocks:
             x = block(x, context)
-        x = x.reshape(b, h, w, c).permute(0, 3, 1, 2).contiguous()
-        return self.proj_out(x) + residual
+        if self.linear_projection:
+            x = self.proj_out(x)
+            x = x.reshape(b, h, w, c).permute(0, 3, 1, 2).contiguous()
+        else:
+            x = x.reshape(b, h, w, c).permute(0, 3, 1, 2).contiguous()
+            x = self.proj_out(x)
+        return x + residual
 
 
-def _transformers(cfg: Mapping[str, Any], channels: int, count: int) -> nn.ModuleList:
+def _transformers(
+    cfg: Mapping[str, Any],
+    channels: int,
+    count: int,
+    *,
+    context_dim: int,
+    heads: int,
+    layers: int,
+) -> nn.ModuleList:
     return nn.ModuleList(
         SpatialTransformer(
-            channels, cfg["cross_attention_dim"], cfg["attention_head_dim"], cfg["norm_num_groups"]
+            channels,
+            context_dim,
+            heads,
+            cfg["norm_num_groups"],
+            layers,
+            cfg["use_linear_projection"],
         )
         for _ in range(count)
     )
@@ -118,17 +191,39 @@ def _transformers(cfg: Mapping[str, Any], channels: int, count: int) -> nn.Modul
 
 class DownBlock(nn.Module):
     def __init__(
-        self, in_ch: int, out_ch: int, *, cfg: Mapping[str, Any], temb: int, attn: bool, down: bool
+        self,
+        in_ch: int,
+        out_ch: int,
+        *,
+        cfg: Mapping[str, Any],
+        temb: int,
+        layers: int,
+        attn: bool,
+        down: bool,
+        context_dim: int,
+        heads: int,
+        transformer_layers: int,
     ) -> None:
         super().__init__()
-        layers, eps, groups = cfg["layers_per_block"], cfg["norm_eps"], cfg["norm_num_groups"]
+        eps, groups = cfg["norm_eps"], cfg["norm_num_groups"]
         self.resnets = nn.ModuleList(
             ResnetBlock(
                 in_ch if i == 0 else out_ch, out_ch, temb_channels=temb, eps=eps, groups=groups
             )
             for i in range(layers)
         )
-        self.attentions = _transformers(cfg, out_ch, layers) if attn else None
+        self.attentions = (
+            _transformers(
+                cfg,
+                out_ch,
+                layers,
+                context_dim=context_dim,
+                heads=heads,
+                layers=transformer_layers,
+            )
+            if attn
+            else None
+        )
         self.downsamplers = nn.ModuleList([Downsample(out_ch, padding=1)]) if down else None
 
     def forward(self, x: Tensor, temb: Tensor, context: Tensor) -> tuple[Tensor, list[Tensor]]:
@@ -153,11 +248,15 @@ class UpBlock(nn.Module):
         *,
         cfg: Mapping[str, Any],
         temb: int,
+        layers: int,
         attn: bool,
         up: bool,
+        context_dim: int,
+        heads: int,
+        transformer_layers: int,
     ) -> None:
         super().__init__()
-        layers, eps, groups = cfg["layers_per_block"] + 1, cfg["norm_eps"], cfg["norm_num_groups"]
+        layers, eps, groups = layers + 1, cfg["norm_eps"], cfg["norm_num_groups"]
         self.resnets = nn.ModuleList()
         for i in range(layers):
             skip_ch = in_ch if i == layers - 1 else out_ch
@@ -165,7 +264,18 @@ class UpBlock(nn.Module):
             self.resnets.append(
                 ResnetBlock(res_in + skip_ch, out_ch, temb_channels=temb, eps=eps, groups=groups)
             )
-        self.attentions = _transformers(cfg, out_ch, layers) if attn else None
+        self.attentions = (
+            _transformers(
+                cfg,
+                out_ch,
+                layers,
+                context_dim=context_dim,
+                heads=heads,
+                layers=transformer_layers,
+            )
+            if attn
+            else None
+        )
         self.upsamplers = nn.ModuleList([Upsample(out_ch)]) if up else None
 
     def forward(
@@ -186,13 +296,29 @@ class UpBlock(nn.Module):
 
 
 class MidBlock(nn.Module):
-    def __init__(self, ch: int, *, cfg: Mapping[str, Any], temb: int) -> None:
+    def __init__(
+        self,
+        ch: int,
+        *,
+        cfg: Mapping[str, Any],
+        temb: int,
+        context_dim: int,
+        heads: int,
+        transformer_layers: int,
+    ) -> None:
         super().__init__()
         eps, groups = cfg["norm_eps"], cfg["norm_num_groups"]
         self.resnets = nn.ModuleList(
             ResnetBlock(ch, ch, temb_channels=temb, eps=eps, groups=groups) for _ in range(2)
         )
-        self.attentions = _transformers(cfg, ch, 1)
+        self.attentions = _transformers(
+            cfg,
+            ch,
+            1,
+            context_dim=context_dim,
+            heads=heads,
+            layers=transformer_layers,
+        )
 
     def forward(self, x: Tensor, temb: Tensor, context: Tensor) -> Tensor:
         x = self.resnets[0](x, temb)
@@ -212,9 +338,55 @@ class TimestepEmbedding(nn.Module):
 
 class UNet2DConditionModel(NativeModel):
     def __init__(self, config: Mapping[str, Any]) -> None:
-        super().__init__(UNET_DEFAULTS | dict(config))
+        unknown = sorted(
+            key
+            for key in config
+            if not key.startswith("_")
+            and key not in UNET_DEFAULTS
+            and key not in _UNSUPPORTED_DEFAULTS
+        )
+        if unknown:
+            raise ValueError(f"Unsupported U-Net setting {unknown[0]}")
+        super().__init__(UNET_DEFAULTS | _UNSUPPORTED_DEFAULTS | dict(config))
         cfg = self.config
         ch = cfg["block_out_channels"]
+        blocks = len(ch)
+        if len(cfg["down_block_types"]) != blocks or len(cfg["up_block_types"]) != blocks:
+            raise ValueError("U-Net block type lists must match block_out_channels")
+        supported_blocks = {"DownBlock2D", "CrossAttnDownBlock2D"}
+        supported_up_blocks = {"UpBlock2D", "CrossAttnUpBlock2D"}
+        if (
+            not set(cfg["down_block_types"]) <= supported_blocks
+            or not set(cfg["up_block_types"]) <= supported_up_blocks
+        ):
+            raise ValueError("Unsupported U-Net block type")
+        for key, default in _UNSUPPORTED_DEFAULTS.items():
+            if key == "upcast_attention" and not cfg[key]:
+                continue
+            if cfg[key] != default:
+                raise ValueError(f"Unsupported U-Net setting {key}={cfg[key]!r}")
+        if cfg["addition_embed_type"] not in (None, "text_time"):
+            raise ValueError(
+                f"Unsupported U-Net setting addition_embed_type={cfg['addition_embed_type']!r}"
+            )
+
+        def per_block(value: Any, name: str) -> list[Any]:
+            values = [value] * blocks if isinstance(value, int) else list(value)
+            if len(values) != blocks:
+                raise ValueError(f"U-Net {name} must have one value per block")
+            return values
+
+        layers = per_block(cfg["layers_per_block"], "layers_per_block")
+        transformer_layers = per_block(
+            cfg["transformer_layers_per_block"], "transformer_layers_per_block"
+        )
+        head_config = (
+            cfg["num_attention_heads"]
+            if cfg["num_attention_heads"] is not None
+            else cfg["attention_head_dim"]
+        )
+        heads = per_block(head_config, "attention heads")
+        context_dims = per_block(cfg["cross_attention_dim"], "cross_attention_dim")
         temb = ch[0] * 4
         self.conv_in = nn.Conv2d(cfg["in_channels"], ch[0], 3, padding=1)
         self.time_embedding = TimestepEmbedding(ch[0], temb)
@@ -228,12 +400,27 @@ class UNet2DConditionModel(NativeModel):
                     out_ch,
                     cfg=cfg,
                     temb=temb,
+                    layers=layers[i],
                     attn=kind == "CrossAttnDownBlock2D",
                     down=i < len(ch) - 1,
+                    context_dim=context_dims[i],
+                    heads=heads[i],
+                    transformer_layers=transformer_layers[i],
                 )
             )
-        self.mid_block = MidBlock(ch[-1], cfg=cfg, temb=temb)
+        self.mid_block = MidBlock(
+            ch[-1],
+            cfg=cfg,
+            temb=temb,
+            context_dim=context_dims[-1],
+            heads=heads[-1],
+            transformer_layers=transformer_layers[-1],
+        )
         rev = list(reversed(ch))
+        rev_layers = list(reversed(layers))
+        rev_transformer_layers = list(reversed(transformer_layers))
+        rev_heads = list(reversed(heads))
+        rev_context_dims = list(reversed(context_dims))
         self.up_blocks = nn.ModuleList()
         out_ch = rev[0]
         for i, kind in enumerate(cfg["up_block_types"]):
@@ -246,14 +433,36 @@ class UNet2DConditionModel(NativeModel):
                     out_ch,
                     cfg=cfg,
                     temb=temb,
+                    layers=rev_layers[i],
                     attn=kind == "CrossAttnUpBlock2D",
                     up=i < len(ch) - 1,
+                    context_dim=rev_context_dims[i],
+                    heads=rev_heads[i],
+                    transformer_layers=rev_transformer_layers[i],
                 )
+            )
+        if cfg["addition_embed_type"] == "text_time":
+            if (
+                cfg["addition_time_embed_dim"] is None
+                or cfg["projection_class_embeddings_input_dim"] is None
+            ):
+                raise ValueError("text_time conditioning requires both embedding dimensions")
+            self.add_time_proj = cfg["addition_time_embed_dim"]
+            self.add_embedding = TimestepEmbedding(
+                cfg["projection_class_embeddings_input_dim"], temb
             )
         self.conv_norm_out = nn.GroupNorm(cfg["norm_num_groups"], ch[0], eps=cfg["norm_eps"])
         self.conv_out = nn.Conv2d(ch[0], cfg["out_channels"], 3, padding=1)
 
-    def forward(self, sample: Tensor, timestep: Tensor, context: Tensor) -> Tensor:
+    def forward(
+        self,
+        sample: Tensor,
+        timestep: Tensor,
+        context: Tensor,
+        *,
+        text_embeds: Tensor | None = None,
+        time_ids: Tensor | None = None,
+    ) -> Tensor:
         timesteps = timestep.reshape(-1).to(sample.device).expand(sample.shape[0])
         t = timestep_embedding(
             timesteps,
@@ -262,14 +471,28 @@ class UNet2DConditionModel(NativeModel):
             shift=self.config["freq_shift"],
         ).to(sample.dtype)
         temb = self.time_embedding(t)
+        if self.config["addition_embed_type"] == "text_time":
+            if text_embeds is None:
+                raise ValueError("text_time conditioning requires text_embeds")
+            if time_ids is None:
+                raise ValueError("text_time conditioning requires time_ids")
+            time_features = timestep_embedding(
+                time_ids.flatten(),
+                self.add_time_proj,
+                flip_sin_to_cos=self.config["flip_sin_to_cos"],
+                shift=self.config["freq_shift"],
+            ).reshape(text_embeds.shape[0], -1)
+            add_embeds = torch.cat([text_embeds, time_features], dim=-1).to(temb.dtype)
+            temb = temb + self.add_embedding(add_embeds)
         x = self.conv_in(sample)
         skips = [x]
         for down in self.down_blocks:
             x, block_skips = down(x, temb, context)
             skips.extend(block_skips)
         x = self.mid_block(x, temb, context)
-        n = self.config["layers_per_block"] + 1
         for up in self.up_blocks:
+            assert isinstance(up, UpBlock)
+            n = len(up.resnets)
             block_skips, skips = skips[-n:], skips[:-n]
             size = tuple(skips[-1].shape[2:]) if skips else None
             x = up(x, block_skips, temb, context, size)

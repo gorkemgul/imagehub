@@ -123,6 +123,41 @@ for _version, _repo, _revision, _provenance, _weights in (
         )
     )
 
+_entries.append(
+    ModelSpec(
+        id="sdxl-base-1.0",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+        repo_id="stabilityai/stable-diffusion-xl-base-1.0",
+        revision="462165984030d82259a11f4367a4eed129e94a7b",
+        provenance="author",
+        catalog_id="sdxl",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

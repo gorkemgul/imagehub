@@ -1,0 +1,290 @@
+"""Parity of native SDXL components and pipeline against diffusers on CPU fp32.
+
+Requires IMAGEHUB_REFERENCE_TESTS=1 and IMAGEHUB_SNAPSHOT_SDXL_BASE_1_0 pointing at a
+snapshot made by ``python -m imagehub.pretrained sdxl-base-1.0 <dir>``.
+"""
+
+import pytest
+import torch
+from helpers import max_diff, snapshot_dir
+
+from imagehub import pipeline
+from imagehub.backends.stable_diffusion import decode_latents, initial_latents
+from imagehub.backends.stable_diffusion_xl import StableDiffusionXLComponents, denoise
+from imagehub.schedulers.euler import EulerDiscreteScheduler
+
+pytestmark = pytest.mark.reference
+diffusers = pytest.importorskip("diffusers")
+transformers = pytest.importorskip("transformers")
+
+# Maximum absolute difference allowed against diffusers 0.40.0 / transformers 5.18.0, CPU fp32.
+# Rule (spec §6.2): 0 if the measured difference is 0, otherwise the next power of ten above it.
+# Random-weight runs at full SDXL size measured exactly 0 for every entry on 2026-10-04.
+TOLERANCES = {
+    "text_encoder": 0.0,
+    "text_encoder_2": 0.0,
+    "unet": 0.0,
+    "vae_decode": 0.0,
+    "vae_encode": 0.0,
+    "e2e_latents": 0.0,
+    "e2e_pixels": 0,
+}
+PROMPT = "a photograph of an astronaut riding a horse"
+PROMPTS = [
+    "a photo of an astronaut riding a horse on mars",
+    "Bir kedi, yağlı boya; İSTANBUL'da ĞÜŞİÖÇ ığüşöç",
+    "emoji 🐱🚀 and   multiple\tspaces\nnewline",
+    "don't won't they're I've I'm we'll he'd 's '' '''s",
+    "numbers 12345 3.14 1e-5 ½ ² Ⅷ ٣",
+    "punct!!! ??? ... --- (a) [b] {c} <d> @#$%^&*",
+    "x!<|endoftext|>y <|startoftext|> mid",
+    "x <|ENDOFTEXT|> y",
+    "<|StartOfText|>hi",
+    "a b\u3000c d e",
+    "Ünïcödé NFC é ﬁ ligature Ωmega ΣΟΦΟΣ",
+    "日本語のテキストと中文和한국어",
+    "word " * 100,
+    "",
+    "!",
+    "a!b",
+    "!!",
+    "Hi CAT!",
+]
+CPU = torch.device("cpu")
+
+
+@pytest.fixture(scope="module")
+def sdxl():
+    root = snapshot_dir("sdxl-base-1.0")
+    ours = StableDiffusionXLComponents.load(root, device=CPU, dtype=torch.float32)
+    ref = diffusers.StableDiffusionXLPipeline.from_pretrained(
+        root, local_files_only=True, add_watermarker=False, torch_dtype=torch.float32
+    )
+    ref.to(CPU)
+    ref.set_progress_bar_config(disable=True)
+    return root, ours, ref
+
+
+def _check(record, name, actual, expected, tolerance_key):
+    measured = max_diff(actual, expected)
+    record(name, **measured, tolerance=TOLERANCES[tolerance_key])
+    torch.testing.assert_close(actual, expected, atol=TOLERANCES[tolerance_key], rtol=0)
+
+
+def test_tokenizers(sdxl, record):
+    _, ours, ref = sdxl
+    mismatches = []
+    for index, (ours_tokenizer, ref_tokenizer) in enumerate(
+        ((ours.tokenizer, ref.tokenizer), (ours.tokenizer_2, ref.tokenizer_2)), start=1
+    ):
+        for text in PROMPTS:
+            expected = ref_tokenizer(text, padding="max_length", max_length=77, truncation=True)[
+                "input_ids"
+            ]
+            if ours_tokenizer(text) != expected:
+                mismatches.append({"tokenizer": index, "prompt": text})
+    record(
+        "sdxl_tokenizers",
+        prompts=len(PROMPTS),
+        tokenizers=2,
+        mismatches=mismatches,
+        tolerance="exact",
+    )
+    assert not mismatches, mismatches[:5]
+
+
+def test_text_encoders(sdxl, record):
+    _, ours, ref = sdxl
+    ids_1 = torch.tensor([ours.tokenizer(prompt) for prompt in PROMPTS])
+    ids_2 = torch.tensor([ours.tokenizer_2(prompt) for prompt in PROMPTS])
+    with torch.inference_mode():
+        _, ours_hidden_1 = ours.text_encoder(ids_1, output_hidden_states=True)
+        expected_1 = ref.text_encoder(ids_1, output_hidden_states=True)
+        ours_pooled_2, _, ours_hidden_2 = ours.text_encoder_2(ids_2, output_hidden_states=True)
+        expected_2 = ref.text_encoder_2(ids_2, output_hidden_states=True)
+    _check(
+        record,
+        "sdxl_text_encoder",
+        ours_hidden_1[-2],
+        expected_1.hidden_states[-2],
+        "text_encoder",
+    )
+    hidden_diff = max_diff(ours_hidden_2[-2], expected_2.hidden_states[-2])
+    pooled_diff = max_diff(ours_pooled_2, expected_2.text_embeds)
+    worst = max((hidden_diff, pooled_diff), key=lambda value: value["max_abs"])
+    record(
+        "sdxl_text_encoder_2",
+        **worst,
+        hidden_states=hidden_diff,
+        text_embeds=pooled_diff,
+        tolerance=TOLERANCES["text_encoder_2"],
+    )
+    torch.testing.assert_close(
+        ours_hidden_2[-2],
+        expected_2.hidden_states[-2],
+        atol=TOLERANCES["text_encoder_2"],
+        rtol=0,
+    )
+    torch.testing.assert_close(
+        ours_pooled_2,
+        expected_2.text_embeds,
+        atol=TOLERANCES["text_encoder_2"],
+        rtol=0,
+    )
+
+
+def test_unet_single_step(sdxl, record):
+    _, ours, ref = sdxl
+    generator = torch.Generator().manual_seed(0)
+    sample = torch.randn(2, 4, 128, 128, generator=generator)
+    context = torch.randn(2, 77, 2048, generator=generator)
+    text_embeds = torch.randn(2, 1280, generator=generator)
+    time_ids = torch.randn(2, 6, generator=generator)
+    pairs = []
+    with torch.inference_mode():
+        for value in (999, 500, 1):
+            timestep = torch.tensor(value)
+            actual = ours.unet(
+                sample,
+                timestep,
+                context,
+                text_embeds=text_embeds,
+                time_ids=time_ids,
+            )
+            expected = ref.unet(
+                sample,
+                timestep,
+                context,
+                added_cond_kwargs={"text_embeds": text_embeds, "time_ids": time_ids},
+            ).sample
+            pairs.append((actual, expected, max_diff(actual, expected)))
+    worst = max((measured for _, _, measured in pairs), key=lambda value: value["max_abs"])
+    record("sdxl_unet", **worst, tolerance=TOLERANCES["unet"], timesteps=[999, 500, 1])
+    for actual, expected, _ in pairs:
+        torch.testing.assert_close(actual, expected, atol=TOLERANCES["unet"], rtol=0)
+
+
+def test_vae(sdxl, record):
+    _, ours, ref = sdxl
+    generator = torch.Generator().manual_seed(1)
+    latents = torch.randn(1, 4, 128, 128, generator=generator)
+    image = torch.rand(1, 3, 1024, 1024, generator=generator) * 2 - 1
+    with torch.inference_mode():
+        decode = ours.vae.decode(latents), ref.vae.decode(latents).sample
+        encode = ours.vae.encode(image), ref.vae.encode(image).latent_dist.mean
+    for name, (actual, expected) in (
+        ("sdxl_vae_decode", decode),
+        ("sdxl_vae_encode", encode),
+    ):
+        tolerance_key = name.removeprefix("sdxl_")
+        record(name, **max_diff(actual, expected), tolerance=TOLERANCES[tolerance_key])
+    for name, (actual, expected) in (
+        ("sdxl_vae_decode", decode),
+        ("sdxl_vae_encode", encode),
+    ):
+        tolerance_key = name.removeprefix("sdxl_")
+        torch.testing.assert_close(actual, expected, atol=TOLERANCES[tolerance_key], rtol=0)
+
+
+def test_euler_scheduler(sdxl, record):
+    _, ours, ref = sdxl
+    measurements = {}
+    schedules = []
+    for steps in (50, 30):
+        actual = EulerDiscreteScheduler(ours.scheduler_config)
+        expected = diffusers.EulerDiscreteScheduler.from_config(ref.scheduler.config)
+        actual.set_timesteps(steps)
+        expected.set_timesteps(steps)
+        measurements[str(steps)] = {
+            "timesteps": max_diff(actual.timesteps, expected.timesteps),
+            "sigmas": max_diff(actual.sigmas, expected.sigmas),
+        }
+        schedules.append((actual, expected))
+    record("sdxl_scheduler", steps=[50, 30], measurements=measurements, tolerance=0.0)
+    for actual, expected in schedules:
+        torch.testing.assert_close(actual.timesteps, expected.timesteps, atol=0, rtol=0)
+        torch.testing.assert_close(actual.sigmas, expected.sigmas, atol=0, rtol=0)
+
+
+def test_end_to_end(sdxl, record):
+    _, ours, ref = sdxl
+    latents = initial_latents(1234, (1, 4, 128, 128))
+    with torch.inference_mode():
+        ref_latents = ref(
+            PROMPT,
+            num_inference_steps=30,
+            guidance_scale=5.0,
+            height=1024,
+            width=1024,
+            latents=latents.clone(),
+            output_type="latent",
+        ).images
+        decoded = ref.vae.decode(ref_latents / ref.vae.config.scaling_factor).sample
+        ref_np = ref.image_processor.postprocess(decoded, output_type="np")
+    ref_pixels = torch.from_numpy((ref_np * 255).round().astype("uint8"))
+    our_latents = denoise(
+        ours,
+        prompt=PROMPT,
+        negative_prompt=None,
+        steps=30,
+        guidance=5.0,
+        latents=latents.clone(),
+        original_size=(1024, 1024),
+        crops_coords_top_left=(0, 0),
+        target_size=(1024, 1024),
+    )
+    our_pixels = decode_latents(ours, our_latents)
+    latent_diff = max_diff(our_latents, ref_latents)
+    pixel_diff = int((our_pixels.int() - ref_pixels.int()).abs().max())
+    passed = (
+        latent_diff["max_abs"] <= TOLERANCES["e2e_latents"]
+        and pixel_diff <= TOLERANCES["e2e_pixels"]
+    )
+    record(
+        "e2e_sdxl-base-1.0",
+        latents=latent_diff,
+        pixels_max_abs=pixel_diff,
+        passed=passed,
+        prompt=PROMPT,
+        steps=30,
+        guidance=5.0,
+        size=[1024, 1024],
+        noise_seed=1234,
+        tolerance={"latents": TOLERANCES["e2e_latents"], "pixels": TOLERANCES["e2e_pixels"]},
+        runtime_note="30 steps are used instead of 50 to keep CPU runtime reasonable.",
+    )
+    assert passed, (latent_diff, pixel_diff)
+
+
+def test_seed_end_to_end(sdxl, record):
+    root, _, ref = sdxl
+    with torch.inference_mode():
+        expected = ref(
+            PROMPT,
+            num_inference_steps=30,
+            guidance_scale=5.0,
+            height=1024,
+            width=1024,
+            generator=torch.Generator("cpu").manual_seed(42),
+            output_type="np",
+        ).images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))[0]
+    actual = (
+        pipeline("t2i", backend="sdxl-base-1.0", model=root)(
+            PROMPT, seed=42, steps=30, guidance=5.0, width=1024, height=1024
+        )
+        .images[0]
+        .tensor
+    )
+    pixel_diff = int((actual.int() - expected.int()).abs().max())
+    record(
+        "seed_e2e_sdxl-base-1.0",
+        pixels_max_abs=pixel_diff,
+        seed=42,
+        steps=30,
+        guidance=5.0,
+        size=[1024, 1024],
+        passed=pixel_diff <= TOLERANCES["e2e_pixels"],
+        runtime_note="30 steps are used instead of 50 to keep CPU runtime reasonable.",
+    )
+    assert pixel_diff <= TOLERANCES["e2e_pixels"]

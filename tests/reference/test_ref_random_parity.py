@@ -5,6 +5,8 @@ import torch
 from helpers import (
     SD1_SCHEDULER,
     SD1_UNET,
+    SDXL_SCHEDULER,
+    SDXL_UNET,
     TINY_TEXT_CONFIG,
     TINY_UNET_CONFIG,
     TINY_VAE_CONFIG,
@@ -13,8 +15,9 @@ from helpers import (
 )
 
 from imagehub.models.autoencoder_kl import AutoencoderKL
-from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel
+from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel, CLIPTextModelWithProjection
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
 
 pytestmark = pytest.mark.reference
@@ -36,7 +39,45 @@ def test_clip_text_random_weights(config):
     ours.load_checkpoint(text_state_for_ours(ref.state_dict()))
     ids = torch.randint(0, ours.config["vocab_size"], (3, 77))
     with torch.inference_mode():
-        exact(ours(ids), ref(ids)[0])
+        actual_last, actual_hidden = ours(ids, output_hidden_states=True)
+        expected = ref(ids, output_hidden_states=True)
+        exact(actual_last, expected.last_hidden_state)
+        exact(actual_hidden[-2], expected.hidden_states[-2])
+
+
+SDXL_TEXT_2 = {
+    "vocab_size": 49408,
+    "hidden_size": 1280,
+    "intermediate_size": 5120,
+    "num_hidden_layers": 32,
+    "num_attention_heads": 20,
+    "max_position_embeddings": 77,
+    "layer_norm_eps": 1e-5,
+    "hidden_act": "gelu",
+    "projection_dim": 1280,
+    "eos_token_id": 2,
+}
+TINY_SDXL_TEXT_2 = TINY_TEXT_CONFIG | {
+    "hidden_act": "gelu",
+    "projection_dim": 24,
+    "eos_token_id": 2,
+}
+
+
+@pytest.mark.parametrize("config", [TINY_SDXL_TEXT_2, SDXL_TEXT_2], ids=["tiny", "sdxl"])
+def test_clip_text_projection_random_weights(config):
+    torch.manual_seed(0)
+    ref = transformers.CLIPTextModelWithProjection(transformers.CLIPTextConfig(**config)).eval()
+    ours = CLIPTextModelWithProjection(config).eval()
+    ours.load_checkpoint(text_state_for_ours(ref.state_dict()))
+    ids = torch.randint(3, config["vocab_size"], (3, 77))
+    ids[:, 30] = 2
+    with torch.inference_mode():
+        actual_embeds, actual_last, actual_hidden = ours(ids, output_hidden_states=True)
+        expected = ref(ids, output_hidden_states=True)
+    exact(actual_embeds, expected.text_embeds)
+    exact(actual_last, expected.last_hidden_state)
+    exact(actual_hidden[-2], expected.hidden_states[-2])
 
 
 SD1_VAE = {
@@ -89,6 +130,56 @@ def test_unet_random_weights(config, sizes):
                 exact(ours(sample, t, context), ref(sample, t, context).sample)
 
 
+TINY_SDXL_UNET = SDXL_UNET | {
+    "block_out_channels": [32, 64, 64],
+    "transformer_layers_per_block": [1, 2, 3],
+    "attention_head_dim": [2, 4, 4],
+    "cross_attention_dim": 32,
+    "addition_time_embed_dim": 8,
+    "projection_class_embeddings_input_dim": 80,
+    "layers_per_block": 1,
+    "norm_num_groups": 8,
+}
+
+
+@pytest.mark.parametrize(
+    ("config", "sizes"),
+    [(TINY_SDXL_UNET, [(16, 16), (13, 9)]), (SDXL_UNET, [(128, 128), (129, 127)])],
+    ids=["tiny", "sdxl"],
+)
+def test_sdxl_unet_random_weights(config, sizes):
+    torch.manual_seed(0)
+    ref = diffusers.UNet2DConditionModel.from_config(config).eval()
+    for parameter in ref.parameters():
+        parameter.data.normal_(0, 0.02)
+    ours = UNet2DConditionModel(config).eval()
+    ours.load_checkpoint(ref.state_dict())
+    context = torch.randn(2, 7, config["cross_attention_dim"])
+    text_dim = (
+        config["projection_class_embeddings_input_dim"] - 6 * config["addition_time_embed_dim"]
+    )
+    text_embeds = torch.randn(2, text_dim)
+    time_ids = torch.randn(2, 6)
+    for hw in sizes:
+        sample = torch.randn(2, 4, *hw)
+        for timestep in (torch.tensor(981), torch.tensor(1)):
+            with torch.inference_mode():
+                actual = ours(
+                    sample,
+                    timestep,
+                    context,
+                    text_embeds=text_embeds,
+                    time_ids=time_ids,
+                )
+                expected = ref(
+                    sample,
+                    timestep,
+                    context,
+                    added_cond_kwargs={"text_embeds": text_embeds, "time_ids": time_ids},
+                ).sample
+            exact(actual, expected)
+
+
 def test_pndm_matches_diffusers():
     ref = diffusers.PNDMScheduler.from_config(SD1_SCHEDULER)
     ours = PNDMScheduler(SD1_SCHEDULER)
@@ -106,3 +197,28 @@ def test_pndm_matches_diffusers():
         x_ref = ref.step(eps, t, x_ref).prev_sample
         x = ours.step(eps, t, x)
     exact(x, x_ref)
+
+
+def test_euler_matches_diffusers():
+    ref = diffusers.EulerDiscreteScheduler.from_config(SDXL_SCHEDULER)
+    ours = EulerDiscreteScheduler(SDXL_SCHEDULER)
+    for steps in (1000, 50, 30, 7, 1):
+        ref.set_timesteps(steps)
+        ours.set_timesteps(steps)
+        exact(ours.timesteps, ref.timesteps)
+        exact(ours.sigmas, ref.sigmas)
+        exact(torch.as_tensor(ours.init_noise_sigma), torch.as_tensor(ref.init_noise_sigma))
+    torch.manual_seed(0)
+    sample = torch.randn(2, 4, 8, 8)
+    expected = sample.clone()
+    ref.set_timesteps(30)
+    ours.set_timesteps(30)
+    for timestep in ref.timesteps:
+        model_output = torch.randn_like(sample)
+        exact(
+            ours.scale_model_input(sample, timestep),
+            ref.scale_model_input(expected, timestep),
+        )
+        expected = ref.step(model_output, timestep, expected).prev_sample
+        sample = ours.step(model_output, timestep, sample)
+    exact(sample, expected)

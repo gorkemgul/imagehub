@@ -1,4 +1,5 @@
 import json
+import mmap
 import struct
 
 import pytest
@@ -69,6 +70,54 @@ def test_safetensors_roundtrip(tmp_path):
 def _raw(header: dict, payload: bytes) -> bytes:
     blob = json.dumps(header).encode()
     return struct.pack("<Q", len(blob)) + blob + payload
+
+
+def test_safetensors_tensors_keep_reference_alignment(tmp_path):
+    tensors = {
+        "a": torch.arange(5, dtype=torch.float32),
+        "b": torch.arange(21, dtype=torch.float32).reshape(7, 3),
+        "c": torch.arange(15, dtype=torch.float32).reshape(3, 5),
+    }
+    path = tmp_path / "w.safetensors"
+    save_safetensors(tensors, path)
+    restored = load_safetensors(path)
+    blob = path.read_bytes()
+    header_length = struct.unpack("<Q", blob[:8])[0]
+    header = json.loads(blob[8 : 8 + header_length])
+    for name, tensor in restored.items():
+        if tensor.numel() == 0:
+            continue
+        start = header[name]["data_offsets"][0]
+        assert (
+            tensor.data_ptr() % mmap.ALLOCATIONGRANULARITY
+            == (8 + header_length + start) % mmap.ALLOCATIONGRANULARITY
+        )
+
+
+def test_safetensors_writes_do_not_touch_disk(tmp_path):
+    tensors = {
+        "a": torch.arange(7, dtype=torch.float32),
+        "b": torch.zeros(3, 4, dtype=torch.float32),
+    }
+    path = tmp_path / "w.safetensors"
+    save_safetensors(tensors, path)
+    original = path.read_bytes()
+    restored = load_safetensors(path)
+    restored["a"].add_(1)
+    restored["b"].fill_(9.0)
+    assert path.read_bytes() == original
+
+
+def test_safetensors_tensors_stay_readable_after_return(tmp_path):
+    tensors = {
+        "a": torch.arange(5, dtype=torch.float32),
+        "b": torch.zeros(2, 3, dtype=torch.float32),
+    }
+    path = tmp_path / "w.safetensors"
+    save_safetensors(tensors, path)
+    restored = load_safetensors(path)
+    for name, value in tensors.items():
+        torch.testing.assert_close(restored[name], value, rtol=0, atol=0)
 
 
 @pytest.mark.parametrize(
