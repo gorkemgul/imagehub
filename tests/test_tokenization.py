@@ -42,6 +42,11 @@ def test_normalize(text, expected):
         ("hi...there", ["hi", "...", "there"]),
         ("x!<|endoftext|>y", ["x", "!<|", "endoftext", "|>", "y"]),
         ("'''s", ["'''", "s"]),
+        ("<|endoftext|>🐱", ["<|", "endoftext", "|>", "🐱"]),
+        ("<|startoftext|>'s", ["<|", "startoftext", "|>", "'s"]),
+        ("<|endoftext|>|>", ["<|", "endoftext", "|>", "|>"]),
+        ("<|endoftext|><|startoftext|>", ["<|", "endoftext", "|>", "<|", "startoftext", "|>"]),
+        ("<|endofte", ["<|", "endofte"]),
         ("日本語 テスト", ["日本語", "テスト"]),
     ],
 )

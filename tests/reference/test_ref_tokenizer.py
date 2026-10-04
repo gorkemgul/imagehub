@@ -1,3 +1,5 @@
+import random
+
 import pytest
 from helpers import checkpoint_dir, write_tiny_tokenizer
 
@@ -68,3 +70,33 @@ def test_sd1_tokenizers_match_transformers_exhaustively(version):
     for text in [*PROMPTS, *SPECIAL_PROMPTS]:
         expected = ref(text, padding="max_length", max_length=77, truncation=True)["input_ids"]
         assert ours(text) == expected, (version, text)
+
+
+FUZZ_PIECES = [
+    "<|startoftext|>", "<|endoftext|>", "<|StartOfText|>", "<|ENDOFTEXT|>", "<|EndOfText|>",
+    "<|STARTOFTEXT|>", "a", "Cat", "'s", " ", "  ", "!", "é", "İ", "日本", "🐱", " ", "12",
+    "x<|", "|>", "don't", "'''s", "é",
+]  # fmt: skip
+
+
+def _fuzz(ours, ref, count=1000):
+    rng = random.Random(0)
+    for _ in range(count):
+        text = "".join(rng.choice(FUZZ_PIECES) for _ in range(rng.randint(1, 12)))
+        expected = ref(text, padding="max_length", max_length=77, truncation=True)["input_ids"]
+        assert ours(text) == expected, f"first mismatching prompt: {text!r}"
+
+
+def test_tiny_tokenizer_fuzz_matches_transformers(tmp_path):
+    path = write_tiny_tokenizer(tmp_path)
+    ours = CLIPTokenizer(path, max_length=77)
+    ref = transformers.CLIPTokenizer.from_pretrained(path, model_max_length=77)
+    _fuzz(ours, ref)
+
+
+@pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
+def test_sd1_tokenizers_fuzz_matches_transformers(version):
+    path = checkpoint_dir(version) / "tokenizer"
+    ours = CLIPTokenizer(path)
+    ref = transformers.CLIPTokenizer.from_pretrained(path)
+    _fuzz(ours, ref)

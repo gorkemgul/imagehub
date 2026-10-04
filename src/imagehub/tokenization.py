@@ -6,8 +6,12 @@ The remaining segments are normalized (NFC, Unicode whitespace runs collapsed to
 per-character lowercase); ``normalized=True`` specials are then extracted from the normalized
 text by exact match (so they also match after lowercasing, e.g. ``<|StartOfText|>``). Everything
 else is split with the pattern
-``'s|'t|'re|'ve|'m|'ll|'d|[\\p{L}]+|[\\p{N}]|[^\\s\\p{L}\\p{N}]+``.
-Python's ``re`` has no ``\\p{..}`` classes, so the split is an explicit scanner.
+``<\\|startoftext\\|>|<\\|endoftext\\|>|'s|'t|'re|'ve|'m|'ll|'d|[\\p{L}]+|[\\p{N}]|[^\\s\\p{L}\\p{N}]+``
+(leftmost-first alternation), followed by the GPT-2 ByteLevel regex. The latter is the identity
+on every piece except a special literal that was not extracted as an added token (for example
+``<|ENDOFTEXT|>`` lowercased): it is captured whole and then re-split into ``<|``, the name and
+``|>``, so ``|>`` never merges with following punctuation. Python's ``re`` has no ``\\p{..}``
+classes, so the split is an explicit scanner.
 """
 
 from __future__ import annotations
@@ -101,9 +105,13 @@ def normalize(text: str) -> str:
 
 
 def pretokenize(text: str) -> list[str]:
-    """Split like the reference regex: contractions | letters+ | one digit | other+.
+    """Split like the reference Split(regex) + ByteLevel pre-tokenizer, scanning left to right.
 
-    Special tokens are not handled here; ``CLIPTokenizer.tokenize`` splits them off first.
+    At each position (after skipping whitespace) the first matching alternative wins: a literal
+    ``<|startoftext|>`` / ``<|endoftext|>`` (emitted as ``<|``, name, ``|>``, as ByteLevel would
+    re-split it), a contraction, a letter run, a single number, or a greedy run of characters
+    that are neither whitespace, letters nor numbers (it does not stop at ``<|``).
+    Extraction of special tokens is done by ``CLIPTokenizer.tokenize`` beforehand.
     """
     pieces: list[str] = []
     i, n = 0, len(text)
@@ -111,6 +119,11 @@ def pretokenize(text: str) -> list[str]:
         ch = text[i]
         if ch in _WHITESPACE:
             i += 1
+            continue
+        literal = next((s for s in (BOS, EOS) if text.startswith(s, i)), None)
+        if literal is not None:
+            pieces.extend(("<|", literal[2:-2], "|>"))
+            i += len(literal)
             continue
         contraction = next((c for c in _CONTRACTIONS if text.startswith(c, i)), None)
         if contraction is not None:
