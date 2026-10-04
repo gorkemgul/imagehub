@@ -10,8 +10,8 @@ from imagehub.backends.stable_diffusion import (
     initial_latents,
     resolve_device,
 )
+from imagehub.checkpoints import SNAPSHOT_FILE
 from imagehub.exceptions import CheckpointError
-from imagehub.pretrained import SNAPSHOT_FILE
 
 
 @pytest.fixture(scope="module")

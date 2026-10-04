@@ -15,13 +15,13 @@ import urllib.parse
 import warnings
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
 
 from imagehub import download
 from imagehub.catalog import model_info
+from imagehub.checkpoints import SNAPSHOT_FILE, read_snapshot
 from imagehub.exceptions import DownloadError
 
-SNAPSHOT_FILE = "imagehub_snapshot.json"
+__all__ = ["SNAPSHOT_FILE", "download_pretrained", "main", "read_snapshot"]
 
 
 def download_pretrained(
@@ -92,14 +92,6 @@ def download_pretrained(
             dest.rmdir()  # verified empty above; never replace user files
         shutil.move(str(staging), dest)
     return dest
-
-
-def read_snapshot(directory: str | os.PathLike[str]) -> dict[str, Any] | None:
-    path = Path(directory) / SNAPSHOT_FILE
-    if not path.is_file():
-        return None
-    value = json.loads(path.read_text(encoding="utf-8"))
-    return value if isinstance(value, dict) else None
 
 
 def main(argv: list[str] | None = None) -> int:

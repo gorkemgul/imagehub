@@ -20,7 +20,7 @@ import torch
 
 import imagehub
 from imagehub.catalog import MODEL_CATALOG
-from imagehub.pretrained import read_snapshot
+from imagehub.checkpoints import read_snapshot
 
 LIMITS = [
     "Parity is claimed only on CPU in float32 against diffusers 0.40.0 and transformers 5.18.0.",

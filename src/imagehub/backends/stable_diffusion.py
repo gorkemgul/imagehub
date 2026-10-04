@@ -17,13 +17,12 @@ import torch
 from torch import Tensor
 
 from imagehub.backends.base import TextToImageBackend
-from imagehub.checkpoints import read_json
+from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel
 from imagehub.models.unet_2d import UNet2DConditionModel
-from imagehub.pretrained import read_snapshot
 from imagehub.schedulers.pndm import PNDMScheduler
 from imagehub.tokenization import CLIPTokenizer
 from imagehub.types import ImageResult, T2IRequest

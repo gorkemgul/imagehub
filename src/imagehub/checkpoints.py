@@ -56,6 +56,17 @@ def read_json(path: str | os.PathLike[str]) -> dict[str, Any]:
     return value
 
 
+SNAPSHOT_FILE = "imagehub_snapshot.json"
+
+
+def read_snapshot(directory: str | os.PathLike[str]) -> dict[str, Any] | None:
+    """Return the download manifest of a snapshot, or None when it has none."""
+    path = Path(directory) / SNAPSHOT_FILE
+    if not path.is_file():
+        return None
+    return read_json(path)
+
+
 def load_safetensors(path: str | os.PathLike[str]) -> dict[str, Tensor]:
     """Read the documented safetensors format using byte buffers and torch.frombuffer."""
     result: dict[str, Tensor] = {}

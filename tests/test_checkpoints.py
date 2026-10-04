@@ -252,3 +252,22 @@ def test_read_json_rejects_invalid_json(tmp_path):
     path.write_text("{not valid json")
     with pytest.raises(CheckpointError, match="Invalid JSON"):
         read_json(path)
+
+
+def test_read_snapshot(tmp_path):
+    from imagehub.checkpoints import SNAPSHOT_FILE, read_snapshot
+
+    assert read_snapshot(tmp_path) is None
+    (tmp_path / SNAPSHOT_FILE).write_text('{"model_id": "sd-v1-5"}')
+    assert read_snapshot(tmp_path) == {"model_id": "sd-v1-5"}
+    for bad in ("{not json", "[1, 2]"):
+        (tmp_path / SNAPSHOT_FILE).write_text(bad)
+        with pytest.raises(CheckpointError, match=SNAPSHOT_FILE):
+            read_snapshot(tmp_path)
+
+
+def test_pretrained_reexports_snapshot_helpers():
+    from imagehub import checkpoints, pretrained
+
+    assert pretrained.read_snapshot is checkpoints.read_snapshot
+    assert pretrained.SNAPSHOT_FILE == checkpoints.SNAPSHOT_FILE
