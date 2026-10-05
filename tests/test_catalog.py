@@ -9,6 +9,7 @@ from imagehub.types import Task
 def test_catalog_contents():
     assert available_models() == {
         "t2i": (
+            "janus-pro-1b",
             "playground-v2.5",
             "sd-v1-1",
             "sd-v1-2",
@@ -69,6 +70,27 @@ def test_catalog_contents():
     assert z_image.license == "Apache-2.0"
     assert len(set(z_image.files)) == len(z_image.files) == 19
     assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in z_image.files)
+
+    janus = model_info("janus-pro-1b")
+    assert janus.task is Task.T2I
+    assert janus.family == "janus"
+    assert janus.repo_id == "deepseek-community/Janus-Pro-1B"
+    assert janus.revision == "1655280bb75959cc1cb85529a2a8b26e7016072e"
+    assert janus.provenance == "community-conversion"
+    assert janus.catalog_id == "janus-pro"
+    assert janus.format == "transformers"
+    assert janus.license == "DeepSeek Model License"
+    assert janus.files == (
+        "config.json",
+        "generation_config.json",
+        "preprocessor_config.json",
+        "processor_config.json",
+        "special_tokens_map.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "chat_template.jinja",
+        "model.safetensors",
+    )
 
     ssd1b = model_info("ssd-1b")
     assert ssd1b.task is Task.T2I

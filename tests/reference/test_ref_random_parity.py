@@ -21,6 +21,8 @@ from helpers import (
 
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel, CLIPTextModelWithProjection
+from imagehub.models.janus_vq import JanusGenerationModel, postprocess_janus
+from imagehub.models.llama import LlamaCache, LlamaModel
 from imagehub.models.qwen3 import Qwen3Model
 from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.models.z_image_transformer import ZImageTransformer2DModel
@@ -122,6 +124,162 @@ def test_qwen3_random_weights():
         expected = ref(input_ids, attention_mask=attention_mask, output_hidden_states=True)
     exact(actual_hidden[-2], expected.hidden_states[-2])
     exact(actual_last, expected.last_hidden_state)
+
+
+LLAMA_TINY = {
+    "vocab_size": 128,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "head_dim": 8,
+    "max_position_embeddings": 1024,
+    "attention_dropout": 0.0,
+    "attention_bias": False,
+    "mlp_bias": False,
+    "hidden_act": "silu",
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 10000.0,
+    "rope_scaling": None,
+    "use_cache": True,
+}
+LLAMA_MEDIUM = LLAMA_TINY | {
+    "hidden_size": 512,
+    "intermediate_size": 768,
+    "num_attention_heads": 8,
+    "num_key_value_heads": 8,
+    "head_dim": 64,
+}
+
+
+@pytest.mark.parametrize("config", [LLAMA_TINY, LLAMA_MEDIUM], ids=["tiny", "medium"])
+def test_llama_static_cache_random_weights(config):
+    torch.manual_seed(0)
+    ref_config = transformers.LlamaConfig(**config)
+    ref_config._attn_implementation = "sdpa"
+    ref = transformers.LlamaModel(ref_config).eval()
+    ours = LlamaModel(config).eval()
+    ours.load_checkpoint(ref.state_dict())
+
+    prompt = torch.tensor(
+        [
+            [0, 0, 1, 13, 14, 15, 2],
+            [1, 21, 22, 23, 2, 0, 0],
+        ]
+    )
+    attention_mask = torch.tensor(
+        [
+            [0, 0, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 0, 0],
+        ]
+    )
+    input_tokens = prompt.repeat(2, 1)
+    unconditional = input_tokens[2:]
+    unconditional[(unconditional != 1) & (unconditional != 2)] = 0
+    inputs_embeds = ref.embed_tokens(input_tokens)
+    attention_mask = attention_mask.repeat(2, 1)
+    max_cache_len = max(20, 576 + prompt.shape[1])
+    ref_cache = transformers.StaticCache(ref_config, max_cache_len=max_cache_len)
+    cache = LlamaCache(config, max_cache_len=max_cache_len)
+    cache_position = torch.arange(prompt.shape[1])
+
+    with torch.inference_mode():
+        for step in range(21):
+            expected = ref(
+                inputs_embeds=inputs_embeds,
+                attention_mask=attention_mask,
+                past_key_values=ref_cache,
+                position_ids=cache_position.unsqueeze(0),
+                use_cache=True,
+            ).last_hidden_state
+            actual = ours(inputs_embeds, attention_mask, cache, cache_position)
+            exact(actual, expected)
+
+            if step == 20:
+                break
+            inputs_embeds = torch.randn(4, 1, config["hidden_size"])
+            attention_mask = torch.cat(
+                [attention_mask, attention_mask.new_ones((attention_mask.shape[0], 1))], dim=-1
+            )
+            cache_position = cache_position.new_tensor([prompt.shape[1] + step])
+
+
+JANUS_VQ = json.loads(
+    (Path(__file__).parents[1] / "fixtures/janus_pro_1b_config.json").read_text(encoding="utf-8")
+)["vq_config"]
+TINY_JANUS_VQ = JANUS_VQ | {
+    "base_channels": 32,
+    "channel_multiplier": [1, 2],
+    "embed_dim": 4,
+    "image_token_embed_dim": 32,
+    "latent_channels": 32,
+    "num_embeddings": 64,
+    "num_hidden_layers": 2,
+    "num_patches": 2,
+    "num_res_blocks": 1,
+    "projection_dim": 32,
+}
+
+
+@pytest.mark.parametrize("config", [TINY_JANUS_VQ, JANUS_VQ], ids=["tiny", "janus-1b"])
+def test_janus_vq_decode_random_weights(config):
+    from transformers.models.janus.configuration_janus import JanusVQVAEConfig
+    from transformers.models.janus.modeling_janus import JanusVQVAE
+
+    torch.manual_seed(0)
+    ref = JanusVQVAE(JanusVQVAEConfig(**config)).eval()
+    ours = JanusGenerationModel(config).eval()
+    ours.vqmodel.load_checkpoint(
+        {
+            name: value
+            for name, value in ref.state_dict().items()
+            if name.startswith(("quantize.", "post_quant_conv.", "decoder."))
+        }
+    )
+    tokens = torch.randint(0, config["num_embeddings"], (2, config["num_patches"] ** 2))
+    with torch.inference_mode():
+        actual = ours.decode_image_tokens(tokens)
+        expected = ref.decode(tokens).permute(0, 2, 3, 1)
+    exact(actual, expected)
+
+
+def test_janus_generation_modules_random_weights():
+    from transformers.models.janus.configuration_janus import JanusVQVAEConfig
+    from transformers.models.janus.modeling_janus import JanusVQVAEAlignerMLP, JanusVQVAEHead
+
+    config = JanusVQVAEConfig(**TINY_JANUS_VQ)
+    torch.manual_seed(0)
+    ref_embeddings = torch.nn.Embedding(config.num_embeddings, config.embed_dim)
+    ref_aligner = JanusVQVAEAlignerMLP(config).eval()
+    ref_head = JanusVQVAEHead(config).eval()
+    ours = JanusGenerationModel(TINY_JANUS_VQ).eval()
+    ours.generation_embeddings.load_state_dict(ref_embeddings.state_dict())
+    ours.generation_aligner.load_state_dict(ref_aligner.state_dict())
+    ours.generation_head.load_state_dict(ref_head.state_dict())
+    tokens = torch.randint(0, config.num_embeddings, (2, 7))
+    hidden_states = torch.randn(2, 7, config.image_token_embed_dim)
+    with torch.inference_mode():
+        exact(ours.generation_embeddings(tokens), ref_embeddings(tokens))
+        exact(ours.generation_aligner(ref_embeddings(tokens)), ref_aligner(ref_embeddings(tokens)))
+        exact(ours.generation_head(hidden_states), ref_head(hidden_states))
+
+
+def test_janus_postprocess_pixels():
+    # AutoProcessor picks the torchvision-backed JanusImageProcessor when torchvision is installed.
+    pytest.importorskip("torchvision")
+    from transformers.models.janus.image_processing_janus import JanusImageProcessor
+
+    processor = JanusImageProcessor(
+        image_mean=[0.5, 0.5, 0.5], image_std=[0.5, 0.5, 0.5], rescale_factor=1 / 255
+    )
+    # decode_image_tokens returns (batch, height, width, channels) in roughly [-1, 1].
+    decoded = (torch.randn(2, 24, 24, 3) * 0.7).clamp(-1.2, 1.2)
+    decoded[0, 0, 0] = 1.0
+    decoded[0, 0, 1] = -1.0
+    expected = processor.postprocess(list(decoded.float()), return_tensors="pt")["pixel_values"]
+    expected = torch.as_tensor(expected).permute(0, 2, 3, 1)
+    exact(postprocess_janus(decoded), expected)
 
 
 SD1_VAE = {

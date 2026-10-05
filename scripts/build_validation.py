@@ -61,6 +61,8 @@ def header_check(header: dict | None) -> dict | None:
     """Merge per-component header records into missing/extra/mismatch lists and counts."""
     if header is None:
         return None
+    if all(key in header for key in ("missing", "extra", "mismatch", "tensors")):
+        return header
     merged: dict = {"missing": [], "extra": [], "mismatch": [], "tensors": {}}
     for component, entry in header.items():
         for key in ("missing", "extra", "mismatch"):
@@ -96,6 +98,7 @@ def main() -> None:
         if snapshot is None or snapshot["revision"] != spec.revision:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
         e2e = measured.get(f"e2e_{spec.id}")
+        e2e_batch2 = measured.get(f"e2e_batch2_{spec.id}")
         e2e_multistep = measured.get(f"e2e_multistep_{spec.id}")
         e2e_guided = measured.get(f"e2e_guided_{spec.id}")
         seed_e2e = measured.get(f"seed_e2e_{spec.id}")
@@ -112,6 +115,7 @@ def main() -> None:
                 "files": snapshot["files"],
                 "tensor_header_check": header_check(header),
                 "end_to_end": e2e,
+                **({"end_to_end_batch2": e2e_batch2} if e2e_batch2 else {}),
                 **({"end_to_end_multistep": e2e_multistep} if e2e_multistep else {}),
                 **({"end_to_end_guided": e2e_guided} if e2e_guided else {}),
                 "seed_end_to_end": seed_e2e,
@@ -150,6 +154,9 @@ def main() -> None:
         },
         "components_z_image": {
             key: value for key, value in measured.items() if key in Z_IMAGE_COMPONENT_KEYS
+        },
+        "components_janus": {
+            key: value for key, value in measured.items() if key.startswith("janus_")
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},
