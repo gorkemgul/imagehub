@@ -1,8 +1,10 @@
 import json
 import random
+import shutil
+from pathlib import Path
 
 import pytest
-from helpers import checkpoint_dir, write_tiny_tokenizer
+from helpers import checkpoint_dir, snapshot_dir, write_tiny_tokenizer
 
 from imagehub.tokenization import CLIPTokenizer
 
@@ -25,6 +27,8 @@ PROMPTS = [
     "word " * 100,
     "",
 ]
+
+TURBO_CONFIGS = Path(__file__).parents[1] / "fixtures" / "sdxl_turbo_configs"
 
 
 def test_tiny_tokenizer_matches_transformers(tmp_path):
@@ -111,6 +115,74 @@ def test_tiny_tokenizer_fuzz_matches_transformers(tmp_path):
     path = write_tiny_tokenizer(tmp_path)
     ours = CLIPTokenizer(path, max_length=77)
     ref = transformers.CLIPTokenizer.from_pretrained(path, model_max_length=77)
+    _fuzz(ours, ref)
+
+
+@pytest.mark.parametrize("name", ["tokenizer", "tokenizer_2"])
+def test_sdxl_turbo_fixture_tokenizers_fuzz_match_transformers(tmp_path, name):
+    source = snapshot_dir("sdxl-turbo") / name
+    path = tmp_path / name
+    path.mkdir()
+    for filename in ("vocab.json", "merges.txt"):
+        shutil.copyfile(source / filename, path / filename)
+    for filename in ("tokenizer_config.json", "special_tokens_map.json"):
+        shutil.copyfile(TURBO_CONFIGS / name / filename, path / filename)
+    ours = CLIPTokenizer(path)
+    ref = transformers.CLIPTokenizer.from_pretrained(path)
+    _fuzz(ours, ref)
+
+
+@pytest.mark.parametrize(
+    "config",
+    [
+        {
+            "added_tokens_decoder": {
+                "515": {"content": "<|startoftext|>", "normalized": True, "special": True},
+                "516": {"content": "<|endoftext|>", "normalized": True, "special": True},
+            },
+            "unk_token": "<|endoftext|>",
+            "bos_token": "<|startoftext|>",
+            "eos_token": "<|endoftext|>",
+            "pad_token": "<|endoftext|>",
+        },
+        {
+            "added_tokens_decoder": {
+                "515": {"content": "<|startoftext|>", "normalized": True, "special": True},
+                "516": {"content": "<|endoftext|>", "normalized": True, "special": True},
+            },
+            "unk_token": {
+                "__type": "AddedToken",
+                "content": "<|endoftext|>",
+                "normalized": False,
+            },
+            "bos_token": "<|startoftext|>",
+            "eos_token": {
+                "__type": "AddedToken",
+                "content": "<|endoftext|>",
+                "normalized": False,
+            },
+            "pad_token": "<|endoftext|>",
+        },
+        {
+            "added_tokens_decoder": {
+                "515": {"content": "<|startoftext|>", "normalized": True, "special": True},
+            },
+            "unk_token": "<|endoftext|>",
+            "bos_token": "<|startoftext|>",
+            "eos_token": {
+                "__type": "AddedToken",
+                "content": "<|endoftext|>",
+                "normalized": True,
+            },
+            "pad_token": "<|endoftext|>",
+        },
+    ],
+)
+def test_mixed_added_token_decoder_configs_fuzz_match_transformers(tmp_path, config):
+    path = write_tiny_tokenizer(tmp_path)
+    (path / "tokenizer_config.json").write_text(json.dumps(config), encoding="utf-8")
+    ours = CLIPTokenizer(path)
+    ref = transformers.CLIPTokenizer.from_pretrained(path)
     _fuzz(ours, ref)
 
 

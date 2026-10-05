@@ -1,8 +1,10 @@
 """Native CLIP byte-level BPE tokenizer matching transformers' ``CLIPTokenizer``.
 
-Each special token carries a ``normalized`` flag read from the tokenizer config. The reference
-first extracts ``normalized=False`` specials from the raw text by exact (case-sensitive) match.
-The remaining segments are normalized (NFC, Unicode whitespace runs collapsed to one space,
+Each special token carries a ``normalized`` flag read from the tokenizer config. When
+``added_tokens_decoder`` has an entry with the same content as a named special token, its flag
+takes precedence over the plain-string or dict value of that named token. The reference first
+extracts ``normalized=False`` specials from the raw text by exact (case-sensitive) match. The
+remaining segments are normalized (NFC, Unicode whitespace runs collapsed to one space,
 per-character lowercase); ``normalized=True`` specials are then extracted from the normalized
 text by exact match (so they also match after lowercasing, e.g. ``<|StartOfText|>``). Everything
 else is split with the pattern
@@ -40,9 +42,10 @@ def _split_on(text: str, tokens: list[str]) -> list[str]:
 def special_token_flags(directory: str | os.PathLike[str]) -> dict[str, bool]:
     """Map configured special-token contents to their ``normalized`` flag.
 
-    Mirrors transformers: the tokens are registered in the order unk, bos, eos, pad from
-    ``tokenizer_config.json`` (``special_tokens_map.json`` as fallback); when several keys share
-    the same content the last registration wins. A plain-string value registers with
+    Mirrors transformers: ``added_tokens_decoder`` properties take precedence for named tokens
+    with matching content. Otherwise the tokens are registered in the order unk, bos, eos, pad
+    from ``tokenizer_config.json`` (``special_tokens_map.json`` as fallback); when several keys
+    share the same content the last registration wins. A plain-string value registers with
     ``normalized=False``, a dict value with its ``"normalized"`` field. Without any config both
     default specials are ``normalized=False``.
     """
@@ -61,6 +64,12 @@ def _special_token_config(
             configured = True
             break
     flags = {} if configured else {BOS: False, EOS: False}
+    added_flags: dict[str, bool] = {}
+    added_tokens_decoder = config.get("added_tokens_decoder")
+    if isinstance(added_tokens_decoder, dict):
+        for value in added_tokens_decoder.values():
+            if isinstance(value, dict) and isinstance(value.get("content"), str):
+                added_flags[value["content"]] = bool(value.get("normalized", False))
     contents: dict[str, str | None] = {
         "unk_token": EOS,
         "bos_token": BOS,
@@ -71,10 +80,12 @@ def _special_token_config(
         value = config.get(key)
         if isinstance(value, str):
             contents[key] = value
-            flags[value] = False
+            flags[value] = added_flags.get(value, False)
         elif isinstance(value, dict) and isinstance(value.get("content"), str):
             contents[key] = value["content"]
-            flags[value["content"]] = bool(value.get("normalized", False))
+            flags[value["content"]] = added_flags.get(
+                value["content"], bool(value.get("normalized", False))
+            )
     return flags, contents
 
 

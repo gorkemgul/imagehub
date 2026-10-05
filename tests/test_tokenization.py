@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 from helpers import write_tiny_tokenizer
@@ -78,6 +79,7 @@ def test_specials_are_exact_case_on_raw_text(tmp_path):
 
 
 BOS_T, EOS_T = "<|startoftext|>", "<|endoftext|>"
+TURBO_CONFIGS = Path(__file__).parent / "fixtures" / "sdxl_turbo_configs"
 
 
 def _tiny_with_config(tmp_path, config):
@@ -89,6 +91,34 @@ def _tiny_with_config(tmp_path, config):
 def test_flags_plain_strings_are_not_normalized(tmp_path):
     path = write_tiny_tokenizer(tmp_path)
     assert special_token_flags(path) == {BOS_T: False, EOS_T: False}
+
+
+@pytest.mark.parametrize(
+    ("name", "expected"),
+    [
+        ("tokenizer", {EOS_T: True, BOS_T: True}),
+        ("tokenizer_2", {EOS_T: True, BOS_T: True, "!": False}),
+    ],
+)
+def test_turbo_flags_come_from_added_tokens_decoder(name, expected):
+    assert special_token_flags(TURBO_CONFIGS / name) == expected
+
+
+def test_added_tokens_decoder_overrides_string_and_dict_specials(tmp_path):
+    config = {
+        "added_tokens_decoder": {
+            "515": {"content": BOS_T, "normalized": True, "special": True},
+            "516": {"content": EOS_T, "normalized": True, "special": True},
+        },
+        "unk_token": {"content": EOS_T, "normalized": False},
+        "bos_token": BOS_T,
+        "eos_token": {"content": EOS_T, "normalized": False},
+        "pad_token": EOS_T,
+    }
+    path = _tiny_with_config(tmp_path, config)
+
+    assert special_token_flags(path) == {EOS_T: True, BOS_T: True}
+    assert CLIPTokenizer(path, max_length=8).tokenize("<|StartOfText|><|ENDOFTEXT|>") == [515, 516]
 
 
 def test_flags_follow_dicts_and_last_registration_wins(tmp_path):
