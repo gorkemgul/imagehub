@@ -11,7 +11,9 @@ pytest.importorskip("transformers")
 
 
 @pytest.mark.parametrize(
-    "guidance,negative_prompt", [(1.0, None), (4.0, "blurry")], ids=["unguided", "guided"]
+    "guidance,negative_prompt",
+    [(0.0, None), (1.0, None), (4.0, "blurry")],
+    ids=["guidance-0", "guidance-1", "guided"],
 )
 def test_tiny_sd3_generation_matches_diffusers_exactly(tmp_path, guidance, negative_prompt):
     root = write_tiny_sd3(tmp_path / "tiny")
