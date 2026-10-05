@@ -15,6 +15,133 @@ from imagehub.tokenization import _WHITESPACE, _is_letter, _is_number, bytes_to_
 _CONTRACTIONS = ("'s", "'t", "'re", "'ve", "'m", "'ll", "'d")
 _AddedPiece: TypeAlias = tuple[str, int | None]
 
+# These combining marks are unassigned in the reference tokenizer's older Unicode tables.
+_REFERENCE_UNASSIGNED = frozenset(
+    {
+        0x7FD,
+        0x898,
+        0x899,
+        0x89A,
+        0x89B,
+        0x89C,
+        0x89D,
+        0x89E,
+        0x89F,
+        0x8CA,
+        0x8CB,
+        0x8CC,
+        0x8CD,
+        0x8CE,
+        0x8CF,
+        0x8D0,
+        0x8D1,
+        0x8D2,
+        0x8D3,
+        0x9FE,
+        0xC3C,
+        0xD3B,
+        0xD3C,
+        0xEBA,
+        0x1715,
+        0x1ABF,
+        0x1AC0,
+        0x1AC1,
+        0x1AC2,
+        0x1AC3,
+        0x1AC4,
+        0x1AC5,
+        0x1AC6,
+        0x1AC7,
+        0x1AC8,
+        0x1AC9,
+        0x1ACA,
+        0x1ACB,
+        0x1ACC,
+        0x1ACD,
+        0x1ACE,
+        0x1DF6,
+        0x1DF7,
+        0x1DF8,
+        0x1DF9,
+        0x1DFA,
+        0xA82C,
+        0x10D24,
+        0x10D25,
+        0x10D26,
+        0x10D27,
+        0x10EAB,
+        0x10EAC,
+        0x10EFD,
+        0x10EFE,
+        0x10EFF,
+        0x10F46,
+        0x10F47,
+        0x10F48,
+        0x10F49,
+        0x10F4A,
+        0x10F4B,
+        0x10F4C,
+        0x10F4D,
+        0x10F4E,
+        0x10F4F,
+        0x10F50,
+        0x10F82,
+        0x10F83,
+        0x10F84,
+        0x10F85,
+        0x11070,
+        0x1133B,
+        0x1145E,
+        0x11839,
+        0x1183A,
+        0x1193D,
+        0x1193E,
+        0x11943,
+        0x119E0,
+        0x11A34,
+        0x11A47,
+        0x11A99,
+        0x11D42,
+        0x11D44,
+        0x11D45,
+        0x11D97,
+        0x11F41,
+        0x11F42,
+        0x16FF0,
+        0x16FF1,
+        0x1E08F,
+        0x1E130,
+        0x1E131,
+        0x1E132,
+        0x1E133,
+        0x1E134,
+        0x1E135,
+        0x1E136,
+        0x1E2AE,
+        0x1E2EC,
+        0x1E2ED,
+        0x1E2EE,
+        0x1E2EF,
+        0x1E4EC,
+        0x1E4ED,
+        0x1E4EE,
+        0x1E4EF,
+    }
+)
+
+
+def _normalize(text: str) -> str:
+    """NFC-normalize with the reference tokenizer's older Unicode tables."""
+    pieces: list[str] = []
+    start = 0
+    for index, character in enumerate(text):
+        if ord(character) in _REFERENCE_UNASSIGNED:
+            pieces.append(unicodedata.normalize("NFC", text[start:index]))
+            pieces.append(character)
+            start = index + 1
+    pieces.append(unicodedata.normalize("NFC", text[start:]))
+    return "".join(pieces)
+
 
 def _split_added(text: str, tokens: dict[str, int]) -> list[_AddedPiece]:
     if not tokens:
@@ -116,7 +243,7 @@ def _pretokenize(text: str) -> list[str]:
 
 
 class Qwen2Tokenizer:
-    """Qwen2 NFC-normalized byte-level BPE tokenizer."""
+    """Qwen2 byte-level BPE tokenizer with reference-compatible NFC normalization."""
 
     def __init__(self, directory: str | os.PathLike[str]) -> None:
         path = Path(directory)
@@ -184,7 +311,7 @@ class Qwen2Tokenizer:
             if raw_id is not None:
                 ids.append(raw_id)
                 continue
-            normalized = unicodedata.normalize("NFC", raw)
+            normalized = _normalize(raw)
             for piece, normalized_id in _split_added(normalized, self._normalized_added):
                 if normalized_id is not None:
                     ids.append(normalized_id)

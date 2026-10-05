@@ -2,9 +2,14 @@ from pathlib import Path
 
 import torch
 
-from imagehub.tokenization_qwen import Qwen2Tokenizer
+from imagehub.tokenization_qwen import Qwen2Tokenizer, _normalize
 
 TOKENIZER = Path(__file__).parent / "fixtures" / "qwen_tokenizer"
+
+
+def test_qwen_normalization_matches_reference_for_recent_combining_marks():
+    assert _normalize("᪶༵࢟") == "᪶༵࢟"
+    assert _normalize("e\N{COMBINING ACUTE ACCENT}") == "é"
 
 
 def test_qwen_tiny_bpe_and_special_tokens():

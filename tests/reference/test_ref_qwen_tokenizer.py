@@ -4,7 +4,7 @@ import pytest
 import torch
 from helpers import snapshot_dir
 
-from imagehub.tokenization_qwen import Qwen2Tokenizer
+from imagehub.tokenization_qwen import Qwen2Tokenizer, _normalize
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
@@ -107,3 +107,49 @@ def test_qwen_tokenizer_seeded_fuzz_matches_reference(record):
         for prompt in batch:
             assert ours.tokenize(prompt) == reference.encode(prompt, add_special_tokens=True)
     record("qwen_tokenizer_fuzz", prompts=len(prompts), mismatches=0, tolerance="exact")
+
+
+def test_qwen_tokenizer_matches_reference_for_every_code_point(record):
+    path = snapshot_dir("z-image-turbo") / "tokenizer"
+    ours = Qwen2Tokenizer(path)
+    reference = transformers.AutoTokenizer.from_pretrained(path)
+    reference_normalize = reference.backend_tokenizer.normalizer.normalize_str
+    normalization_mismatches = 0
+    tokenization_mismatches = 0
+
+    for code_point in range(0x20, 0x110000):
+        if 0xD800 <= code_point <= 0xDFFF:
+            continue
+        character = chr(code_point)
+        normalization_prompts = [
+            character,
+            "a" + character,
+            character + "̴",
+            "̴" + character,
+            character + "́",
+            "༵" + character + "̴",
+            character + "ְ",
+        ]
+        normalization_mismatches += sum(
+            _normalize(prompt) != reference_normalize(prompt) for prompt in normalization_prompts
+        )
+        tokenization_prompts = [
+            "a" + character + "b",
+            character + "́",
+            " " + character + "1",
+            "༵" + character,
+        ]
+        tokenization_mismatches += sum(
+            ours.tokenize(prompt) != reference.encode(prompt, add_special_tokens=True)
+            for prompt in tokenization_prompts
+        )
+
+    assert normalization_mismatches == 0
+    assert tokenization_mismatches == 0
+    record(
+        "qwen_tokenizer_exhaustive",
+        code_points=0x110000 - 0x20 - 0x800,
+        normalization_mismatches=normalization_mismatches,
+        tokenization_mismatches=tokenization_mismatches,
+        tolerance="exact",
+    )
