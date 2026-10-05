@@ -154,6 +154,37 @@ The header-only tensor check covered `text_encoder`, `transformer` and `vae`: te
 398 / 521 / 244, with missing, extra and shape-mismatched tensors all **0**. Record:
 `tensor_header_check`, [validation.json](validation.json).
 
+## Janus-Pro
+
+Validated on CPU on October 5, 2026, in the same environment as above. `janus-pro-1b` was loaded
+strictly and compared with transformers 5.18.0
+`JanusForConditionalGeneration.generate(generation_mode="image")`. The observed difference in
+every numeric comparison is **exactly 0**: on CPU in float32, the local implementation produces
+bit-identical image tokens and pixels.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| DeepSeek LLM tokenizer (fixed prompts, seeded fuzz and every code point; processor prompt ids) | identical | exact |
+| Language model (prompt prefill and 8 decode steps with the static cache) | 0 | 0 |
+| LlamaGen VQ-16 decode | 0 | 0 |
+| End to end: 576 image tokens / pixels (1 image, seeded sampling, guidance 5) | identical / identical | exact / exact |
+| End to end: 576 image tokens / pixels (batch of 2, seeded sampling, guidance 5) | identical / identical | exact / exact |
+| End to end, seed 42 (pixels) | identical | exact |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse". Both the transformers
+reference and imagehub use seeded sampling, guidance 5, temperature 1.0 and 576 autoregressive
+image tokens. The header check covered 964 tensors. Understanding-only tensors are skipped by an
+explicit allow-list; missing, extra and shape-mismatched generation tensors are all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
+**Checkpoint provenance.** The catalog uses the transformers conversion
+`deepseek-community/Janus-Pro-1B` (provenance `community-conversion`) because the authors'
+`deepseek-ai/Janus-Pro-1B` ships `pytorch_model.bin` for the original `janus` package. All 819
+tensors used for image generation are byte-identical to the authors' file; the 145 tensors that
+differ belong to the understanding-only `vision_model`.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -176,11 +207,11 @@ The header-only tensor check covered `text_encoder`, `transformer` and `vae`: te
 
 ## Automated tests
 
-- Regular tests: 313 passed, 127 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 340 passed, 145 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 8 passed, 1 skipped for `playground-v2.5`, and 9 passed for
-  `z-image-turbo`. These
+  `z-image-turbo`, and 6 passed for `janus-pro-1b`. These
   include structural parity with random weights, end-to-end parity with a small model,
   real-checkpoint parity and tokenizer fuzz tests.
 - MPS smoke test: 1 passed.
@@ -213,3 +244,8 @@ The SDXL validation found three more differences:
    64-byte aligned tensors, unlike single-file checkpoints, and BLAS summation order depends on
    alignment. The first run therefore differed by 4.2e-5 in the transformer, 3.1e-3 in unguided
    latents and 1 pixel.
+8. **SDPA attention in the Janus reference.** The reference loads the language model with SDPA
+   attention. Eager attention differed by 5.5e-6 in the last hidden state.
+9. **Janus return-sequence configuration.** In transformers 5.18.0, setting
+   `model.generation_config.num_return_sequences` as the model card shows fails validation. The
+   equivalent `generate(num_return_sequences=...)` argument is used instead.

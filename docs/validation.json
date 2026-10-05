@@ -450,6 +450,49 @@
       }
     },
     {
+      "model_id": "janus-pro-1b",
+      "repo_id": "deepseek-community/Janus-Pro-1B",
+      "revision": "1655280bb75959cc1cb85529a2a8b26e7016072e",
+      "provenance": "community-conversion",
+      "catalog_id": "janus-pro",
+      "license": "DeepSeek Model License",
+      "status": "full",
+      "files": {
+        "config.json": "931a5d566cbaed44fe0114412755c7b1efe76bf8e30c7d04ee3e337b121805aa",
+        "generation_config.json": "cb3fe41f2dbb0cf759909e9346b01cbd946d27a4a27c56d54d1fed02db0869be",
+        "preprocessor_config.json": "00bc5d559ff85d8a11452ef01e42ec478feee6de880ba921f5e74381002a984d",
+        "processor_config.json": "b9df983688f30166d870e495de7ac9882d320e76205f96c34da97fc538bca870",
+        "special_tokens_map.json": "0427a4e49abdd6028f4152fc841009b6c892009107b91fc067e518741f077e92",
+        "tokenizer.json": "b41bc4a54543e107fa7ea1b170b985d38af106e3a69d2a1318501006f8dbb563",
+        "tokenizer_config.json": "867aca294b5e986d9551939db41dbf9d8f05b2c061f50824b20a704285b63b96",
+        "chat_template.jinja": "ca86eba863fa87feee121798ddc615b986b2642757e8e472d66d82fe256124a2",
+        "model.safetensors": "9d1a416f95fb58d6e02858623c9c676003d66006d51fb5d5cc93348ba78cb942"
+      },
+      "tensor_header_check": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 964
+      },
+      "end_to_end": {
+        "num_images": 1,
+        "passed": true,
+        "pixels_match": true,
+        "tokens_match": true
+      },
+      "end_to_end_batch2": {
+        "num_images": 2,
+        "passed": true,
+        "pixels_match": true,
+        "tokens_match": true
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "pixels_match": true,
+        "seed": 42
+      }
+    },
+    {
       "model_id": "sdxl-turbo",
       "repo_id": "stabilityai/sdxl-turbo",
       "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
@@ -1062,6 +1105,19 @@
       "tolerance": 0.0
     }
   },
+  "components_janus": {
+    "janus_language_model": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": 8,
+      "tolerance": 0.0
+    },
+    "janus_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -1089,6 +1145,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "9 passed, 9 deselected, 3 warnings"
+    "reference_summary": "6 passed"
   }
 }

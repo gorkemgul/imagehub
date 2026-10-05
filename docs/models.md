@@ -159,6 +159,43 @@ refiner model, img2img, other schedulers and fp16 parity are not in this release
 **License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
 
 
+# Janus-Pro
+
+Catalog: [`janus-pro`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `janus-pro-1b` · Task: `t2i`
+
+**Architecture.** The DeepSeek LLM tokenizer renders the prompt through a chat template ending in
+the image-start token. A 24-layer Llama autoregressively generates 576 image tokens, applying
+classifier-free guidance over the logits. A LlamaGen VQ-16 decoder produces the fixed 384×384
+image.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained janus-pro-1b checkpoints/janus-pro-1b
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="janus-pro-1b", model="checkpoints/janus-pro-1b", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The supported options are `guidance` (5), `temperature` (1.0), `do_sample` (True),
+`num_images` and `seed`. The output size is fixed at 384×384. Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU, seed 42 produces the same image tokens and pixels as transformers
+5.18.0 `JanusForConditionalGeneration.generate(generation_mode="image")`
+([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is no claim of exact
+equality on these devices.
+
+**Out of scope.** Image understanding and variable output sizes are not supported.
+
+**License.** The original Janus code is licensed under MIT. The weights are under the DeepSeek
+Model License; see the license. imagehub does not distribute weights.
+
+
 # Playground v2.5
 
 Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
