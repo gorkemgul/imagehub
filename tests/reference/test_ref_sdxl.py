@@ -238,17 +238,15 @@ def test_euler_scheduler(sdxl, record):
         torch.testing.assert_close(actual.sigmas, expected.sigmas, atol=0, rtol=0)
 
 
-def test_end_to_end(sdxl, record):
-    model_id, _, ours, ref = sdxl
-    defaults = MODEL_CATALOG[model_id].config.get("defaults", {})
-    steps = int(defaults.get("steps", 30))
-    guidance = float(defaults.get("guidance", 5.0))
+def _run_end_to_end(sdxl, record, *, steps, guidance, negative_prompt, record_name, runtime_note):
+    _, _, ours, ref = sdxl
     latent_size = int(ours.unet.config["sample_size"])
     image_size = latent_size * 8
     latents = initial_latents(1234, (1, 4, latent_size, latent_size))
     with torch.inference_mode():
         ref_latents = ref(
             PROMPT,
+            negative_prompt=negative_prompt,
             num_inference_steps=steps,
             guidance_scale=guidance,
             height=image_size,
@@ -263,7 +261,7 @@ def test_end_to_end(sdxl, record):
     our_latents = denoise(
         ours,
         prompt=PROMPT,
-        negative_prompt=None,
+        negative_prompt=negative_prompt,
         steps=steps,
         guidance=guidance,
         latents=latents.clone(),
@@ -280,7 +278,7 @@ def test_end_to_end(sdxl, record):
         and pixel_diff <= TOLERANCES["e2e_pixels"]
     )
     record(
-        f"e2e_{model_id}",
+        record_name,
         latents=latent_diff,
         pixels_max_abs=pixel_diff,
         passed=passed,
@@ -290,9 +288,45 @@ def test_end_to_end(sdxl, record):
         size=[image_size, image_size],
         noise_seed=1234,
         tolerance={"latents": TOLERANCES["e2e_latents"], "pixels": TOLERANCES["e2e_pixels"]},
-        runtime_note="30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        runtime_note=runtime_note,
     )
     assert passed, (latent_diff, pixel_diff)
+
+
+def test_end_to_end(sdxl, record):
+    model_id, _, _, _ = sdxl
+    defaults = MODEL_CATALOG[model_id].config.get("defaults", {})
+    steps = int(defaults.get("steps", 30))
+    guidance = float(defaults.get("guidance", 5.0))
+    _run_end_to_end(
+        sdxl,
+        record,
+        steps=steps,
+        guidance=guidance,
+        negative_prompt=None,
+        record_name=f"e2e_{model_id}",
+        runtime_note=(
+            "30 steps are used instead of 50 to keep CPU runtime reasonable."
+            if "steps" not in defaults
+            else f"{steps} step(s): the catalog default for this model."
+        ),
+    )
+
+
+def test_end_to_end_multistep(sdxl, record):
+    model_id, _, _, _ = sdxl
+    defaults = MODEL_CATALOG[model_id].config.get("defaults", {})
+    if "steps" not in defaults:
+        pytest.skip("model does not define a few-step default")
+    _run_end_to_end(
+        sdxl,
+        record,
+        steps=4,
+        guidance=2.0,
+        negative_prompt="blurry",
+        record_name=f"e2e_multistep_{model_id}",
+        runtime_note="4 steps exercise ancestral sampling and classifier-free guidance.",
+    )
 
 
 def test_seed_end_to_end(sdxl, record):
