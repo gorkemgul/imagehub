@@ -25,6 +25,10 @@ from imagehub.models.qwen3 import Qwen3Model
 from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
+from imagehub.schedulers.flow_match_euler import (
+    FlowMatchEulerDiscreteScheduler,
+    z_image_sigmas,
+)
 from imagehub.schedulers.pndm import PNDMScheduler
 
 pytestmark = pytest.mark.reference
@@ -147,6 +151,43 @@ def test_vae_random_weights(config, latent_hw):
     with torch.inference_mode():
         exact(ours.decode(z), ref.decode(z).sample)
         exact(ours.encode(image), ref.encode(image).latent_dist.mean)
+
+
+Z_IMAGE_VAE = json.loads(
+    (Path(__file__).parents[1] / "fixtures/z_image_turbo_configs/vae_config.json").read_text(
+        encoding="utf-8"
+    )
+)
+TINY_Z_IMAGE_VAE = Z_IMAGE_VAE | {
+    "block_out_channels": [32, 32, 64, 64],
+    "norm_num_groups": 8,
+    "sample_size": 64,
+}
+
+
+def test_z_image_vae_random_weights():
+    torch.manual_seed(0)
+    ref = diffusers.AutoencoderKL.from_config(TINY_Z_IMAGE_VAE).eval()
+    for parameter in ref.parameters():
+        parameter.data.normal_(0, 0.02)
+    ours = AutoencoderKL(TINY_Z_IMAGE_VAE).eval()
+    ours.load_checkpoint(legacy_vae_state(ref.state_dict()))
+    latents = torch.randn(1, 16, 8, 6)
+    image = torch.rand(1, 3, 64, 48) * 2 - 1
+    with torch.inference_mode():
+        exact(ours.decode(latents), ref.decode(latents).sample)
+        exact(ours.encode(image), ref.encode(image).latent_dist.mean)
+
+
+def test_z_image_vae_full_config_layout():
+    with torch.device("meta"):
+        ref = diffusers.AutoencoderKL.from_config(Z_IMAGE_VAE)
+        ours = AutoencoderKL(Z_IMAGE_VAE)
+    expected = {
+        name: list(value.shape) for name, value in legacy_vae_state(ref.state_dict()).items()
+    }
+    actual = {name: list(value.shape) for name, value in ours.state_dict().items()}
+    assert actual == expected
 
 
 @pytest.mark.parametrize(
@@ -299,6 +340,37 @@ def test_euler_matches_diffusers():
         expected = ref.step(model_output, timestep, expected).prev_sample
         sample = ours.step(model_output, timestep, sample)
     exact(sample, expected)
+
+
+def test_flow_match_euler_matches_diffusers():
+    fixture = Path(__file__).parents[1] / (
+        "fixtures/z_image_turbo_configs/scheduler_scheduler_config.json"
+    )
+    config = json.loads(fixture.read_text(encoding="utf-8"))
+    for steps in (1, 8, 9, 50):
+        for sigmas in (z_image_sigmas(steps), None):
+            ref = diffusers.FlowMatchEulerDiscreteScheduler.from_config(config)
+            ours = FlowMatchEulerDiscreteScheduler(config)
+            ref.set_timesteps(steps, sigmas=sigmas, mu=0.9)
+            ours.set_timesteps(steps, sigmas=sigmas, mu=0.9)
+            exact(ours.timesteps, ref.timesteps)
+            exact(ours.sigmas, ref.sigmas)
+
+    torch.manual_seed(0)
+    sample = torch.randn(2, 16, 8, 8)
+    expected = sample.clone()
+    ref = diffusers.FlowMatchEulerDiscreteScheduler.from_config(config)
+    ours = FlowMatchEulerDiscreteScheduler(config)
+    sigmas = z_image_sigmas(9)
+    ref.set_timesteps(9, sigmas=sigmas, mu=0.9)
+    ours.set_timesteps(9, sigmas=sigmas, mu=0.9)
+    ref.set_begin_index(0)
+    ours.set_begin_index(0)
+    for timestep in ref.timesteps:
+        model_output = torch.randn_like(sample)
+        expected = ref.step(model_output, timestep, expected).prev_sample
+        sample = ours.step(model_output, timestep, sample)
+        exact(sample, expected)
 
 
 def test_edm_dpmsolver_matches_diffusers():
