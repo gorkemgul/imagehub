@@ -91,3 +91,20 @@ def test_accepts_latent_statistics_config():
     vae = AutoencoderKL(config)
     assert vae.latents_mean == config["latents_mean"]
     assert vae.latents_std == config["latents_std"]
+
+
+def test_flux_style_options():
+    config = TINY_VAE_CONFIG | {
+        "latent_channels": 16,
+        "use_quant_conv": False,
+        "use_post_quant_conv": False,
+        "shift_factor": 0.1159,
+        "mid_block_add_attention": True,
+    }
+    vae = AutoencoderKL(config).eval()
+    assert vae.shift_factor == 0.1159
+    assert not hasattr(vae, "quant_conv")
+    assert not hasattr(vae, "post_quant_conv")
+    with torch.inference_mode():
+        assert vae.decode(torch.randn(1, 16, 8, 6)).shape == (1, 3, 64, 48)
+        assert vae.encode(torch.rand(1, 3, 64, 48) * 2 - 1).shape == (1, 16, 8, 6)

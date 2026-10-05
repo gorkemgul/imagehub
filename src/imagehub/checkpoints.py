@@ -226,7 +226,12 @@ def load_weights(
                         raise CheckpointError(
                             f"Checkpoint shard {shard} listed in {index_path} is missing"
                         )
-                    values = load_weights(shard, container_key=container_key)
+                    # The reference loaders copy sharded checkpoints into fresh (64-byte
+                    # aligned) tensors; CPU BLAS summation order depends on that alignment.
+                    values = {
+                        name: tensor.clone()
+                        for name, tensor in load_weights(shard, container_key=container_key).items()
+                    }
                     if result.keys() & values.keys():
                         raise CheckpointError("Duplicate tensor names across checkpoint shards")
                     result.update(values)

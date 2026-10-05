@@ -361,3 +361,124 @@ def write_tiny_sdxl(
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(state, root / name / weights)
     return root
+
+
+TINY_Z_IMAGE_TEXT = {
+    "vocab_size": 34,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "head_dim": 8,
+    "max_position_embeddings": 512,
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 10000.0,
+    "rope_scaling": None,
+    "attention_bias": False,
+    "attention_dropout": 0.0,
+    "hidden_act": "silu",
+    "use_sliding_window": False,
+    "sliding_window": None,
+    "model_type": "qwen3",
+    "architectures": ["Qwen3Model"],
+}
+TINY_Z_IMAGE_TRANSFORMER = {
+    "_class_name": "ZImageTransformer2DModel",
+    "all_patch_size": [2],
+    "all_f_patch_size": [1],
+    "in_channels": 16,
+    "dim": 32,
+    "n_layers": 2,
+    "n_refiner_layers": 1,
+    "n_heads": 2,
+    "n_kv_heads": 2,
+    "norm_eps": 1e-5,
+    "qk_norm": True,
+    "cap_feat_dim": 32,
+    "siglip_feat_dim": None,
+    "rope_theta": 256.0,
+    "t_scale": 1000.0,
+    "axes_dims": [4, 4, 8],
+    "axes_lens": [64, 32, 32],
+}
+TINY_Z_IMAGE_VAE = {
+    "_class_name": "AutoencoderKL",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 16,
+    "block_out_channels": [32, 32, 64, 64],
+    "layers_per_block": 2,
+    "norm_num_groups": 8,
+    "scaling_factor": 0.3611,
+    "shift_factor": 0.1159,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "mid_block_add_attention": True,
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "sample_size": 32,
+}
+TINY_Z_IMAGE_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "num_train_timesteps": 1000,
+    "use_dynamic_shifting": False,
+    "shift": 3.0,
+}
+
+
+def write_tiny_z_image(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight Z-Image snapshot in the published diffusers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.qwen3 import Qwen3Model
+    from imagehub.models.z_image_transformer import ZImageTransformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    shutil.copytree(FIXTURES / "qwen_tokenizer", tokenizer)
+    tokenizer_config = json.loads((tokenizer / "tokenizer_config.json").read_text())
+    tokenizer_config["chat_template"] = (
+        "{% for message in messages %}<|im_start|>{{ message['role'] }}\n"
+        "{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        "{% if add_generation_prompt %}<|im_start|>assistant\n{% endif %}"
+    )
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(TINY_Z_IMAGE_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "ZImagePipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen3Model"],
+                "tokenizer": ["transformers", "Qwen2Tokenizer"],
+                "transformer": ["diffusers", "ZImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKL"],
+            }
+        )
+    )
+    for name, cls, config, weights in (
+        ("text_encoder", Qwen3Model, TINY_Z_IMAGE_TEXT, "model.safetensors"),
+        (
+            "transformer",
+            ZImageTransformer2DModel,
+            TINY_Z_IMAGE_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_Z_IMAGE_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state = {key.removeprefix("model."): value for key, value in state.items()}
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root

@@ -1,0 +1,7 @@
+{
+  "tokenizer_class": "Qwen2Tokenizer",
+  "model_max_length": 512,
+  "eos_token": "<|im_end|>",
+  "pad_token": "<|endoftext|>",
+  "additional_special_tokens": ["<|im_start|>", "<|im_end|>"]
+}

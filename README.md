@@ -4,7 +4,7 @@ An inference library for open-weight image generation architectures, natively re
 PyTorch behind a single API. **PyTorch is the only required runtime dependency.** A model is added
 only once it is shown to reproduce the original implementation's output
 ([validation](docs/validation.md)). On CPU in float32, outputs are bit-identical to diffusers
-for both model families; the details are on the [validation](docs/validation.md) page.
+for all three model families; the details are on the [validation](docs/validation.md) page.
 Architectures are linked to the
 [awesome-text-to-image-architectures](https://github.com/gorkemgul/awesome-text-to-image-architectures)
 catalog.
@@ -48,6 +48,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 | --- | --- | --- | --- |
 | Stable Diffusion 1.x | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5` | `t2i` | CPU fp32 parity |
 | Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-turbo`, `ssd-1b`, `playground-v2.5` | `t2i` | CPU fp32 parity |
+| Z-Image | `z-image-turbo` | `t2i` | CPU fp32 parity |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
 [Third-party notices](THIRD_PARTY_NOTICES.md)

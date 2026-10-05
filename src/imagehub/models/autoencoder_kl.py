@@ -23,8 +23,12 @@ VAE_DEFAULTS: dict[str, Any] = {
     "layers_per_block": 2,
     "norm_num_groups": 32,
     "scaling_factor": 0.18215,
+    "shift_factor": None,
     "latents_mean": None,
     "latents_std": None,
+    "use_quant_conv": True,
+    "use_post_quant_conv": True,
+    "mid_block_add_attention": True,
 }
 _EPS = 1e-6
 
@@ -48,15 +52,18 @@ class VAEAttention(nn.Module):
 
 
 class VAEMidBlock(nn.Module):
-    def __init__(self, ch: int, groups: int) -> None:
+    def __init__(self, ch: int, groups: int, add_attention: bool) -> None:
         super().__init__()
         self.resnets = nn.ModuleList(
             ResnetBlock(ch, ch, temb_channels=None, eps=_EPS, groups=groups) for _ in range(2)
         )
-        self.attentions = nn.ModuleList([VAEAttention(ch, groups)])
+        self.attentions = nn.ModuleList([VAEAttention(ch, groups)] if add_attention else [])
 
     def forward(self, x: Tensor) -> Tensor:
-        return self.resnets[1](self.attentions[0](self.resnets[0](x)))
+        x = self.resnets[0](x)
+        if self.attentions:
+            x = self.attentions[0](x)
+        return self.resnets[1](x)
 
 
 class EncoderBlock(nn.Module):
@@ -110,7 +117,7 @@ class Encoder(nn.Module):
             EncoderBlock(ch[max(i - 1, 0)], ch[i], layers, groups, down=i < len(ch) - 1)
             for i in range(len(ch))
         )
-        self.mid_block = VAEMidBlock(ch[-1], groups)
+        self.mid_block = VAEMidBlock(ch[-1], groups, cfg["mid_block_add_attention"])
         self.conv_norm_out = nn.GroupNorm(groups, ch[-1], eps=_EPS)
         self.conv_out = nn.Conv2d(ch[-1], 2 * cfg["latent_channels"], 3, padding=1)
 
@@ -132,7 +139,7 @@ class Decoder(nn.Module):
         )
         rev = list(reversed(ch))
         self.conv_in = nn.Conv2d(cfg["latent_channels"], rev[0], 3, padding=1)
-        self.mid_block = VAEMidBlock(rev[0], groups)
+        self.mid_block = VAEMidBlock(rev[0], groups, cfg["mid_block_add_attention"])
         self.up_blocks = nn.ModuleList(
             DecoderBlock(rev[max(i - 1, 0)], rev[i], layers + 1, groups, up=i < len(ch) - 1)
             for i in range(len(ch))
@@ -153,12 +160,19 @@ class AutoencoderKL(NativeModel):
         latent = self.config["latent_channels"]
         self.encoder = Encoder(self.config)
         self.decoder = Decoder(self.config)
-        self.quant_conv = nn.Conv2d(2 * latent, 2 * latent, 1)
-        self.post_quant_conv = nn.Conv2d(latent, latent, 1)
+        if self.config["use_quant_conv"]:
+            self.quant_conv = nn.Conv2d(2 * latent, 2 * latent, 1)
+        if self.config["use_post_quant_conv"]:
+            self.post_quant_conv = nn.Conv2d(latent, latent, 1)
 
     @property
     def scaling_factor(self) -> float:
         return float(self.config["scaling_factor"])
+
+    @property
+    def shift_factor(self) -> float | None:
+        value = self.config["shift_factor"]
+        return None if value is None else float(value)
 
     @property
     def latents_mean(self) -> list[float] | None:
@@ -185,9 +199,13 @@ class AutoencoderKL(NativeModel):
 
     def encode(self, image: Tensor) -> Tensor:
         """Return the posterior mean (unscaled latents) for images in [-1, 1]."""
-        moments = self.quant_conv(self.encoder(image))
+        moments = self.encoder(image)
+        if self.config["use_quant_conv"]:
+            moments = self.quant_conv(moments)
         return moments.chunk(2, dim=1)[0]
 
     def decode(self, latents: Tensor) -> Tensor:
         """Decode unscaled latents to images in roughly [-1, 1]."""
-        return self.decoder(self.post_quant_conv(latents))
+        if self.config["use_post_quant_conv"]:
+            latents = self.post_quant_conv(latents)
+        return self.decoder(latents)
