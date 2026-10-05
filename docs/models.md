@@ -162,12 +162,14 @@ refiner model, img2img, other schedulers and fp16 parity are not in this release
 # Janus-Pro
 
 Catalog: [`janus-pro`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `janus-pro-1b` · Task: `t2i`
+Models: `janus-pro-1b`, `janus-pro-7b` · Task: `t2i`
 
 **Architecture.** The DeepSeek LLM tokenizer renders the prompt through a chat template ending in
-the image-start token. A 24-layer Llama autoregressively generates 576 image tokens, applying
-classifier-free guidance over the logits. A LlamaGen VQ-16 decoder produces the fixed 384×384
-image.
+the image-start token. The 1B checkpoint uses a 24-layer Llama with hidden size 2048; the 7B
+checkpoint uses 30 layers with hidden size 4096. It autoregressively generates 576 image tokens,
+applying classifier-free guidance over the logits. Model-specific special-token ids, which differ
+between the two checkpoints, are read from each checkpoint's config. A LlamaGen VQ-16 decoder
+produces the fixed 384×384 image.
 
 **Usage.**
 

@@ -223,6 +223,36 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="janus-pro-7b",
+        task=Task.T2I,
+        family="janus",
+        source="https://huggingface.co/deepseek-community/Janus-Pro-7B",
+        repo_id="deepseek-community/Janus-Pro-7B",
+        revision="8f23139ed8d37346501091b3690291cb7b16f9fc",
+        provenance="community-conversion",
+        catalog_id="janus-pro",
+        format="transformers",
+        license="DeepSeek Model License",
+        config={"defaults": {"guidance": 5.0}},
+        files=(
+            "config.json",
+            "generation_config.json",
+            "preprocessor_config.json",
+            "processor_config.json",
+            "special_tokens_map.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "chat_template.jinja",
+            "model.safetensors.index.json",
+            "model-00001-of-00003.safetensors",
+            "model-00002-of-00003.safetensors",
+            "model-00003-of-00003.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-turbo",
         task=Task.T2I,
         family="stable-diffusion-xl",

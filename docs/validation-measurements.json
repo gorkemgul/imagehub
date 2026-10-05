@@ -1,5 +1,26 @@
 {
+  "deepseek_tokenizer_exhaustive_janus-pro-7b": {
+    "mismatches": 0,
+    "prompts": 3336096,
+    "tolerance": "exact"
+  },
+  "deepseek_tokenizer_fuzz_janus-pro-7b": {
+    "mismatches": 0,
+    "prompts": 3000,
+    "tolerance": "exact"
+  },
+  "deepseek_tokenizer_janus-pro-7b": {
+    "mismatches": 0,
+    "prompts": 13,
+    "tolerance": "exact"
+  },
   "e2e_batch2_janus-pro-1b": {
+    "num_images": 2,
+    "passed": true,
+    "pixels_match": true,
+    "tokens_match": true
+  },
+  "e2e_batch2_janus-pro-7b": {
     "num_images": 2,
     "passed": true,
     "pixels_match": true,
@@ -26,6 +47,12 @@
     }
   },
   "e2e_janus-pro-1b": {
+    "num_images": 1,
+    "passed": true,
+    "pixels_match": true,
+    "tokens_match": true
+  },
+  "e2e_janus-pro-7b": {
     "num_images": 1,
     "passed": true,
     "pixels_match": true,
@@ -265,6 +292,12 @@
     "missing": [],
     "tensors": 964
   },
+  "header_janus-pro-7b": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 1018
+  },
   "header_playground-v2.5": {
     "text_encoder": {
       "extra": [],
@@ -495,7 +528,18 @@
     "steps": 8,
     "tolerance": 0.0
   },
+  "janus_language_model_janus-pro-7b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": 8,
+    "tolerance": 0.0
+  },
   "janus_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "janus_vq_decode_janus-pro-7b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -793,6 +837,11 @@
     "tolerance": 0.0
   },
   "seed_e2e_janus-pro-1b": {
+    "passed": true,
+    "pixels_match": true,
+    "seed": 42
+  },
+  "seed_e2e_janus-pro-7b": {
     "passed": true,
     "pixels_match": true,
     "seed": 42

@@ -1,3 +1,5 @@
+import json
+
 import pytest
 import torch
 from helpers import write_tiny_janus
@@ -25,6 +27,25 @@ def test_loads_published_layout_and_casts_bfloat16_weights(tmp_path):
     model = JanusModel.from_pretrained(root, dtype=torch.float32)
     assert model.language_model.embed_tokens.weight.dtype == torch.float32
     assert model.generation_embeddings.weight.dtype == torch.float32
+
+
+def test_loads_sharded_published_layout(tmp_path):
+    root = write_tiny_janus(tmp_path / "sharded")
+    state = load_safetensors(root / "model.safetensors")
+    names = sorted(state)
+    weight_map = {}
+    for index, shard_names in enumerate((names[::3], names[1::3], names[2::3]), start=1):
+        shard = f"model-{index:05d}-of-00003.safetensors"
+        save_safetensors({name: state[name] for name in shard_names}, root / shard)
+        weight_map.update(dict.fromkeys(shard_names, shard))
+    (root / "model.safetensors.index.json").write_text(
+        json.dumps({"metadata": {}, "weight_map": weight_map}), encoding="utf-8"
+    )
+    (root / "model.safetensors").unlink()
+
+    components = JanusComponents.load(root, device=torch.device("cpu"), dtype=torch.float32)
+
+    assert components.model.language_model.embed_tokens.weight.dtype == torch.float32
 
 
 def test_unknown_published_tensor_is_rejected(tiny_janus, tmp_path):

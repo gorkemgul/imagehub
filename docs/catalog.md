@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**4 architecture families, 11 published checkpoints.** A model is a separately published set of weights;
+**4 architecture families, 12 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -23,11 +23,12 @@ tested with the original weights. In this release every model is `full`.
 | `playground-v2.5` | `stable-diffusion-xl` | [playgroundai/playground-v2.5-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2.5-1024px-aesthetic) | `1e032f1` | author | full | playground-v2dot5-community | `playground-v2` |
 | `z-image-turbo` | `z-image` | [Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) | `f332072` | author | full | Apache-2.0 | `z-image` |
 | `janus-pro-1b` | `janus` | [deepseek-community/Janus-Pro-1B](https://huggingface.co/deepseek-community/Janus-Pro-1B) | `1655280` | community conversion | full | DeepSeek Model License | `janus-pro` |
+| `janus-pro-7b` | `janus` | [deepseek-community/Janus-Pro-7B](https://huggingface.co/deepseek-community/Janus-Pro-7B) | `8f23139` | community conversion | full | DeepSeek Model License | `janus-pro` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
 repository used is a community mirror. The v1.1–v1.3 fp32 weights are published only as `.bin`
 files, so they are loaded with `weights_only=True`, containing tensors only.
 
-The catalog uses the `deepseek-community/Janus-Pro-1B` transformers conversion with
-`community-conversion` provenance because the authors' repository ships weights for the original
-`janus` package rather than the transformers layout.
+The catalog uses the `deepseek-community/Janus-Pro-1B` and `deepseek-community/Janus-Pro-7B`
+transformers conversions with `community-conversion` provenance because the authors' repositories
+ship weights for the original `janus` package rather than the transformers layout.

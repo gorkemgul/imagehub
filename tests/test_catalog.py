@@ -10,6 +10,7 @@ def test_catalog_contents():
     assert available_models() == {
         "t2i": (
             "janus-pro-1b",
+            "janus-pro-7b",
             "playground-v2.5",
             "sd-v1-1",
             "sd-v1-2",
@@ -90,6 +91,30 @@ def test_catalog_contents():
         "tokenizer_config.json",
         "chat_template.jinja",
         "model.safetensors",
+    )
+
+    janus_7b = model_info("janus-pro-7b")
+    assert janus_7b.task is Task.T2I
+    assert janus_7b.family == "janus"
+    assert janus_7b.repo_id == "deepseek-community/Janus-Pro-7B"
+    assert janus_7b.revision == "8f23139ed8d37346501091b3690291cb7b16f9fc"
+    assert janus_7b.provenance == "community-conversion"
+    assert janus_7b.catalog_id == "janus-pro"
+    assert janus_7b.format == "transformers"
+    assert janus_7b.license == "DeepSeek Model License"
+    assert janus_7b.files == (
+        "config.json",
+        "generation_config.json",
+        "preprocessor_config.json",
+        "processor_config.json",
+        "special_tokens_map.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "chat_template.jinja",
+        "model.safetensors.index.json",
+        "model-00001-of-00003.safetensors",
+        "model-00002-of-00003.safetensors",
+        "model-00003-of-00003.safetensors",
     )
 
     ssd1b = model_info("ssd-1b")
