@@ -58,8 +58,13 @@ class JanusComponents:
         model_id: str | None = None,
     ) -> JanusComponents:
         root = Path(directory)
-        required = ("config.json", "generation_config.json", "tokenizer.json", "model.safetensors")
+        required = ("config.json", "generation_config.json", "tokenizer.json")
         missing = [name for name in required if not (root / name).is_file()]
+        if not any(
+            (root / name).is_file()
+            for name in ("model.safetensors", "model.safetensors.index.json")
+        ):
+            missing.append("model.safetensors or model.safetensors.index.json")
         if missing:
             raise CheckpointError(
                 f"{root} is not a Janus snapshot (missing {', '.join(missing)}). "

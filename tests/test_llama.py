@@ -6,28 +6,43 @@ import torch
 
 from imagehub.models.llama import LlamaCache, LlamaModel
 
-CONFIG_PATH = Path(__file__).parent / "fixtures" / "janus_pro_1b_config.json"
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
-def test_matches_janus_pro_tensor_layout():
-    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+@pytest.mark.parametrize(
+    ("model_id", "hidden_size", "intermediate_size", "num_hidden_layers"),
+    [("janus_pro_1b", 2048, 5632, 24), ("janus_pro_7b", 4096, 11008, 30)],
+)
+def test_matches_janus_pro_tensor_layout(
+    model_id, hidden_size, intermediate_size, num_hidden_layers
+):
+    config = json.loads((FIXTURES / f"{model_id}_config.json").read_text(encoding="utf-8"))
     with torch.device("meta"):
         model = LlamaModel(config)
     state = model.state_dict()
 
-    assert list(state["embed_tokens.weight"].shape) == [102400, 2048]
-    assert list(state["norm.weight"].shape) == [2048]
-    for layer in range(24):
+    assert list(state["embed_tokens.weight"].shape) == [102400, hidden_size]
+    assert list(state["norm.weight"].shape) == [hidden_size]
+    for layer in range(num_hidden_layers):
         prefix = f"layers.{layer}"
-        assert list(state[f"{prefix}.input_layernorm.weight"].shape) == [2048]
-        assert list(state[f"{prefix}.post_attention_layernorm.weight"].shape) == [2048]
-        assert list(state[f"{prefix}.self_attn.q_proj.weight"].shape) == [2048, 2048]
-        assert list(state[f"{prefix}.self_attn.k_proj.weight"].shape) == [2048, 2048]
-        assert list(state[f"{prefix}.self_attn.v_proj.weight"].shape) == [2048, 2048]
-        assert list(state[f"{prefix}.self_attn.o_proj.weight"].shape) == [2048, 2048]
-        assert list(state[f"{prefix}.mlp.gate_proj.weight"].shape) == [5632, 2048]
-        assert list(state[f"{prefix}.mlp.up_proj.weight"].shape) == [5632, 2048]
-        assert list(state[f"{prefix}.mlp.down_proj.weight"].shape) == [2048, 5632]
+        assert list(state[f"{prefix}.input_layernorm.weight"].shape) == [hidden_size]
+        assert list(state[f"{prefix}.post_attention_layernorm.weight"].shape) == [hidden_size]
+        assert list(state[f"{prefix}.self_attn.q_proj.weight"].shape) == [hidden_size, hidden_size]
+        assert list(state[f"{prefix}.self_attn.k_proj.weight"].shape) == [hidden_size, hidden_size]
+        assert list(state[f"{prefix}.self_attn.v_proj.weight"].shape) == [hidden_size, hidden_size]
+        assert list(state[f"{prefix}.self_attn.o_proj.weight"].shape) == [hidden_size, hidden_size]
+        assert list(state[f"{prefix}.mlp.gate_proj.weight"].shape) == [
+            intermediate_size,
+            hidden_size,
+        ]
+        assert list(state[f"{prefix}.mlp.up_proj.weight"].shape) == [
+            intermediate_size,
+            hidden_size,
+        ]
+        assert list(state[f"{prefix}.mlp.down_proj.weight"].shape) == [
+            hidden_size,
+            intermediate_size,
+        ]
 
 
 def test_cache_is_preallocated_and_masks_unused_slots():

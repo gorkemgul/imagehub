@@ -55,6 +55,7 @@ Z_IMAGE_COMPONENT_KEYS = (
     "z_image_vae_encode",
     "z_image_scheduler",
 )
+JANUS_COMPONENT_KEYS = ("janus_language_model", "janus_vq_decode")
 
 
 def header_check(header: dict | None) -> dict | None:
@@ -156,7 +157,15 @@ def main() -> None:
             key: value for key, value in measured.items() if key in Z_IMAGE_COMPONENT_KEYS
         },
         "components_janus": {
-            key: value for key, value in measured.items() if key.startswith("janus_")
+            key: value
+            for key, value in measured.items()
+            if key in JANUS_COMPONENT_KEYS
+            or any(
+                key == f"{component}_{spec.id}"
+                for component in JANUS_COMPONENT_KEYS
+                for spec in MODEL_CATALOG.values()
+                if spec.family == "janus" and spec.id != "janus-pro-1b"
+            )
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},

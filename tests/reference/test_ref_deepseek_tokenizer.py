@@ -4,10 +4,12 @@ import pytest
 import torch
 from helpers import snapshot_dir
 
+from imagehub.catalog import MODEL_CATALOG
 from imagehub.tokenization_deepseek import DeepSeekTokenizer
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
+JANUS_MODEL_IDS = tuple(spec.id for spec in MODEL_CATALOG.values() if spec.family == "janus")
 
 FIXED_PROMPTS = [
     "a cat",
@@ -82,8 +84,13 @@ def _assert_prompts_match(ours, processor, prompts):
     assert torch.equal(actual_mask, expected["attention_mask"].bool())
 
 
-def test_deepseek_tokenizer_fixed_prompts_and_processor_match_reference(record):
-    path = snapshot_dir("janus-pro-1b")
+def _record_key(key, model_id):
+    return key if model_id == "janus-pro-1b" else f"{key}_{model_id}"
+
+
+@pytest.mark.parametrize("model_id", JANUS_MODEL_IDS)
+def test_deepseek_tokenizer_fixed_prompts_and_processor_match_reference(record, model_id):
+    path = snapshot_dir(model_id)
     ours = DeepSeekTokenizer(path)
     reference = transformers.AutoTokenizer.from_pretrained(path)
     processor = transformers.JanusProcessor.from_pretrained(path)
@@ -91,11 +98,17 @@ def test_deepseek_tokenizer_fixed_prompts_and_processor_match_reference(record):
     for prompt in FIXED_PROMPTS:
         assert ours.tokenize(prompt) == reference.encode(prompt)
     _assert_prompts_match(ours, processor, FIXED_PROMPTS)
-    record("deepseek_tokenizer", prompts=len(FIXED_PROMPTS), mismatches=0, tolerance="exact")
+    record(
+        _record_key("deepseek_tokenizer", model_id),
+        prompts=len(FIXED_PROMPTS),
+        mismatches=0,
+        tolerance="exact",
+    )
 
 
-def test_deepseek_tokenizer_seeded_fuzz_matches_reference(record):
-    path = snapshot_dir("janus-pro-1b")
+@pytest.mark.parametrize("model_id", JANUS_MODEL_IDS)
+def test_deepseek_tokenizer_seeded_fuzz_matches_reference(record, model_id):
+    path = snapshot_dir(model_id)
     ours = DeepSeekTokenizer(path)
     reference = transformers.AutoTokenizer.from_pretrained(path)
     processor = transformers.JanusProcessor.from_pretrained(path)
@@ -109,11 +122,17 @@ def test_deepseek_tokenizer_seeded_fuzz_matches_reference(record):
         expected = reference(batch, add_special_tokens=True)["input_ids"]
         assert [ours.tokenize(prompt) for prompt in batch] == expected
         _assert_prompts_match(ours, processor, batch)
-    record("deepseek_tokenizer_fuzz", prompts=len(prompts), mismatches=0, tolerance="exact")
+    record(
+        _record_key("deepseek_tokenizer_fuzz", model_id),
+        prompts=len(prompts),
+        mismatches=0,
+        tolerance="exact",
+    )
 
 
-def test_deepseek_tokenizer_matches_reference_for_every_code_point(record):
-    path = snapshot_dir("janus-pro-1b")
+@pytest.mark.parametrize("model_id", JANUS_MODEL_IDS)
+def test_deepseek_tokenizer_matches_reference_for_every_code_point(record, model_id):
+    path = snapshot_dir(model_id)
     ours = DeepSeekTokenizer(path)
     reference = transformers.AutoTokenizer.from_pretrained(path)
     mismatches = 0
@@ -140,7 +159,7 @@ def test_deepseek_tokenizer_matches_reference_for_every_code_point(record):
 
     assert mismatches == 0
     record(
-        "deepseek_tokenizer_exhaustive",
+        _record_key("deepseek_tokenizer_exhaustive", model_id),
         prompts=checked,
         mismatches=mismatches,
         tolerance="exact",

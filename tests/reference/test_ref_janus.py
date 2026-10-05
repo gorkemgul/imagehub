@@ -1,4 +1,4 @@
-"""Parity of native Janus-Pro-1B generation against transformers on CPU float32."""
+"""Parity of native Janus-Pro generation against transformers on CPU float32."""
 
 import gc
 import json
@@ -10,6 +10,7 @@ from helpers import max_diff, snapshot_dir
 
 from imagehub import pipeline
 from imagehub.backends.janus import JanusComponents, generate_image_tokens
+from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json
 from imagehub.models.janus import JanusModel
 from imagehub.models.janus_vq import postprocess_janus
@@ -19,6 +20,7 @@ transformers = pytest.importorskip("transformers")
 
 CPU = torch.device("cpu")
 PROMPT = "a photograph of an astronaut riding a horse"
+JANUS_MODEL_IDS = tuple(spec.id for spec in MODEL_CATALOG.values() if spec.family == "janus")
 
 
 def _reference(root, num_images=1):
@@ -29,15 +31,17 @@ def _reference(root, num_images=1):
     return model, processor
 
 
-def _inputs(processor):
+def _inputs(processor, model_id):
     text = processor.apply_chat_template(
         [{"role": "user", "content": [{"type": "text", "text": PROMPT}]}],
         tokenize=False,
         add_generation_prompt=True,
     )
     inputs = processor(text=[text], generation_mode="image", return_tensors="pt")
-    assert inputs.input_ids.tolist() == [
-        [
+    expected_ids = processor.tokenizer.encode(text + processor.image_start_token)
+    assert inputs.input_ids.tolist() == [expected_ids]
+    if model_id == "janus-pro-1b":
+        assert expected_ids == [
             100000,
             100588,
             25,
@@ -55,21 +59,39 @@ def _inputs(processor):
             25,
             100003,
         ]
-    ]
     return inputs
 
 
-def test_published_tensor_headers_match(record):
-    root = snapshot_dir("janus-pro-1b")
-    config = read_json(root / "config.json")
-    with torch.device("meta"):
-        model = JanusModel(config)
+def _checkpoint_shapes(root):
+    index_path = root / "model.safetensors.index.json"
+    if index_path.is_file():
+        weight_map = read_json(index_path)["weight_map"]
+        headers = {}
+        shapes = {}
+        for name, shard in sorted(weight_map.items()):
+            if shard not in headers:
+                with (root / shard).open("rb") as source:
+                    (length,) = struct.unpack("<Q", source.read(8))
+                    headers[shard] = json.loads(source.read(length))
+            shapes[name] = tuple(headers[shard][name]["shape"])
+        return shapes
     with (root / "model.safetensors").open("rb") as source:
         (length,) = struct.unpack("<Q", source.read(8))
         header = json.loads(source.read(length))
-    shapes = {
-        name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"
-    }
+    return {name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"}
+
+
+def _component_key(key, model_id):
+    return key if model_id == "janus-pro-1b" else f"{key}_{model_id}"
+
+
+@pytest.mark.parametrize("model_id", JANUS_MODEL_IDS)
+def test_published_tensor_headers_match(record, model_id):
+    root = snapshot_dir(model_id)
+    config = read_json(root / "config.json")
+    with torch.device("meta"):
+        model = JanusModel(config)
+    shapes = _checkpoint_shapes(root)
     prepared = model.prepare_state_dict(
         {name: torch.empty(shape, device="meta") for name, shape in shapes.items()}
     )
@@ -83,15 +105,16 @@ def test_published_tensor_headers_match(record):
         ),
         "tensors": len(shapes),
     }
-    record("header_janus-pro-1b", **result)
+    record(f"header_{model_id}", **result)
     assert not result["missing"] and not result["extra"] and not result["mismatch"]
 
 
-def test_language_model_prefill_and_decode(record):
-    root = snapshot_dir("janus-pro-1b")
+@pytest.mark.parametrize("model_id", JANUS_MODEL_IDS)
+def test_language_model_prefill_and_decode(record, model_id):
+    root = snapshot_dir(model_id)
     reference, processor = _reference(root)
     components = JanusComponents.load(root, device=CPU, dtype=torch.float32)
-    inputs = _inputs(processor)
+    inputs = _inputs(processor, model_id)
     input_ids = inputs.input_ids.repeat(2, 1)
     mask = inputs.attention_mask.repeat(2, 1)
     input_ids[1, 1:-1] = reference.generation_config.pad_token_id
@@ -142,15 +165,16 @@ def test_language_model_prefill_and_decode(record):
         (max_diff(actual, expected) for actual, expected in pairs),
         key=lambda value: value["max_abs"],
     )
-    record("janus_language_model", **worst, steps=8, tolerance=0.0)
+    record(_component_key("janus_language_model", model_id), **worst, steps=8, tolerance=0.0)
     for actual, expected in pairs:
         torch.testing.assert_close(actual, expected, rtol=0, atol=0)
     del reference, components
     gc.collect()
 
 
-def test_vq_decode(record):
-    root = snapshot_dir("janus-pro-1b")
+@pytest.mark.parametrize("model_id", JANUS_MODEL_IDS)
+def test_vq_decode(record, model_id):
+    root = snapshot_dir(model_id)
     reference, _ = _reference(root)
     components = JanusComponents.load(root, device=CPU, dtype=torch.float32)
     tokens = (torch.arange(576) % 16384).reshape(1, 576)
@@ -158,15 +182,18 @@ def test_vq_decode(record):
         expected = reference.decode_image_tokens(tokens)
         actual = components.model.decode_image_tokens(tokens)
     measured = max_diff(actual, expected)
-    record("janus_vq_decode", **measured, tolerance=0.0)
+    record(_component_key("janus_vq_decode", model_id), **measured, tolerance=0.0)
     torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+    del reference, components
+    gc.collect()
 
 
+@pytest.mark.parametrize("model_id", JANUS_MODEL_IDS)
 @pytest.mark.parametrize("num_images", [1, 2])
-def test_end_to_end(record, num_images):
-    root = snapshot_dir("janus-pro-1b")
+def test_end_to_end(record, num_images, model_id):
+    root = snapshot_dir(model_id)
     reference, processor = _reference(root, num_images)
-    inputs = _inputs(processor)
+    inputs = _inputs(processor, model_id)
     torch.manual_seed(42)
     with torch.inference_mode():
         # Setting model.generation_config.num_return_sequences (the model card's way) fails
@@ -199,19 +226,22 @@ def test_end_to_end(record, num_images):
         actual_pixels, expected_pixels
     )
     record(
-        "e2e_janus-pro-1b" if num_images == 1 else f"e2e_batch{num_images}_janus-pro-1b",
+        f"e2e_{model_id}" if num_images == 1 else f"e2e_batch{num_images}_{model_id}",
         num_images=num_images,
         tokens_match=torch.equal(actual_tokens, expected_tokens),
         pixels_match=torch.equal(actual_pixels, expected_pixels),
         passed=passed,
     )
     assert passed
+    del components
+    gc.collect()
 
 
-def test_seed_end_to_end(record):
-    root = snapshot_dir("janus-pro-1b")
+@pytest.mark.parametrize("model_id", JANUS_MODEL_IDS)
+def test_seed_end_to_end(record, model_id):
+    root = snapshot_dir(model_id)
     reference, processor = _reference(root)
-    inputs = _inputs(processor)
+    inputs = _inputs(processor, model_id)
     torch.manual_seed(42)
     with torch.inference_mode():
         tokens = reference.generate(
@@ -222,7 +252,7 @@ def test_seed_end_to_end(record):
         )["pixel_values"][0].permute(1, 2, 0)
     del reference
     gc.collect()
-    actual = pipeline("t2i", backend="janus-pro-1b", model=root)(PROMPT, seed=42).images[0].tensor
+    actual = pipeline("t2i", backend=model_id, model=root)(PROMPT, seed=42).images[0].tensor
     passed = torch.equal(actual, expected)
-    record("seed_e2e_janus-pro-1b", seed=42, pixels_match=passed, passed=passed)
+    record(f"seed_e2e_{model_id}", seed=42, pixels_match=passed, passed=passed)
     assert passed
