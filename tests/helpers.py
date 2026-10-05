@@ -282,6 +282,7 @@ def write_tiny_sdxl(
     *,
     seed: int = 0,
     scheduler_config: dict | None = None,
+    vae_config: dict | None = None,
     sample_size: int = 32,
 ) -> Path:
     """A random-weight SDXL snapshot in the published diffusers layout."""
@@ -321,6 +322,8 @@ def write_tiny_sdxl(
         "sample_size": sample_size,
     }
     vae = TINY_VAE_FILE_CONFIG | {"scaling_factor": 0.13025, "force_upcast": True}
+    if vae_config is not None:
+        vae |= vae_config
     model_index = {
         "_class_name": "StableDiffusionXLPipeline",
         "_diffusers_version": "0.40.0",

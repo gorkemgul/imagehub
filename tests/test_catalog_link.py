@@ -25,4 +25,10 @@ def test_catalog_ids_exist_with_consistent_weight_licenses():
     for spec in MODEL_CATALOG.values():
         assert spec.catalog_id in entries, spec.id
         weights = entries[spec.catalog_id]["license"]["weights"]
-        assert _norm(weights) == _norm(spec.license), (spec.id, weights)
+        # A catalog entry may cover several releases: "license-a (v2); license-b (v2.5)".
+        parts = [part.strip() for part in weights.split(";")]
+        assert any(
+            _norm(part) == _norm(spec.license)
+            or part.lower().split(" (")[0] == spec.license.lower()
+            for part in parts
+        ), (spec.id, weights)

@@ -29,6 +29,20 @@ def tiny_turbo(tmp_path_factory):
     )
 
 
+@pytest.fixture(scope="module")
+def tiny_playground(tmp_path_factory):
+    from pathlib import Path
+
+    config = json.loads(
+        (
+            Path(__file__).parent / "fixtures/playground_v25_configs/scheduler_config.json"
+        ).read_text()
+    )
+    return write_tiny_sdxl(
+        tmp_path_factory.mktemp("tiny-playground"), scheduler_config=config, sample_size=4
+    )
+
+
 def test_generates_images_with_metadata(tiny_sdxl):
     result = pipeline("t2i", backend="stable-diffusion-xl", model=tiny_sdxl)(
         "a cat", seed=3, steps=4, width=64, height=48, num_images=2
@@ -56,6 +70,16 @@ def test_turbo_uses_model_scheduler_defaults_and_native_size(tiny_turbo):
     assert result.metadata["steps"] == 1
     assert result.metadata["guidance"] == 0.0
     assert result.metadata["scheduler"] == "euler_ancestral"
+
+
+def test_playground_uses_model_guidance_and_edm_scheduler(tiny_playground):
+    result = pipeline("t2i", backend="playground-v2.5", model=tiny_playground)(
+        "a cat", seed=7, steps=1
+    )
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["steps"] == 1
+    assert result.metadata["guidance"] == 3.0
+    assert result.metadata["scheduler"] == "edm_dpmsolver_multistep"
 
 
 def test_unknown_scheduler_fails(tiny_sdxl, tmp_path):

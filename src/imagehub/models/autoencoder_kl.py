@@ -23,6 +23,8 @@ VAE_DEFAULTS: dict[str, Any] = {
     "layers_per_block": 2,
     "norm_num_groups": 32,
     "scaling_factor": 0.18215,
+    "latents_mean": None,
+    "latents_std": None,
 }
 _EPS = 1e-6
 
@@ -157,6 +159,14 @@ class AutoencoderKL(NativeModel):
     @property
     def scaling_factor(self) -> float:
         return float(self.config["scaling_factor"])
+
+    @property
+    def latents_mean(self) -> list[float] | None:
+        return self.config["latents_mean"]
+
+    @property
+    def latents_std(self) -> list[float] | None:
+        return self.config["latents_std"]
 
     def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
         """Convert current diffusers VAE attention names to the legacy SD 1.x names."""

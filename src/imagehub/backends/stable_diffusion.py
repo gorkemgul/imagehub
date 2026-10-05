@@ -158,7 +158,17 @@ def denoise(
 def decode_latents(components: _VAEComponents, latents: Tensor) -> Tensor:
     """Decode final latents to uint8 images of shape (batch, height, width, 3) on CPU."""
     vae = components.vae
-    image = vae.decode(latents / vae.scaling_factor)
+    if vae.latents_mean is not None and vae.latents_std is not None:
+        latents_mean = (
+            torch.tensor(vae.latents_mean).view(1, 4, 1, 1).to(latents.device, latents.dtype)
+        )
+        latents_std = (
+            torch.tensor(vae.latents_std).view(1, 4, 1, 1).to(latents.device, latents.dtype)
+        )
+        latents = latents * latents_std / vae.scaling_factor + latents_mean
+    else:
+        latents = latents / vae.scaling_factor
+    image = vae.decode(latents)
     image = (image / 2 + 0.5).clamp(0, 1).permute(0, 2, 3, 1).float().cpu()
     return (image * 255).round().to(torch.uint8)
 

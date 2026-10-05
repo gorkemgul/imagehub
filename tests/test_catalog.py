@@ -9,6 +9,7 @@ from imagehub.types import Task
 def test_catalog_contents():
     assert available_models() == {
         "t2i": (
+            "playground-v2.5",
             "sd-v1-1",
             "sd-v1-2",
             "sd-v1-3",
@@ -66,6 +67,19 @@ def test_catalog_contents():
     assert ssd1b.format == "diffusers"
     assert ssd1b.license == "Apache-2.0"
     assert len(set(ssd1b.files)) == len(ssd1b.files) == 18
+
+    playground = model_info("playground-v2.5")
+    assert playground.task is Task.T2I
+    assert playground.family == "stable-diffusion-xl"
+    assert playground.repo_id == "playgroundai/playground-v2.5-1024px-aesthetic"
+    assert playground.revision == "1e032f13f2fe6db2dc49947dbdbd196e753de573"
+    assert playground.provenance == "author"
+    assert playground.catalog_id == "playground-v2"
+    assert playground.format == "diffusers"
+    assert playground.license == "playground-v2dot5-community"
+    assert playground.config == {"defaults": {"guidance": 3.0}}
+    assert len(set(playground.files)) == len(playground.files) == 18
+    assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in playground.files)
 
 
 def test_provenance_and_formats():

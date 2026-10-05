@@ -27,6 +27,7 @@ from imagehub.image import Image
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.euler_ancestral import EulerAncestralDiscreteScheduler
 from imagehub.tokenization import CLIPTokenizer
@@ -63,6 +64,8 @@ def _scheduler(config: dict[str, Any]) -> tuple[Any, str]:
         return EulerDiscreteScheduler(config), "euler"
     if class_name == "EulerAncestralDiscreteScheduler":
         return EulerAncestralDiscreteScheduler(config), "euler_ancestral"
+    if class_name == "EDMDPMSolverMultistepScheduler":
+        return EDMDPMSolverMultistepScheduler(config), "edm_dpmsolver_multistep"
     raise ValueError(f"Unsupported SDXL scheduler {class_name}")
 
 

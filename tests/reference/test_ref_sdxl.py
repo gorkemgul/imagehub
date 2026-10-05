@@ -12,6 +12,7 @@ from imagehub import pipeline
 from imagehub.backends.stable_diffusion import decode_latents, initial_latents
 from imagehub.backends.stable_diffusion_xl import StableDiffusionXLComponents, denoise
 from imagehub.catalog import MODEL_CATALOG
+from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.euler_ancestral import EulerAncestralDiscreteScheduler
 
@@ -57,6 +58,7 @@ SDXL_MODEL_IDS = tuple(
     spec.id for spec in MODEL_CATALOG.values() if spec.family == "stable-diffusion-xl"
 )
 SCHEDULERS = {
+    "EDMDPMSolverMultistepScheduler": EDMDPMSolverMultistepScheduler,
     "EulerDiscreteScheduler": EulerDiscreteScheduler,
     "EulerAncestralDiscreteScheduler": EulerAncestralDiscreteScheduler,
 }
@@ -212,7 +214,7 @@ def test_vae(sdxl, record):
         torch.testing.assert_close(actual, expected, atol=TOLERANCES[tolerance_key], rtol=0)
 
 
-def test_euler_scheduler(sdxl, record):
+def test_scheduler(sdxl, record):
     model_id, _, ours, ref = sdxl
     scheduler_cls = SCHEDULERS[ours.scheduler_config["_class_name"]]
     measurements = {}
@@ -255,7 +257,15 @@ def _run_end_to_end(sdxl, record, *, steps, guidance, negative_prompt, record_na
             generator=torch.Generator("cpu").manual_seed(5678),
             output_type="latent",
         ).images
-        decoded = ref.vae.decode(ref_latents / ref.vae.config.scaling_factor).sample
+        if ref.vae.config.latents_mean is not None and ref.vae.config.latents_std is not None:
+            latents_mean = torch.tensor(ref.vae.config.latents_mean).view(1, 4, 1, 1)
+            latents_std = torch.tensor(ref.vae.config.latents_std).view(1, 4, 1, 1)
+            decode_latents_input = (
+                ref_latents * latents_std / ref.vae.config.scaling_factor + latents_mean
+            )
+        else:
+            decode_latents_input = ref_latents / ref.vae.config.scaling_factor
+        decoded = ref.vae.decode(decode_latents_input).sample
         ref_np = ref.image_processor.postprocess(decoded, output_type="np")
     ref_pixels = torch.from_numpy((ref_np * 255).round().astype("uint8"))
     our_latents = denoise(
