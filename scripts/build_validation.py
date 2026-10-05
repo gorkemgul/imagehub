@@ -1,10 +1,11 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL measurements are grouped in a flat ``components_sdxl`` mapping: the base model
-keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry
-may also contain its own ``seed_end_to_end`` measurement. Missing model directories are errors
-unless ``--allow-missing`` is passed, in which case they are omitted with a warning.
+measurements. SDXL and SD3 measurements are grouped in flat ``components_sdxl`` and
+``components_sd3`` mappings: the base model keeps its historical unsuffixed keys, while other
+models use ``<key>_<model-id>``. Each model entry may also contain its own ``seed_end_to_end``
+measurement. Missing model directories are errors unless ``--allow-missing`` is passed, in which
+case they are omitted with a warning.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -34,7 +35,8 @@ LIMITS = [
     "no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x and Euler for SDXL.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler for SDXL, "
+    "and flow-match Euler for SD 3.5.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -56,6 +58,16 @@ Z_IMAGE_COMPONENT_KEYS = (
     "z_image_scheduler",
 )
 JANUS_COMPONENT_KEYS = ("janus_language_model", "janus_vq_decode")
+SD3_COMPONENT_KEYS = (
+    "sd3_tokenizers",
+    "sd3_text_encoder",
+    "sd3_text_encoder_2",
+    "sd3_text_encoder_3",
+    "sd3_transformer",
+    "sd3_vae_decode",
+    "sd3_vae_encode",
+    "sd3_scheduler",
+)
 
 
 def header_check(header: dict | None) -> dict | None:
@@ -165,6 +177,17 @@ def main() -> None:
                 for component in JANUS_COMPONENT_KEYS
                 for spec in MODEL_CATALOG.values()
                 if spec.family == "janus" and spec.id != "janus-pro-1b"
+            )
+        },
+        "components_sd3": {
+            key: value
+            for key, value in measured.items()
+            if key in SD3_COMPONENT_KEYS
+            or any(
+                key == f"{component}_{spec.id}"
+                for component in SD3_COMPONENT_KEYS
+                for spec in MODEL_CATALOG.values()
+                if spec.family == "stable-diffusion-3" and spec.id != "sd3.5-medium"
             )
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
