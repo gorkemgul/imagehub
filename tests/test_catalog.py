@@ -12,6 +12,7 @@ def test_catalog_contents():
             "janus-pro-1b",
             "janus-pro-7b",
             "playground-v2.5",
+            "qwen-image-2.1",
             "sd-v1-1",
             "sd-v1-2",
             "sd-v1-3",
@@ -74,6 +75,12 @@ def test_catalog_contents():
     assert z_image.license == "Apache-2.0"
     assert len(set(z_image.files)) == len(z_image.files) == 19
     assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in z_image.files)
+
+    qwen_image = model_info("qwen-image-2.1")
+    assert qwen_image.family == "qwen-image"
+    assert qwen_image.catalog_id == "qwen-image-2"
+    assert qwen_image.license == "Qwen Research License"
+    assert len(set(qwen_image.files)) == len(qwen_image.files) == 25
 
     janus = model_info("janus-pro-1b")
     assert janus.task is Task.T2I
