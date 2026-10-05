@@ -156,34 +156,46 @@ The header-only tensor check covered `text_encoder`, `transformer` and `vae`: te
 
 ## Janus-Pro
 
-Validated on CPU on October 5, 2026, in the same environment as above. `janus-pro-1b` was loaded
-strictly and compared with transformers 5.18.0
+Validated on CPU on October 5, 2026, in the same environment as above. `janus-pro-1b` and
+`janus-pro-7b` were loaded strictly and compared with transformers 5.18.0
 `JanusForConditionalGeneration.generate(generation_mode="image")`. The observed difference in
 every numeric comparison is **exactly 0**: on CPU in float32, the local implementation produces
 bit-identical image tokens and pixels.
 
 ### Comparisons (CPU, float32)
 
-| Comparison | Largest observed difference | Tolerance |
-| --- | --- | --- |
-| DeepSeek LLM tokenizer (fixed prompts, seeded fuzz and every code point; processor prompt ids) | identical | exact |
-| Language model (prompt prefill and 8 decode steps with the static cache) | 0 | 0 |
-| LlamaGen VQ-16 decode | 0 | 0 |
-| End to end: 576 image tokens / pixels (1 image, seeded sampling, guidance 5) | identical / identical | exact / exact |
-| End to end: 576 image tokens / pixels (batch of 2, seeded sampling, guidance 5) | identical / identical | exact / exact |
-| End to end, seed 42 (pixels) | identical | exact |
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| DeepSeek LLM tokenizer (fixed prompts, seeded fuzz and every code point; processor prompt ids) | janus-pro-1b | identical | exact |
+| Language model (prompt prefill and 8 decode steps with the static cache) | janus-pro-1b | 0 | 0 |
+| LlamaGen VQ-16 decode | janus-pro-1b | 0 | 0 |
+| End to end: 576 image tokens / pixels (1 image, seeded sampling, guidance 5) | janus-pro-1b | identical / identical | exact / exact |
+| End to end: 576 image tokens / pixels (batch of 2, seeded sampling, guidance 5) | janus-pro-1b | identical / identical | exact / exact |
+| End to end, seed 42 (pixels) | janus-pro-1b | identical | exact |
+| DeepSeek LLM tokenizer (13 fixed prompts + 3,000 fuzz + every code point: 3,336,096 strings; 0 mismatches) | janus-pro-7b | identical | exact |
+| Language model (prompt prefill and 8 decode steps with the static cache) | janus-pro-7b | 0 | 0 |
+| LlamaGen VQ-16 decode | janus-pro-7b | 0 | 0 |
+| End to end: 576 image tokens / pixels (1 image, seeded sampling, guidance 5) | janus-pro-7b | identical / identical | exact / exact |
+| End to end: 576 image tokens / pixels (batch of 2, seeded sampling, guidance 5) | janus-pro-7b | identical / identical | exact / exact |
+| End to end, seed 42 (pixels) | janus-pro-7b | identical | exact |
 
 The end-to-end prompt was "a photograph of an astronaut riding a horse". Both the transformers
 reference and imagehub use seeded sampling, guidance 5, temperature 1.0 and 576 autoregressive
-image tokens. The header check covered 964 tensors. Understanding-only tensors are skipped by an
-explicit allow-list; missing, extra and shape-mismatched generation tensors are all **0**. Record:
-`tensor_header_check`, [validation.json](validation.json).
+image tokens. The header checks covered 964 tensors for `janus-pro-1b` and 1018 tensors for
+`janus-pro-7b`. Understanding-only tensors are skipped by an explicit allow-list; missing, extra
+and shape-mismatched generation tensors are all **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
 
-**Checkpoint provenance.** The catalog uses the transformers conversion
-`deepseek-community/Janus-Pro-1B` (provenance `community-conversion`) because the authors'
-`deepseek-ai/Janus-Pro-1B` ships `pytorch_model.bin` for the original `janus` package. All 819
-tensors used for image generation are byte-identical to the authors' file; the 145 tensors that
-differ belong to the understanding-only `vision_model`.
+**Checkpoint provenance.** The catalog uses the transformers conversions
+`deepseek-community/Janus-Pro-1B` and `deepseek-community/Janus-Pro-7B` (provenance
+`community-conversion`) because the authors' repositories ship weights for the original `janus`
+package. For 1B, all 819 tensors used for image generation are byte-identical to the authors'
+`deepseek-ai/Janus-Pro-1B` file; the 145 tensors that differ belong to the understanding-only
+`vision_model`. For 7B, 873 of 1018 converted tensors are byte-identical to the authors'
+`deepseek-ai/Janus-Pro-7B` shards; the 145 that differ are the understanding-only `vision_model`.
+
+The 7B checkpoint is approximately 28 GB per float32 copy. To fit the 96 GB machine, one reference
+and one native copy were loaded at a time. The full 7B validation run took 68 minutes.
 
 ## Device smoke tests (no parity claim)
 
@@ -211,7 +223,7 @@ differ belong to the understanding-only `vision_model`.
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 8 passed, 1 skipped for `playground-v2.5`, and 9 passed for
-  `z-image-turbo`, and 6 passed for `janus-pro-1b`. These
+  `z-image-turbo`, 6 passed for `janus-pro-1b`, and 9 passed for `janus-pro-7b`. These
   include structural parity with random weights, end-to-end parity with a small model,
   real-checkpoint parity and tokenizer fuzz tests.
 - MPS smoke test: 1 passed.

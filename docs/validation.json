@@ -493,6 +493,52 @@
       }
     },
     {
+      "model_id": "janus-pro-7b",
+      "repo_id": "deepseek-community/Janus-Pro-7B",
+      "revision": "8f23139ed8d37346501091b3690291cb7b16f9fc",
+      "provenance": "community-conversion",
+      "catalog_id": "janus-pro",
+      "license": "DeepSeek Model License",
+      "status": "full",
+      "files": {
+        "config.json": "980d1d1f14c4e95eddaa4df6512be90127ffb345acc08461a69fd55e024f0aa9",
+        "generation_config.json": "9dab02001d2ddcee8394353e9bdc9d8b9af95b520a9b57c91a89e870ef9d3e2a",
+        "preprocessor_config.json": "00bc5d559ff85d8a11452ef01e42ec478feee6de880ba921f5e74381002a984d",
+        "processor_config.json": "b9df983688f30166d870e495de7ac9882d320e76205f96c34da97fc538bca870",
+        "special_tokens_map.json": "0427a4e49abdd6028f4152fc841009b6c892009107b91fc067e518741f077e92",
+        "tokenizer.json": "42bcf2c54739affa70425520f9f8eb48e7409cf515541c74594de4c412b7d5ad",
+        "tokenizer_config.json": "eea827fd25d3e6e1749b491e39074a67d1857f862d45f5dcd2b5b4e4ccd1e7ba",
+        "chat_template.jinja": "ca86eba863fa87feee121798ddc615b986b2642757e8e472d66d82fe256124a2",
+        "model.safetensors.index.json": "14f566f443d91371f495643603a233794d87b25306617a589d20033745953655",
+        "model-00001-of-00003.safetensors": "c75c3abf946ba6f523fa8ea3b30fb0e15cd11438677c291b277cf93eb1ca9d00",
+        "model-00002-of-00003.safetensors": "5bccb41fbf819986c359905b5227b4476d9bfe838862499a3f987030b72eeca5",
+        "model-00003-of-00003.safetensors": "7480680b7def008b29bca684c7c36bba3d3f47d2b585ed1a35faf15156f7c8ed"
+      },
+      "tensor_header_check": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 1018
+      },
+      "end_to_end": {
+        "num_images": 1,
+        "passed": true,
+        "pixels_match": true,
+        "tokens_match": true
+      },
+      "end_to_end_batch2": {
+        "num_images": 2,
+        "passed": true,
+        "pixels_match": true,
+        "tokens_match": true
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "pixels_match": true,
+        "seed": 42
+      }
+    },
+    {
       "model_id": "sdxl-turbo",
       "repo_id": "stabilityai/sdxl-turbo",
       "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
@@ -1112,7 +1158,18 @@
       "steps": 8,
       "tolerance": 0.0
     },
+    "janus_language_model_janus-pro-7b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": 8,
+      "tolerance": 0.0
+    },
     "janus_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "janus_vq_decode_janus-pro-7b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -1145,6 +1202,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "6 passed"
+    "reference_summary": "9 passed, 9 deselected"
   }
 }
