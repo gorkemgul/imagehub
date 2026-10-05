@@ -23,6 +23,7 @@ from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel, CLIPTextModelWithProjection
 from imagehub.models.qwen3 import Qwen3Model
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.models.z_image_transformer import ZImageTransformer2DModel
 from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.flow_match_euler import (
@@ -188,6 +189,40 @@ def test_z_image_vae_full_config_layout():
     }
     actual = {name: list(value.shape) for name, value in ours.state_dict().items()}
     assert actual == expected
+
+
+def test_z_image_transformer_random_weights():
+    config = {
+        "all_patch_size": [2],
+        "all_f_patch_size": [1],
+        "in_channels": 8,
+        "dim": 32,
+        "n_layers": 3,
+        "n_refiner_layers": 2,
+        "n_heads": 2,
+        "n_kv_heads": 2,
+        "norm_eps": 1e-5,
+        "qk_norm": True,
+        "cap_feat_dim": 24,
+        "siglip_feat_dim": None,
+        "rope_theta": 256.0,
+        "t_scale": 1000.0,
+        "axes_dims": [4, 4, 8],
+        "axes_lens": [64, 32, 32],
+    }
+    torch.manual_seed(0)
+    ref = diffusers.ZImageTransformer2DModel.from_config(config).eval()
+    ours = ZImageTransformer2DModel(config).eval()
+    ours.load_checkpoint(ref.state_dict())
+    x = [torch.randn(8, 1, 10, 14), torch.randn(8, 1, 8, 12)]
+    timesteps = torch.tensor([0.875, 0.25])
+    cap_feats = [torch.randn(5, 24), torch.randn(9, 24)]
+    with torch.inference_mode():
+        expected = ref(x, timesteps, cap_feats).sample
+        actual = ours(x, timesteps, cap_feats)
+    assert len(actual) == len(expected)
+    for actual_item, expected_item in zip(actual, expected, strict=True):
+        exact(actual_item, expected_item)
 
 
 @pytest.mark.parametrize(
