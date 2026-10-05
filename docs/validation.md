@@ -3,6 +3,7 @@
 Validated on CPU on October 4, 2026. Environment: Python 3.13.11 / PyTorch 2.14.1.
 Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB unified memory,
 12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
+References are recorded per model in `validation.json` under `reference`.
 
 ## Scope
 
@@ -154,6 +155,38 @@ The header-only tensor check covered `text_encoder`, `transformer` and `vae`: te
 398 / 521 / 244, with missing, extra and shape-mismatched tensors all **0**. Record:
 `tensor_header_check`, [validation.json](validation.json).
 
+## Qwen-Image 2.1
+
+The reference is the implementation the Qwen team contributed to diffusers. No released diffusers
+version contains it yet: 0.40.0 predates it. The reference was pinned to commit
+`7997e4eabb1f880fa5697e2b24de09a892fffad5` in a separate environment with the same PyTorch 2.14.1
+and transformers 5.18.0. The comparison will be re-run when a diffusers release includes the model.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Prompt token ids (2 prompts) | identical | exact |
+| Qwen3-VL text encoder (last decoder layer before the final norm) | 0 | 0 |
+| Transformer cached-flow calls (1024×1024) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 |
+| Flow-match Euler scheduler with dynamic shifting | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 8 steps, `true_cfg` 1.0) | 0 / 0 | 0 / 0 |
+| Guided end to end: final latent / pixels (1024×1024, 4 steps, `true_cfg` 4.0, negative prompt) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (1024×1024, 8 steps, `true_cfg` 1.0; pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
+`seed=1234`; the guided run used the negative prompt "blurry". The model card uses 40 steps at
+2048×2048. The reduced step counts and 1024×1024 size used here only shorten the CPU run.
+
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts
+750 / 297 / 238, with missing, extra and shape-mismatched tensors all **0**. Understanding-only
+text-encoder tensors were skipped by an explicit allow-list. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
+To fit the 96 GB machine, each native/reference component pair was loaded and freed one at a time.
+The full validation run took 42 minutes.
+
 ## Janus-Pro
 
 Validated on CPU on October 5, 2026, in the same environment as above. `janus-pro-1b` and
@@ -268,17 +301,19 @@ The large-turbo run took 17 minutes.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
 - Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
   for SDXL base and SSD-1B, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
-  and flow-match Euler for Z-Image and Stable Diffusion 3.5.
+  flow-match Euler for Z-Image and Stable Diffusion 3.5, and flow-match Euler with dynamic shifting
+  for Qwen-Image 2.1.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 369 passed, 188 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 387 passed, 232 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 8 passed, 1 skipped for `playground-v2.5`, and 9 passed for
-  `z-image-turbo`, 6 passed for `janus-pro-1b`, and 9 passed for `janus-pro-7b`. These
+  `z-image-turbo`, 6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, and 9 passed for
+  `qwen-image-2.1`. These
   include structural parity with random weights, end-to-end parity with a small model,
   real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3.5 reference tests (CPU): 10 passed each for `sd3.5-medium` and

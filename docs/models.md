@@ -201,6 +201,46 @@ fp16/bf16 parity are not in this release.
 not distribute weights.
 
 
+# Qwen-Image 2.1
+
+Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `qwen-image-2.1` · Task: `t2i`
+
+**Architecture.** A Qwen3-VL-8B text encoder renders the prompt through the pipeline's prompt
+template and supplies the last decoder-layer output before the final norm. A 7B transformer uses
+block-causal joint attention and reuses a text KV cache across sampling steps. A causal 3D VAE has
+64 latent channels. The flow-match Euler scheduler uses dynamic shifting. The native image size is
+1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained qwen-image-2.1 checkpoints/qwen-image-2.1
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="qwen-image-2.1", model="checkpoints/qwen-image-2.1", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry", true_cfg=4.0)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 40, `true_cfg` defaults to 1.0 and `width`/`height` default to
+1024 and must be multiples of 32. The other supported options are `negative_prompt`, `num_images`,
+`seed` and `latents`. Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as the pinned
+diffusers reference with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is no claim of exact
+equality on these devices.
+
+**Out of scope.** Image editing, condition images, the Qwen3-VL vision encoder and fp16/bf16 parity
+are not supported.
+
+**License.** The weights use the Qwen Research License and are for research use; see the license.
+imagehub does not distribute weights.
+
+
 # Janus-Pro
 
 Catalog: [`janus-pro`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

@@ -1,11 +1,11 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL and SD3 measurements are grouped in flat ``components_sdxl`` and
-``components_sd3`` mappings: the base model keeps its historical unsuffixed keys, while other
-models use ``<key>_<model-id>``. Each model entry may also contain its own ``seed_end_to_end``
-measurement. Missing model directories are errors unless ``--allow-missing`` is passed, in which
-case they are omitted with a warning.
+measurements. SDXL, Qwen-Image and SD3 measurements are grouped in flat ``components_sdxl``,
+``components_qwen_image`` and ``components_sd3`` mappings: the base model keeps its historical
+unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
+own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
+output is retained unchanged; a missing directory without an existing entry is an error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -36,7 +36,8 @@ LIMITS = [
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler for SDXL, "
-    "and flow-match Euler for SD 3.5.",
+    "flow-match Euler for Z-Image and SD 3.5, and flow-match Euler with dynamic shifting for "
+    "Qwen-Image 2.1.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -56,6 +57,14 @@ Z_IMAGE_COMPONENT_KEYS = (
     "z_image_vae_decode",
     "z_image_vae_encode",
     "z_image_scheduler",
+)
+QWEN_IMAGE_COMPONENT_KEYS = (
+    "qwen_image_prompt_ids",
+    "qwen_image_text_encoder",
+    "qwen_image_transformer",
+    "qwen_image_vae_decode",
+    "qwen_image_vae_encode",
+    "qwen_image_scheduler",
 )
 JANUS_COMPONENT_KEYS = ("janus_language_model", "janus_vq_decode")
 SD3_COMPONENT_KEYS = (
@@ -91,20 +100,22 @@ def main() -> None:
     parser.add_argument("--machine", required=True)
     parser.add_argument("--tests-log", type=Path, required=True)
     parser.add_argument("--output", type=Path, default=Path("docs/validation.json"))
-    parser.add_argument("--allow-missing", action="store_true")
     args = parser.parse_args()
 
     import diffusers
     import transformers
 
     measured = json.loads(args.measurements.read_text(encoding="utf-8"))
+    existing = json.loads(args.output.read_text(encoding="utf-8")) if args.output.is_file() else {}
+    existing_models = {model["model_id"]: model for model in existing.get("models", [])}
     models = []
     for spec in MODEL_CATALOG.values():
         snapshot_dir = args.checkpoints / spec.id
         if not snapshot_dir.is_dir():
             message = f"{spec.id}: snapshot directory is missing: {snapshot_dir}"
-            if args.allow_missing:
-                print(f"warning: {message}; skipping", file=sys.stderr)
+            if spec.id in existing_models:
+                print(f"warning: {message}; keeping existing entry", file=sys.stderr)
+                models.append(existing_models[spec.id])
                 continue
             sys.exit(message)
         snapshot = read_snapshot(snapshot_dir)
@@ -170,6 +181,9 @@ def main() -> None:
         },
         "components_z_image": {
             key: value for key, value in measured.items() if key in Z_IMAGE_COMPONENT_KEYS
+        },
+        "components_qwen_image": {
+            key: value for key, value in measured.items() if key in QWEN_IMAGE_COMPONENT_KEYS
         },
         "components_janus": {
             key: value

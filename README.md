@@ -4,7 +4,7 @@ An inference library for open-weight image generation architectures, natively re
 PyTorch behind a single API. **PyTorch is the only required runtime dependency.** A model is added
 only once it is shown to reproduce the original implementation's output
 ([validation](docs/validation.md)). On CPU in float32, outputs are bit-identical to diffusers
-for all four model families; the details are on the [validation](docs/validation.md) page.
+for all six model families; the details are on the [validation](docs/validation.md) page.
 Architectures are linked to the
 [awesome-text-to-image-architectures](https://github.com/gorkemgul/awesome-text-to-image-architectures)
 catalog.
@@ -49,6 +49,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 | Stable Diffusion 1.x | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5` | `t2i` | CPU fp32 parity |
 | Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-turbo`, `ssd-1b`, `playground-v2.5` | `t2i` | CPU fp32 parity |
 | Stable Diffusion 3.5 | `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | CPU fp32 parity |
+| Qwen-Image | `qwen-image-2.1` | `t2i` | CPU fp32 parity |
 | Z-Image | `z-image-turbo` | `t2i` | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | CPU fp32 parity |
 

@@ -26,6 +26,24 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_guided_qwen-image-2.1": {
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "reference": {
+      "diffusers_git_commit": "7997e4eabb1f880fa5697e2b24de09a892fffad5"
+    },
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4,
+    "true_cfg": 4.0
+  },
   "e2e_guided_sd3.5-large-turbo": {
     "guidance": 3.5,
     "latents": {
@@ -117,6 +135,24 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_qwen-image-2.1": {
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "reference": {
+      "diffusers_git_commit": "7997e4eabb1f880fa5697e2b24de09a892fffad5"
+    },
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 8,
+    "true_cfg": 1.0
   },
   "e2e_sd-v1-1": {
     "guidance": 7.5,
@@ -391,6 +427,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_qwen-image-2.1": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 750
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 297
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 238
     }
   },
   "header_sd-v1-1": {
@@ -705,6 +761,38 @@
     "tolerance": 0.0
   },
   "janus_vq_decode_janus-pro-7b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_prompt_ids": {
+    "ids_match": true,
+    "prompts": 2,
+    "tolerance": "exact"
+  },
+  "qwen_image_scheduler": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_transformer": {
+    "calls": 2,
+    "kv_cache": true,
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -1238,6 +1326,17 @@
       1024
     ],
     "steps": 30
+  },
+  "seed_e2e_qwen-image-2.1": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 8,
+    "true_cfg": 1.0
   },
   "seed_e2e_sd-v1-5": {
     "passed": true,
