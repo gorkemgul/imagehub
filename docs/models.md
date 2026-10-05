@@ -162,15 +162,15 @@ refiner model, img2img, other schedulers and fp16 parity are not in this release
 # Stable Diffusion 3.5
 
 Catalog: [`stable-diffusion-3`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `sd3.5-medium`, `sd3.5-large` · Task: `t2i`
+Models: `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` · Task: `t2i`
 
 **Architecture.** Three frozen text encoders—CLIP-L, CLIP-G and T5-XXL—produce a joint sequence
 of 77 CLIP tokens and 256 T5 tokens plus a 2048-wide pooled CLIP embedding. The medium checkpoint
-uses MMDiT-X, with dual attention in its first 13 blocks; the large checkpoint uses a 38-block
-MMDiT. A 16-channel VAE with a shift factor decodes the latents. The flow-match Euler scheduler
-uses shift 3.
+uses MMDiT-X, with dual attention in its first 13 blocks; the large and large-turbo checkpoints use
+the same 38-block MMDiT architecture. Large-turbo is distilled for 4 steps without guidance. A
+16-channel VAE with a shift factor decodes the latents. The flow-match Euler scheduler uses shift 3.
 
-**Usage.** Both repositories are gated. Accept the repository terms and provide `HF_TOKEN` when
+**Usage.** All three repositories are gated. Accept the repository terms and provide `HF_TOKEN` when
 downloading:
 
 ```bash
@@ -185,9 +185,10 @@ with pipeline("t2i", backend="sd3.5-medium", model="checkpoints/sd3.5-medium", d
 ```
 
 **Settings.** Medium defaults to 40 steps and guidance 4.5; large defaults to 28 steps and
-guidance 3.5. Both default to 1024×1024, and `width`/`height` must be multiples of 16. The other
-supported options are `negative_prompt`, `num_images`, `seed`, `latents` and
-`max_sequence_length` (256). Unrecognized settings raise an error.
+guidance 3.5; large-turbo defaults to 4 steps and guidance 0.0. All three default to 1024×1024,
+and `width`/`height` must be multiples of 16. The other supported options are `negative_prompt`,
+`num_images`, `seed`, `latents` and `max_sequence_length` (256). Unrecognized settings raise an
+error.
 
 **Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA

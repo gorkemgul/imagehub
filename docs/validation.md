@@ -200,9 +200,9 @@ and one native copy were loaded at a time. The full 7B validation run took 68 mi
 ## Stable Diffusion 3.5
 
 Validated on CPU in the same environment as above against diffusers 0.40.0
-`StableDiffusion3Pipeline` and transformers 5.18.0. Both `sd3.5-medium` and `sd3.5-large` were
-loaded strictly. Every numeric comparison was exactly **0**, so the native implementation produced
-bit-identical results to the reference in CPU float32.
+`StableDiffusion3Pipeline` and transformers 5.18.0. `sd3.5-medium`, `sd3.5-large` and
+`sd3.5-large-turbo` were loaded strictly. Every numeric comparison was exactly **0**, so the native
+implementation produced bit-identical results to the reference in CPU float32.
 
 ### Comparisons (CPU, float32)
 
@@ -222,23 +222,35 @@ bit-identical results to the reference in CPU float32.
 | Flow-match Euler timesteps / sigmas (28 steps) | sd3.5-large | 0 / 0 | 0 |
 | End to end: final latent / pixels (1024×1024, 8 steps, guidance 3.5) | sd3.5-large | 0 / 0 | 0 / 0 |
 | End to end, seed 42 with the same settings (pixels) | sd3.5-large | 0 | 0 |
+| Three tokenizers (3 fixed prompts) | sd3.5-large-turbo | identical | exact |
+| CLIP-L / CLIP-G / T5-XXL text encoders | sd3.5-large-turbo | 0 / 0 / 0 | 0 |
+| MMDiT single-step calls (1024×1024, t = 1000 and 500) | sd3.5-large-turbo | 0 | 0 |
+| VAE decode / encode | sd3.5-large-turbo | 0 / 0 | 0 |
+| Flow-match Euler timesteps / sigmas (4 steps) | sd3.5-large-turbo | 0 / 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 4 steps, guidance 0.0) | sd3.5-large-turbo | 0 / 0 | 0 / 0 |
+| Guided end to end: final latent / pixels (1024×1024, 4 steps, guidance 3.5, negative prompt) | sd3.5-large-turbo | 0 / 0 | 0 / 0 |
+| End to end, seed 42 with the defaults (pixels) | sd3.5-large-turbo | 0 | 0 |
 
-For both checkpoints, all three tokenizers matched. The T5 tokenizer additionally passed seeded
+For all three checkpoints, all three tokenizers matched. The T5 tokenizer additionally passed seeded
 fuzzing and an every-code-point check against the snapshot's `tokenizer_3`.
 
 The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
 `seed=1234`. The guidance values are the model-card settings. Medium used 12 steps instead of its
 40-step default, and large used 8 instead of its 28-step default; these reductions only shorten
-the CPU validation run. The seed 42 comparisons used the same size, step count and guidance.
+the CPU validation run. Large-turbo used its defaults of 4 steps and guidance 0.0, with no
+reduction. Its guided comparison used guidance 3.5 and the negative prompt "blurry". The seed 42
+comparisons used the same size, step count and guidance.
 
 The header-only checks covered `text_encoder`, `text_encoder_2`, `text_encoder_3`, `transformer`
 and `vae`. Medium had 197 / 517 / 219 / 909 / 244 tensors; large had
-197 / 517 / 219 / 1227 / 244. Missing, extra and shape-mismatched tensors were all **0**. Record:
-`tensor_header_check`, [validation.json](validation.json).
+197 / 517 / 219 / 1227 / 244; large-turbo had 197 / 517 / 219 / 1227 / 244. Missing, extra and
+shape-mismatched tensors were all **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
 
 To fit the 96 GB machine, each native/reference component pair was loaded and freed one at a time.
 For end-to-end validation, the reference pipeline ran first and was freed before the native
 pipeline ran. The medium run took 16 minutes and the large run took 27 minutes.
+The large-turbo run took 17 minutes.
 
 ## Device smoke tests (no parity claim)
 
@@ -270,7 +282,7 @@ pipeline ran. The medium run took 16 minutes and the large run took 27 minutes.
   include structural parity with random weights, end-to-end parity with a small model,
   real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3.5 reference tests (CPU): 10 passed each for `sd3.5-medium` and
-  `sd3.5-large`.
+  `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
 - MPS smoke test: 1 passed.
 
 ## Differences found and fixed during validation
