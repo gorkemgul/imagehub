@@ -32,9 +32,32 @@ def _reference(root, num_images=1):
 
 def _inputs(processor):
     text = processor.apply_chat_template(
-        [{"role": "user", "content": PROMPT}], tokenize=False, add_generation_prompt=True
+        [{"role": "user", "content": [{"type": "text", "text": PROMPT}]}],
+        tokenize=False,
+        add_generation_prompt=True,
     )
-    return processor(text=[text], generation_mode="image", return_tensors="pt")
+    inputs = processor(text=[text], generation_mode="image", return_tensors="pt")
+    assert inputs.input_ids.tolist() == [
+        [
+            100000,
+            100588,
+            25,
+            245,
+            14537,
+            280,
+            274,
+            62202,
+            17040,
+            245,
+            7569,
+            185,
+            185,
+            100589,
+            25,
+            100003,
+        ]
+    ]
+    return inputs
 
 
 def test_published_tensor_headers_match(record):
@@ -75,7 +98,8 @@ def test_language_model_prefill_and_decode(record):
     input_ids[1, 1:-1] = reference.generation_config.pad_token_id
     reference_inputs = reference.get_input_embeddings()(input_ids)
     native_inputs = components.model.language_model.embed_tokens(input_ids)
-    cache_length = max(reference.generation_config.max_length, input_ids.shape[1] + 576)
+    cache_length = max(reference.generation_config.max_length or 20, input_ids.shape[1] + 576)
+    assert cache_length == 592
     native_cache = __import__("imagehub.models.llama", fromlist=["LlamaCache"]).LlamaCache(
         components.model.language_model.config, cache_length
     )

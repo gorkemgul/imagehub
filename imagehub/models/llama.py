@@ -154,7 +154,7 @@ class LlamaAttention(nn.Module):
         self,
         hidden_states: Tensor,
         position_embeddings: tuple[Tensor, Tensor],
-        attention_mask: Tensor,
+        attention_mask: Tensor | None,
         cache: LlamaCache,
         cache_position: Tensor,
     ) -> Tensor:
@@ -170,15 +170,25 @@ class LlamaAttention(nn.Module):
         key_states, value_states = cache.update(
             key_states, value_states, self.layer_index, cache_position
         )
-        key_states = repeat_kv(key_states, self.num_key_value_groups)
-        value_states = repeat_kv(value_states, self.num_key_value_groups)
+        enable_gqa = self.num_key_value_groups > 1 and attention_mask is None
+        if self.num_key_value_groups > 1 and not enable_gqa:
+            key_states = repeat_kv(key_states, self.num_key_value_groups)
+            value_states = repeat_kv(value_states, self.num_key_value_groups)
 
-        attention_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * self.scaling
-        attention_weights = attention_weights + attention_mask
-        attention_weights = F.softmax(attention_weights, dim=-1, dtype=torch.float32).to(
-            query_states.dtype
+        is_causal = query_states.shape[2] > 1 and attention_mask is None
+        if is_causal and key_states.shape[2] > query_states.shape[2]:
+            key_states = key_states[:, :, : query_states.shape[2], :]
+            value_states = value_states[:, :, : query_states.shape[2], :]
+        attention_output = F.scaled_dot_product_attention(
+            query_states,
+            key_states,
+            value_states,
+            attn_mask=attention_mask,
+            dropout_p=0.0,
+            is_causal=is_causal,
+            scale=self.scaling,
+            enable_gqa=enable_gqa,
         )
-        attention_output = torch.matmul(attention_weights, value_states)
         attention_output = attention_output.transpose(1, 2).contiguous()
         attention_output = attention_output.reshape(*input_shape, -1).contiguous()
         return self.o_proj(attention_output)
@@ -196,7 +206,7 @@ class LlamaDecoderLayer(nn.Module):
         self,
         hidden_states: Tensor,
         position_embeddings: tuple[Tensor, Tensor],
-        attention_mask: Tensor,
+        attention_mask: Tensor | None,
         cache: LlamaCache,
         cache_position: Tensor,
     ) -> Tensor:
@@ -252,7 +262,7 @@ class LlamaModel(NativeModel):
         attention_mask: Tensor,
         cache: LlamaCache,
         cache_position: Tensor,
-    ) -> Tensor:
+    ) -> Tensor | None:
         key_positions = torch.arange(cache.max_cache_len, device=inputs_embeds.device)
         allowed = key_positions[None, :] <= cache_position[:, None]
         padding = torch.zeros(
@@ -261,13 +271,17 @@ class LlamaModel(NativeModel):
             device=inputs_embeds.device,
         )
         padding[:, : attention_mask.shape[1]] = attention_mask.bool()
+        query_length = inputs_embeds.shape[1]
+        if (query_length == 1 or cache.max_cache_len == query_length) and padding.all():
+            return None
+        if (
+            cache_position[0] == 0
+            and padding[:, :query_length].all()
+            and (~padding[:, query_length:]).all()
+        ):
+            return None
         allowed = allowed[None, None] & padding[:, None, None, :]
-        minimum = torch.finfo(inputs_embeds.dtype).min
-        return torch.where(
-            allowed,
-            torch.tensor(0.0, dtype=inputs_embeds.dtype, device=inputs_embeds.device),
-            minimum,
-        )
+        return allowed
 
     def forward(
         self,

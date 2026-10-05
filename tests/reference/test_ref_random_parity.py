@@ -157,7 +157,7 @@ LLAMA_MEDIUM = LLAMA_TINY | {
 def test_llama_static_cache_random_weights(config):
     torch.manual_seed(0)
     ref_config = transformers.LlamaConfig(**config)
-    ref_config._attn_implementation = "eager"
+    ref_config._attn_implementation = "sdpa"
     ref = transformers.LlamaModel(ref_config).eval()
     ours = LlamaModel(config).eval()
     ours.load_checkpoint(ref.state_dict())
