@@ -484,6 +484,137 @@ def write_tiny_z_image(directory: str | os.PathLike[str], *, seed: int = 0) -> P
     return root
 
 
+TINY_SD3_T5 = {
+    "architectures": ["T5EncoderModel"],
+    "vocab_size": 11,
+    "d_model": 32,
+    "d_kv": 8,
+    "d_ff": 64,
+    "num_layers": 2,
+    "num_heads": 4,
+    "relative_attention_num_buckets": 8,
+    "relative_attention_max_distance": 16,
+    "dropout_rate": 0.0,
+    "layer_norm_epsilon": 1e-6,
+    "feed_forward_proj": "gated-gelu",
+    "dense_act_fn": "gelu_new",
+    "is_gated_act": True,
+    "is_encoder_decoder": False,
+    "use_cache": False,
+}
+TINY_SD3_TRANSFORMER = {
+    "_class_name": "SD3Transformer2DModel",
+    "sample_size": 4,
+    "patch_size": 2,
+    "in_channels": 4,
+    "num_layers": 2,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "joint_attention_dim": 32,
+    "caption_projection_dim": 16,
+    "pooled_projection_dim": 32,
+    "out_channels": 4,
+    "pos_embed_max_size": 4,
+    "qk_norm": "rms_norm",
+    "dual_attention_layers": [],
+}
+TINY_SD3_VAE = TINY_VAE_FILE_CONFIG | {
+    "latent_channels": 4,
+    "scaling_factor": 1.5305,
+    "shift_factor": 0.0609,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "sample_size": 32,
+}
+TINY_SD3_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "num_train_timesteps": 1000,
+    "shift": 3.0,
+}
+
+
+def write_tiny_sd3(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight SD3 snapshot in the published diffusers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.clip_text import CLIPTextModelWithProjection
+    from imagehub.models.sd3_transformer import SD3Transformer2DModel
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_tokenizer(root / "tokenizer")
+    write_tiny_tokenizer(root / "tokenizer_2", pad_token="!")
+    tokenizer_3 = root / "tokenizer_3"
+    tokenizer_3.mkdir()
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", tokenizer_3 / "tokenizer.json")
+    tokenizer_3_config = {
+        "tokenizer_class": "T5TokenizerFast",
+        "model_max_length": 512,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (tokenizer_3 / "tokenizer_config.json").write_text(json.dumps(tokenizer_3_config))
+    (tokenizer_3 / "special_tokens_map.json").write_text(
+        json.dumps(
+            {key: tokenizer_3_config[key] for key in ("pad_token", "eos_token", "unk_token")}
+        )
+    )
+
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(TINY_SD3_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "StableDiffusion3Pipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "CLIPTextModelWithProjection"],
+                "text_encoder_2": ["transformers", "CLIPTextModelWithProjection"],
+                "text_encoder_3": ["transformers", "T5EncoderModel"],
+                "tokenizer": ["transformers", "CLIPTokenizer"],
+                "tokenizer_2": ["transformers", "CLIPTokenizer"],
+                "tokenizer_3": ["transformers", "T5TokenizerFast"],
+                "transformer": ["diffusers", "SD3Transformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKL"],
+            }
+        )
+    )
+    clip_config = TINY_TEXT_FILE_CONFIG | {
+        "architectures": ["CLIPTextModelWithProjection"],
+        "hidden_size": 16,
+        "intermediate_size": 32,
+        "num_attention_heads": 4,
+        "projection_dim": 16,
+    }
+    for name, cls, config, weights in (
+        ("text_encoder", CLIPTextModelWithProjection, clip_config, "model.safetensors"),
+        ("text_encoder_2", CLIPTextModelWithProjection, clip_config, "model.safetensors"),
+        ("text_encoder_3", T5EncoderModel, TINY_SD3_T5, "model.safetensors"),
+        (
+            "transformer",
+            SD3Transformer2DModel,
+            TINY_SD3_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_SD3_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name.startswith("text_encoder") and name != "text_encoder_3":
+            state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
 TINY_JANUS_TEXT_CONFIG = {
     "model_type": "llama",
     "vocab_size": 32,
