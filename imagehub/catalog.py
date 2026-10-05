@@ -16,7 +16,7 @@ from typing import Any
 
 from imagehub.types import Task
 
-PROVENANCES = ("author", "community-mirror")
+PROVENANCES = ("author", "community-mirror", "community-conversion")
 
 
 @dataclass(frozen=True)
@@ -190,6 +190,33 @@ _entries.append(
             "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
             "vae/config.json",
             "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="janus-pro-1b",
+        task=Task.T2I,
+        family="janus",
+        source="https://huggingface.co/deepseek-community/Janus-Pro-1B",
+        repo_id="deepseek-community/Janus-Pro-1B",
+        revision="1655280bb75959cc1cb85529a2a8b26e7016072e",
+        provenance="community-conversion",
+        catalog_id="janus-pro",
+        format="transformers",
+        license="DeepSeek Model License",
+        config={"defaults": {"guidance": 5.0}},
+        files=(
+            "config.json",
+            "generation_config.json",
+            "preprocessor_config.json",
+            "processor_config.json",
+            "special_tokens_map.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "chat_template.jinja",
+            "model.safetensors",
         ),
     )
 )

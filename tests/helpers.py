@@ -482,3 +482,110 @@ def write_tiny_z_image(directory: str | os.PathLike[str], *, seed: int = 0) -> P
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(state, root / name / weights)
     return root
+
+
+TINY_JANUS_TEXT_CONFIG = {
+    "model_type": "llama",
+    "vocab_size": 32,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 4,
+    "head_dim": 8,
+    "max_position_embeddings": 64,
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 10000.0,
+    "rope_scaling": None,
+    "attention_bias": False,
+    "attention_dropout": 0.0,
+    "mlp_bias": False,
+    "hidden_act": "silu",
+    "pad_token_id": 22,
+    "bos_token_id": 20,
+    "eos_token_id": 21,
+    "use_cache": True,
+}
+TINY_JANUS_VISION_CONFIG = {
+    "model_type": "janus_vision",
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 1,
+    "num_attention_heads": 4,
+    "num_channels": 3,
+    "image_size": 32,
+    "patch_size": 16,
+    "num_image_tokens": 4,
+    "projection_dim": 32,
+}
+TINY_JANUS_VQ_CONFIG = {
+    "model_type": "janus_vqgan",
+    "embed_dim": 8,
+    "num_embeddings": 16,
+    "double_latent": False,
+    "latent_channels": 32,
+    "in_channels": 3,
+    "base_channels": 32,
+    "channel_multiplier": [1],
+    "num_res_blocks": 1,
+    "dropout": 0.0,
+    "initializer_range": 0.02,
+    "num_patches": 2,
+    "out_channels": 3,
+    "projection_dim": 32,
+    "num_hidden_layers": 2,
+    "hidden_act": "gelu",
+    "image_token_embed_dim": 32,
+}
+TINY_JANUS_CONFIG = {
+    "model_type": "janus",
+    "text_config": TINY_JANUS_TEXT_CONFIG,
+    "vision_config": TINY_JANUS_VISION_CONFIG,
+    "vq_config": TINY_JANUS_VQ_CONFIG,
+    "image_token_id": 26,
+}
+
+
+def write_tiny_janus(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """Write a random tiny Janus checkpoint in the published transformers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.janus import JanusModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    tokenizer = FIXTURES / "deepseek_tokenizer"
+    for name in ("tokenizer.json", "tokenizer_config.json"):
+        shutil.copyfile(tokenizer / name, root / name)
+    tokenizer_data = json.loads((root / "tokenizer.json").read_text(encoding="utf-8"))
+    tokenizer_data["model"]["vocab"][":"] = 26
+    (root / "tokenizer.json").write_text(json.dumps(tokenizer_data), encoding="utf-8")
+    (root / "config.json").write_text(json.dumps(TINY_JANUS_CONFIG), encoding="utf-8")
+    (root / "generation_config.json").write_text(
+        json.dumps(
+            {
+                "bos_token_id": 20,
+                "eos_token_id": 21,
+                "pad_token_id": 22,
+                "do_sample": True,
+                "guidance_scale": 5.0,
+                "max_length": 20,
+                "num_return_sequences": 1,
+                "generation_kwargs": {"boi_token_id": 23},
+            }
+        ),
+        encoding="utf-8",
+    )
+    torch.manual_seed(seed)
+    model = JanusModel(TINY_JANUS_CONFIG)
+    for parameter in model.parameters():
+        parameter.data.normal_(0, 0.05)
+    state = {f"model.{name}": value for name, value in model.state_dict().items()}
+    state["lm_head.weight"] = torch.zeros(32, 32)
+    state["model.vision_model.placeholder"] = torch.zeros(1)
+    state["model.aligner.placeholder"] = torch.zeros(1)
+    state["model.vqmodel.encoder.placeholder"] = torch.zeros(1)
+    state["model.vqmodel.quant_conv.placeholder"] = torch.zeros(1)
+    save_safetensors(state, root / "model.safetensors")
+    return root

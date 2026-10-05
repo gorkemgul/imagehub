@@ -11,6 +11,8 @@ def test_family_and_model_aliases_are_registered():
     assert "stable-diffusion-xl" in names
     assert {"sd-v1-1", "sd-v1-5"} <= set(names)
     assert "sdxl-base-1.0" in names
+    assert "janus" in names
+    assert "janus-pro-1b" in names
 
 
 def test_registration_rules():
