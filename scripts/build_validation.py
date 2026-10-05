@@ -124,6 +124,9 @@ def main() -> None:
                 "provenance": spec.provenance,
                 "catalog_id": spec.catalog_id,
                 "license": spec.license,
+                "reference": {
+                    package: dict(details) for package, details in spec.reference.items()
+                },
                 "status": "full" if e2e and e2e.get("passed") else "experimental",
                 "files": snapshot["files"],
                 "tensor_header_check": header_check(header),

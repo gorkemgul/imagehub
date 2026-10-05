@@ -15,7 +15,13 @@ CATALOG = (
 def _norm(value: str) -> str:
     if "(" in value and value.endswith(")"):
         value = value.rsplit("(", 1)[1][:-1]
-    return value.lower().replace("_", "-").replace(" ", "-").replace("open-rail", "openrail")
+    return (
+        value.lower()
+        .replace("_", "-")
+        .replace(" ", "-")
+        .replace("open-rail", "openrail")
+        .replace("-agreement", "")
+    )
 
 
 def test_catalog_ids_exist_with_consistent_weight_licenses():
@@ -30,5 +36,6 @@ def test_catalog_ids_exist_with_consistent_weight_licenses():
         assert any(
             _norm(part) == _norm(spec.license)
             or part.lower().split(" (")[0] == spec.license.lower()
+            or part.lower().split(" agreement")[0] == spec.license.lower()
             for part in parts
         ), (spec.id, weights)

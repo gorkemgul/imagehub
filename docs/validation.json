@@ -18,6 +18,7 @@
       "provenance": "author",
       "catalog_id": "stable-diffusion-1",
       "license": "CreativeML-OpenRAIL-M",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
@@ -72,6 +73,7 @@
       "provenance": "author",
       "catalog_id": "stable-diffusion-1",
       "license": "CreativeML-OpenRAIL-M",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
@@ -126,6 +128,7 @@
       "provenance": "author",
       "catalog_id": "stable-diffusion-1",
       "license": "CreativeML-OpenRAIL-M",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
@@ -180,6 +183,7 @@
       "provenance": "author",
       "catalog_id": "stable-diffusion-1",
       "license": "CreativeML-OpenRAIL-M",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
@@ -234,6 +238,7 @@
       "provenance": "community-mirror",
       "catalog_id": "stable-diffusion-1",
       "license": "CreativeML-OpenRAIL-M",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "e2f6f22e274374010aec30c79eb2d6e53fff4a36ac0225523a92cb2d41a83347",
@@ -292,6 +297,7 @@
       "provenance": "author",
       "catalog_id": "sdxl",
       "license": "CreativeML-OpenRAIL++-M",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "6d7b93508390ab91ac5bfbe4aeb4dc2d83f7bb1b05fb069d714b5b0c75f70d44",
@@ -365,6 +371,7 @@
       "provenance": "author",
       "catalog_id": "z-image",
       "license": "Apache-2.0",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "18a90e1bc117a29a8b7961bb200c86ff0b9704609e87c7171511dc724fcdc9d3",
@@ -456,6 +463,7 @@
       "provenance": "author",
       "catalog_id": "stable-diffusion-3",
       "license": "Stability AI Community License",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "b5e97ca0d3c0cd9a1e3ed91a71bbdd489de7941b23fe038b3aaa9acf36fd1543",
@@ -534,6 +542,7 @@
       "provenance": "author",
       "catalog_id": "stable-diffusion-3",
       "license": "Stability AI Community License",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "b5e97ca0d3c0cd9a1e3ed91a71bbdd489de7941b23fe038b3aaa9acf36fd1543",
@@ -614,6 +623,7 @@
       "provenance": "author",
       "catalog_id": "stable-diffusion-3",
       "license": "Stability AI Community License",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "b5e97ca0d3c0cd9a1e3ed91a71bbdd489de7941b23fe038b3aaa9acf36fd1543",
@@ -712,6 +722,7 @@
       "provenance": "community-conversion",
       "catalog_id": "janus-pro",
       "license": "DeepSeek Model License",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "config.json": "931a5d566cbaed44fe0114412755c7b1efe76bf8e30c7d04ee3e337b121805aa",
@@ -755,6 +766,7 @@
       "provenance": "community-conversion",
       "catalog_id": "janus-pro",
       "license": "DeepSeek Model License",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "config.json": "980d1d1f14c4e95eddaa4df6512be90127ffb345acc08461a69fd55e024f0aa9",
@@ -801,6 +813,7 @@
       "provenance": "author",
       "catalog_id": "sdxl-turbo",
       "license": "sai-nc-community",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "c3c2f99e3e94b5940bb072f7cf66858ab05d115dc5899b3cb36a7781e91769e0",
@@ -895,6 +908,7 @@
       "provenance": "author",
       "catalog_id": "ssd-1b",
       "license": "Apache-2.0",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "2f4d71b6da5648627b9a2848b7f430d2294e95abbc5d3282dddd438bf8b466da",
@@ -968,6 +982,7 @@
       "provenance": "author",
       "catalog_id": "playground-v2",
       "license": "playground-v2dot5-community",
+      "reference": {"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
       "status": "full",
       "files": {
         "model_index.json": "e69bc6c32f552e1a967c4c4c706f6ce264dc31f3d34e8972a107ee89b585da8a",

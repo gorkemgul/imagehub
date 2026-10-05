@@ -19,6 +19,13 @@ from imagehub.types import Task
 PROVENANCES = ("author", "community-mirror", "community-conversion")
 
 
+def _released_reference() -> dict[str, dict[str, str]]:
+    return {
+        "diffusers": {"version": "0.40.0"},
+        "transformers": {"version": "5.18.0"},
+    }
+
+
 @dataclass(frozen=True)
 class ModelSpec:
     id: str
@@ -32,11 +39,22 @@ class ModelSpec:
     revision: str
     provenance: str
     config: Mapping[str, Any] = field(default_factory=dict)
+    reference: Mapping[str, Mapping[str, str]] = field(default_factory=_released_reference)
     gated: bool = False
     license: str = "See model card"
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "config", MappingProxyType(dict(self.config)))
+        object.__setattr__(
+            self,
+            "reference",
+            MappingProxyType(
+                {
+                    package: MappingProxyType(dict(details))
+                    for package, details in self.reference.items()
+                }
+            ),
+        )
         object.__setattr__(self, "files", tuple(self.files))
         if not re.fullmatch(r"[0-9a-f]{40}", self.revision):
             raise ValueError("revision must be a 40-character lowercase commit hash")
@@ -188,6 +206,52 @@ _entries.append(
             "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
             "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
             "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="qwen-image-2.1",
+        task=Task.T2I,
+        family="qwen-image",
+        source="https://huggingface.co/Qwen/Qwen-Image-2.1",
+        repo_id="Qwen/Qwen-Image-2.1",
+        revision="d26bb61231c349cf6b7896fa83353113880e1ba3",
+        provenance="author",
+        catalog_id="qwen-image-2",
+        format="diffusers",
+        license="Qwen Research License",
+        reference={
+            "diffusers": {"git_commit": "7997e4eabb1f880fa5697e2b24de09a892fffad5"},
+            "transformers": {"version": "5.18.0"},
+        },
+        files=(
+            "model_index.json",
+            "LICENSE",
+            "processor/added_tokens.json",
+            "processor/chat_template.jinja",
+            "processor/merges.txt",
+            "processor/preprocessor_config.json",
+            "processor/special_tokens_map.json",
+            "processor/tokenizer.json",
+            "processor/tokenizer_config.json",
+            "processor/video_preprocessor_config.json",
+            "processor/vocab.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
             "vae/config.json",
             "vae/diffusion_pytorch_model.safetensors",
         ),

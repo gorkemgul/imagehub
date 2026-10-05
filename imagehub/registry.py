@@ -95,6 +95,7 @@ for _task, _name, _path in (
         "imagehub.backends.stable_diffusion_3:StableDiffusion3Backend",
     ),
     (Task.T2I, "z-image", "imagehub.backends.z_image:ZImageBackend"),
+    (Task.T2I, "qwen-image", "imagehub.backends.qwen_image:QwenImageBackend"),
     (Task.T2I, "janus", "imagehub.backends.janus:JanusBackend"),
 ):
     backend_registry.register(_task, _name, _path)
