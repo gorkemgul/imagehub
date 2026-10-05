@@ -157,3 +157,41 @@ runs are smoke tests only; there is no claim of exact equality on these devices.
 refiner model, img2img, other schedulers and fp16 parity are not in this release.
 
 **License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
+
+
+# Playground v2.5
+
+Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `playground-v2.5` · Task: `t2i`
+
+**Architecture.** An SDXL-family model with the same two frozen text encoders and `text_time`
+micro-conditioning. Its EDM DPM-Solver++ scheduler is a second-order multistep scheduler with
+Karras sigmas and EDM preconditioning. The f=8 KL autoencoder uses a scaling factor of 0.5, with
+per-channel `latents_mean` and `latents_std` applied before decoding. Its native image size is
+1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained playground-v2.5 checkpoints/playground-v2.5
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="playground-v2.5", model="checkpoints/playground-v2.5", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 3.0 and `width`/`height` default to
+1024. Other supported settings match SDXL. Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
+refiner model, img2img, other schedulers and fp16 parity are not in this release.
+
+**License.** The weights use the `playground-v2dot5-community` license, which restricts commercial
+use under its terms; see the license. imagehub does not distribute weights.
