@@ -46,7 +46,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 
 | Family | Checkpoints | Task | Validation |
 | --- | --- | --- | --- |
-| Stable Diffusion 1.x | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5` | `t2i` | CPU fp32 parity |
+| Stable Diffusion | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`, `sd-turbo` | `t2i` | CPU fp32 parity |
 | Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-turbo`, `ssd-1b`, `playground-v2.5` | `t2i` | CPU fp32 parity |
 | Stable Diffusion 3.5 | `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | CPU fp32 parity |
 | Qwen-Image | `qwen-image-2.1` | `t2i` | CPU fp32 parity |
