@@ -7,6 +7,8 @@ from helpers import (
     SD1_UNET,
     SDXL_SCHEDULER,
     SDXL_UNET,
+    SSD1B_UNET,
+    TINY_SSD1B_UNET,
     TINY_TEXT_CONFIG,
     TINY_UNET_CONFIG,
     TINY_VAE_CONFIG,
@@ -163,6 +165,44 @@ def test_sdxl_unet_random_weights(config, sizes):
     for hw in sizes:
         sample = torch.randn(2, 4, *hw)
         for timestep in (torch.tensor(981), torch.tensor(1)):
+            with torch.inference_mode():
+                actual = ours(
+                    sample,
+                    timestep,
+                    context,
+                    text_embeds=text_embeds,
+                    time_ids=time_ids,
+                )
+                expected = ref(
+                    sample,
+                    timestep,
+                    context,
+                    added_cond_kwargs={"text_embeds": text_embeds, "time_ids": time_ids},
+                ).sample
+            exact(actual, expected)
+
+
+@pytest.mark.parametrize(
+    ("config", "sizes"),
+    [(TINY_SSD1B_UNET, [(16, 16), (13, 9)]), (SSD1B_UNET, [(128, 128)])],
+    ids=["tiny", "ssd1b"],
+)
+def test_ssd1b_unet_random_weights(config, sizes):
+    torch.manual_seed(0)
+    ref = diffusers.UNet2DConditionModel.from_config(config).eval()
+    for parameter in ref.parameters():
+        parameter.data.normal_(0, 0.02)
+    ours = UNet2DConditionModel(config).eval()
+    ours.load_checkpoint(ref.state_dict())
+    context = torch.randn(2, 7, config["cross_attention_dim"])
+    text_dim = (
+        config["projection_class_embeddings_input_dim"] - 6 * config["addition_time_embed_dim"]
+    )
+    text_embeds = torch.randn(2, text_dim)
+    time_ids = torch.randn(2, 6)
+    for hw in sizes:
+        sample = torch.randn(2, 4, *hw)
+        for timestep in (torch.tensor(999), torch.tensor(500), torch.tensor(1)):
             with torch.inference_mode():
                 actual = ours(
                     sample,

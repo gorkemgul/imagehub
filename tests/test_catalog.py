@@ -8,7 +8,15 @@ from imagehub.types import Task
 
 def test_catalog_contents():
     assert available_models() == {
-        "t2i": ("sd-v1-1", "sd-v1-2", "sd-v1-3", "sd-v1-4", "sd-v1-5", "sdxl-base-1.0")
+        "t2i": (
+            "sd-v1-1",
+            "sd-v1-2",
+            "sd-v1-3",
+            "sd-v1-4",
+            "sd-v1-5",
+            "sdxl-base-1.0",
+            "ssd-1b",
+        )
     }
     for spec in (value for value in MODEL_CATALOG.values() if value.family == "stable-diffusion"):
         assert spec.task is Task.T2I
@@ -33,6 +41,17 @@ def test_catalog_contents():
     assert sdxl.format == "diffusers"
     assert sdxl.license == "CreativeML-OpenRAIL++-M"
     assert len(set(sdxl.files)) == len(sdxl.files) == 18
+
+    ssd1b = model_info("ssd-1b")
+    assert ssd1b.task is Task.T2I
+    assert ssd1b.family == "stable-diffusion-xl"
+    assert ssd1b.repo_id == "segmind/SSD-1B"
+    assert ssd1b.revision == "60987f37e94cd59c36b1cba832b9f97b57395a10"
+    assert ssd1b.provenance == "author"
+    assert ssd1b.catalog_id == "ssd-1b"
+    assert ssd1b.format == "diffusers"
+    assert ssd1b.license == "Apache-2.0"
+    assert len(set(ssd1b.files)) == len(ssd1b.files) == 18
 
 
 def test_provenance_and_formats():

@@ -10,6 +10,7 @@ from helpers import (
     meta_shapes,
     published_shapes,
     sdxl_published_shapes,
+    ssd1b_published_shapes,
 )
 
 from imagehub.models.layers import timestep_embedding
@@ -30,14 +31,59 @@ def test_matches_sdxl_published_tensor_layout():
     ("config_path", "family"),
     [
         ("sdxl_configs/unet.json", "sdxl"),
+        ("ssd1b_configs/unet.json", "ssd1b"),
         ("sd1_configs/v1-5/unet.json", "sd1"),
         ("sd1_configs/v1-1/unet.json", "sd1"),
     ],
 )
 def test_real_release_configs_match_published_tensor_layout(config_path, family):
     config = json.loads((FIXTURES / config_path).read_text(encoding="utf-8"))
-    expected = sdxl_published_shapes("unet") if family == "sdxl" else published_shapes("unet")
-    assert meta_shapes(UNet2DConditionModel, config) == expected
+    fixtures = {
+        "sdxl": sdxl_published_shapes,
+        "ssd1b": ssd1b_published_shapes,
+        "sd1": published_shapes,
+    }
+    assert meta_shapes(UNet2DConditionModel, config) == fixtures[family]("unet")
+
+
+def test_ssd1b_mid_block_has_one_resnet_and_no_attention():
+    config = TINY_UNET_CONFIG | {"mid_block_type": "UNetMidBlock2D"}
+    model = UNet2DConditionModel(config)
+    assert len(model.mid_block.resnets) == 1
+    assert model.mid_block.attentions is None
+    sample = torch.randn(2, 4, 8, 8)
+    with torch.inference_mode():
+        out = model(sample, torch.tensor(981), torch.randn(2, 7, 32))
+    assert out.shape == sample.shape
+
+
+def test_nested_transformer_layers_apply_per_resnet():
+    config = TINY_UNET_CONFIG | {
+        "block_out_channels": [32, 64],
+        "down_block_types": ["DownBlock2D", "CrossAttnDownBlock2D"],
+        "up_block_types": ["CrossAttnUpBlock2D", "UpBlock2D"],
+        "transformer_layers_per_block": [1, [1, 2]],
+        "reverse_transformer_layers_per_block": [[2, 3, 4], 1],
+        "mid_block_type": "UNetMidBlock2D",
+    }
+    model = UNet2DConditionModel(config)
+    down = model.down_blocks[1].attentions
+    assert [len(block.transformer_blocks) for block in down] == [1, 2]
+    up = model.up_blocks[0].attentions
+    assert [len(block.transformer_blocks) for block in up] == [2, 3, 4]
+
+
+def test_mismatched_transformer_layer_depths_raise():
+    config = TINY_UNET_CONFIG | {
+        "block_out_channels": [32, 64],
+        "down_block_types": ["DownBlock2D", "CrossAttnDownBlock2D"],
+        "up_block_types": ["CrossAttnUpBlock2D", "UpBlock2D"],
+        "transformer_layers_per_block": [1, [1, 2, 3]],
+    }
+    with pytest.raises(ValueError, match="transformer_layers_per_block"):
+        UNet2DConditionModel(config)
+    with pytest.raises(ValueError, match="reverse_transformer_layers_per_block"):
+        UNet2DConditionModel(TINY_UNET_CONFIG | {"reverse_transformer_layers_per_block": [1]})
 
 
 def test_timestep_embedding_closed_form():
@@ -101,6 +147,7 @@ def test_text_time_conditioning_requires_both_inputs():
         {"center_input_sample": True},
         {"act_fn": "gelu"},
         {"conv_in_kernel": 5},
+        {"mid_block_type": "UNetMidBlock2DSimpleCrossAttn"},
         {"attention_mask": True},
         {"unknown_option": True},
     ],

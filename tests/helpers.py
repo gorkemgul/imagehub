@@ -87,6 +87,11 @@ def sdxl_published_shapes(component: str) -> dict[str, list[int]]:
     return {name: entry["shape"] for name, entry in data[component].items()}
 
 
+def ssd1b_published_shapes(component: str) -> dict[str, list[int]]:
+    data = json.loads((FIXTURES / "ssd1b_tensor_shapes.json").read_text(encoding="utf-8"))
+    return {name: entry["shape"] for name, entry in data[component].items()}
+
+
 def meta_shapes(model_cls, config) -> dict[str, list[int]]:
     with torch.device("meta"):
         model = model_cls(config)
@@ -179,6 +184,20 @@ SDXL_UNET = {
     "layers_per_block": 2,
     "norm_num_groups": 32,
     "sample_size": 128,
+}
+SSD1B_UNET = SDXL_UNET | {
+    "transformer_layers_per_block": [[1], [2, 2], [4, 4]],
+    "reverse_transformer_layers_per_block": [[4, 4, 10], [2, 1, 1], 1],
+    "mid_block_type": "UNetMidBlock2D",
+}
+TINY_SSD1B_UNET = SSD1B_UNET | {
+    "block_out_channels": [32, 64, 64],
+    "attention_head_dim": [2, 4, 4],
+    "cross_attention_dim": 32,
+    "addition_time_embed_dim": 8,
+    "projection_class_embeddings_input_dim": 80,
+    "norm_num_groups": 8,
+    "sample_size": 32,
 }
 TINY_UNET_CONFIG = SD1_UNET | {
     "block_out_channels": [32, 64, 64, 64],
