@@ -88,6 +88,7 @@ def main() -> None:
         if snapshot is None or snapshot["revision"] != spec.revision:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
         e2e = measured.get(f"e2e_{spec.id}")
+        e2e_multistep = measured.get(f"e2e_multistep_{spec.id}")
         seed_e2e = measured.get(f"seed_e2e_{spec.id}")
         header = measured.get(f"header_{spec.id}")
         models.append(
@@ -102,6 +103,7 @@ def main() -> None:
                 "files": snapshot["files"],
                 "tensor_header_check": header_check(header),
                 "end_to_end": e2e,
+                **({"end_to_end_multistep": e2e_multistep} if e2e_multistep else {}),
                 "seed_end_to_end": seed_e2e,
             }
         )

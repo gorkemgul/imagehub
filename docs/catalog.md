@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**2 architecture families, 7 published checkpoints.** A model is a separately published set of weights;
+**2 architecture families, 8 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -18,6 +18,7 @@ tested with the original weights. In this release every model is `full`.
 | `sd-v1-4` | `stable-diffusion` | [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) | `133a221` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `sd-v1-5` | `stable-diffusion` | [stable-diffusion-v1-5/stable-diffusion-v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5) | `451f4fe` | community mirror | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `sdxl-base-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) | `4621659` | author | full | CreativeML Open RAIL++-M | `sdxl` |
+| `sdxl-turbo` | `stable-diffusion-xl` | [stabilityai/sdxl-turbo](https://huggingface.co/stabilityai/sdxl-turbo) | `7115331` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` |
 | `ssd-1b` | `stable-diffusion-xl` | [segmind/SSD-1B](https://huggingface.co/segmind/SSD-1B) | `60987f3` | author | full | Apache-2.0 | `ssd-1b` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
