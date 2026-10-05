@@ -239,6 +239,19 @@ class Qwen3Model(NativeModel):
                 raise ValueError(f"Unsupported Qwen3 {option}")
         self.model = Qwen3Transformer(self.config)
 
+    def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
+        """Prefix the published transformers Qwen3Model tensor names."""
+        if state and not next(iter(state)).startswith("model."):
+            return {"model." + name: value for name, value in state.items()}
+        return state
+
+    def init_non_persistent_buffers(self) -> None:
+        dim = self.config["head_dim"]
+        base = self.config["rope_theta"]
+        self.model.rotary_emb.inv_freq = 1.0 / (
+            base ** (torch.arange(0, dim, 2, dtype=torch.float32) / dim)
+        )
+
     def forward(
         self,
         input_ids: Tensor,

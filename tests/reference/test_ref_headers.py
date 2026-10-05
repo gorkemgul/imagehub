@@ -18,7 +18,9 @@ from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
+from imagehub.models.qwen3 import Qwen3Model
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.models.z_image_transformer import ZImageTransformer2DModel
 
 pytestmark = pytest.mark.reference
 
@@ -42,6 +44,11 @@ SDXL_FIXTURES = {
     "sdxl-base-1.0": "sdxl_tensor_shapes.json",
     "ssd-1b": "ssd1b_tensor_shapes.json",
     "sdxl-turbo": "sdxl_tensor_shapes.json",
+}
+Z_IMAGE_COMPONENTS = {
+    "text_encoder": Qwen3Model,
+    "transformer": ZImageTransformer2DModel,
+    "vae": AutoencoderKL,
 }
 
 
@@ -94,6 +101,13 @@ def _assert_headers_match(result):
         assert not entry["mismatch"], (component, entry["mismatch"][:5])
 
 
+def _sharded_tensor_names(directory: Path) -> set[str]:
+    index = next(directory.glob("*.safetensors.index.json"))
+    weight_map = json.loads(index.read_text(encoding="utf-8"))["weight_map"]
+    assert isinstance(weight_map, dict)
+    return set(weight_map)
+
+
 @pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
 def test_published_tensor_headers_match_models(version, record):
     result = _header_result(checkpoint_dir(version), COMPONENTS)
@@ -107,4 +121,28 @@ def test_sdxl_published_tensor_headers_match_models(model_id, record):
     published = json.loads(fixture.read_text(encoding="utf-8"))
     result = _header_result(snapshot_dir(model_id), SDXL_COMPONENTS, published)
     record(f"header_{model_id}", **result)
+    _assert_headers_match(result)
+
+
+def test_z_image_published_tensor_headers_match_models(record):
+    root = snapshot_dir("z-image-turbo")
+    result = {}
+    for component, cls in Z_IMAGE_COMPONENTS.items():
+        with torch.device("meta"):
+            model = cls(read_json(root / component / "config.json"))
+        if component in ("text_encoder", "transformer"):
+            got = _sharded_tensor_names(root / component)
+            expected = set(model.state_dict())
+            if component == "text_encoder":
+                expected = {name.removeprefix("model.") for name in expected}
+        else:
+            got = set(checkpoint_shapes(root / component))
+            expected = set(model.state_dict())
+        result[component] = {
+            "missing": sorted(expected - got),
+            "extra": sorted(got - expected),
+            "mismatch": [],
+            "tensors": len(got),
+        }
+    record("header_z-image-turbo", **result)
     _assert_headers_match(result)

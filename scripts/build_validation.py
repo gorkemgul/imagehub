@@ -47,6 +47,14 @@ SDXL_COMPONENT_KEYS = (
     "sdxl_vae_encode",
     "sdxl_scheduler",
 )
+Z_IMAGE_COMPONENT_KEYS = (
+    "z_image_tokenizer",
+    "z_image_text_encoder",
+    "z_image_transformer",
+    "z_image_vae_decode",
+    "z_image_vae_encode",
+    "z_image_scheduler",
+)
 
 
 def header_check(header: dict | None) -> dict | None:
@@ -89,6 +97,7 @@ def main() -> None:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
         e2e = measured.get(f"e2e_{spec.id}")
         e2e_multistep = measured.get(f"e2e_multistep_{spec.id}")
+        e2e_guided = measured.get(f"e2e_guided_{spec.id}")
         seed_e2e = measured.get(f"seed_e2e_{spec.id}")
         header = measured.get(f"header_{spec.id}")
         models.append(
@@ -104,6 +113,7 @@ def main() -> None:
                 "tensor_header_check": header_check(header),
                 "end_to_end": e2e,
                 **({"end_to_end_multistep": e2e_multistep} if e2e_multistep else {}),
+                **({"end_to_end_guided": e2e_guided} if e2e_guided else {}),
                 "seed_end_to_end": seed_e2e,
             }
         )
@@ -137,6 +147,9 @@ def main() -> None:
                 for spec in MODEL_CATALOG.values()
                 if spec.family == "stable-diffusion-xl" and spec.id != "sdxl-base-1.0"
             )
+        },
+        "components_z_image": {
+            key: value for key, value in measured.items() if key in Z_IMAGE_COMPONENT_KEYS
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},

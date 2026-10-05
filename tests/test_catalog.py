@@ -18,6 +18,7 @@ def test_catalog_contents():
             "sdxl-base-1.0",
             "sdxl-turbo",
             "ssd-1b",
+            "z-image-turbo",
         )
     }
     for spec in (value for value in MODEL_CATALOG.values() if value.family == "stable-diffusion"):
@@ -56,6 +57,18 @@ def test_catalog_contents():
     assert turbo.config == {"defaults": {"steps": 1, "guidance": 0.0}}
     assert len(set(turbo.files)) == len(turbo.files) == 18
     assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in turbo.files)
+
+    z_image = model_info("z-image-turbo")
+    assert z_image.task is Task.T2I
+    assert z_image.family == "z-image"
+    assert z_image.repo_id == "Tongyi-MAI/Z-Image-Turbo"
+    assert z_image.revision == "f332072aa78be7aecdf3ee76d5c247082da564a6"
+    assert z_image.provenance == "author"
+    assert z_image.catalog_id == "z-image"
+    assert z_image.format == "diffusers"
+    assert z_image.license == "Apache-2.0"
+    assert len(set(z_image.files)) == len(z_image.files) == 19
+    assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in z_image.files)
 
     ssd1b = model_info("ssd-1b")
     assert ssd1b.task is Task.T2I
