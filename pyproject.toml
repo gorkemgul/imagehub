@@ -15,7 +15,7 @@ dependencies = ["torch>=2.2"]
 
 [project.optional-dependencies]
 image = ["pillow>=10"]
-reference = ["diffusers==0.40.0", "transformers==5.18.0"]
+reference = ["diffusers==0.40.0", "transformers==5.18.0", "torchvision"]
 dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.9", "mypy>=1.13", "build>=1.2"]
 
 [tool.hatch.build.targets.sdist]
