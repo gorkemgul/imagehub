@@ -359,6 +359,100 @@
       }
     },
     {
+      "model_id": "sdxl-turbo",
+      "repo_id": "stabilityai/sdxl-turbo",
+      "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
+      "provenance": "author",
+      "catalog_id": "sdxl-turbo",
+      "license": "sai-nc-community",
+      "status": "full",
+      "files": {
+        "model_index.json": "c3c2f99e3e94b5940bb072f7cf66858ab05d115dc5899b3cb36a7781e91769e0",
+        "scheduler/scheduler_config.json": "13847eb34084bc56e9f8b10f84d2c650cf8cb00016b2530429af0b894d4e1aa2",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "7eb36a76a02551ce8583dbee08d062e672997a5fe1db82ebc642d88c7e79cc96",
+        "tokenizer/special_tokens_map.json": "6a757fc443f84ad1def3b893aac3858178f2a1513e3cf97b35ff131b5d88edd5",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "f73737aca344421ae12c5302aad65570218d4911872ac2e656d685a23bee270a",
+        "text_encoder_2/config.json": "d798a4e0dea19feb3e4f17d311e02507055ce3ee81d015a43123517433f2a7ef",
+        "unet/config.json": "6ae877bd8daca6088f44c6251e07d7e252da53ace0d5895a0c6cbcbd5c132cb4",
+        "vae/config.json": "85a181424a5fd0cc292e44e467be66a5263976eee1baf36d208133f9d49d4269",
+        "text_encoder/model.safetensors": "778d02eb9e707c3fbaae0b67b79ea0d1399b52e624fb634f2f19375ae7c047c3",
+        "text_encoder_2/model.safetensors": "fa5b2e6f4c2efc2d82e4b8312faec1a5540eabfc6415126c9a05c8436a530ef4",
+        "unet/diffusion_pytorch_model.safetensors": "1968fc61aa8449ab3d3f9b9a05bce88c611760c01e0c4a7a3785911b546fe582",
+        "vae/diffusion_pytorch_model.safetensors": "716971093e3428c9156906fcbcc5500abf005317c5f4d3a5bb3fa28c45e1e071"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 0.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "runtime_note": "1 step(s): the catalog default for this model.",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "end_to_end_multistep": {
+        "guidance": 2.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "runtime_note": "4 steps exercise ancestral sampling and classifier-free guidance.",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 4,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "seed_end_to_end": {
+        "guidance": 0.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        "seed": 42,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1
+      }
+    },
+    {
       "model_id": "ssd-1b",
       "repo_id": "segmind/SSD-1B",
       "revision": "60987f37e94cd59c36b1cba832b9f97b57395a10",
@@ -420,6 +514,79 @@
       },
       "seed_end_to_end": {
         "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        "seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 30
+      }
+    },
+    {
+      "model_id": "playground-v2.5",
+      "repo_id": "playgroundai/playground-v2.5-1024px-aesthetic",
+      "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
+      "provenance": "author",
+      "catalog_id": "playground-v2",
+      "license": "playground-v2dot5-community",
+      "status": "full",
+      "files": {
+        "model_index.json": "e69bc6c32f552e1a967c4c4c706f6ce264dc31f3d34e8972a107ee89b585da8a",
+        "scheduler/scheduler_config.json": "0ed36bdd654252bf88170e7d9beefa9da6854ffe96efd2a18931c0ca1837a9fb",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "7eb36a76a02551ce8583dbee08d062e672997a5fe1db82ebc642d88c7e79cc96",
+        "tokenizer/special_tokens_map.json": "6a757fc443f84ad1def3b893aac3858178f2a1513e3cf97b35ff131b5d88edd5",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "10bddfdedc5621be3f4563750b70e0a29f464b8a2b2cc8f51e70e118934522cb",
+        "text_encoder_2/config.json": "63ad1cce6af27eb467a5453b091ab6f6a00ccb524cac6e8ff6602a4901b198b3",
+        "unet/config.json": "73cd3f7bd618835b6d09eefd5155b84ccdeea07c32a4d201574af19bd405a5bc",
+        "vae/config.json": "900dba765a6f61896ed12fa863b951a7053e9d13c8d249aa9ff757721fcf86ee",
+        "text_encoder/model.safetensors": "778d02eb9e707c3fbaae0b67b79ea0d1399b52e624fb634f2f19375ae7c047c3",
+        "text_encoder_2/model.safetensors": "fa5b2e6f4c2efc2d82e4b8312faec1a5540eabfc6415126c9a05c8436a530ef4",
+        "unet/diffusion_pytorch_model.safetensors": "11b6d7bce65674659cc6b7ea960658436edfd80e566cb240ebd4bfbc3e2076c8",
+        "vae/diffusion_pytorch_model.safetensors": "e8aef7b00195ec3fa8caaa3434e7516eff7d658e1d30eafc9ad6b0e66e9e827e"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 3.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 30,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "seed_end_to_end": {
+        "guidance": 3.0,
         "passed": true,
         "pixels_max_abs": 0,
         "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
@@ -497,6 +664,64 @@
       ],
       "tolerance": 0.0
     },
+    "sdxl_scheduler_playground-v2.5": {
+      "measurements": {
+        "30": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "50": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        }
+      },
+      "steps": [
+        50,
+        30
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_sdxl-turbo": {
+      "measurements": {
+        "30": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "50": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        }
+      },
+      "steps": [
+        50,
+        30
+      ],
+      "tolerance": 0.0
+    },
     "sdxl_scheduler_ssd-1b": {
       "measurements": {
         "30": {
@@ -544,6 +769,32 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_2_playground-v2.5": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_2_sdxl-turbo": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_2_ssd-1b": {
       "hidden_states": {
         "max_abs": 0.0,
@@ -557,12 +808,34 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_playground-v2.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_sdxl-turbo": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_ssd-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
     },
     "sdxl_tokenizers": {
+      "mismatches": [],
+      "prompts": 18,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_playground-v2.5": {
+      "mismatches": [],
+      "prompts": 18,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_sdxl-turbo": {
       "mismatches": [],
       "prompts": 18,
       "tokenizers": 2,
@@ -575,6 +848,26 @@
       "tolerance": "exact"
     },
     "sdxl_unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        999,
+        500,
+        1
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_unet_playground-v2.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        999,
+        500,
+        1
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_unet_sdxl-turbo": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "timesteps": [
@@ -599,12 +892,32 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sdxl_vae_decode_playground-v2.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_decode_sdxl-turbo": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_vae_decode_ssd-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
     },
     "sdxl_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_playground-v2.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_sdxl-turbo": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -642,6 +955,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed, 13 deselected, 5 warnings"
+    "reference_summary": "8 passed, 1 skipped, 32 deselected, 1 warning"
   }
 }

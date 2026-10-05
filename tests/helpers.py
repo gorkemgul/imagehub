@@ -277,7 +277,14 @@ def write_tiny_sd(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
     return root
 
 
-def write_tiny_sdxl(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+def write_tiny_sdxl(
+    directory: str | os.PathLike[str],
+    *,
+    seed: int = 0,
+    scheduler_config: dict | None = None,
+    vae_config: dict | None = None,
+    sample_size: int = 32,
+) -> Path:
     """A random-weight SDXL snapshot in the published diffusers layout."""
     from imagehub.checkpoints import save_safetensors
     from imagehub.models.autoencoder_kl import AutoencoderKL
@@ -312,14 +319,19 @@ def write_tiny_sdxl(directory: str | os.PathLike[str], *, seed: int = 0) -> Path
         "projection_class_embeddings_input_dim": 80,
         "layers_per_block": 1,
         "norm_num_groups": 8,
-        "sample_size": 32,
+        "sample_size": sample_size,
     }
     vae = TINY_VAE_FILE_CONFIG | {"scaling_factor": 0.13025, "force_upcast": True}
+    if vae_config is not None:
+        vae |= vae_config
     model_index = {
         "_class_name": "StableDiffusionXLPipeline",
         "_diffusers_version": "0.40.0",
         "force_zeros_for_empty_prompt": True,
-        "scheduler": ["diffusers", "EulerDiscreteScheduler"],
+        "scheduler": [
+            "diffusers",
+            (scheduler_config or SDXL_SCHEDULER).get("_class_name", "EulerDiscreteScheduler"),
+        ],
         "text_encoder": ["transformers", "CLIPTextModel"],
         "text_encoder_2": ["transformers", "CLIPTextModelWithProjection"],
         "tokenizer": ["transformers", "CLIPTokenizer"],
@@ -328,7 +340,9 @@ def write_tiny_sdxl(directory: str | os.PathLike[str], *, seed: int = 0) -> Path
         "vae": ["diffusers", "AutoencoderKL"],
     }
     (root / "scheduler").mkdir()
-    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(SDXL_SCHEDULER))
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        json.dumps(scheduler_config or SDXL_SCHEDULER)
+    )
     (root / "model_index.json").write_text(json.dumps(model_index))
 
     for name, cls, config, weights in (

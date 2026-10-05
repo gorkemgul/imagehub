@@ -30,6 +30,7 @@ def test_matches_sdxl_published_tensor_layout():
 @pytest.mark.parametrize(
     ("config_path", "family"),
     [
+        ("playground_v25_configs/unet.json", "sdxl"),
         ("sdxl_configs/unet.json", "sdxl"),
         ("ssd1b_configs/unet.json", "ssd1b"),
         ("sd1_configs/v1-5/unet.json", "sd1"),

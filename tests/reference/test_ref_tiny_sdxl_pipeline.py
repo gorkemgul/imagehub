@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 import torch
 from helpers import write_tiny_sdxl
@@ -64,6 +67,72 @@ def test_tiny_sdxl_generation_matches_diffusers(tmp_path, case):
         width=w,
         seed=42,
         **common,
+    )
+    actual = torch.stack([image.tensor for image in result.images])
+    assert torch.equal(actual, expected)
+
+
+def test_tiny_ancestral_generation_matches_diffusers_exactly(tmp_path):
+    config = json.loads(
+        (
+            Path(__file__).parents[1] / "fixtures/sdxl_turbo_configs/scheduler_config.json"
+        ).read_text()
+    )
+    root = write_tiny_sdxl(tmp_path / "tiny-ancestral", scheduler_config=config, sample_size=4)
+    ref = diffusers.StableDiffusionXLPipeline.from_pretrained(
+        root, local_files_only=True, add_watermarker=False
+    )
+    ref.set_progress_bar_config(disable=True)
+    expected = ref(
+        "a cat",
+        num_inference_steps=2,
+        guidance_scale=0.0,
+        height=32,
+        width=32,
+        generator=torch.Generator("cpu").manual_seed(42),
+        output_type="np",
+    ).images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
+    result = pipeline("t2i", backend="sdxl-turbo", model=root)(
+        "a cat", seed=42, steps=2, guidance=0.0, height=32, width=32
+    )
+    actual = torch.stack([image.tensor for image in result.images])
+    assert torch.equal(actual, expected)
+
+
+def test_tiny_playground_generation_matches_diffusers_exactly(tmp_path):
+    config = json.loads(
+        (
+            Path(__file__).parents[1] / "fixtures/playground_v25_configs/scheduler_config.json"
+        ).read_text()
+    )
+    vae_config = {
+        "latents_mean": [-1.6574, 1.886, -1.383, 2.5155],
+        "latents_std": [8.4927, 5.9022, 6.5498, 5.2299],
+        "scaling_factor": 0.5,
+    }
+    root = write_tiny_sdxl(
+        tmp_path / "tiny-playground",
+        scheduler_config=config,
+        vae_config=vae_config,
+        sample_size=4,
+    )
+    ref = diffusers.StableDiffusionXLPipeline.from_pretrained(
+        root, local_files_only=True, add_watermarker=False
+    )
+    ref.set_progress_bar_config(disable=True)
+    expected = ref(
+        "a cat",
+        num_inference_steps=2,
+        guidance_scale=3.0,
+        height=32,
+        width=32,
+        generator=torch.Generator("cpu").manual_seed(42),
+        output_type="np",
+    ).images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
+    result = pipeline("t2i", backend="playground-v2.5", model=root)(
+        "a cat", seed=42, steps=2, height=32, width=32
     )
     actual = torch.stack([image.tensor for image in result.images])
     assert torch.equal(actual, expected)

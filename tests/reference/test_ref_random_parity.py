@@ -1,5 +1,8 @@
 """Structural parity with random weights: no checkpoint download needed."""
 
+import json
+from pathlib import Path
+
 import pytest
 import torch
 from helpers import (
@@ -19,6 +22,7 @@ from helpers import (
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel, CLIPTextModelWithProjection
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
 
@@ -253,6 +257,33 @@ def test_euler_matches_diffusers():
     expected = sample.clone()
     ref.set_timesteps(30)
     ours.set_timesteps(30)
+    for timestep in ref.timesteps:
+        model_output = torch.randn_like(sample)
+        exact(
+            ours.scale_model_input(sample, timestep),
+            ref.scale_model_input(expected, timestep),
+        )
+        expected = ref.step(model_output, timestep, expected).prev_sample
+        sample = ours.step(model_output, timestep, sample)
+    exact(sample, expected)
+
+
+def test_edm_dpmsolver_matches_diffusers():
+    fixture = Path(__file__).parents[1] / "fixtures/playground_v25_configs/scheduler_config.json"
+    config = json.loads(fixture.read_text(encoding="utf-8"))
+    ref = diffusers.EDMDPMSolverMultistepScheduler.from_config(config)
+    ours = EDMDPMSolverMultistepScheduler(config)
+    for steps in (1, 2, 25, 50):
+        ref.set_timesteps(steps)
+        ours.set_timesteps(steps)
+        exact(ours.timesteps, ref.timesteps)
+        exact(ours.sigmas, ref.sigmas)
+        exact(torch.as_tensor(ours.init_noise_sigma), torch.as_tensor(ref.init_noise_sigma))
+    torch.manual_seed(0)
+    sample = torch.randn(2, 4, 8, 8)
+    expected = sample.clone()
+    ref.set_timesteps(25)
+    ours.set_timesteps(25)
     for timestep in ref.timesteps:
         model_output = torch.randn_like(sample)
         exact(

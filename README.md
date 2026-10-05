@@ -47,7 +47,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 | Family | Checkpoints | Task | Validation |
 | --- | --- | --- | --- |
 | Stable Diffusion 1.x | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5` | `t2i` | CPU fp32 parity |
-| Stable Diffusion XL | `sdxl-base-1.0`, `ssd-1b` | `t2i` | CPU fp32 parity |
+| Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-turbo`, `ssd-1b`, `playground-v2.5` | `t2i` | CPU fp32 parity |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
 [Third-party notices](THIRD_PARTY_NOTICES.md)
@@ -64,6 +64,7 @@ Reference comparisons are optional and never download anything:
 ```bash
 uv pip install --python .venv -e ".[dev,image,reference]"
 IMAGEHUB_REFERENCE_TESTS=1 IMAGEHUB_SD_V1_5=checkpoints/sd-v1-5 .venv/bin/python -m pytest tests/reference
+IMAGEHUB_REFERENCE_TESTS=1 IMAGEHUB_SNAPSHOT_SDXL_TURBO=checkpoints/sdxl-turbo .venv/bin/python -m pytest tests/reference/test_ref_sdxl.py
 ```
 
 ## License

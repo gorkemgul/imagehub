@@ -64,10 +64,10 @@ with pipeline("t2i", backend="sdxl-base-1.0", model="checkpoints/sdxl-base-1.0",
 ```
 
 **Settings.** `steps` (50, at most 1000), `guidance` (5.0; 1 and below turns guidance off),
-`width`/`height` (1024, multiples of 8), `negative_prompt` (None; with an empty negative prompt,
-zero embeddings are used), `num_images` (1), `seed`, `latents`, and the micro-conditioning inputs
-`original_size`, `crops_coords_top_left` and `target_size` (default to the generated size and
-`(0, 0)`). Unrecognized settings raise an error.
+`width`/`height` (the U-Net config's native size, 1024 here, and multiples of 8), `negative_prompt`
+(None; with an empty negative prompt, zero embeddings are used), `num_images` (1), `seed`,
+`latents`, and the micro-conditioning inputs `original_size`, `crops_coords_top_left` and
+`target_size` (default to the generated size and `(0, 0)`). Unrecognized settings raise an error.
 
 **Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). As with SD 1.x,
@@ -78,6 +78,47 @@ refiner model, img2img, other schedulers and fp16 parity are not in this release
 
 **License.** The weights are licensed under CreativeML Open RAIL++-M; the license's use
 restrictions bind whoever downloads and uses the weights. imagehub does not distribute weights.
+
+
+# SDXL Turbo
+
+Catalog: [`sdxl-turbo`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `sdxl-turbo` · Task: `t2i`
+
+**Architecture.** A distilled SDXL model with the same two frozen text encoders, `text_time`
+micro-conditioning and f=8 KL autoencoder design as SDXL. Its native image size is 512×512. The
+checkpoint publishes an Euler ancestral scheduler with `timestep_spacing="trailing"` and
+`steps_offset=1`; its ancestral noise is drawn from the same seeded CPU generator as the initial
+noise.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained sdxl-turbo checkpoints/sdxl-turbo
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="sdxl-turbo", model="checkpoints/sdxl-turbo", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 1, `guidance` defaults to 0.0 and `width`/`height` default to
+512. Other supported settings match SDXL. Other SDXL models retain defaults of 50 steps and 5.0
+guidance and take their default size from the U-Net config. Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)), including the
+ancestral noise at every scheduler step. MPS and CUDA runs are smoke tests only; there is no claim
+of exact equality on these devices.
+
+**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
+refiner model, img2img, other schedulers and fp16 parity are not in this release.
+
+**License.** The weights use the `sai-nc-community` license and are limited to non-commercial use.
+The license's use restrictions bind whoever downloads and uses the weights. imagehub does not
+distribute weights.
 
 
 # SSD-1B
@@ -104,9 +145,9 @@ with pipeline("t2i", backend="ssd-1b", model="checkpoints/ssd-1b", device="mps")
 ```
 
 **Settings.** The defaults and supported settings are the same as for SDXL: `steps` (50, at most
-1000), `guidance` (5.0), `width`/`height` (1024, multiples of 8), `negative_prompt` (None),
-`num_images` (1), `seed`, `latents`, `original_size`, `crops_coords_top_left` and `target_size`.
-Unrecognized settings raise an error.
+1000), `guidance` (5.0), `width`/`height` (the U-Net config's native size, 1024 here, and multiples
+of 8), `negative_prompt` (None), `num_images` (1), `seed`, `latents`, `original_size`,
+`crops_coords_top_left` and `target_size`. Unrecognized settings raise an error.
 
 **Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
@@ -116,3 +157,41 @@ runs are smoke tests only; there is no claim of exact equality on these devices.
 refiner model, img2img, other schedulers and fp16 parity are not in this release.
 
 **License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
+
+
+# Playground v2.5
+
+Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `playground-v2.5` · Task: `t2i`
+
+**Architecture.** An SDXL-family model with the same two frozen text encoders and `text_time`
+micro-conditioning. Its EDM DPM-Solver++ scheduler is a second-order multistep scheduler with
+Karras sigmas and EDM preconditioning. The f=8 KL autoencoder uses a scaling factor of 0.5, with
+per-channel `latents_mean` and `latents_std` applied before decoding. Its native image size is
+1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained playground-v2.5 checkpoints/playground-v2.5
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="playground-v2.5", model="checkpoints/playground-v2.5", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 3.0 and `width`/`height` default to
+1024. Other supported settings match SDXL. Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
+refiner model, img2img, other schedulers and fp16 parity are not in this release.
+
+**License.** The weights use the `playground-v2dot5-community` license, which restricts commercial
+use under its terms; see the license. imagehub does not distribute weights.

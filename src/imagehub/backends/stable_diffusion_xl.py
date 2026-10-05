@@ -18,16 +18,18 @@ from imagehub.backends.stable_diffusion import (
     LATENT_CHANNELS,
     LATENT_SCALE,
     decode_latents,
-    initial_latents,
     resolve_device,
 )
+from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
+from imagehub.schedulers.euler_ancestral import EulerAncestralDiscreteScheduler
 from imagehub.tokenization import CLIPTokenizer
 from imagehub.types import ImageResult, T2IRequest
 
@@ -44,8 +46,8 @@ OPTION_DEFAULTS: dict[str, Any] = {
     "negative_prompt": None,
     "steps": 50,
     "guidance": 5.0,
-    "width": 1024,
-    "height": 1024,
+    "width": None,
+    "height": None,
     "num_images": 1,
     "seed": None,
     "latents": None,
@@ -54,6 +56,17 @@ OPTION_DEFAULTS: dict[str, Any] = {
     "target_size": None,
 }
 _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
+
+
+def _scheduler(config: dict[str, Any]) -> tuple[Any, str]:
+    class_name = config.get("_class_name", "EulerDiscreteScheduler")
+    if class_name == "EulerDiscreteScheduler":
+        return EulerDiscreteScheduler(config), "euler"
+    if class_name == "EulerAncestralDiscreteScheduler":
+        return EulerAncestralDiscreteScheduler(config), "euler_ancestral"
+    if class_name == "EDMDPMSolverMultistepScheduler":
+        return EDMDPMSolverMultistepScheduler(config), "edm_dpmsolver_multistep"
+    raise ValueError(f"Unsupported SDXL scheduler {class_name}")
 
 
 def _hint(root: Path, model_id: str | None) -> str:
@@ -137,6 +150,7 @@ def denoise(
     original_size: tuple[int, int],
     crops_coords_top_left: tuple[int, int],
     target_size: tuple[int, int],
+    generator: torch.Generator | None = None,
 ) -> Tensor:
     dtype = components.unet.conv_in.weight.dtype
     batch = latents.shape[0]
@@ -167,7 +181,7 @@ def denoise(
         time_ids = torch.cat([time_ids, time_ids])
     time_ids = time_ids.repeat(batch, 1)
 
-    scheduler = EulerDiscreteScheduler(components.scheduler_config)
+    scheduler, _ = _scheduler(components.scheduler_config)
     scheduler.set_timesteps(steps)
     latents = latents.to(dtype) * scheduler.init_noise_sigma
     for timestep in scheduler.timesteps:
@@ -183,7 +197,10 @@ def denoise(
         if use_cfg:
             noise_uncond, noise_text = noise.chunk(2)
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
-        latents = scheduler.step(noise, timestep, latents)
+        if isinstance(scheduler, EulerAncestralDiscreteScheduler):
+            latents = scheduler.step(noise, timestep, latents, generator=generator)
+        else:
+            latents = scheduler.step(noise, timestep, latents)
     return latents
 
 
@@ -226,13 +243,26 @@ class StableDiffusionXLBackend(TextToImageBackend):
             raise ValueError("dtype must be torch.float32, torch.float16 or torch.bfloat16")
         self.components: StableDiffusionXLComponents | None = None
         self.snapshot: dict[str, Any] | None = None
+        model_defaults = {}
+        if model_id is not None and model_id in MODEL_CATALOG:
+            model_defaults = dict(MODEL_CATALOG[model_id].config.get("defaults", {}))
+        self.option_defaults = OPTION_DEFAULTS | model_defaults
 
     def validate_options(self, inputs: T2IRequest, options: dict[str, Any]) -> dict[str, Any]:
         merged = dict(inputs.parameters) | options
         unknown = sorted(set(merged) - set(OPTION_DEFAULTS))
         if unknown:
             raise TypeError(f"Unknown Stable Diffusion XL options: {', '.join(unknown)}")
-        o = OPTION_DEFAULTS | merged
+        o = self.option_defaults | merged
+        if o["width"] is None or o["height"] is None:
+            try:
+                sample_size = int(read_json(self.source / "unet" / "config.json")["sample_size"])
+            except (FileNotFoundError, KeyError):
+                sample_size = 128
+            if o["width"] is None:
+                o["width"] = sample_size * LATENT_SCALE
+            if o["height"] is None:
+                o["height"] = sample_size * LATENT_SCALE
         if o["negative_prompt"] is not None and not isinstance(o["negative_prompt"], str):
             raise TypeError("negative_prompt must be a string or None")
         for name in ("steps", "num_images", "width", "height"):
@@ -296,18 +326,23 @@ class StableDiffusionXLBackend(TextToImageBackend):
     def _infer(self, inputs: T2IRequest, **o: Any) -> ImageResult:
         assert self.components is not None
         seed, latents = o["seed"], o["latents"]
+        generator = None
         if latents is None:
             if seed is None:
                 seed = secrets.randbits(63)
-            latents = initial_latents(
-                seed,
+            generator = torch.Generator("cpu").manual_seed(seed)
+            latents = torch.randn(
                 (
                     o["num_images"],
                     LATENT_CHANNELS,
                     o["height"] // LATENT_SCALE,
                     o["width"] // LATENT_SCALE,
                 ),
+                generator=generator,
+                dtype=torch.float32,
             )
+        # As in diffusers, caller-provided latents without a seed leave ancestral noise on
+        # the global RNG by passing generator=None.
         size = (o["height"], o["width"])
         final = denoise(
             self.components,
@@ -319,6 +354,7 @@ class StableDiffusionXLBackend(TextToImageBackend):
             original_size=o["original_size"] or size,
             crops_coords_top_left=o["crops_coords_top_left"] or (0, 0),
             target_size=o["target_size"] or size,
+            generator=generator,
         )
         pixels = decode_latents(self.components, final)
         snapshot = self.snapshot or {}
@@ -331,7 +367,7 @@ class StableDiffusionXLBackend(TextToImageBackend):
             "width": o["width"],
             "height": o["height"],
             "negative_prompt": o["negative_prompt"],
-            "scheduler": "euler",
+            "scheduler": _scheduler(self.components.scheduler_config)[1],
             "device": str(self.device),
             "dtype": str(self.dtype).removeprefix("torch."),
         }

@@ -42,6 +42,18 @@ def test_matches_sdxl_text_encoder_layouts():
 @pytest.mark.parametrize(
     ("model_cls", "config_path", "component", "family"),
     [
+        (
+            CLIPTextModel,
+            "playground_v25_configs/text_encoder.json",
+            "text_encoder",
+            "sdxl",
+        ),
+        (
+            CLIPTextModelWithProjection,
+            "playground_v25_configs/text_encoder_2.json",
+            "text_encoder_2",
+            "sdxl",
+        ),
         (CLIPTextModel, "sdxl_configs/text_encoder.json", "text_encoder", "sdxl"),
         (
             CLIPTextModelWithProjection,

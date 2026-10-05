@@ -31,6 +31,7 @@ def test_matches_sdxl_published_tensor_layout_after_name_conversion():
 @pytest.mark.parametrize(
     ("config_path", "family"),
     [
+        ("playground_v25_configs/vae.json", "sdxl"),
         ("sdxl_configs/vae.json", "sdxl"),
         ("sd1_configs/v1-5/vae.json", "sd1"),
         ("sd1_configs/v1-1/vae.json", "sd1"),
@@ -79,3 +80,14 @@ def test_shapes_and_scaling_factor():
     with torch.inference_mode():
         assert vae.decode(torch.randn(1, 4, 8, 6)).shape == (1, 3, 64, 48)
         assert vae.encode(torch.rand(1, 3, 64, 48) * 2 - 1).shape == (1, 4, 8, 6)
+
+
+def test_accepts_latent_statistics_config():
+    config = TINY_VAE_CONFIG | {
+        "latents_mean": [-1.0, 1.0, -2.0, 2.0],
+        "latents_std": [2.0, 3.0, 4.0, 5.0],
+        "scaling_factor": 0.5,
+    }
+    vae = AutoencoderKL(config)
+    assert vae.latents_mean == config["latents_mean"]
+    assert vae.latents_std == config["latents_std"]

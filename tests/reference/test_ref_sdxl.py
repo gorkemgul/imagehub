@@ -12,7 +12,9 @@ from imagehub import pipeline
 from imagehub.backends.stable_diffusion import decode_latents, initial_latents
 from imagehub.backends.stable_diffusion_xl import StableDiffusionXLComponents, denoise
 from imagehub.catalog import MODEL_CATALOG
+from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
+from imagehub.schedulers.euler_ancestral import EulerAncestralDiscreteScheduler
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
@@ -55,6 +57,11 @@ CPU = torch.device("cpu")
 SDXL_MODEL_IDS = tuple(
     spec.id for spec in MODEL_CATALOG.values() if spec.family == "stable-diffusion-xl"
 )
+SCHEDULERS = {
+    "EDMDPMSolverMultistepScheduler": EDMDPMSolverMultistepScheduler,
+    "EulerDiscreteScheduler": EulerDiscreteScheduler,
+    "EulerAncestralDiscreteScheduler": EulerAncestralDiscreteScheduler,
+}
 
 
 def _component_record(prefix, model_id):
@@ -145,7 +152,8 @@ def test_text_encoders(sdxl, record):
 def test_unet_single_step(sdxl, record):
     model_id, _, ours, ref = sdxl
     generator = torch.Generator().manual_seed(0)
-    sample = torch.randn(2, 4, 128, 128, generator=generator)
+    latent_size = int(ours.unet.config["sample_size"])
+    sample = torch.randn(2, 4, latent_size, latent_size, generator=generator)
     context = torch.randn(2, 77, 2048, generator=generator)
     text_embeds = torch.randn(2, 1280, generator=generator)
     time_ids = torch.randn(2, 6, generator=generator)
@@ -181,8 +189,10 @@ def test_unet_single_step(sdxl, record):
 def test_vae(sdxl, record):
     model_id, _, ours, ref = sdxl
     generator = torch.Generator().manual_seed(1)
-    latents = torch.randn(1, 4, 128, 128, generator=generator)
-    image = torch.rand(1, 3, 1024, 1024, generator=generator) * 2 - 1
+    latent_size = int(ours.unet.config["sample_size"])
+    image_size = latent_size * 8
+    latents = torch.randn(1, 4, latent_size, latent_size, generator=generator)
+    image = torch.rand(1, 3, image_size, image_size, generator=generator) * 2 - 1
     with torch.inference_mode():
         decode = ours.vae.decode(latents), ref.vae.decode(latents).sample
         encode = ours.vae.encode(image), ref.vae.encode(image).latent_dist.mean
@@ -204,13 +214,14 @@ def test_vae(sdxl, record):
         torch.testing.assert_close(actual, expected, atol=TOLERANCES[tolerance_key], rtol=0)
 
 
-def test_euler_scheduler(sdxl, record):
+def test_scheduler(sdxl, record):
     model_id, _, ours, ref = sdxl
+    scheduler_cls = SCHEDULERS[ours.scheduler_config["_class_name"]]
     measurements = {}
     schedules = []
     for steps in (50, 30):
-        actual = EulerDiscreteScheduler(ours.scheduler_config)
-        expected = diffusers.EulerDiscreteScheduler.from_config(ref.scheduler.config)
+        actual = scheduler_cls(ours.scheduler_config)
+        expected = type(ref.scheduler).from_config(ref.scheduler.config)
         actual.set_timesteps(steps)
         expected.set_timesteps(steps)
         measurements[str(steps)] = {
@@ -229,32 +240,45 @@ def test_euler_scheduler(sdxl, record):
         torch.testing.assert_close(actual.sigmas, expected.sigmas, atol=0, rtol=0)
 
 
-def test_end_to_end(sdxl, record):
-    model_id, _, ours, ref = sdxl
-    latents = initial_latents(1234, (1, 4, 128, 128))
+def _run_end_to_end(sdxl, record, *, steps, guidance, negative_prompt, record_name, runtime_note):
+    _, _, ours, ref = sdxl
+    latent_size = int(ours.unet.config["sample_size"])
+    image_size = latent_size * 8
+    latents = initial_latents(1234, (1, 4, latent_size, latent_size))
     with torch.inference_mode():
         ref_latents = ref(
             PROMPT,
-            num_inference_steps=30,
-            guidance_scale=5.0,
-            height=1024,
-            width=1024,
+            negative_prompt=negative_prompt,
+            num_inference_steps=steps,
+            guidance_scale=guidance,
+            height=image_size,
+            width=image_size,
             latents=latents.clone(),
+            generator=torch.Generator("cpu").manual_seed(5678),
             output_type="latent",
         ).images
-        decoded = ref.vae.decode(ref_latents / ref.vae.config.scaling_factor).sample
+        if ref.vae.config.latents_mean is not None and ref.vae.config.latents_std is not None:
+            latents_mean = torch.tensor(ref.vae.config.latents_mean).view(1, 4, 1, 1)
+            latents_std = torch.tensor(ref.vae.config.latents_std).view(1, 4, 1, 1)
+            decode_latents_input = (
+                ref_latents * latents_std / ref.vae.config.scaling_factor + latents_mean
+            )
+        else:
+            decode_latents_input = ref_latents / ref.vae.config.scaling_factor
+        decoded = ref.vae.decode(decode_latents_input).sample
         ref_np = ref.image_processor.postprocess(decoded, output_type="np")
     ref_pixels = torch.from_numpy((ref_np * 255).round().astype("uint8"))
     our_latents = denoise(
         ours,
         prompt=PROMPT,
-        negative_prompt=None,
-        steps=30,
-        guidance=5.0,
+        negative_prompt=negative_prompt,
+        steps=steps,
+        guidance=guidance,
         latents=latents.clone(),
-        original_size=(1024, 1024),
+        original_size=(image_size, image_size),
         crops_coords_top_left=(0, 0),
-        target_size=(1024, 1024),
+        target_size=(image_size, image_size),
+        generator=torch.Generator("cpu").manual_seed(5678),
     )
     our_pixels = decode_latents(ours, our_latents)
     latent_diff = max_diff(our_latents, ref_latents)
@@ -264,37 +288,82 @@ def test_end_to_end(sdxl, record):
         and pixel_diff <= TOLERANCES["e2e_pixels"]
     )
     record(
-        f"e2e_{model_id}",
+        record_name,
         latents=latent_diff,
         pixels_max_abs=pixel_diff,
         passed=passed,
         prompt=PROMPT,
-        steps=30,
-        guidance=5.0,
-        size=[1024, 1024],
+        steps=steps,
+        guidance=guidance,
+        size=[image_size, image_size],
         noise_seed=1234,
         tolerance={"latents": TOLERANCES["e2e_latents"], "pixels": TOLERANCES["e2e_pixels"]},
-        runtime_note="30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        runtime_note=runtime_note,
     )
     assert passed, (latent_diff, pixel_diff)
 
 
+def test_end_to_end(sdxl, record):
+    model_id, _, _, _ = sdxl
+    defaults = MODEL_CATALOG[model_id].config.get("defaults", {})
+    steps = int(defaults.get("steps", 30))
+    guidance = float(defaults.get("guidance", 5.0))
+    _run_end_to_end(
+        sdxl,
+        record,
+        steps=steps,
+        guidance=guidance,
+        negative_prompt=None,
+        record_name=f"e2e_{model_id}",
+        runtime_note=(
+            "30 steps are used instead of 50 to keep CPU runtime reasonable."
+            if "steps" not in defaults
+            else f"{steps} step(s): the catalog default for this model."
+        ),
+    )
+
+
+def test_end_to_end_multistep(sdxl, record):
+    model_id, _, _, _ = sdxl
+    defaults = MODEL_CATALOG[model_id].config.get("defaults", {})
+    if "steps" not in defaults:
+        pytest.skip("model does not define a few-step default")
+    _run_end_to_end(
+        sdxl,
+        record,
+        steps=4,
+        guidance=2.0,
+        negative_prompt="blurry",
+        record_name=f"e2e_multistep_{model_id}",
+        runtime_note="4 steps exercise ancestral sampling and classifier-free guidance.",
+    )
+
+
 def test_seed_end_to_end(sdxl, record):
-    model_id, root, _, ref = sdxl
+    model_id, root, ours, ref = sdxl
+    defaults = MODEL_CATALOG[model_id].config.get("defaults", {})
+    steps = int(defaults.get("steps", 30))
+    guidance = float(defaults.get("guidance", 5.0))
+    image_size = int(ours.unet.config["sample_size"]) * 8
     with torch.inference_mode():
         expected = ref(
             PROMPT,
-            num_inference_steps=30,
-            guidance_scale=5.0,
-            height=1024,
-            width=1024,
+            num_inference_steps=steps,
+            guidance_scale=guidance,
+            height=image_size,
+            width=image_size,
             generator=torch.Generator("cpu").manual_seed(42),
             output_type="np",
         ).images
     expected = torch.from_numpy((expected * 255).round().astype("uint8"))[0]
     actual = (
         pipeline("t2i", backend=model_id, model=root)(
-            PROMPT, seed=42, steps=30, guidance=5.0, width=1024, height=1024
+            PROMPT,
+            seed=42,
+            steps=steps,
+            guidance=guidance,
+            width=image_size,
+            height=image_size,
         )
         .images[0]
         .tensor
@@ -304,9 +373,9 @@ def test_seed_end_to_end(sdxl, record):
         f"seed_e2e_{model_id}",
         pixels_max_abs=pixel_diff,
         seed=42,
-        steps=30,
-        guidance=5.0,
-        size=[1024, 1024],
+        steps=steps,
+        guidance=guidance,
+        size=[image_size, image_size],
         passed=pixel_diff <= TOLERANCES["e2e_pixels"],
         runtime_note="30 steps are used instead of 50 to keep CPU runtime reasonable.",
     )

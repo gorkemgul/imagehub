@@ -50,6 +50,21 @@ _IGNORED_COMPATIBILITY_KEYS = {
 }
 
 
+def scaled_linear_training_sigmas(config: Mapping[str, Any]) -> Tensor:
+    """Build the float32 scaled-linear training sigma schedule."""
+    betas = (
+        torch.linspace(
+            config["beta_start"] ** 0.5,
+            config["beta_end"] ** 0.5,
+            config["num_train_timesteps"],
+            dtype=torch.float32,
+        )
+        ** 2
+    )
+    alphas_cumprod = torch.cumprod(1.0 - betas, dim=0)
+    return ((1.0 - alphas_cumprod) / alphas_cumprod) ** 0.5
+
+
 class EulerDiscreteScheduler:
     """Stateful Euler sampler. Create one per trajectory and set its timesteps first."""
 
@@ -67,18 +82,7 @@ class EulerDiscreteScheduler:
         for key, expected in _REQUIRED.items():
             if cfg[key] != expected:
                 raise ValueError(f"Unsupported Euler setting {key}={cfg[key]!r}")
-        count = cfg["num_train_timesteps"]
-        betas = (
-            torch.linspace(
-                cfg["beta_start"] ** 0.5,
-                cfg["beta_end"] ** 0.5,
-                count,
-                dtype=torch.float32,
-            )
-            ** 2
-        )
-        alphas_cumprod = torch.cumprod(1.0 - betas, dim=0)
-        self._training_sigmas = ((1.0 - alphas_cumprod) / alphas_cumprod) ** 0.5
+        self._training_sigmas = scaled_linear_training_sigmas(cfg)
         self.config = cfg
         self.timesteps = torch.empty(0, dtype=torch.float32)
         self.sigmas = torch.empty(0, dtype=torch.float32)

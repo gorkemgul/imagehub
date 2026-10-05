@@ -48,9 +48,10 @@ Record: `tensor_header_check`, [validation.json](validation.json).
 
 ## SDXL
 
-Validated on CPU on October 5, 2026, in the same environment as above. Two checkpoints, `full`:
-`sdxl-base-1.0` and `ssd-1b`. The published tensors were loaded strictly. A 1024×1024 generation
-from the same initial noise was compared against diffusers.
+Validated on CPU on October 5, 2026, in the same environment as above. Four checkpoints, `full`:
+`sdxl-base-1.0`, `sdxl-turbo`, `ssd-1b` and `playground-v2.5`. The published tensors were loaded
+strictly. A generation at each model's native size was compared against diffusers from the same
+initial noise.
 
 ### Comparisons (CPU, float32)
 
@@ -64,6 +65,15 @@ from the same initial noise was compared against diffusers.
 | Euler timesteps / sigmas (50 and 30 steps) | sdxl-base-1.0 | 0 / 0 | 0 |
 | End to end: final latent / pixels | sdxl-base-1.0 | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (pixels) | sdxl-base-1.0 | 0 | 0 |
+| Tokenizer token ids (2 tokenizers, 18 prompts) | sdxl-turbo | identical | identical |
+| CLIP ViT-L/14 text encoder (penultimate layer) | sdxl-turbo | 0 | 0 |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | sdxl-turbo | 0 / 0 | 0 / 0 |
+| U-Net single step (t = 999, 500, 1) | sdxl-turbo | 0 | 0 |
+| VAE decode / encode | sdxl-turbo | 0 / 0 | 0 |
+| Euler ancestral timesteps / sigmas (50 and 30 steps) | sdxl-turbo | 0 / 0 | 0 |
+| End to end: final latent / pixels (1 step, guidance 0.0) | sdxl-turbo | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels (4 steps, guidance 2.0) | sdxl-turbo | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | sdxl-turbo | 0 | 0 |
 | Tokenizer token ids (2 tokenizers, 18 prompts) | ssd-1b | identical | identical |
 | CLIP ViT-L/14 text encoder (penultimate layer) | ssd-1b | 0 | 0 |
 | OpenCLIP bigG text encoder (penultimate layer and pooled output) | ssd-1b | 0 / 0 | 0 / 0 |
@@ -72,23 +82,45 @@ from the same initial noise was compared against diffusers.
 | Euler timesteps / sigmas (50 and 30 steps) | ssd-1b | 0 / 0 | 0 |
 | End to end: final latent / pixels | ssd-1b | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (pixels) | ssd-1b | 0 | 0 |
+| Tokenizer token ids (2 tokenizers, 18 prompts) | playground-v2.5 | identical | identical |
+| CLIP ViT-L/14 text encoder (penultimate layer) | playground-v2.5 | 0 | 0 |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | playground-v2.5 | 0 / 0 | 0 / 0 |
+| U-Net single step (t = 999, 500, 1) | playground-v2.5 | 0 | 0 |
+| VAE decode / encode | playground-v2.5 | 0 / 0 | 0 |
+| EDM DPM-Solver++ timesteps / sigmas (50 and 30 steps) | playground-v2.5 | 0 / 0 | 0 |
+| End to end: final latent / pixels | playground-v2.5 | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | playground-v2.5 | 0 | 0 |
 
 The observed difference in every comparison is **exactly 0**: on CPU in float32, the local
 implementation produces a bit-identical image to the one diffusers produces. The same tolerance
 rule applies: since every measurement came out 0, no tolerance needed to be loosened.
 
-End-to-end test settings: prompt "a photograph of an astronaut riding a horse", 1024×1024,
-guidance 5.0, initial noise `seed=1234` (the seed 42 run uses the same settings). 30 steps are
-used instead of the default 50 to keep CPU runtime reasonable.
+End-to-end test settings for `sdxl-base-1.0` and `ssd-1b`: prompt "a photograph of an astronaut
+riding a horse", 1024×1024, guidance 5.0, initial noise `seed=1234` (the seed 42 run uses the same
+settings). 30 steps are used instead of the default 50 to keep CPU runtime reasonable. SDXL Turbo's
+native size is 512×512. Its default run uses 1 step and guidance 0.0; the guided run uses 4 steps
+and guidance 2.0. Its Euler ancestral scheduler draws the per-step ancestral noise from the same
+seeded CPU generator as the initial noise. `playground-v2.5` uses 1024×1024, 30 steps and guidance
+3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable.
 
 For `sdxl-base-1.0`, the same header-only tensor check covered the four components
 (`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
 missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
 
+For `sdxl-turbo`, the same header-only tensor check covered the four components (`text_encoder`,
+`text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and missing, extra and
+shape-mismatched tensors are **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
 For `ssd-1b`, the same header-only tensor check covered the four components (`text_encoder`,
 `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 944 / 248, and missing, extra and
 shape-mismatched tensors are **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
+For `playground-v2.5`, the same header-only tensor check covered the four components
+(`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
+missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
 
 ## Device smoke tests (no parity claim)
@@ -105,16 +137,19 @@ shape-mismatched tensors are **0**. Record: `tensor_header_check`,
   the difference from CPU. There is no parity claim on these devices.
 - There is no parity claim for float16 or bfloat16.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
-- Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x and Euler for SDXL.
+- Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
+  for SDXL base and SSD-1B, Euler ancestral for SDXL Turbo and EDM DPM-Solver++ for Playground v2.5.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 133 passed, 36 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 273 passed, 108 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
-- Reference tests (CPU): 34 passed. These include structural parity with random weights, end-to-end
-  parity with a small model, real-checkpoint parity and tokenizer fuzz tests.
+- Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), and 8 passed, 1 skipped for `playground-v2.5`. These
+  include structural parity with random weights, end-to-end parity with a small model,
+  real-checkpoint parity and tokenizer fuzz tests.
 - MPS smoke test: 1 passed.
 
 ## Differences found and fixed during validation
@@ -128,7 +163,7 @@ could not show. Both were fixed and are guarded by permanent fuzz tests:
 2. **Splitting of sequences not recognized as special tokens.** These sequences are split into three
    pieces, `<|`, `endoftext`, `|>`, as in the reference pre-tokenizer.
 
-The SDXL validation found two more differences:
+The SDXL validation found three more differences:
 
 3. **Memory-mapped safetensors files.** CPU BLAS picked a different summation order for
    differently aligned weights, so a 4.8e-7 difference in the pooled text embedding grew to a
@@ -136,3 +171,6 @@ The SDXL validation found two more differences:
    read from the file at their published alignment.
 4. **`null` for disabled options.** The published SDXL config uses `null` for disabled options,
    for example `class_embed_type` and `cross_attention_norm` in the U-Net config.
+5. **Special-token metadata in `added_tokens_decoder`.** SDXL Turbo's tokenizer configs define
+   special-token normalization there, so those entries now take precedence over the named
+   `unk_token`, `bos_token`, `eos_token` and `pad_token` values.

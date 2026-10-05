@@ -9,12 +9,14 @@ from imagehub.types import Task
 def test_catalog_contents():
     assert available_models() == {
         "t2i": (
+            "playground-v2.5",
             "sd-v1-1",
             "sd-v1-2",
             "sd-v1-3",
             "sd-v1-4",
             "sd-v1-5",
             "sdxl-base-1.0",
+            "sdxl-turbo",
             "ssd-1b",
         )
     }
@@ -42,6 +44,19 @@ def test_catalog_contents():
     assert sdxl.license == "CreativeML-OpenRAIL++-M"
     assert len(set(sdxl.files)) == len(sdxl.files) == 18
 
+    turbo = model_info("sdxl-turbo")
+    assert turbo.task is Task.T2I
+    assert turbo.family == "stable-diffusion-xl"
+    assert turbo.repo_id == "stabilityai/sdxl-turbo"
+    assert turbo.revision == "71153311d3dbb46851df1931d3ca6e939de83304"
+    assert turbo.provenance == "author"
+    assert turbo.catalog_id == "sdxl-turbo"
+    assert turbo.format == "diffusers"
+    assert turbo.license == "sai-nc-community"
+    assert turbo.config == {"defaults": {"steps": 1, "guidance": 0.0}}
+    assert len(set(turbo.files)) == len(turbo.files) == 18
+    assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in turbo.files)
+
     ssd1b = model_info("ssd-1b")
     assert ssd1b.task is Task.T2I
     assert ssd1b.family == "stable-diffusion-xl"
@@ -52,6 +67,19 @@ def test_catalog_contents():
     assert ssd1b.format == "diffusers"
     assert ssd1b.license == "Apache-2.0"
     assert len(set(ssd1b.files)) == len(ssd1b.files) == 18
+
+    playground = model_info("playground-v2.5")
+    assert playground.task is Task.T2I
+    assert playground.family == "stable-diffusion-xl"
+    assert playground.repo_id == "playgroundai/playground-v2.5-1024px-aesthetic"
+    assert playground.revision == "1e032f13f2fe6db2dc49947dbdbd196e753de573"
+    assert playground.provenance == "author"
+    assert playground.catalog_id == "playground-v2"
+    assert playground.format == "diffusers"
+    assert playground.license == "playground-v2dot5-community"
+    assert playground.config == {"defaults": {"guidance": 3.0}}
+    assert len(set(playground.files)) == len(playground.files) == 18
+    assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in playground.files)
 
 
 def test_provenance_and_formats():
