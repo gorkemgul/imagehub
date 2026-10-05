@@ -123,6 +123,37 @@ For `playground-v2.5`, the same header-only tensor check covered the four compon
 missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
 
+## Z-Image
+
+Validated on CPU on October 5, 2026, in the same environment as above. `z-image-turbo` was loaded
+strictly from `Tongyi-MAI/Z-Image-Turbo`. The observed difference in every comparison is **exactly
+0**: on CPU in float32, the local implementation produces a bit-identical result to the reference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tokenizer token ids and attention masks (3 fixed prompts, seeded fuzz, exhaustive per-code-point check) | identical | exact |
+| Qwen3 text encoder (`hidden_states[-2]`) | 0 | 0 |
+| Transformer single step (1024×1024, t = 0.5 and 0.25) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 |
+| Flow-match scheduler timesteps / sigmas | 0 / 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 9 steps, guidance 0.0) | 0 / 0 | 0 / 0 |
+| Guided end to end: final latent / pixels (1024×1024, 4 steps, guidance 4.0, negative prompt) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (1024×1024, 9 steps, guidance 0.0; pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
+`seed=1234`; the guided run uses a negative prompt. The tokenizer check covers fixed prompts, seeded
+fuzz and every Unicode code point. The reference tokenizer's Unicode tables are older than Python's
+for 108 combining marks, which it treats as unassigned.
+
+To fit the 96 GB machine, each component pair (ours and the reference) is loaded and freed one at a
+time, and in the end-to-end checks the reference pipeline runs first and is freed before ours runs.
+
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts
+398 / 521 / 244, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -138,16 +169,18 @@ missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_ch
 - There is no parity claim for float16 or bfloat16.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
 - Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
-  for SDXL base and SSD-1B, Euler ancestral for SDXL Turbo and EDM DPM-Solver++ for Playground v2.5.
+  for SDXL base and SSD-1B, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
+  and flow-match Euler for Z-Image.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 273 passed, 108 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 313 passed, 127 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), and 8 passed, 1 skipped for `playground-v2.5`. These
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 8 passed, 1 skipped for `playground-v2.5`, and 9 passed for
+  `z-image-turbo`. These
   include structural parity with random weights, end-to-end parity with a small model,
   real-checkpoint parity and tokenizer fuzz tests.
 - MPS smoke test: 1 passed.
@@ -174,3 +207,9 @@ The SDXL validation found three more differences:
 5. **Special-token metadata in `added_tokens_decoder`.** SDXL Turbo's tokenizer configs define
    special-token normalization there, so those entries now take precedence over the named
    `unk_token`, `bos_token`, `eos_token` and `pad_token` values.
+6. **Older Unicode tables in the reference tokenizer.** For 108 combining marks, the reference
+   tokenizer treats code points Python recognizes as assigned as unassigned.
+7. **Sharded checkpoint alignment.** The reference loaders copy sharded checkpoints into fresh
+   64-byte aligned tensors, unlike single-file checkpoints, and BLAS summation order depends on
+   alignment. The first run therefore differed by 4.2e-5 in the transformer, 3.1e-3 in unguided
+   latents and 1 pixel.
