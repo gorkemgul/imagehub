@@ -357,6 +357,79 @@
         ],
         "steps": 30
       }
+    },
+    {
+      "model_id": "ssd-1b",
+      "repo_id": "segmind/SSD-1B",
+      "revision": "60987f37e94cd59c36b1cba832b9f97b57395a10",
+      "provenance": "author",
+      "catalog_id": "ssd-1b",
+      "license": "Apache-2.0",
+      "status": "full",
+      "files": {
+        "model_index.json": "2f4d71b6da5648627b9a2848b7f430d2294e95abbc5d3282dddd438bf8b466da",
+        "scheduler/scheduler_config.json": "e0140f54cf0f8a5fb1cf8140caa95c1e733b6d9fa45c5e859aae43f3b9a45648",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "32d8cadf544d77c231efa1381145ac7e8f4cc88f581455c3c5f6369364474c83",
+        "text_encoder_2/config.json": "79b0f15ad762cf9c2992d50f9679d08c6cb477a50c88d41e216fc2d886e37abb",
+        "unet/config.json": "34e7893a088737536ce0accd3f9d891c01d092886f88bbfa64a9091cb2501d13",
+        "vae/config.json": "2e425cbde02bdb63e43e8d49db7e14a941a76bb7b2058761200c72dc3d6344fd",
+        "text_encoder/model.safetensors": "8377b1ca9d88fe06ec483dd7b3cfc62e5e8dbf8ddd252f455e79d659fa0553c5",
+        "text_encoder_2/model.safetensors": "b84f413eebecbd049b72874c1df533a516510cb5a2489ae58c7e320209cf0ebe",
+        "unet/diffusion_pytorch_model.safetensors": "02ed8ebd0ed55aec686fcf20946d7a1659a31f9f8d9c3798cd254ba6b67434ca",
+        "vae/diffusion_pytorch_model.safetensors": "78f6189c8492013e3cac81637a1f657f790a237387f8a9dfd6bfa5fee28eb646"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 944,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 30,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        "seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 30
+      }
     }
   ],
   "components": {
@@ -424,6 +497,35 @@
       ],
       "tolerance": 0.0
     },
+    "sdxl_scheduler_ssd-1b": {
+      "measurements": {
+        "30": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "50": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        }
+      },
+      "steps": [
+        50,
+        30
+      ],
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -442,7 +544,31 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_2_ssd-1b": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_ssd-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_tokenizers": {
+      "mismatches": [],
+      "prompts": 18,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_ssd-1b": {
       "mismatches": [],
       "prompts": 18,
       "tokenizers": 2,
@@ -458,12 +584,32 @@
       ],
       "tolerance": 0.0
     },
+    "sdxl_unet_ssd-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        999,
+        500,
+        1
+      ],
+      "tolerance": 0.0
+    },
     "sdxl_vae_decode": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sdxl_vae_decode_ssd-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_ssd-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -496,6 +642,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "34 passed, 2 deselected"
+    "reference_summary": "8 passed, 13 deselected, 5 warnings"
   }
 }

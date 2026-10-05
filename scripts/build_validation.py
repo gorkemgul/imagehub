@@ -1,9 +1,10 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL measurements are grouped under ``components_sdxl``, and each model entry may
-also contain its own ``seed_end_to_end`` measurement. Missing model directories are errors unless
-``--allow-missing`` is passed, in which case they are omitted with a warning.
+measurements. SDXL measurements are grouped in a flat ``components_sdxl`` mapping: the base model
+keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry
+may also contain its own ``seed_end_to_end`` measurement. Missing model directories are errors
+unless ``--allow-missing`` is passed, in which case they are omitted with a warning.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -37,6 +38,15 @@ LIMITS = [
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
+SDXL_COMPONENT_KEYS = (
+    "sdxl_tokenizers",
+    "sdxl_text_encoder",
+    "sdxl_text_encoder_2",
+    "sdxl_unet",
+    "sdxl_vae_decode",
+    "sdxl_vae_encode",
+    "sdxl_scheduler",
+)
 
 
 def header_check(header: dict | None) -> dict | None:
@@ -118,15 +128,12 @@ def main() -> None:
         "components_sdxl": {
             key: value
             for key, value in measured.items()
-            if key
-            in (
-                "sdxl_tokenizers",
-                "sdxl_text_encoder",
-                "sdxl_text_encoder_2",
-                "sdxl_unet",
-                "sdxl_vae_decode",
-                "sdxl_vae_encode",
-                "sdxl_scheduler",
+            if key in SDXL_COMPONENT_KEYS
+            or any(
+                key == f"{component}_{spec.id}"
+                for component in SDXL_COMPONENT_KEYS
+                for spec in MODEL_CATALOG.values()
+                if spec.family == "stable-diffusion-xl" and spec.id != "sdxl-base-1.0"
             )
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),

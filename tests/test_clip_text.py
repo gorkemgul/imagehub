@@ -3,7 +3,13 @@ from pathlib import Path
 
 import pytest
 import torch
-from helpers import TINY_TEXT_CONFIG, meta_shapes, published_shapes, sdxl_published_shapes
+from helpers import (
+    TINY_TEXT_CONFIG,
+    meta_shapes,
+    published_shapes,
+    sdxl_published_shapes,
+    ssd1b_published_shapes,
+)
 
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
 
@@ -45,6 +51,13 @@ def test_matches_sdxl_text_encoder_layouts():
         ),
         (CLIPTextModel, "sd1_configs/v1-5/text_encoder.json", "text_encoder", "sd1"),
         (CLIPTextModel, "sd1_configs/v1-1/text_encoder.json", "text_encoder", "sd1"),
+        (CLIPTextModel, "ssd1b_configs/text_encoder.json", "text_encoder", "ssd1b"),
+        (
+            CLIPTextModelWithProjection,
+            "ssd1b_configs/text_encoder_2.json",
+            "text_encoder_2",
+            "ssd1b",
+        ),
     ],
 )
 def test_real_release_configs_match_published_tensor_layout(
@@ -53,9 +66,11 @@ def test_real_release_configs_match_published_tensor_layout(
     config = json.loads((FIXTURES / config_path).read_text(encoding="utf-8"))
     if family == "sdxl":
         expected = sdxl_published_shapes(component)
+    elif family == "ssd1b":
+        expected = ssd1b_published_shapes(component)
     else:
         expected = published_shapes(component)
-        expected.pop("text_model.embeddings.position_ids")
+    expected.pop("text_model.embeddings.position_ids", None)
     assert meta_shapes(model_cls, config) == expected
 
 
@@ -74,6 +89,14 @@ def test_forward_shape_and_causality():
 
 def test_position_ids_are_dropped_on_load():
     model = CLIPTextModel(TINY_TEXT_CONFIG)
+    state = dict(model.state_dict())
+    state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
+    model.load_checkpoint(state)
+
+
+def test_projection_position_ids_are_dropped_on_load():
+    config = TINY_TEXT_CONFIG | {"hidden_act": "gelu", "projection_dim": 24, "eos_token_id": 2}
+    model = CLIPTextModelWithProjection(config)
     state = dict(model.state_dict())
     state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
     model.load_checkpoint(state)

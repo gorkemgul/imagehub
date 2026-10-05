@@ -158,6 +158,41 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="ssd-1b",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/segmind/SSD-1B",
+        repo_id="segmind/SSD-1B",
+        revision="60987f37e94cd59c36b1cba832b9f97b57395a10",
+        provenance="author",
+        catalog_id="ssd-1b",
+        format="diffusers",
+        license="Apache-2.0",
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/special_tokens_map.json",
+            "text_encoder/config.json",
+            "text_encoder_2/config.json",
+            "unet/config.json",
+            "vae/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

@@ -1,7 +1,7 @@
 """Parity of native SDXL components and pipeline against diffusers on CPU fp32.
 
-Requires IMAGEHUB_REFERENCE_TESTS=1 and IMAGEHUB_SNAPSHOT_SDXL_BASE_1_0 pointing at a
-snapshot made by ``python -m imagehub.pretrained sdxl-base-1.0 <dir>``.
+Requires IMAGEHUB_REFERENCE_TESTS=1 and an IMAGEHUB_SNAPSHOT_<ID> variable pointing at a
+snapshot made by ``python -m imagehub.pretrained <model-id> <dir>``.
 """
 
 import pytest
@@ -11,6 +11,7 @@ from helpers import max_diff, snapshot_dir
 from imagehub import pipeline
 from imagehub.backends.stable_diffusion import decode_latents, initial_latents
 from imagehub.backends.stable_diffusion_xl import StableDiffusionXLComponents, denoise
+from imagehub.catalog import MODEL_CATALOG
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 
 pytestmark = pytest.mark.reference
@@ -51,18 +52,26 @@ PROMPTS = [
     "Hi CAT!",
 ]
 CPU = torch.device("cpu")
+SDXL_MODEL_IDS = tuple(
+    spec.id for spec in MODEL_CATALOG.values() if spec.family == "stable-diffusion-xl"
+)
 
 
-@pytest.fixture(scope="module")
-def sdxl():
-    root = snapshot_dir("sdxl-base-1.0")
+def _component_record(prefix, model_id):
+    return prefix if model_id == "sdxl-base-1.0" else f"{prefix}_{model_id}"
+
+
+@pytest.fixture(scope="module", params=SDXL_MODEL_IDS)
+def sdxl(request):
+    model_id = request.param
+    root = snapshot_dir(model_id)
     ours = StableDiffusionXLComponents.load(root, device=CPU, dtype=torch.float32)
     ref = diffusers.StableDiffusionXLPipeline.from_pretrained(
         root, local_files_only=True, add_watermarker=False, torch_dtype=torch.float32
     )
     ref.to(CPU)
     ref.set_progress_bar_config(disable=True)
-    return root, ours, ref
+    return model_id, root, ours, ref
 
 
 def _check(record, name, actual, expected, tolerance_key):
@@ -72,7 +81,7 @@ def _check(record, name, actual, expected, tolerance_key):
 
 
 def test_tokenizers(sdxl, record):
-    _, ours, ref = sdxl
+    model_id, _, ours, ref = sdxl
     mismatches = []
     for index, (ours_tokenizer, ref_tokenizer) in enumerate(
         ((ours.tokenizer, ref.tokenizer), (ours.tokenizer_2, ref.tokenizer_2)), start=1
@@ -84,7 +93,7 @@ def test_tokenizers(sdxl, record):
             if ours_tokenizer(text) != expected:
                 mismatches.append({"tokenizer": index, "prompt": text})
     record(
-        "sdxl_tokenizers",
+        _component_record("sdxl_tokenizers", model_id),
         prompts=len(PROMPTS),
         tokenizers=2,
         mismatches=mismatches,
@@ -94,7 +103,7 @@ def test_tokenizers(sdxl, record):
 
 
 def test_text_encoders(sdxl, record):
-    _, ours, ref = sdxl
+    model_id, _, ours, ref = sdxl
     ids_1 = torch.tensor([ours.tokenizer(prompt) for prompt in PROMPTS])
     ids_2 = torch.tensor([ours.tokenizer_2(prompt) for prompt in PROMPTS])
     with torch.inference_mode():
@@ -104,7 +113,7 @@ def test_text_encoders(sdxl, record):
         expected_2 = ref.text_encoder_2(ids_2, output_hidden_states=True)
     _check(
         record,
-        "sdxl_text_encoder",
+        _component_record("sdxl_text_encoder", model_id),
         ours_hidden_1[-2],
         expected_1.hidden_states[-2],
         "text_encoder",
@@ -113,7 +122,7 @@ def test_text_encoders(sdxl, record):
     pooled_diff = max_diff(ours_pooled_2, expected_2.text_embeds)
     worst = max((hidden_diff, pooled_diff), key=lambda value: value["max_abs"])
     record(
-        "sdxl_text_encoder_2",
+        _component_record("sdxl_text_encoder_2", model_id),
         **worst,
         hidden_states=hidden_diff,
         text_embeds=pooled_diff,
@@ -134,7 +143,7 @@ def test_text_encoders(sdxl, record):
 
 
 def test_unet_single_step(sdxl, record):
-    _, ours, ref = sdxl
+    model_id, _, ours, ref = sdxl
     generator = torch.Generator().manual_seed(0)
     sample = torch.randn(2, 4, 128, 128, generator=generator)
     context = torch.randn(2, 77, 2048, generator=generator)
@@ -159,13 +168,18 @@ def test_unet_single_step(sdxl, record):
             ).sample
             pairs.append((actual, expected, max_diff(actual, expected)))
     worst = max((measured for _, _, measured in pairs), key=lambda value: value["max_abs"])
-    record("sdxl_unet", **worst, tolerance=TOLERANCES["unet"], timesteps=[999, 500, 1])
+    record(
+        _component_record("sdxl_unet", model_id),
+        **worst,
+        tolerance=TOLERANCES["unet"],
+        timesteps=[999, 500, 1],
+    )
     for actual, expected, _ in pairs:
         torch.testing.assert_close(actual, expected, atol=TOLERANCES["unet"], rtol=0)
 
 
 def test_vae(sdxl, record):
-    _, ours, ref = sdxl
+    model_id, _, ours, ref = sdxl
     generator = torch.Generator().manual_seed(1)
     latents = torch.randn(1, 4, 128, 128, generator=generator)
     image = torch.rand(1, 3, 1024, 1024, generator=generator) * 2 - 1
@@ -177,7 +191,11 @@ def test_vae(sdxl, record):
         ("sdxl_vae_encode", encode),
     ):
         tolerance_key = name.removeprefix("sdxl_")
-        record(name, **max_diff(actual, expected), tolerance=TOLERANCES[tolerance_key])
+        record(
+            _component_record(name, model_id),
+            **max_diff(actual, expected),
+            tolerance=TOLERANCES[tolerance_key],
+        )
     for name, (actual, expected) in (
         ("sdxl_vae_decode", decode),
         ("sdxl_vae_encode", encode),
@@ -187,7 +205,7 @@ def test_vae(sdxl, record):
 
 
 def test_euler_scheduler(sdxl, record):
-    _, ours, ref = sdxl
+    model_id, _, ours, ref = sdxl
     measurements = {}
     schedules = []
     for steps in (50, 30):
@@ -200,14 +218,19 @@ def test_euler_scheduler(sdxl, record):
             "sigmas": max_diff(actual.sigmas, expected.sigmas),
         }
         schedules.append((actual, expected))
-    record("sdxl_scheduler", steps=[50, 30], measurements=measurements, tolerance=0.0)
+    record(
+        _component_record("sdxl_scheduler", model_id),
+        steps=[50, 30],
+        measurements=measurements,
+        tolerance=0.0,
+    )
     for actual, expected in schedules:
         torch.testing.assert_close(actual.timesteps, expected.timesteps, atol=0, rtol=0)
         torch.testing.assert_close(actual.sigmas, expected.sigmas, atol=0, rtol=0)
 
 
 def test_end_to_end(sdxl, record):
-    _, ours, ref = sdxl
+    model_id, _, ours, ref = sdxl
     latents = initial_latents(1234, (1, 4, 128, 128))
     with torch.inference_mode():
         ref_latents = ref(
@@ -241,7 +264,7 @@ def test_end_to_end(sdxl, record):
         and pixel_diff <= TOLERANCES["e2e_pixels"]
     )
     record(
-        "e2e_sdxl-base-1.0",
+        f"e2e_{model_id}",
         latents=latent_diff,
         pixels_max_abs=pixel_diff,
         passed=passed,
@@ -257,7 +280,7 @@ def test_end_to_end(sdxl, record):
 
 
 def test_seed_end_to_end(sdxl, record):
-    root, _, ref = sdxl
+    model_id, root, _, ref = sdxl
     with torch.inference_mode():
         expected = ref(
             PROMPT,
@@ -270,7 +293,7 @@ def test_seed_end_to_end(sdxl, record):
         ).images
     expected = torch.from_numpy((expected * 255).round().astype("uint8"))[0]
     actual = (
-        pipeline("t2i", backend="sdxl-base-1.0", model=root)(
+        pipeline("t2i", backend=model_id, model=root)(
             PROMPT, seed=42, steps=30, guidance=5.0, width=1024, height=1024
         )
         .images[0]
@@ -278,7 +301,7 @@ def test_seed_end_to_end(sdxl, record):
     )
     pixel_diff = int((actual.int() - expected.int()).abs().max())
     record(
-        "seed_e2e_sdxl-base-1.0",
+        f"seed_e2e_{model_id}",
         pixels_max_abs=pixel_diff,
         seed=42,
         steps=30,

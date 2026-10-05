@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import torch
@@ -29,6 +29,8 @@ UNET_DEFAULTS: dict[str, Any] = {
     "attention_head_dim": 8,
     "cross_attention_dim": 768,
     "transformer_layers_per_block": 1,
+    "reverse_transformer_layers_per_block": None,
+    "mid_block_type": "UNetMidBlock2DCrossAttn",
     "num_attention_heads": None,
     "use_linear_projection": False,
     "addition_embed_type": None,
@@ -42,7 +44,6 @@ UNET_DEFAULTS: dict[str, Any] = {
 }
 _UNSUPPORTED_DEFAULTS: dict[str, Any] = {
     "center_input_sample": False,
-    "mid_block_type": "UNetMidBlock2DCrossAttn",
     "only_cross_attention": False,
     "downsample_padding": 1,
     "mid_block_scale_factor": 1,
@@ -69,7 +70,6 @@ _UNSUPPORTED_DEFAULTS: dict[str, Any] = {
     "mid_block_only_cross_attention": None,
     "cross_attention_norm": None,
     "addition_embed_type_num_heads": 64,
-    "reverse_transformer_layers_per_block": None,
 }
 
 
@@ -174,18 +174,23 @@ def _transformers(
     *,
     context_dim: int,
     heads: int,
-    layers: int,
+    layers: int | Sequence[int],
 ) -> nn.ModuleList:
+    depths = [layers] * count if isinstance(layers, int) else [int(v) for v in layers]
+    if len(depths) != count:
+        raise ValueError(
+            "U-Net transformer_layers_per_block must have one depth per attention layer"
+        )
     return nn.ModuleList(
         SpatialTransformer(
             channels,
             context_dim,
             heads,
             cfg["norm_num_groups"],
-            layers,
+            depth,
             cfg["use_linear_projection"],
         )
-        for _ in range(count)
+        for depth in depths
     )
 
 
@@ -304,26 +309,38 @@ class MidBlock(nn.Module):
         temb: int,
         context_dim: int,
         heads: int,
-        transformer_layers: int,
+        transformer_layers: int | Sequence[int],
     ) -> None:
         super().__init__()
         eps, groups = cfg["norm_eps"], cfg["norm_num_groups"]
-        self.resnets = nn.ModuleList(
-            ResnetBlock(ch, ch, temb_channels=temb, eps=eps, groups=groups) for _ in range(2)
-        )
-        self.attentions = _transformers(
-            cfg,
-            ch,
-            1,
-            context_dim=context_dim,
-            heads=heads,
-            layers=transformer_layers,
-        )
+
+        def resnet() -> ResnetBlock:
+            return ResnetBlock(ch, ch, temb_channels=temb, eps=eps, groups=groups)
+
+        self.attentions: nn.ModuleList | None
+        if cfg["mid_block_type"] == "UNetMidBlock2DCrossAttn":
+            self.resnets = nn.ModuleList([resnet(), resnet()])
+            self.attentions = _transformers(
+                cfg,
+                ch,
+                1,
+                context_dim=context_dim,
+                heads=heads,
+                layers=transformer_layers,
+            )
+        else:
+            # diffusers builds the conditional UNet's UNetMidBlock2D with a single residual
+            # block and an empty attention list.
+            self.resnets = nn.ModuleList([resnet()])
+            self.attentions = None
 
     def forward(self, x: Tensor, temb: Tensor, context: Tensor) -> Tensor:
         x = self.resnets[0](x, temb)
-        x = self.attentions[0](x, context)
-        return self.resnets[1](x, temb)
+        if self.attentions is not None:
+            x = self.attentions[0](x, context)
+        for resnet in self.resnets[1:]:
+            x = resnet(x, temb)
+        return x
 
 
 class TimestepEmbedding(nn.Module):
@@ -369,6 +386,8 @@ class UNet2DConditionModel(NativeModel):
             raise ValueError(
                 f"Unsupported U-Net setting addition_embed_type={cfg['addition_embed_type']!r}"
             )
+        if cfg["mid_block_type"] not in ("UNetMidBlock2DCrossAttn", "UNetMidBlock2D"):
+            raise ValueError(f"Unsupported U-Net setting mid_block_type={cfg['mid_block_type']!r}")
 
         def per_block(value: Any, name: str) -> list[Any]:
             values = [value] * blocks if isinstance(value, int) else list(value)
@@ -418,7 +437,15 @@ class UNet2DConditionModel(NativeModel):
         )
         rev = list(reversed(ch))
         rev_layers = list(reversed(layers))
-        rev_transformer_layers = list(reversed(transformer_layers))
+        reverse_config = cfg["reverse_transformer_layers_per_block"]
+        if reverse_config is None:
+            rev_transformer_layers = list(reversed(transformer_layers))
+        else:
+            rev_transformer_layers = list(reverse_config)
+            if len(rev_transformer_layers) != blocks:
+                raise ValueError(
+                    "U-Net reverse_transformer_layers_per_block must have one value per block"
+                )
         rev_heads = list(reversed(heads))
         rev_context_dims = list(reversed(context_dims))
         self.up_blocks = nn.ModuleList()

@@ -14,6 +14,7 @@ import pytest
 import torch
 from helpers import checkpoint_dir, snapshot_dir
 
+from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
@@ -33,6 +34,13 @@ WEIGHT_FILES = (
     "pytorch_model.bin",
     "diffusion_pytorch_model.bin",
 )
+SDXL_MODEL_IDS = tuple(
+    spec.id for spec in MODEL_CATALOG.values() if spec.family == "stable-diffusion-xl"
+)
+SDXL_FIXTURES = {
+    "sdxl-base-1.0": "sdxl_tensor_shapes.json",
+    "ssd-1b": "ssd1b_tensor_shapes.json",
+}
 
 
 def checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
@@ -48,12 +56,17 @@ def checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
     return {name: tuple(t.shape) for name, t in state.items()}
 
 
-def _header_result(root, components):
+def _header_result(root, components, published=None):
     result = {}
     for component, cls in components.items():
         with torch.device("meta"):
             model = cls(read_json(root / component / "config.json"))
         shapes = checkpoint_shapes(root / component)
+        if published is not None:
+            expected_published = {
+                name: tuple(entry["shape"]) for name, entry in published[component].items()
+            }
+            assert shapes == expected_published
         prepared = model.prepare_state_dict(
             {n: torch.empty(s, device="meta") for n, s in shapes.items()}
         )
@@ -86,7 +99,10 @@ def test_published_tensor_headers_match_models(version, record):
     _assert_headers_match(result)
 
 
-def test_sdxl_published_tensor_headers_match_models(record):
-    result = _header_result(snapshot_dir("sdxl-base-1.0"), SDXL_COMPONENTS)
-    record("header_sdxl-base-1.0", **result)
+@pytest.mark.parametrize("model_id", SDXL_MODEL_IDS)
+def test_sdxl_published_tensor_headers_match_models(model_id, record):
+    fixture = Path(__file__).parents[1] / "fixtures" / SDXL_FIXTURES[model_id]
+    published = json.loads(fixture.read_text(encoding="utf-8"))
+    result = _header_result(snapshot_dir(model_id), SDXL_COMPONENTS, published)
+    record(f"header_{model_id}", **result)
     _assert_headers_match(result)
