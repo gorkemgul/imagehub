@@ -17,6 +17,8 @@ def test_catalog_contents():
             "sd-v1-3",
             "sd-v1-4",
             "sd-v1-5",
+            "sd3.5-large",
+            "sd3.5-medium",
             "sdxl-base-1.0",
             "sdxl-turbo",
             "ssd-1b",
@@ -140,6 +142,17 @@ def test_catalog_contents():
     assert playground.config == {"defaults": {"guidance": 3.0}}
     assert len(set(playground.files)) == len(playground.files) == 18
     assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in playground.files)
+
+    for model_id in ("sd3.5-medium", "sd3.5-large"):
+        spec = model_info(model_id)
+        assert spec.task is Task.T2I
+        assert spec.family == "stable-diffusion-3"
+        assert spec.catalog_id == "stable-diffusion-3"
+        assert spec.provenance == "author"
+        assert spec.format == "diffusers"
+        assert spec.license == "Stability AI Community License"
+        assert spec.gated
+        assert not any("fp16" in name or "single_file" in name for name in spec.files)
 
 
 def test_provenance_and_formats():

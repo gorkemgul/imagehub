@@ -89,6 +89,11 @@ for _task, _name, _path in (
         "stable-diffusion-xl",
         "imagehub.backends.stable_diffusion_xl:StableDiffusionXLBackend",
     ),
+    (
+        Task.T2I,
+        "stable-diffusion-3",
+        "imagehub.backends.stable_diffusion_3:StableDiffusion3Backend",
+    ),
     (Task.T2I, "z-image", "imagehub.backends.z_image:ZImageBackend"),
     (Task.T2I, "janus", "imagehub.backends.janus:JanusBackend"),
 ):

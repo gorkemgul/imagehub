@@ -194,6 +194,73 @@ _entries.append(
     )
 )
 
+_SD35_COMMON_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "tokenizer/merges.txt",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/vocab.json",
+    "tokenizer_2/merges.txt",
+    "tokenizer_2/special_tokens_map.json",
+    "tokenizer_2/tokenizer_config.json",
+    "tokenizer_2/vocab.json",
+    "tokenizer_3/special_tokens_map.json",
+    "tokenizer_3/spiece.model",
+    "tokenizer_3/tokenizer.json",
+    "tokenizer_3/tokenizer_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors",
+    "text_encoder_2/config.json",
+    "text_encoder_2/model.safetensors",
+    "text_encoder_3/config.json",
+    "text_encoder_3/model.safetensors.index.json",
+    "text_encoder_3/model-00001-of-00002.safetensors",
+    "text_encoder_3/model-00002-of-00002.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _model_id, _revision, _defaults, _transformer_files in (
+    (
+        "sd3.5-medium",
+        "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+        {"steps": 40, "guidance": 4.5},
+        (
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+        ),
+    ),
+    (
+        "sd3.5-large",
+        "ceddf0a7fdf2064ea28e2213e3b84e4afa170a0f",
+        {"steps": 28, "guidance": 3.5},
+        (
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+        ),
+    ),
+):
+    _repo = f"stabilityai/stable-diffusion-3.5-{_model_id.rsplit('-', 1)[-1]}"
+    _entries.append(
+        ModelSpec(
+            id=_model_id,
+            task=Task.T2I,
+            family="stable-diffusion-3",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="stable-diffusion-3",
+            format="diffusers",
+            license="Stability AI Community License",
+            gated=True,
+            config={"defaults": _defaults},
+            files=_SD35_COMMON_FILES + _transformer_files,
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="janus-pro-1b",
