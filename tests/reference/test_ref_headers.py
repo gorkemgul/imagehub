@@ -101,11 +101,18 @@ def _assert_headers_match(result):
         assert not entry["mismatch"], (component, entry["mismatch"][:5])
 
 
-def _sharded_tensor_names(directory: Path) -> set[str]:
+def _sharded_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
     index = next(directory.glob("*.safetensors.index.json"))
     weight_map = json.loads(index.read_text(encoding="utf-8"))["weight_map"]
     assert isinstance(weight_map, dict)
-    return set(weight_map)
+    shapes: dict[str, tuple[int, ...]] = {}
+    for shard in sorted(set(weight_map.values())):
+        with (directory / shard).open("rb") as source:
+            (length,) = struct.unpack("<Q", source.read(8))
+            header = json.loads(source.read(length))
+        shapes |= {n: tuple(e["shape"]) for n, e in header.items() if n != "__metadata__"}
+    assert set(shapes) == set(weight_map)
+    return shapes
 
 
 @pytest.mark.parametrize("version", [1, 2, 3, 4, 5])
@@ -131,18 +138,19 @@ def test_z_image_published_tensor_headers_match_models(record):
         with torch.device("meta"):
             model = cls(read_json(root / component / "config.json"))
         if component in ("text_encoder", "transformer"):
-            got = _sharded_tensor_names(root / component)
-            expected = set(model.state_dict())
-            if component == "text_encoder":
-                expected = {name.removeprefix("model.") for name in expected}
+            shapes = _sharded_shapes(root / component)
         else:
-            got = set(checkpoint_shapes(root / component))
-            expected = set(model.state_dict())
+            shapes = checkpoint_shapes(root / component)
+        prepared = model.prepare_state_dict(
+            {n: torch.empty(s, device="meta") for n, s in shapes.items()}
+        )
+        expected = {n: tuple(t.shape) for n, t in model.state_dict().items()}
+        got = {n: tuple(t.shape) for n, t in prepared.items()}
         result[component] = {
-            "missing": sorted(expected - got),
-            "extra": sorted(got - expected),
-            "mismatch": [],
-            "tensors": len(got),
+            "missing": sorted(expected.keys() - got.keys()),
+            "extra": sorted(got.keys() - expected.keys()),
+            "mismatch": sorted(n for n in expected.keys() & got.keys() if expected[n] != got[n]),
+            "tensors": len(shapes),
         }
     record("header_z-image-turbo", **result)
     _assert_headers_match(result)
