@@ -36,7 +36,6 @@ _REQUIRED = {
     "use_beta_sigmas": False,
     "sigma_min": None,
     "sigma_max": None,
-    "timestep_spacing": "leading",
     "timestep_type": "discrete",
     "trained_betas": None,
     "rescale_betas_zero_snr": False,
@@ -82,6 +81,10 @@ class EulerDiscreteScheduler:
         for key, expected in _REQUIRED.items():
             if cfg[key] != expected:
                 raise ValueError(f"Unsupported Euler setting {key}={cfg[key]!r}")
+        if cfg["timestep_spacing"] not in ("leading", "trailing"):
+            raise ValueError(
+                f"Unsupported Euler setting timestep_spacing={cfg['timestep_spacing']!r}"
+            )
         self._training_sigmas = scaled_linear_training_sigmas(cfg)
         self.config = cfg
         self.timesteps = torch.empty(0, dtype=torch.float32)
@@ -98,6 +101,8 @@ class EulerDiscreteScheduler:
         if self.num_inference_steps == 0:
             raise RuntimeError("Call set_timesteps before reading init_noise_sigma")
         maximum = self.sigmas.max()
+        if self.config["timestep_spacing"] == "trailing":
+            return maximum
         return (maximum**2 + 1) ** 0.5
 
     def set_timesteps(self, num_inference_steps: int) -> None:
@@ -105,12 +110,18 @@ class EulerDiscreteScheduler:
         if type(num_inference_steps) is not int or not 0 < num_inference_steps <= count:
             raise ValueError(f"num_inference_steps must be an int in [1, {count}]")
         self.num_inference_steps = num_inference_steps
-        ratio = count // num_inference_steps
-        self.timesteps = (
-            torch.arange(num_inference_steps, dtype=torch.float32).mul(ratio).flip(0)
-            + self.config["steps_offset"]
-        )
-        # The supported leading schedule has integer timesteps. Selecting from the float32
+        if self.config["timestep_spacing"] == "leading":
+            ratio = count // num_inference_steps
+            self.timesteps = (
+                torch.arange(num_inference_steps, dtype=torch.float32).mul(ratio).flip(0)
+                + self.config["steps_offset"]
+            )
+        else:
+            ratio = count / num_inference_steps
+            self.timesteps = (
+                torch.arange(count, 0, -ratio, dtype=torch.float64).round().to(torch.float32) - 1
+            )
+        # The supported schedules have integer timesteps. Selecting from the float32
         # training schedule exactly reproduces NumPy's float64 interpolation followed by
         # the reference's float32 cast, without returning float64 tensors.
         indices = self.timesteps.to(torch.int64).clamp_max(count - 1)

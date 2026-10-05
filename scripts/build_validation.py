@@ -50,6 +50,14 @@ SDXL_COMPONENT_KEYS = (
     "sdxl_vae_encode",
     "sdxl_scheduler",
 )
+SD_TURBO_COMPONENT_KEYS = (
+    "sd_turbo_tokenizer",
+    "sd_turbo_text_encoder",
+    "sd_turbo_unet",
+    "sd_turbo_vae_decode",
+    "sd_turbo_vae_encode",
+    "sd_turbo_scheduler",
+)
 Z_IMAGE_COMPONENT_KEYS = (
     "z_image_tokenizer",
     "z_image_text_encoder",
@@ -178,6 +186,9 @@ def main() -> None:
                 for spec in MODEL_CATALOG.values()
                 if spec.family == "stable-diffusion-xl" and spec.id != "sdxl-base-1.0"
             )
+        },
+        "components_sd_turbo": {
+            key: value for key, value in measured.items() if key in SD_TURBO_COMPONENT_KEYS
         },
         "components_z_image": {
             key: value for key, value in measured.items() if key in Z_IMAGE_COMPONENT_KEYS

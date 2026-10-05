@@ -39,11 +39,42 @@ pytest.importorskip("transformers")
             hw=(64, 64),
             seed=1,
         ),
+        dict(
+            prompt="turbo no cfg",
+            negative_prompt=None,
+            steps=1,
+            guidance=0.0,
+            num=1,
+            hw=(64, 64),
+            seed=11,
+            scheduler="euler-trailing",
+        ),
+        dict(
+            prompt="turbo cfg",
+            negative_prompt="blurry",
+            steps=4,
+            guidance=2.0,
+            num=1,
+            hw=(64, 64),
+            seed=12,
+            scheduler="euler-trailing",
+        ),
     ],
-    ids=["cfg", "negative-batch", "no-cfg"],
+    ids=["cfg", "negative-batch", "no-cfg", "euler-no-cfg", "euler-cfg"],
 )
 def test_tiny_snapshot_generation_matches_diffusers(tmp_path, case):
     root = write_tiny_sd(tmp_path / "tiny")
+    if case.get("scheduler") == "euler-trailing":
+        scheduler_path = root / "scheduler" / "scheduler_config.json"
+        scheduler = __import__("json").loads(scheduler_path.read_text(encoding="utf-8"))
+        scheduler["_class_name"] = "EulerDiscreteScheduler"
+        scheduler["timestep_spacing"] = "trailing"
+        scheduler_path.write_text(__import__("json").dumps(scheduler), encoding="utf-8")
+        # diffusers picks the scheduler class from model_index.json, not from scheduler_config.json.
+        index_path = root / "model_index.json"
+        index = __import__("json").loads(index_path.read_text(encoding="utf-8"))
+        index["scheduler"] = ["diffusers", "EulerDiscreteScheduler"]
+        index_path.write_text(__import__("json").dumps(index), encoding="utf-8")
     ref = diffusers.StableDiffusionPipeline.from_pretrained(
         root,
         safety_checker=None,

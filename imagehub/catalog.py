@@ -143,6 +143,36 @@ for _version, _repo, _revision, _provenance, _weights in (
 
 _entries.append(
     ModelSpec(
+        id="sd-turbo",
+        task=Task.T2I,
+        family="stable-diffusion",
+        source="https://huggingface.co/stabilityai/sd-turbo",
+        repo_id="stabilityai/sd-turbo",
+        revision="b261bac6fd2cf515557d5d0707481eafa0485ec2",
+        provenance="author",
+        catalog_id="sdxl-turbo",
+        format="diffusers",
+        license="sai-nc-community",
+        config={"defaults": {"steps": 1, "guidance": 0.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-base-1.0",
         task=Task.T2I,
         family="stable-diffusion-xl",
