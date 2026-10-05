@@ -30,10 +30,10 @@ diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 
 CPU = torch.device("cpu")
-MODEL_IDS = ("sd3.5-medium", "sd3.5-large")
+MODEL_IDS = ("sd3.5-medium", "sd3.5-large", "sd3.5-large-turbo")
 PROMPT = "a photograph of an astronaut riding a horse"
 PROMPTS = [PROMPT, "Bir kedi, yağlı boya; İSTANBUL'da ĞÜŞİÖÇ ığüşöç", ""]
-REDUCED_STEPS = {"sd3.5-medium": 12, "sd3.5-large": 8}
+TEST_STEPS = {"sd3.5-medium": 12, "sd3.5-large": 8, "sd3.5-large-turbo": 4}
 TOLERANCES = {
     "text_encoder": 0.0,
     "text_encoder_2": 0.0,
@@ -275,7 +275,7 @@ def test_scheduler(model_id, record):
     torch.testing.assert_close(actual.sigmas, expected.sigmas, atol=0, rtol=0)
 
 
-def _reference_output(root, *, steps, guidance, noise):
+def _reference_output(root, *, steps, guidance, noise, negative_prompt=None):
     reference = diffusers.StableDiffusion3Pipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     )
@@ -284,6 +284,7 @@ def _reference_output(root, *, steps, guidance, noise):
     with torch.inference_mode():
         latents = reference(
             PROMPT,
+            negative_prompt=negative_prompt,
             num_inference_steps=steps,
             guidance_scale=guidance,
             height=1024,
@@ -305,7 +306,7 @@ def _reference_output(root, *, steps, guidance, noise):
 @pytest.mark.parametrize("model_id", MODEL_IDS)
 def test_end_to_end(model_id, record):
     root = snapshot_dir(model_id)
-    steps = REDUCED_STEPS[model_id]
+    steps = TEST_STEPS[model_id]
     guidance = float(MODEL_CATALOG[model_id].config["defaults"]["guidance"])
     noise = torch.randn(1, 16, 128, 128, generator=torch.Generator("cpu").manual_seed(1234))
     expected_latents, expected_pixels = _reference_output(
@@ -339,9 +340,62 @@ def test_end_to_end(model_id, record):
         size=[1024, 1024],
         noise_seed=1234,
         runtime_note=(
-            f"Reduced from the {MODEL_CATALOG[model_id].config['defaults']['steps']}-step "
-            "model default."
+            "Model default."
+            if steps == MODEL_CATALOG[model_id].config["defaults"]["steps"]
+            else (
+                f"Reduced from the {MODEL_CATALOG[model_id].config['defaults']['steps']}-step "
+                "model default."
+            )
         ),
+    )
+    assert passed, (latent_diff, pixel_diff)
+    del ours
+    gc.collect()
+
+
+def test_end_to_end_guided_large_turbo(record):
+    model_id = "sd3.5-large-turbo"
+    root = snapshot_dir(model_id)
+    steps = 4
+    guidance = 3.5
+    negative_prompt = "blurry"
+    noise = torch.randn(1, 16, 128, 128, generator=torch.Generator("cpu").manual_seed(1234))
+    expected_latents, expected_pixels = _reference_output(
+        root,
+        steps=steps,
+        guidance=guidance,
+        noise=noise,
+        negative_prompt=negative_prompt,
+    )
+    ours = StableDiffusion3Components.load(root, device=CPU, dtype=torch.float32)
+    actual_latents = denoise(
+        ours,
+        prompt=PROMPT,
+        negative_prompt=negative_prompt,
+        steps=steps,
+        guidance=guidance,
+        latents=noise.clone(),
+        max_sequence_length=256,
+    )
+    actual_pixels = decode_latents(ours.vae, actual_latents)
+    latent_diff = max_diff(actual_latents, expected_latents)
+    pixel_diff = int((actual_pixels.int() - expected_pixels.int()).abs().max())
+    passed = (
+        latent_diff["max_abs"] <= TOLERANCES["e2e_latents"]
+        and pixel_diff <= TOLERANCES["e2e_pixels"]
+    )
+    record(
+        f"e2e_guided_{model_id}",
+        latents=latent_diff,
+        pixels_max_abs=pixel_diff,
+        passed=passed,
+        prompt=PROMPT,
+        negative_prompt=negative_prompt,
+        steps=steps,
+        guidance=guidance,
+        size=[1024, 1024],
+        noise_seed=1234,
+        runtime_note="Model default step count with classifier-free guidance.",
     )
     assert passed, (latent_diff, pixel_diff)
     del ours
@@ -351,7 +405,7 @@ def test_end_to_end(model_id, record):
 @pytest.mark.parametrize("model_id", MODEL_IDS)
 def test_seed_end_to_end(model_id, record):
     root = snapshot_dir(model_id)
-    steps = REDUCED_STEPS[model_id]
+    steps = TEST_STEPS[model_id]
     guidance = float(MODEL_CATALOG[model_id].config["defaults"]["guidance"])
     reference = diffusers.StableDiffusion3Pipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
@@ -395,8 +449,12 @@ def test_seed_end_to_end(model_id, record):
         size=[1024, 1024],
         passed=pixel_diff <= TOLERANCES["e2e_pixels"],
         runtime_note=(
-            f"Reduced from the {MODEL_CATALOG[model_id].config['defaults']['steps']}-step "
-            "model default."
+            "Model default."
+            if steps == MODEL_CATALOG[model_id].config["defaults"]["steps"]
+            else (
+                f"Reduced from the {MODEL_CATALOG[model_id].config['defaults']['steps']}-step "
+                "model default."
+            )
         ),
     )
     assert pixel_diff <= TOLERANCES["e2e_pixels"]

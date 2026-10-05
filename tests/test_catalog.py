@@ -18,6 +18,7 @@ def test_catalog_contents():
             "sd-v1-4",
             "sd-v1-5",
             "sd3.5-large",
+            "sd3.5-large-turbo",
             "sd3.5-medium",
             "sdxl-base-1.0",
             "sdxl-turbo",
@@ -143,7 +144,7 @@ def test_catalog_contents():
     assert len(set(playground.files)) == len(playground.files) == 18
     assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in playground.files)
 
-    for model_id in ("sd3.5-medium", "sd3.5-large"):
+    for model_id in ("sd3.5-medium", "sd3.5-large", "sd3.5-large-turbo"):
         spec = model_info(model_id)
         assert spec.task is Task.T2I
         assert spec.family == "stable-diffusion-3"
@@ -153,6 +154,13 @@ def test_catalog_contents():
         assert spec.license == "Stability AI Community License"
         assert spec.gated
         assert not any("fp16" in name or "single_file" in name for name in spec.files)
+
+    sd35_large = model_info("sd3.5-large")
+    sd35_large_turbo = model_info("sd3.5-large-turbo")
+    assert sd35_large_turbo.repo_id == "stabilityai/stable-diffusion-3.5-large-turbo"
+    assert sd35_large_turbo.revision == "ec07796fc06b096cc56de9762974a28f4c632eda"
+    assert sd35_large_turbo.config == {"defaults": {"steps": 4, "guidance": 0.0}}
+    assert sd35_large_turbo.files == sd35_large.files
 
 
 def test_provenance_and_formats():
