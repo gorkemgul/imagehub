@@ -21,6 +21,7 @@ from helpers import (
 
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIP_TEXT_DEFAULTS, CLIPTextModel, CLIPTextModelWithProjection
+from imagehub.models.qwen3 import Qwen3Model
 from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
@@ -84,6 +85,38 @@ def test_clip_text_projection_random_weights(config):
     exact(actual_embeds, expected.text_embeds)
     exact(actual_last, expected.last_hidden_state)
     exact(actual_hidden[-2], expected.hidden_states[-2])
+
+
+def test_qwen3_random_weights():
+    config = {
+        "vocab_size": 97,
+        "hidden_size": 32,
+        "intermediate_size": 64,
+        "num_hidden_layers": 3,
+        "num_attention_heads": 4,
+        "num_key_value_heads": 2,
+        "head_dim": 8,
+        "max_position_embeddings": 32,
+        "attention_dropout": 0.0,
+        "attention_bias": False,
+        "hidden_act": "silu",
+        "rms_norm_eps": 1e-6,
+        "rope_theta": 10000.0,
+        "rope_scaling": None,
+        "use_cache": False,
+        "use_sliding_window": False,
+    }
+    torch.manual_seed(0)
+    ref = transformers.Qwen3Model(transformers.Qwen3Config(**config)).eval()
+    ours = Qwen3Model(config).eval()
+    ours.load_checkpoint({"model." + name: value for name, value in ref.state_dict().items()})
+    input_ids = torch.tensor([[1, 2, 3, 4, 5, 6], [7, 8, 9, 0, 0, 0]])
+    attention_mask = torch.tensor([[1, 1, 1, 1, 1, 1], [1, 1, 1, 0, 0, 0]])
+    with torch.inference_mode():
+        actual_last, actual_hidden = ours(input_ids, attention_mask, output_hidden_states=True)
+        expected = ref(input_ids, attention_mask=attention_mask, output_hidden_states=True)
+    exact(actual_hidden[-2], expected.hidden_states[-2])
+    exact(actual_last, expected.last_hidden_state)
 
 
 SD1_VAE = {

@@ -1,0 +1,51 @@
+import json
+from pathlib import Path
+
+import pytest
+import torch
+
+from imagehub.models.qwen3 import Qwen3Model
+
+FIXTURES = Path(__file__).parent / "fixtures"
+CONFIG_PATH = FIXTURES / "z_image_turbo_configs" / "text_encoder_config.json"
+TENSORS_PATH = FIXTURES / "z_image_turbo_text_encoder_tensors.json"
+
+
+def test_matches_z_image_turbo_tensor_layout():
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    expected_names = json.loads(TENSORS_PATH.read_text(encoding="utf-8"))
+    with torch.device("meta"):
+        model = Qwen3Model(config)
+    state = model.state_dict()
+
+    assert sorted(state) == expected_names
+    assert list(state["model.embed_tokens.weight"].shape) == [151936, 2560]
+    assert list(state["model.norm.weight"].shape) == [2560]
+    for layer in range(36):
+        prefix = f"model.layers.{layer}"
+        assert list(state[f"{prefix}.input_layernorm.weight"].shape) == [2560]
+        assert list(state[f"{prefix}.post_attention_layernorm.weight"].shape) == [2560]
+        assert list(state[f"{prefix}.self_attn.q_proj.weight"].shape) == [4096, 2560]
+        assert list(state[f"{prefix}.self_attn.k_proj.weight"].shape) == [1024, 2560]
+        assert list(state[f"{prefix}.self_attn.v_proj.weight"].shape) == [1024, 2560]
+        assert list(state[f"{prefix}.self_attn.o_proj.weight"].shape) == [2560, 4096]
+        assert list(state[f"{prefix}.self_attn.q_norm.weight"].shape) == [128]
+        assert list(state[f"{prefix}.self_attn.k_norm.weight"].shape) == [128]
+        assert list(state[f"{prefix}.mlp.gate_proj.weight"].shape) == [9728, 2560]
+        assert list(state[f"{prefix}.mlp.up_proj.weight"].shape) == [9728, 2560]
+        assert list(state[f"{prefix}.mlp.down_proj.weight"].shape) == [2560, 9728]
+
+
+@pytest.mark.parametrize(
+    ("option", "value"),
+    [
+        ("hidden_act", "gelu"),
+        ("attention_bias", True),
+        ("rope_scaling", {"rope_type": "linear", "factor": 2.0}),
+        ("use_sliding_window", True),
+    ],
+)
+def test_rejects_unsupported_options(option, value):
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    with pytest.raises(ValueError, match="Unsupported Qwen3"):
+        Qwen3Model(config | {option: value})
