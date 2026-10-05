@@ -191,7 +191,15 @@ def main() -> None:
             key: value for key, value in measured.items() if key in SD_TURBO_COMPONENT_KEYS
         },
         "components_z_image": {
-            key: value for key, value in measured.items() if key in Z_IMAGE_COMPONENT_KEYS
+            key: value
+            for key, value in measured.items()
+            if key in Z_IMAGE_COMPONENT_KEYS
+            or any(
+                key == f"{component}_{spec.id}"
+                for component in Z_IMAGE_COMPONENT_KEYS
+                for spec in MODEL_CATALOG.values()
+                if spec.family == "z-image" and spec.id != "z-image-turbo"
+            )
         },
         "components_qwen_image": {
             key: value for key, value in measured.items() if key in QWEN_IMAGE_COMPONENT_KEYS

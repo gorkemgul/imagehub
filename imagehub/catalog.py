@@ -208,6 +208,42 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="z-image",
+        task=Task.T2I,
+        family="z-image",
+        source="https://huggingface.co/Tongyi-MAI/Z-Image",
+        repo_id="Tongyi-MAI/Z-Image",
+        revision="04cc4abb7c5069926f75c9bfde9ef43d49423021",
+        provenance="author",
+        catalog_id="z-image",
+        format="diffusers",
+        license="Apache-2.0",
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/merges.txt",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00003.safetensors",
+            "text_encoder/model-00002-of-00003.safetensors",
+            "text_encoder/model-00003-of-00003.safetensors",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+        config={"defaults": {"steps": 50, "guidance": 4.0}},
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="z-image-turbo",
         task=Task.T2I,
         family="z-image",
