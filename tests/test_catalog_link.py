@@ -13,6 +13,8 @@ CATALOG = (
 
 
 def _norm(value: str) -> str:
+    if "(" in value and value.endswith(")"):
+        value = value.rsplit("(", 1)[1][:-1]
     return value.lower().replace("_", "-").replace(" ", "-").replace("open-rail", "openrail")
 
 

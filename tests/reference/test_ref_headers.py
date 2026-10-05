@@ -40,6 +40,7 @@ SDXL_MODEL_IDS = tuple(
 SDXL_FIXTURES = {
     "sdxl-base-1.0": "sdxl_tensor_shapes.json",
     "ssd-1b": "ssd1b_tensor_shapes.json",
+    "sdxl-turbo": "sdxl_tensor_shapes.json",
 }
 
 

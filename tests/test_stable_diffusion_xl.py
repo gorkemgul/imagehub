@@ -16,6 +16,19 @@ def tiny_sdxl(tmp_path_factory):
     return write_tiny_sdxl(tmp_path_factory.mktemp("tiny-sdxl"))
 
 
+@pytest.fixture(scope="module")
+def tiny_turbo(tmp_path_factory):
+    config = json.loads(
+        (
+            __import__("pathlib").Path(__file__).parent
+            / "fixtures/sdxl_turbo_configs/scheduler_config.json"
+        ).read_text()
+    )
+    return write_tiny_sdxl(
+        tmp_path_factory.mktemp("tiny-turbo"), scheduler_config=config, sample_size=4
+    )
+
+
 def test_generates_images_with_metadata(tiny_sdxl):
     result = pipeline("t2i", backend="stable-diffusion-xl", model=tiny_sdxl)(
         "a cat", seed=3, steps=4, width=64, height=48, num_images=2
@@ -35,6 +48,27 @@ def test_seed_and_latents_are_reproducible(tiny_sdxl):
     c = pipe("a cat", latents=latents, steps=3, width=32, height=32)
     assert torch.equal(a.images[0].tensor, b.images[0].tensor)
     assert torch.equal(a.images[0].tensor, c.images[0].tensor)
+
+
+def test_turbo_uses_model_scheduler_defaults_and_native_size(tiny_turbo):
+    result = pipeline("t2i", backend="sdxl-turbo", model=tiny_turbo)("a cat", seed=7)
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["steps"] == 1
+    assert result.metadata["guidance"] == 0.0
+    assert result.metadata["scheduler"] == "euler_ancestral"
+
+
+def test_unknown_scheduler_fails(tiny_sdxl, tmp_path):
+    import shutil
+
+    copy = shutil.copytree(tiny_sdxl, tmp_path / "unknown-scheduler")
+    scheduler_path = copy / "scheduler/scheduler_config.json"
+    config = json.loads(scheduler_path.read_text())
+    scheduler_path.write_text(json.dumps(config | {"_class_name": "UnknownScheduler"}))
+    with pytest.raises(ValueError, match="Unsupported SDXL scheduler UnknownScheduler"):
+        pipeline("t2i", backend="stable-diffusion-xl", model=copy)(
+            "a cat", seed=1, steps=1, width=32, height=32
+        )
 
 
 @pytest.mark.parametrize(

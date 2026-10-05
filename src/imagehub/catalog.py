@@ -160,6 +160,42 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="sdxl-turbo",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/stabilityai/sdxl-turbo",
+        repo_id="stabilityai/sdxl-turbo",
+        revision="71153311d3dbb46851df1931d3ca6e939de83304",
+        provenance="author",
+        catalog_id="sdxl-turbo",
+        format="diffusers",
+        license="sai-nc-community",
+        config={"defaults": {"steps": 1, "guidance": 0.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/special_tokens_map.json",
+            "text_encoder/config.json",
+            "text_encoder_2/config.json",
+            "unet/config.json",
+            "vae/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="ssd-1b",
         task=Task.T2I,
         family="stable-diffusion-xl",

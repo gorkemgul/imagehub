@@ -15,6 +15,7 @@ def test_catalog_contents():
             "sd-v1-4",
             "sd-v1-5",
             "sdxl-base-1.0",
+            "sdxl-turbo",
             "ssd-1b",
         )
     }
@@ -41,6 +42,19 @@ def test_catalog_contents():
     assert sdxl.format == "diffusers"
     assert sdxl.license == "CreativeML-OpenRAIL++-M"
     assert len(set(sdxl.files)) == len(sdxl.files) == 18
+
+    turbo = model_info("sdxl-turbo")
+    assert turbo.task is Task.T2I
+    assert turbo.family == "stable-diffusion-xl"
+    assert turbo.repo_id == "stabilityai/sdxl-turbo"
+    assert turbo.revision == "71153311d3dbb46851df1931d3ca6e939de83304"
+    assert turbo.provenance == "author"
+    assert turbo.catalog_id == "sdxl-turbo"
+    assert turbo.format == "diffusers"
+    assert turbo.license == "sai-nc-community"
+    assert turbo.config == {"defaults": {"steps": 1, "guidance": 0.0}}
+    assert len(set(turbo.files)) == len(turbo.files) == 18
+    assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in turbo.files)
 
     ssd1b = model_info("ssd-1b")
     assert ssd1b.task is Task.T2I
