@@ -26,7 +26,6 @@ def _reference(root, num_images=1):
     model = transformers.JanusForConditionalGeneration.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     ).eval()
-    model.generation_config.num_return_sequences = num_images
     return model, processor
 
 
@@ -170,8 +169,14 @@ def test_end_to_end(record, num_images):
     inputs = _inputs(processor)
     torch.manual_seed(42)
     with torch.inference_mode():
+        # Setting model.generation_config.num_return_sequences (the model card's way) fails
+        # validation in transformers 5.18.0; the generate() argument is equivalent.
         expected_tokens = reference.generate(
-            **inputs, generation_mode="image", do_sample=True, use_cache=True
+            **inputs,
+            generation_mode="image",
+            do_sample=True,
+            use_cache=True,
+            num_return_sequences=num_images,
         )
         expected_pixels = processor.postprocess(
             reference.decode_image_tokens(expected_tokens), return_tensors="pt"
@@ -194,7 +199,7 @@ def test_end_to_end(record, num_images):
         actual_pixels, expected_pixels
     )
     record(
-        "e2e_janus-pro-1b",
+        "e2e_janus-pro-1b" if num_images == 1 else f"e2e_batch{num_images}_janus-pro-1b",
         num_images=num_images,
         tokens_match=torch.equal(actual_tokens, expected_tokens),
         pixels_match=torch.equal(actual_pixels, expected_pixels),
