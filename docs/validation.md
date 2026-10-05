@@ -48,9 +48,9 @@ Record: `tensor_header_check`, [validation.json](validation.json).
 
 ## SDXL
 
-Validated on CPU on October 5, 2026, in the same environment as above. One checkpoint, `full`:
-`sdxl-base-1.0`. The published tensors were loaded strictly. A 1024×1024 generation from the same
-initial noise was compared against diffusers.
+Validated on CPU on October 5, 2026, in the same environment as above. Two checkpoints, `full`:
+`sdxl-base-1.0` and `ssd-1b`. The published tensors were loaded strictly. A 1024×1024 generation
+from the same initial noise was compared against diffusers.
 
 ### Comparisons (CPU, float32)
 
@@ -64,6 +64,14 @@ initial noise was compared against diffusers.
 | Euler timesteps / sigmas (50 and 30 steps) | sdxl-base-1.0 | 0 / 0 | 0 |
 | End to end: final latent / pixels | sdxl-base-1.0 | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (pixels) | sdxl-base-1.0 | 0 | 0 |
+| Tokenizer token ids (2 tokenizers, 18 prompts) | ssd-1b | identical | identical |
+| CLIP ViT-L/14 text encoder (penultimate layer) | ssd-1b | 0 | 0 |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | ssd-1b | 0 / 0 | 0 / 0 |
+| U-Net single step (t = 999, 500, 1) | ssd-1b | 0 | 0 |
+| VAE decode / encode | ssd-1b | 0 / 0 | 0 |
+| Euler timesteps / sigmas (50 and 30 steps) | ssd-1b | 0 / 0 | 0 |
+| End to end: final latent / pixels | ssd-1b | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | ssd-1b | 0 | 0 |
 
 The observed difference in every comparison is **exactly 0**: on CPU in float32, the local
 implementation produces a bit-identical image to the one diffusers produces. The same tolerance
@@ -76,6 +84,11 @@ used instead of the default 50 to keep CPU runtime reasonable.
 For `sdxl-base-1.0`, the same header-only tensor check covered the four components
 (`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
 missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
+For `ssd-1b`, the same header-only tensor check covered the four components (`text_encoder`,
+`text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 944 / 248, and missing, extra and
+shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
 
 ## Device smoke tests (no parity claim)

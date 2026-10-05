@@ -78,3 +78,41 @@ refiner model, img2img, other schedulers and fp16 parity are not in this release
 
 **License.** The weights are licensed under CreativeML Open RAIL++-M; the license's use
 restrictions bind whoever downloads and uses the weights. imagehub does not distribute weights.
+
+
+# SSD-1B
+
+Catalog: [`ssd-1b`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `ssd-1b` · Task: `t2i`
+
+**Architecture.** A distilled SDXL model with the same frozen CLIP ViT-L/14 and OpenCLIP bigG text
+encoders, f=8 KL autoencoder and Euler scheduler as SDXL. Its 1.3B-parameter U-Net uses per-block
+transformer depths and a mid block without attention while retaining SDXL's `text_time`
+micro-conditioning.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained ssd-1b checkpoints/ssd-1b
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="ssd-1b", model="checkpoints/ssd-1b", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The defaults and supported settings are the same as for SDXL: `steps` (50, at most
+1000), `guidance` (5.0), `width`/`height` (1024, multiples of 8), `negative_prompt` (None),
+`num_images` (1), `seed`, `latents`, `original_size`, `crops_coords_top_left` and `target_size`.
+Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
+refiner model, img2img, other schedulers and fp16 parity are not in this release.
+
+**License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
