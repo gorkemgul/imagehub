@@ -402,6 +402,66 @@
       "pixels": 0
     }
   },
+  "e2e_sdxl-lightning-2step": {
+    "guidance": 0.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 2,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "e2e_sdxl-lightning-4step": {
+    "guidance": 0.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "e2e_sdxl-lightning-8step": {
+    "guidance": 0.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 8,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
   "e2e_sdxl-turbo": {
     "guidance": 0.0,
     "latents": {
@@ -838,6 +898,24 @@
       "missing": [],
       "tensors": 248
     }
+  },
+  "header_sdxl-lightning-2step": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 1680
+  },
+  "header_sdxl-lightning-4step": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 1680
+  },
+  "header_sdxl-lightning-8step": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 1680
   },
   "header_sdxl-turbo": {
     "text_encoder": {
@@ -1368,6 +1446,36 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sdxl_lightning_unet_sdxl-lightning-2step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "size": [
+      1024,
+      1024
+    ],
+    "timestep": 999,
+    "tolerance": 0.0
+  },
+  "sdxl_lightning_unet_sdxl-lightning-4step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "size": [
+      1024,
+      1024
+    ],
+    "timestep": 999,
+    "tolerance": 0.0
+  },
+  "sdxl_lightning_unet_sdxl-lightning-8step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "size": [
+      1024,
+      1024
+    ],
+    "timestep": 999,
+    "tolerance": 0.0
+  },
   "sdxl_scheduler": {
     "measurements": {
       "30": {
@@ -1767,6 +1875,39 @@
       1024
     ],
     "steps": 30
+  },
+  "seed_e2e_sdxl-lightning-2step": {
+    "guidance": 0.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 2
+  },
+  "seed_e2e_sdxl-lightning-4step": {
+    "guidance": 0.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4
+  },
+  "seed_e2e_sdxl-lightning-8step": {
+    "guidance": 0.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 8
   },
   "seed_e2e_sdxl-turbo": {
     "guidance": 0.0,

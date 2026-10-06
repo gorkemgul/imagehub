@@ -113,7 +113,8 @@ imagehub does not distribute weights.
 # Stable Diffusion XL
 
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `sdxl-base-1.0` · Task: `t2i`
+Models: `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`,
+`sdxl-lightning-8step` · Task: `t2i`
 
 **Architecture.** Two frozen text encoders: CLIP ViT-L/14 (penultimate layer output) and OpenCLIP
 bigG (penultimate layer output and pooled output). The concatenated outputs condition a
@@ -122,6 +123,10 @@ the target size of the image, encoded as a 6-element vector per sample. The VAE 
 autoencoder with a scaling factor of 0.13025 (1024×1024×3 image ↔ 128×128×4 latent). The
 scheduler is the Euler published with the checkpoint (`timestep_spacing="leading"`,
 `steps_offset=1`): 50 steps perform 50 U-Net evaluations.
+
+**SDXL-Lightning.** These three models place a distilled U-Net on the SDXL base. Their defaults are
+respectively 2, 4 and 8 steps, guidance 0.0, and Euler scheduling with
+`timestep_spacing="trailing"`.
 
 **Usage.**
 

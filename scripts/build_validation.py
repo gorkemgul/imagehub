@@ -155,6 +155,7 @@ def main() -> None:
                 },
                 "status": "full" if e2e and e2e.get("passed") else "experimental",
                 "files": snapshot["files"],
+                **({"base": snapshot["base"]} if "base" in snapshot else {}),
                 "tensor_header_check": header_check(header),
                 "end_to_end": e2e,
                 **({"end_to_end_batch2": e2e_batch2} if e2e_batch2 else {}),
@@ -187,6 +188,7 @@ def main() -> None:
             key: value
             for key, value in measured.items()
             if key in SDXL_COMPONENT_KEYS
+            or key.startswith("sdxl_lightning_unet_sdxl-lightning-")
             or any(
                 key == f"{component}_{spec.id}"
                 for component in SDXL_COMPONENT_KEYS

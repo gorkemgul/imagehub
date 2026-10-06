@@ -11,6 +11,7 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from pathlib import PurePosixPath
 from types import MappingProxyType
 from typing import Any
 
@@ -42,6 +43,8 @@ class ModelSpec:
     reference: Mapping[str, Mapping[str, str]] = field(default_factory=_released_reference)
     gated: bool = False
     license: str = "See model card"
+    base: str | None = None
+    overlay: Mapping[str, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "config", MappingProxyType(dict(self.config)))
@@ -56,10 +59,22 @@ class ModelSpec:
             ),
         )
         object.__setattr__(self, "files", tuple(self.files))
+        object.__setattr__(self, "overlay", MappingProxyType(dict(self.overlay)))
         if not re.fullmatch(r"[0-9a-f]{40}", self.revision):
             raise ValueError("revision must be a 40-character lowercase commit hash")
         if self.provenance not in PROVENANCES:
             raise ValueError(f"provenance must be one of {', '.join(PROVENANCES)}")
+        if self.base is not None and not any(entry.id == self.base for entry in _entries):
+            raise ValueError(f"base model {self.base!r} does not exist")
+        if self.overlay and self.base is None:
+            raise ValueError("overlay requires a base model")
+        for destination, source in self.overlay.items():
+            for name in (destination, source):
+                path = PurePosixPath(name)
+                if not name or path.is_absolute() or "." in path.parts or ".." in path.parts:
+                    raise ValueError(f"overlay path {name!r} is not a safe relative path")
+            if source not in self.files:
+                raise ValueError(f"overlay source {source!r} is not listed in files")
 
 
 _entries: list[ModelSpec] = []
@@ -235,6 +250,30 @@ _entries.append(
         ),
     )
 )
+
+for _steps in (2, 4, 8):
+    _overlay_file = f"sdxl_lightning_{_steps}step_unet.safetensors"
+    _entries.append(
+        ModelSpec(
+            id=f"sdxl-lightning-{_steps}step",
+            task=Task.T2I,
+            family="stable-diffusion-xl",
+            source="https://huggingface.co/ByteDance/SDXL-Lightning",
+            repo_id="ByteDance/SDXL-Lightning",
+            revision="c9a24f48e1c025556787b0c58dd67a091ece2e44",
+            provenance="author",
+            catalog_id="sdxl-lightning",
+            format="diffusers",
+            license="CreativeML-OpenRAIL++-M",
+            base="sdxl-base-1.0",
+            files=(_overlay_file,),
+            overlay={"unet/diffusion_pytorch_model.safetensors": _overlay_file},
+            config={
+                "defaults": {"steps": _steps, "guidance": 0.0},
+                "scheduler": {"timestep_spacing": "trailing"},
+            },
+        )
+    )
 
 _entries.append(
     ModelSpec(
