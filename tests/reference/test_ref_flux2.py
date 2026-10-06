@@ -257,7 +257,11 @@ def test_seed_end_to_end(record):
     )
     reference.set_progress_bar_config(disable=True)
     expected = reference(
-        PROMPT,
+        prompt=PROMPT,
+        num_inference_steps=4,
+        guidance_scale=1.0,
+        height=1024,
+        width=1024,
         generator=torch.Generator("cpu").manual_seed(42),
         output_type="np",
     ).images
