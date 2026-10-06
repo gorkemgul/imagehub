@@ -7,6 +7,7 @@ from helpers import write_tiny_lcm, write_tiny_sd
 from imagehub import pipeline
 from imagehub.backends.stable_diffusion import (
     StableDiffusionBackend,
+    _scheduler,
     initial_latents,
     resolve_device,
 )
@@ -33,6 +34,30 @@ def test_generates_images_with_metadata(tiny_sd):
     assert meta["seed"] == 3 and meta["steps"] == 4 and meta["scheduler"] == "pndm"
     assert meta["model_id"] is None and meta["revision"] is None
     assert meta["device"] == "cpu" and meta["dtype"] == "float32"
+
+
+def test_sd_turbo_uses_model_defaults_and_unet_size(tiny_sd):
+    scheduler_path = tiny_sd / "scheduler" / "scheduler_config.json"
+    scheduler = json.loads(scheduler_path.read_text(encoding="utf-8"))
+    scheduler["_class_name"] = "EulerDiscreteScheduler"
+    scheduler["timestep_spacing"] = "trailing"
+    scheduler_path.write_text(json.dumps(scheduler), encoding="utf-8")
+    unet_path = tiny_sd / "unet" / "config.json"
+    unet = json.loads(unet_path.read_text(encoding="utf-8"))
+    unet["sample_size"] = 4
+    unet_path.write_text(json.dumps(unet), encoding="utf-8")
+
+    result = pipeline("t2i", backend="sd-turbo", model=tiny_sd)("a cat", seed=3)
+
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["steps"] == 1
+    assert result.metadata["guidance"] == 0.0
+    assert result.metadata["scheduler"] == "euler"
+
+
+def test_rejects_unknown_scheduler():
+    with pytest.raises(ValueError, match="Unsupported Stable Diffusion scheduler Unknown"):
+        _scheduler({"_class_name": "Unknown"})
 
 
 def test_lcm_uses_checkpoint_scheduler_and_model_defaults(tiny_lcm):

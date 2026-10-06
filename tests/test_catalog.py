@@ -14,6 +14,7 @@ def test_catalog_contents():
             "lcm-dreamshaper-v7",
             "playground-v2.5",
             "qwen-image-2.1",
+            "sd-turbo",
             "sd-v1-1",
             "sd-v1-2",
             "sd-v1-3",
@@ -45,6 +46,30 @@ def test_catalog_contents():
             name.startswith(("safety_checker/", "feature_extractor/")) for name in spec.files
         )
 
+    sd_turbo = model_info("sd-turbo")
+    assert sd_turbo.task is Task.T2I
+    assert sd_turbo.family == "stable-diffusion"
+    assert sd_turbo.repo_id == "stabilityai/sd-turbo"
+    assert sd_turbo.revision == "b261bac6fd2cf515557d5d0707481eafa0485ec2"
+    assert sd_turbo.provenance == "author"
+    assert sd_turbo.catalog_id == "sdxl-turbo"
+    assert sd_turbo.format == "diffusers"
+    assert sd_turbo.license == "sai-nc-community"
+    assert sd_turbo.config == {"defaults": {"steps": 1, "guidance": 0.0}}
+    assert sd_turbo.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "tokenizer/merges.txt",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer_config.json",
+        "tokenizer/vocab.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors",
+        "unet/config.json",
+        "unet/diffusion_pytorch_model.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
     lcm = model_info("lcm-dreamshaper-v7")
     assert lcm.task is Task.T2I
     assert lcm.family == "stable-diffusion"

@@ -1,12 +1,11 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. LCM, SDXL, Qwen-Image and SD3 measurements are grouped in flat ``components_lcm``,
-``components_sdxl``, ``components_qwen_image`` and ``components_sd3`` mappings: the base model
-keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry
-may also contain its own ``seed_end_to_end`` measurement. When a model directory is missing, its
-existing entry in the output is retained unchanged; a missing directory without an existing entry
-is an error.
+measurements. SDXL, Qwen-Image and SD3 measurements are grouped in flat ``components_sdxl``,
+``components_qwen_image`` and ``components_sd3`` mappings: the base model keeps its historical
+unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
+own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
+output is retained unchanged; a missing directory without an existing entry is an error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -36,9 +35,9 @@ LIMITS = [
     "no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, LCM for "
-    "LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, and "
-    "flow-match Euler with dynamic shifting for Qwen-Image 2.1.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing "
+    "spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for "
+    "Z-Image and SD 3.5, and flow-match Euler with dynamic shifting for Qwen-Image 2.1.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -50,6 +49,14 @@ SDXL_COMPONENT_KEYS = (
     "sdxl_vae_decode",
     "sdxl_vae_encode",
     "sdxl_scheduler",
+)
+SD_TURBO_COMPONENT_KEYS = (
+    "sd_turbo_tokenizer",
+    "sd_turbo_text_encoder",
+    "sd_turbo_unet",
+    "sd_turbo_vae_decode",
+    "sd_turbo_vae_encode",
+    "sd_turbo_scheduler",
 )
 LCM_COMPONENT_KEYS = (
     "lcm_text_encoder",
@@ -176,9 +183,6 @@ def main() -> None:
             if key
             in ("tokenizer", "text_encoder", "unet", "vae_decode", "vae_encode", "seed_noise")
         },
-        "components_lcm": {
-            key: value for key, value in measured.items() if key in LCM_COMPONENT_KEYS
-        },
         "components_sdxl": {
             key: value
             for key, value in measured.items()
@@ -189,6 +193,12 @@ def main() -> None:
                 for spec in MODEL_CATALOG.values()
                 if spec.family == "stable-diffusion-xl" and spec.id != "sdxl-base-1.0"
             )
+        },
+        "components_sd_turbo": {
+            key: value for key, value in measured.items() if key in SD_TURBO_COMPONENT_KEYS
+        },
+        "components_lcm": {
+            key: value for key, value in measured.items() if key in LCM_COMPONENT_KEYS
         },
         "components_z_image": {
             key: value for key, value in measured.items() if key in Z_IMAGE_COMPONENT_KEYS

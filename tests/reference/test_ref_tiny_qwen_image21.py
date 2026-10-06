@@ -7,6 +7,11 @@ from imagehub.backends.qwen_image import QwenImageComponents, denoise
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
+if not hasattr(diffusers, "QwenImage21Pipeline"):
+    pytest.skip(
+        "needs the diffusers commit pinned for Qwen-Image 2.1 (.venv-ref-qwen-image-2.1)",
+        allow_module_level=True,
+    )
 transformers = pytest.importorskip("transformers")
 
 

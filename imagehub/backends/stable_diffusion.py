@@ -25,6 +25,7 @@ from imagehub.image import Image
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
 from imagehub.tokenization import CLIPTokenizer
@@ -46,10 +47,14 @@ LATENT_SCALE = 8
 _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
 
 
-def _scheduler(config: dict[str, Any]) -> tuple[PNDMScheduler | LCMScheduler, str]:
+def _scheduler(
+    config: dict[str, Any],
+) -> tuple[PNDMScheduler | EulerDiscreteScheduler | LCMScheduler, str]:
     class_name = config.get("_class_name", "PNDMScheduler")
     if class_name == "PNDMScheduler":
         return PNDMScheduler(config), "pndm"
+    if class_name == "EulerDiscreteScheduler":
+        return EulerDiscreteScheduler(config), "euler"
     if class_name == "LCMScheduler":
         return LCMScheduler(config), "lcm"
     raise ValueError(f"Unsupported Stable Diffusion scheduler {class_name}")
@@ -195,11 +200,13 @@ def denoise(
         context = cond
     for t in scheduler.timesteps:
         model_input = torch.cat([latents] * 2) if use_cfg else latents
+        if isinstance(scheduler, EulerDiscreteScheduler):
+            model_input = scheduler.scale_model_input(model_input, t)
         noise = components.unet(model_input, t, context)
         if use_cfg:
             noise_uncond, noise_text = noise.chunk(2)
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
-        assert isinstance(scheduler, PNDMScheduler)
+        assert isinstance(scheduler, PNDMScheduler | EulerDiscreteScheduler)
         latents = scheduler.step(noise, t, latents)
     return latents
 

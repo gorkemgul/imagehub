@@ -326,6 +326,92 @@
       }
     },
     {
+      "model_id": "sd-turbo",
+      "repo_id": "stabilityai/sd-turbo",
+      "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+      "provenance": "author",
+      "catalog_id": "sdxl-turbo",
+      "license": "sai-nc-community",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "679fe7c2a03a419a046f4330bb2e32570d96e7a6da51b7df147d4a87bc7f775c",
+        "scheduler/scheduler_config.json": "5599066c725fc2747a201fa3165ad7c8c3de3be629ce325451752e8f94c0d1ae",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "c2d0fb8b86ad86b1f46134d4a5f93fd1e688c932a78efc8d149087c33a53ad06",
+        "tokenizer/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "text_encoder/config.json": "9f6935d3d41bf8ce49b1d7ed912b29e770649d1aa3f3972215284f9397cd97d2",
+        "text_encoder/model.safetensors": "67e013543d4fac905c882e2993d86a2d454ee69dc9e8f37c0c23d33a48959d15",
+        "unet/config.json": "ca09d494527ebe13343006e22b4468d45bf12aa34e76cf03639b6dbba1fb5c6d",
+        "unet/diffusion_pytorch_model.safetensors": "438da6db739c8651ec4152341b8133d6896db452ea27afdb6b9b0344f0c40532",
+        "vae/config.json": "699a58ef7ecf3bffa201a507a3eaa3eed7efabab457ac547bf82df798b52a9be",
+        "vae/diffusion_pytorch_model.safetensors": "2aa1f43011b553a4cba7f37456465cdbd48aab7b54b9348b890e8058ea7683ec"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 372,
+          "unet": 686,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 0.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "end_to_end_guided": {
+        "guidance": 2.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "size": [
+          512,
+          512
+        ],
+        "steps": 4,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42
+      }
+    },
+    {
       "model_id": "lcm-dreamshaper-v7",
       "repo_id": "SimianLuo/LCM_Dreamshaper_v7",
       "revision": "a85df6a8bd976cdd08b4fd8f3b73f229c9e54df5",
@@ -1356,34 +1442,6 @@
       "tolerance": 0.0
     }
   },
-  "components_lcm": {
-    "lcm_scheduler": {
-      "max_abs": 0.0,
-      "steps": 4,
-      "tolerance": 0.0
-    },
-    "lcm_text_encoder": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "lcm_unet": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "timestep": 999,
-      "tolerance": 0.0
-    },
-    "lcm_vae_decode": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "lcm_vae_encode": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    }
-  },
   "components_sdxl": {
     "sdxl_scheduler": {
       "measurements": {
@@ -1673,6 +1731,105 @@
       "tolerance": 0.0
     },
     "sdxl_vae_encode_ssd-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
+  "components_sd_turbo": {
+    "sd_turbo_scheduler": {
+      "measurements": {
+        "1": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "2": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "4": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        }
+      },
+      "steps": [
+        1,
+        2,
+        4
+      ],
+      "tolerance": 0.0
+    },
+    "sd_turbo_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sd_turbo_tokenizer": {
+      "mismatches": [],
+      "prompts": 5,
+      "tolerance": "exact"
+    },
+    "sd_turbo_unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        999.0,
+        499.0
+      ],
+      "tolerance": 0.0
+    },
+    "sd_turbo_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sd_turbo_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
+  "components_lcm": {
+    "lcm_scheduler": {
+      "max_abs": 0.0,
+      "steps": 4,
+      "tolerance": 0.0
+    },
+    "lcm_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lcm_unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 999,
+      "tolerance": 0.0
+    },
+    "lcm_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lcm_vae_encode": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -2019,7 +2176,7 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, and flow-match Euler with dynamic shifting for Qwen-Image 2.1.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, and flow-match Euler with dynamic shifting for Qwen-Image 2.1.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
