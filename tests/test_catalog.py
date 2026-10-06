@@ -10,6 +10,7 @@ def test_catalog_contents():
     assert available_models() == {
         "t2i": (
             "flux2-klein-4b",
+            "flux2-klein-9b",
             "janus-pro-1b",
             "janus-pro-7b",
             "lcm-dreamshaper-v7",
@@ -270,6 +271,44 @@ def test_provenance_and_formats():
         assert model_info(f"sd-v1-{version}").provenance == "author"
     assert "unet/diffusion_pytorch_model.bin" in model_info("sd-v1-1").files
     assert "unet/diffusion_pytorch_model.safetensors" in model_info("sd-v1-4").files
+
+
+def test_flux2_klein_9b_catalog_entry():
+    spec = model_info("flux2-klein-9b")
+    assert spec.task is Task.T2I
+    assert spec.family == "flux2"
+    assert spec.repo_id == "black-forest-labs/FLUX.2-klein-9B"
+    assert spec.revision == "92196c8e11f7b6cf2b7493e037d8c5345c559216"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "flux-2"
+    assert spec.format == "diffusers"
+    assert spec.license == "FLUX Non-Commercial License"
+    assert spec.gated
+    assert spec.config == {"defaults": {"steps": 4, "guidance": 1.0}}
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "tokenizer/added_tokens.json",
+        "tokenizer/chat_template.jinja",
+        "tokenizer/merges.txt",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer_config.json",
+        "tokenizer/vocab.json",
+        "text_encoder/config.json",
+        "text_encoder/generation_config.json",
+        "text_encoder/model.safetensors.index.json",
+        "text_encoder/model-00001-of-00004.safetensors",
+        "text_encoder/model-00002-of-00004.safetensors",
+        "text_encoder/model-00003-of-00004.safetensors",
+        "text_encoder/model-00004-of-00004.safetensors",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors.index.json",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
 
 
 def test_unknown_model_lists_available():

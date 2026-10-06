@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 import torch
 from helpers import write_tiny_flux2
@@ -6,6 +9,10 @@ from imagehub import pipeline
 from imagehub.backends.flux2 import Flux2Backend, compute_empirical_mu
 from imagehub.catalog import model_info
 from imagehub.exceptions import CheckpointError
+from imagehub.models.flux2_transformer import Flux2Transformer2DModel
+from imagehub.models.qwen3 import Qwen3Model
+
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 @pytest.fixture(scope="module")
@@ -79,3 +86,23 @@ def test_catalog_entry_and_snapshot_hint(tmp_path):
     pipe = pipeline("t2i", backend="flux2-klein-4b", model=tmp_path / "nowhere")
     with pytest.raises(CheckpointError, match=r"imagehub\.pretrained flux2-klein-4b "):
         pipe("a cat")
+
+
+def test_klein_9b_full_config_layout():
+    root = FIXTURES / "flux2_klein_9b_configs"
+    text_config = json.loads((root / "text_encoder_config.json").read_text(encoding="utf-8"))
+    transformer_config = json.loads((root / "transformer_config.json").read_text(encoding="utf-8"))
+    assert text_config["num_hidden_layers"] == 36
+    assert text_config["hidden_size"] == 4096
+    assert transformer_config["joint_attention_dim"] == 3 * text_config["hidden_size"]
+    with torch.device("meta"):
+        text_model = Qwen3Model(text_config)
+        model = Flux2Transformer2DModel(transformer_config)
+    assert len(text_model.model.layers) == 36
+    assert tuple(text_model.model.embed_tokens.weight.shape) == (151936, 4096)
+    assert tuple(text_model.model.layers[0].self_attn.q_proj.weight.shape) == (4096, 4096)
+    assert tuple(text_model.model.layers[0].mlp.gate_proj.weight.shape) == (12288, 4096)
+    assert len(model.transformer_blocks) == 8
+    assert len(model.single_transformer_blocks) == 24
+    assert model.inner_dim == 32 * 128
+    assert model.context_embedder.in_features == 12288
