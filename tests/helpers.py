@@ -545,6 +545,147 @@ def write_tiny_z_image(directory: str | os.PathLike[str], *, seed: int = 0) -> P
     return root
 
 
+TINY_FLUX2_TEXT = TINY_Z_IMAGE_TEXT | {
+    "vocab_size": 36,
+    "hidden_size": 8,
+    "intermediate_size": 16,
+    "num_hidden_layers": 27,
+    "num_attention_heads": 1,
+    "num_key_value_heads": 1,
+    "head_dim": 8,
+    "architectures": ["Qwen3ForCausalLM"],
+    "tie_word_embeddings": False,
+}
+TINY_FLUX2_TRANSFORMER = {
+    "_class_name": "Flux2Transformer2DModel",
+    "patch_size": 1,
+    "in_channels": 16,
+    "out_channels": 16,
+    "num_layers": 1,
+    "num_single_layers": 1,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "joint_attention_dim": 24,
+    "timestep_guidance_channels": 16,
+    "mlp_ratio": 3.0,
+    "axes_dims_rope": [2, 2, 2, 2],
+    "rope_theta": 2000,
+    "eps": 1e-6,
+    "guidance_embeds": False,
+}
+TINY_FLUX2_VAE = {
+    "_class_name": "AutoencoderKLFlux2",
+    "in_channels": 3,
+    "out_channels": 3,
+    "down_block_types": ["DownEncoderBlock2D", "DownEncoderBlock2D"],
+    "up_block_types": ["UpDecoderBlock2D", "UpDecoderBlock2D"],
+    "block_out_channels": [8, 16],
+    "layers_per_block": 1,
+    "latent_channels": 4,
+    "norm_num_groups": 4,
+    "sample_size": 16,
+    "force_upcast": True,
+    "use_quant_conv": True,
+    "use_post_quant_conv": True,
+    "mid_block_add_attention": True,
+    "batch_norm_eps": 1e-4,
+    "batch_norm_momentum": 0.1,
+    "patch_size": [2, 2],
+}
+TINY_FLUX2_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "num_train_timesteps": 1000,
+    "use_dynamic_shifting": True,
+    "base_shift": 0.5,
+    "max_shift": 1.15,
+    "base_image_seq_len": 256,
+    "max_image_seq_len": 4096,
+}
+
+
+def write_tiny_flux2(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight FLUX.2 klein snapshot in the published diffusers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl_flux2 import AutoencoderKLFlux2
+    from imagehub.models.flux2_transformer import Flux2Transformer2DModel
+    from imagehub.models.qwen3 import Qwen3Model
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    shutil.copytree(FIXTURES / "qwen_tokenizer", tokenizer)
+    tokenizer_data = json.loads((tokenizer / "tokenizer.json").read_text())
+    for token_id, content in ((34, "<think>"), (35, "</think>")):
+        tokenizer_data["model"]["vocab"][content] = token_id
+        tokenizer_data["added_tokens"].append(
+            {
+                "id": token_id,
+                "content": content,
+                "single_word": False,
+                "lstrip": False,
+                "rstrip": False,
+                "normalized": False,
+                "special": False,
+            }
+        )
+    (tokenizer / "tokenizer.json").write_text(json.dumps(tokenizer_data))
+    tokenizer_config = json.loads((tokenizer / "tokenizer_config.json").read_text())
+    tokenizer_config["chat_template"] = (
+        "{% for message in messages %}<|im_start|>{{ message['role'] }}\n"
+        "{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        "{% if add_generation_prompt %}<|im_start|>assistant\n"
+        "{% if enable_thinking is defined and enable_thinking is false %}"
+        "<think>\n\n</think>\n\n{% endif %}{% endif %}"
+    )
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(TINY_FLUX2_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "Flux2KleinPipeline",
+                "is_distilled": True,
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen3ForCausalLM"],
+                "tokenizer": ["transformers", "Qwen2Tokenizer"],
+                "transformer": ["diffusers", "Flux2Transformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKLFlux2"],
+            }
+        )
+    )
+    for name, cls, config, weights in (
+        ("text_encoder", Qwen3Model, TINY_FLUX2_TEXT, "model.safetensors"),
+        (
+            "transformer",
+            Flux2Transformer2DModel,
+            TINY_FLUX2_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        (
+            "vae",
+            AutoencoderKLFlux2,
+            TINY_FLUX2_VAE,
+            "diffusion_pytorch_model.safetensors",
+        ),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        if name == "vae":
+            model.bn.running_mean.normal_(0, 0.05)
+            model.bn.running_var.uniform_(0.5, 1.5)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state["lm_head.weight"] = torch.randn(config["vocab_size"], config["hidden_size"])
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
 TINY_QWEN_IMAGE21_TEXT = {
     "vocab_size": 260,
     "hidden_size": 16,

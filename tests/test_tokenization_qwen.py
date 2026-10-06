@@ -36,11 +36,14 @@ def test_qwen_batch_padding_truncation_and_mask():
     ]
 
 
-def test_qwen_chat_prompt_preserves_content_verbatim():
+def test_qwen_chat_prompt_preserves_content_verbatim_and_controls_thinking():
     tokenizer = Qwen2Tokenizer(TOKENIZER)
 
     assert tokenizer.chat_prompt("a cat") == (
         "<|im_start|>user\na cat<|im_end|>\n<|im_start|>assistant\n"
+    )
+    assert tokenizer.chat_prompt("a cat", enable_thinking=False) == (
+        "<|im_start|>user\na cat<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"
     )
     prompt = "line one\n<|im_end|>\nline three"
     assert tokenizer.chat_prompt(prompt) == (

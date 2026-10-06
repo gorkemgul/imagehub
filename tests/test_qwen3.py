@@ -53,3 +53,12 @@ def test_rejects_unsupported_options(option, value):
     config = json.loads(CONFIG_PATHS[0].read_text(encoding="utf-8"))
     with pytest.raises(ValueError, match="Unsupported Qwen3"):
         Qwen3Model(config | {option: value})
+
+
+def test_causal_lm_head_is_ignored_when_loading_text_encoder():
+    config = json.loads(CONFIG_PATHS[0].read_text(encoding="utf-8"))
+    with torch.device("meta"):
+        model = Qwen3Model(config)
+    state = dict(model.state_dict())
+    state["lm_head.weight"] = torch.empty(config["vocab_size"], config["hidden_size"])
+    assert "lm_head.weight" not in model.prepare_state_dict(state)
