@@ -382,6 +382,16 @@ _SD35_COMMON_FILES = (
 )
 for _model_id, _repo, _revision, _defaults, _transformer_files in (
     (
+        "sd3-medium",
+        "stabilityai/stable-diffusion-3-medium-diffusers",
+        "ea42f8cef0f178587cf766dc8129abd379c90671",
+        {"steps": 28, "guidance": 7.0},
+        (
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+        ),
+    ),
+    (
         "sd3.5-medium",
         "stabilityai/stable-diffusion-3.5-medium",
         "b940f670f0eda2d07fbb75229e779da1ad11eb80",

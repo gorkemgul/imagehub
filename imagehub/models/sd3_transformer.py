@@ -245,6 +245,7 @@ class Attention(nn.Module):
         *,
         context_pre_only: bool | None = None,
         added_projection: bool = False,
+        qk_norm: str | None = None,
     ) -> None:
         super().__init__()
         self.heads = heads
@@ -253,14 +254,14 @@ class Attention(nn.Module):
         self.to_q = nn.Linear(dim, inner_dim, bias=True)
         self.to_k = nn.Linear(dim, inner_dim, bias=True)
         self.to_v = nn.Linear(dim, inner_dim, bias=True)
-        self.norm_q = RMSNorm(head_dim, eps=1e-6)
-        self.norm_k = RMSNorm(head_dim, eps=1e-6)
+        self.norm_q = RMSNorm(head_dim, eps=1e-6) if qk_norm == "rms_norm" else None
+        self.norm_k = RMSNorm(head_dim, eps=1e-6) if qk_norm == "rms_norm" else None
         if added_projection:
             self.add_k_proj = nn.Linear(dim, inner_dim, bias=True)
             self.add_v_proj = nn.Linear(dim, inner_dim, bias=True)
             self.add_q_proj = nn.Linear(dim, inner_dim, bias=True)
-            self.norm_added_q = RMSNorm(head_dim, eps=1e-6)
-            self.norm_added_k = RMSNorm(head_dim, eps=1e-6)
+            self.norm_added_q = RMSNorm(head_dim, eps=1e-6) if qk_norm == "rms_norm" else None
+            self.norm_added_k = RMSNorm(head_dim, eps=1e-6) if qk_norm == "rms_norm" else None
         self.to_out = nn.ModuleList([nn.Linear(inner_dim, dim, bias=True), nn.Dropout(0.0)])
         if context_pre_only is not None and not context_pre_only:
             self.to_add_out = nn.Linear(inner_dim, dim, bias=True)
@@ -278,8 +279,10 @@ class Attention(nn.Module):
         query = query.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
         key = key.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
         value = value.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
-        query = self.norm_q(query)
-        key = self.norm_k(key)
+        if self.norm_q is not None:
+            query = self.norm_q(query)
+        if self.norm_k is not None:
+            key = self.norm_k(key)
 
         if encoder_hidden_states is not None:
             context_query = self.add_q_proj(encoder_hidden_states)
@@ -288,8 +291,10 @@ class Attention(nn.Module):
             context_query = context_query.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
             context_key = context_key.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
             context_value = context_value.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
-            context_query = self.norm_added_q(context_query)
-            context_key = self.norm_added_k(context_key)
+            if self.norm_added_q is not None:
+                context_query = self.norm_added_q(context_query)
+            if self.norm_added_k is not None:
+                context_key = self.norm_added_k(context_key)
             query = torch.cat([query, context_query], dim=2)
             key = torch.cat([key, context_key], dim=2)
             value = torch.cat([value, context_value], dim=2)
@@ -345,6 +350,7 @@ class JointTransformerBlock(nn.Module):
         attention_head_dim: int,
         context_pre_only: bool,
         use_dual_attention: bool,
+        qk_norm: str | None,
     ) -> None:
         super().__init__()
         self.use_dual_attention = use_dual_attention
@@ -359,9 +365,12 @@ class JointTransformerBlock(nn.Module):
             attention_head_dim,
             context_pre_only=context_pre_only,
             added_projection=True,
+            qk_norm=qk_norm,
         )
         self.attn2: Attention | None = (
-            Attention(dim, num_attention_heads, attention_head_dim) if use_dual_attention else None
+            Attention(dim, num_attention_heads, attention_head_dim, qk_norm=qk_norm)
+            if use_dual_attention
+            else None
         )
         self.norm2 = nn.LayerNorm(dim, elementwise_affine=False, eps=1e-6)
         self.ff = FeedForward(dim)
@@ -424,7 +433,7 @@ class JointTransformerBlock(nn.Module):
 class SD3Transformer2DModel(NativeModel):
     def __init__(self, config: Mapping[str, Any]) -> None:
         cfg = SD3_TRANSFORMER_DEFAULTS | dict(config)
-        if cfg["qk_norm"] != "rms_norm":
+        if cfg["qk_norm"] not in (None, "rms_norm"):
             raise ValueError("Unsupported SD3 transformer option")
         super().__init__(cfg)
         self.out_channels = (
@@ -452,6 +461,7 @@ class SD3Transformer2DModel(NativeModel):
                 cfg["attention_head_dim"],
                 context_pre_only=index == cfg["num_layers"] - 1,
                 use_dual_attention=index in dual_attention_layers,
+                qk_norm=cfg["qk_norm"],
             )
             for index in range(cfg["num_layers"])
         )
