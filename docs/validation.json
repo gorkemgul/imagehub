@@ -836,6 +836,92 @@
       }
     },
     {
+      "model_id": "sd3-medium",
+      "repo_id": "stabilityai/stable-diffusion-3-medium-diffusers",
+      "revision": "ea42f8cef0f178587cf766dc8129abd379c90671",
+      "provenance": "author",
+      "catalog_id": "stable-diffusion-3",
+      "license": "Stability AI Community License",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "f6b0490bd731d8467e7b478d7f7d13b447575d6fe8b0ae9948af526820823137",
+        "scheduler/scheduler_config.json": "677e1ed36ca0de4ac8cc766ca58869e8649673d5f1d47eb8f8aef511a18ae8f7",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+        "tokenizer/tokenizer_config.json": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/special_tokens_map.json": "c4dbb96da703fb38f10ccf0490df2fd476811c5a3e71b7e0189cffeed3224e25",
+        "tokenizer_2/tokenizer_config.json": "e70eb3e2b85a508e32bb81c32c13fc3f2b015548ca469b94627c2f32e445cba1",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_3/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
+        "tokenizer_3/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer_3/tokenizer.json": "652ffdfc379606bad8edfb653f92dcf28e2e5dbf1cdfe50d685d29b2cad12dd6",
+        "tokenizer_3/tokenizer_config.json": "83b3e7737eef754efca607d9f580798cc35457daa96052cc60179f095a375c14",
+        "text_encoder/config.json": "3ae637e6409ed10c125e13b935461060d629ee069eea7cb8c3e9eee26b01ff1a",
+        "text_encoder/model.safetensors": "71e183d11db0c6b6282a4d9e0abb74125edc8692393e89ed8ee5571005f35cb1",
+        "text_encoder_2/config.json": "786ac791f8ae2168eca583978d89e97b704579e4873a2ca36e2d8b5af561f625",
+        "text_encoder_2/model.safetensors": "ec310df2af79c318e24d20511b601a591ca8cd4f1fce1d8dff822a356bcdb1f4",
+        "text_encoder_3/config.json": "9035948b0904c536918a88b5d984a52cfca26a5c57efa9e90149790cf38c151e",
+        "text_encoder_3/model.safetensors.index.json": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a",
+        "text_encoder_3/model-00001-of-00002.safetensors": "4f2751ceeb2a96edd693e539dc5d6bba0b8d3814f49a9b3798403a0cec4b2e3d",
+        "text_encoder_3/model-00002-of-00002.safetensors": "f63154532130422309532ff56f11945fbea8266c958e3133e8e5aef85c6293c7",
+        "transformer/config.json": "11d5414a4f9667e99b87670b369d99c62259903bcd091e423156e97f75bc5722",
+        "transformer/diffusion_pytorch_model.safetensors": "8b0e357dd04755fbfb067c63f4a883ac1de2942dd4a3240069874a17022e5418",
+        "vae/config.json": "2b82cf4cf6728bb2b411199c437c16ce61a82265ebd8461d66600073c8470ee4",
+        "vae/diffusion_pytorch_model.safetensors": "f9b67a279283625caee39d61eacb5324243848477b4eb535355eaaa8423d4e09"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 197,
+          "text_encoder_2": 517,
+          "text_encoder_3": 219,
+          "transformer": 683,
+          "vae": 244
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "runtime_note": "Reduced from the 28-step model default.",
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 12
+      },
+      "seed_end_to_end": {
+        "guidance": 7.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Reduced from the 28-step model default.",
+        "seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 12
+      }
+    },
+    {
       "model_id": "sd3.5-medium",
       "repo_id": "stabilityai/stable-diffusion-3.5-medium",
       "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
@@ -2068,6 +2154,18 @@
       },
       "tolerance": 0.0
     },
+    "sd3_scheduler_sd3-medium": {
+      "sigmas": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "steps": 28,
+      "timesteps": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
     "sd3_scheduler_sd3.5-large": {
       "sigmas": {
         "max_abs": 0.0,
@@ -2118,6 +2216,19 @@
       },
       "tolerance": 0.0
     },
+    "sd3_text_encoder_2_sd3-medium": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "pooled": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
     "sd3_text_encoder_2_sd3.5-large": {
       "hidden_states": {
         "max_abs": 0.0,
@@ -2149,6 +2260,11 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sd3_text_encoder_3_sd3-medium": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sd3_text_encoder_3_sd3.5-large": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -2157,6 +2273,19 @@
     "sd3_text_encoder_3_sd3.5-large-turbo": {
       "max_abs": 0.0,
       "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sd3_text_encoder_sd3-medium": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "pooled": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
       "tolerance": 0.0
     },
     "sd3_text_encoder_sd3.5-large": {
@@ -2191,6 +2320,12 @@
       "tokenizers": 3,
       "tolerance": "exact"
     },
+    "sd3_tokenizers_sd3-medium": {
+      "mismatches": [],
+      "prompts": 3,
+      "tokenizers": 3,
+      "tolerance": "exact"
+    },
     "sd3_tokenizers_sd3.5-large": {
       "mismatches": [],
       "prompts": 3,
@@ -2204,6 +2339,19 @@
       "tolerance": "exact"
     },
     "sd3_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "size": [
+        1024,
+        1024
+      ],
+      "timesteps": [
+        1000.0,
+        500.0
+      ],
+      "tolerance": 0.0
+    },
+    "sd3_transformer_sd3-medium": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "size": [
@@ -2247,6 +2395,11 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sd3_vae_decode_sd3-medium": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sd3_vae_decode_sd3.5-large": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -2258,6 +2411,11 @@
       "tolerance": 0.0
     },
     "sd3_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sd3_vae_encode_sd3-medium": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -2300,6 +2458,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (z-image, 47 min)"
+    "reference_summary": "10 passed (sd3-medium, 13 min)"
   }
 }

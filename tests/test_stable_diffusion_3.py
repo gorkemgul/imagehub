@@ -87,9 +87,11 @@ def test_invalid_options_fail_before_loading(tiny_sd3, options, error, match):
 
 
 def test_catalog_entries_and_snapshot_hint(tmp_path):
+    sd3_medium = model_info("sd3-medium")
     medium = model_info("sd3.5-medium")
     large = model_info("sd3.5-large")
-    assert medium.family == large.family == "stable-diffusion-3"
+    assert sd3_medium.family == medium.family == large.family == "stable-diffusion-3"
+    assert sd3_medium.config == {"defaults": {"steps": 28, "guidance": 7.0}}
     assert medium.config == {"defaults": {"steps": 40, "guidance": 4.5}}
     assert large.config == {"defaults": {"steps": 28, "guidance": 3.5}}
     assert len(medium.files) == 26 and len(large.files) == 28

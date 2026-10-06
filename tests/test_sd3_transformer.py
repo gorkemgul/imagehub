@@ -40,7 +40,6 @@ TINY_CONFIG = {
 @pytest.mark.parametrize(
     ("option", "value"),
     [
-        ("qk_norm", None),
         ("qk_norm", "layer_norm"),
     ],
 )

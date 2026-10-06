@@ -30,10 +30,10 @@ diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 
 CPU = torch.device("cpu")
-MODEL_IDS = ("sd3.5-medium", "sd3.5-large", "sd3.5-large-turbo")
+MODEL_IDS = ("sd3-medium", "sd3.5-medium", "sd3.5-large", "sd3.5-large-turbo")
 PROMPT = "a photograph of an astronaut riding a horse"
 PROMPTS = [PROMPT, "Bir kedi, yağlı boya; İSTANBUL'da ĞÜŞİÖÇ ığüşöç", ""]
-TEST_STEPS = {"sd3.5-medium": 12, "sd3.5-large": 8, "sd3.5-large-turbo": 4}
+TEST_STEPS = {"sd3-medium": 12, "sd3.5-medium": 12, "sd3.5-large": 8, "sd3.5-large-turbo": 4}
 TOLERANCES = {
     "text_encoder": 0.0,
     "text_encoder_2": 0.0,

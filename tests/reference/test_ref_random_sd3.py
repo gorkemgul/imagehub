@@ -40,10 +40,11 @@ MEDIUM = TINY | {
 @pytest.mark.parametrize(
     "config_path",
     [
+        CONFIGS / "sd3_medium_transformer_config.json",
         CONFIGS / "medium_transformer_config.json",
         CONFIGS / "large_transformer_config.json",
     ],
-    ids=["sd35-medium", "sd35-large"],
+    ids=["sd3-medium", "sd35-medium", "sd35-large"],
 )
 def test_sd35_published_layout(config_path):
     config = json.loads(config_path.read_text(encoding="utf-8"))
@@ -60,11 +61,12 @@ def test_sd35_published_layout(config_path):
 @pytest.mark.parametrize(
     "config",
     [
+        TINY | {"qk_norm": None, "dual_attention_layers": []},
         TINY | {"dual_attention_layers": []},
         TINY | {"dual_attention_layers": [0, 1]},
         MEDIUM,
     ],
-    ids=["tiny", "tiny-dual", "medium-width"],
+    ids=["tiny-no-qk-norm", "tiny", "tiny-dual", "medium-width"],
 )
 def test_sd3_transformer_random_weights_exact(config):
     torch.manual_seed(0)
