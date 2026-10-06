@@ -242,9 +242,10 @@ The full validation run took 47 minutes.
 
 ## FLUX.2 klein
 
-Validated on CPU in the same environment as above. `flux2-klein-4b` was loaded strictly from
-`black-forest-labs/FLUX.2-klein-4B`. The observed difference in every comparison is **exactly 0**:
-on CPU in float32, the local implementation produces a bit-identical result to the reference.
+Validated on CPU in the same environment as above. `flux2-klein-4b` and `flux2-klein-9b` were loaded
+strictly from `black-forest-labs/FLUX.2-klein-4B` and `black-forest-labs/FLUX.2-klein-9B`,
+respectively. The observed difference in every comparison is **exactly 0**: on CPU in float32, the
+local implementation produces a bit-identical result to the reference.
 
 ### Comparisons (CPU, float32)
 
@@ -257,15 +258,24 @@ on CPU in float32, the local implementation produces a bit-identical result to t
 | Flow-match Euler scheduler with empirical shift | exact | exact |
 | End to end: final latent / pixels (1024×1024, 4 steps, guidance 1.0) | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (pixels) | 0 | 0 |
+| `flux2-klein-9b` prompt string / token ids / attention masks | identical | exact |
+| `flux2-klein-9b` Qwen3-8B text encoder (layers 9, 18 and 27 stacked) | 0 | 0 |
+| `flux2-klein-9b` FLUX.2 transformer single step | 0 | 0 |
+| `flux2-klein-9b` VAE decode / encode | 0 / 0 | 0 / 0 |
+| `flux2-klein-9b` flow-match Euler scheduler with empirical shift | exact | exact |
+| `flux2-klein-9b` end to end: final latent / pixels (1024×1024, 4 steps, guidance 1.0) | 0 / 0 | 0 / 0 |
+| `flux2-klein-9b` end to end, seed 42 (pixels) | 0 | 0 |
 
 The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
 `seed=1234`.
 
-The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts
-398 / 169 / 251, with missing, extra and shape-mismatched tensors all **0**. Record:
-`tensor_header_check`, [validation.json](validation.json).
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: `flux2-klein-4b` had
+398 / 169 / 251 tensors and `flux2-klein-9b` had 399 / 233 / 251 tensors, with missing, extra and
+shape-mismatched tensors all **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
 
-The full validation run took 12 minutes.
+For the 9B run, one reference/native component pair was loaded at a time; peak memory use was about
+65 GB. The 4B validation run took 12 minutes and the 9B validation run took 29 minutes.
 
 ## Qwen-Image 2.1
 
@@ -428,13 +438,14 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
 
 ## Automated tests
 
-- Regular tests: 412 passed, 264 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 430 passed, 285 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models,
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
-  for `flux2-klein-4b`, 9 passed for `sd-turbo`, and 7 passed for `lcm-dreamshaper-v7`. These include
+  for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 9 passed for `sd-turbo`, and 7 passed for
+  `lcm-dreamshaper-v7`. These include
   structural parity with random weights, end-to-end parity with a small model, real-checkpoint
   parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

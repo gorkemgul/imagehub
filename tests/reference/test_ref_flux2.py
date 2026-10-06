@@ -1,4 +1,4 @@
-"""FLUX.2 klein 4B parity on CPU float32."""
+"""FLUX.2 klein parity on CPU float32."""
 
 import gc
 import json
@@ -26,8 +26,16 @@ diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 
 CPU = torch.device("cpu")
-MODEL_ID = "flux2-klein-4b"
+MODEL_IDS = ("flux2-klein-4b", "flux2-klein-9b")
+TEXT_ENCODER_OUT_LAYERS = {
+    "flux2-klein-4b": (9, 18, 27),
+    "flux2-klein-9b": (9, 18, 27),
+}
 PROMPT = "a photograph of an astronaut riding a horse"
+
+
+def _record_name(key, model_id):
+    return key if model_id == "flux2-klein-4b" else f"{key}_{model_id}"
 
 
 def _check(record, name, actual, expected):
@@ -55,8 +63,9 @@ def _checkpoint_shapes(directory):
     return shapes
 
 
-def test_header(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_header(model_id, record):
+    root = snapshot_dir(model_id)
     result = {}
     for component, cls in {
         "text_encoder": Qwen3Model,
@@ -79,14 +88,15 @@ def test_header(record):
             ),
             "tensors": len(shapes),
         }
-    record("header_flux2-klein-4b", **result)
+    record(f"header_{model_id}", **result)
     assert all(
         not entry[key] for entry in result.values() for key in ("missing", "extra", "mismatch")
     )
 
 
-def test_prompt_tokens_and_text_encoder(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_prompt_tokens_and_text_encoder(model_id, record):
+    root = snapshot_dir(model_id)
     native_tokenizer = Qwen2Tokenizer(root / "tokenizer")
     reference_tokenizer = transformers.AutoTokenizer.from_pretrained(
         root / "tokenizer", local_files_only=True
@@ -109,7 +119,7 @@ def test_prompt_tokens_and_text_encoder(record):
     token_matches = torch.equal(native_ids, expected_tokens.input_ids)
     mask_matches = torch.equal(native_mask, expected_tokens.attention_mask.bool())
     record(
-        "flux2_tokenizer",
+        _record_name("flux2_tokenizer", model_id),
         prompt_string_match=text_matches,
         ids_match=token_matches,
         masks_match=mask_matches,
@@ -129,15 +139,17 @@ def test_prompt_tokens_and_text_encoder(record):
             output_hidden_states=True,
             use_cache=False,
         ).hidden_states
-        actual = torch.stack([actual_states[index] for index in (9, 18, 27)], dim=2).flatten(2)
-        expected = torch.stack([expected_states[index] for index in (9, 18, 27)], dim=2).flatten(2)
-    _check(record, "flux2_text_encoder", actual, expected)
+        layers = TEXT_ENCODER_OUT_LAYERS[model_id]
+        actual = torch.stack([actual_states[index] for index in layers], dim=2).flatten(2)
+        expected = torch.stack([expected_states[index] for index in layers], dim=2).flatten(2)
+    _check(record, _record_name("flux2_text_encoder", model_id), actual, expected)
     del ours, reference
     gc.collect()
 
 
-def test_transformer(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_transformer(model_id, record):
+    root = snapshot_dir(model_id)
     ours = Flux2Transformer2DModel.from_pretrained(
         root / "transformer", device=CPU, dtype=torch.float32
     )
@@ -146,7 +158,8 @@ def test_transformer(record):
     )
     generator = torch.Generator("cpu").manual_seed(0)
     hidden = torch.randn(1, 4096, 128, generator=generator)
-    context = torch.randn(1, 512, 7680, generator=generator)
+    config = read_json(root / "transformer" / "config.json")
+    context = torch.randn(1, 512, config["joint_attention_dim"], generator=generator)
     img_ids = torch.cartesian_prod(
         torch.arange(1), torch.arange(64), torch.arange(64), torch.arange(1)
     ).unsqueeze(0)
@@ -163,13 +176,14 @@ def test_transformer(record):
             img_ids=img_ids,
             txt_ids=txt_ids,
         ).sample
-    _check(record, "flux2_transformer", actual, expected)
+    _check(record, _record_name("flux2_transformer", model_id), actual, expected)
     del ours, reference
     gc.collect()
 
 
-def test_vae(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_vae(model_id, record):
+    root = snapshot_dir(model_id)
     ours = AutoencoderKLFlux2.from_pretrained(root / "vae", device=CPU, dtype=torch.float32)
     reference = diffusers.AutoencoderKLFlux2.from_pretrained(
         root / "vae", local_files_only=True, torch_dtype=torch.float32
@@ -182,14 +196,15 @@ def test_vae(record):
         expected_decode = reference.decode(latents).sample
         actual_encode = ours.encode(image)
         expected_encode = reference.encode(image).latent_dist.mode()
-    _check(record, "flux2_vae_decode", actual_decode, expected_decode)
-    _check(record, "flux2_vae_encode", actual_encode, expected_encode)
+    _check(record, _record_name("flux2_vae_decode", model_id), actual_decode, expected_decode)
+    _check(record, _record_name("flux2_vae_encode", model_id), actual_encode, expected_encode)
     del ours, reference
     gc.collect()
 
 
-def test_scheduler(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_scheduler(model_id, record):
+    root = snapshot_dir(model_id)
     config = read_json(root / "scheduler" / "scheduler_config.json")
     sigmas = torch.linspace(1.0, 0.25, 4, dtype=torch.float64).tolist()
     mu = compute_empirical_mu(4096, 4)
@@ -200,12 +215,13 @@ def test_scheduler(record):
     exact = torch.equal(ours.sigmas, reference.sigmas.cpu()) and torch.equal(
         ours.timesteps, reference.timesteps.cpu()
     )
-    record("flux2_scheduler", mu=mu, exact=exact, tolerance="exact")
+    record(_record_name("flux2_scheduler", model_id), mu=mu, exact=exact, tolerance="exact")
     assert exact
 
 
-def test_end_to_end(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_end_to_end(model_id, record):
+    root = snapshot_dir(model_id)
     reference = diffusers.Flux2KleinPipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     )
@@ -220,6 +236,19 @@ def test_end_to_end(record):
         latents=noise.clone(),
         output_type="latent",
     ).images
+    expected = reference(
+        prompt=PROMPT,
+        num_inference_steps=4,
+        guidance_scale=1.0,
+        height=1024,
+        width=1024,
+        latents=noise.clone(),
+        output_type="np",
+    ).images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
+    del reference
+    gc.collect()
+
     components = Flux2Components.load(root, device=CPU, dtype=torch.float32)
     actual_latents = denoise(
         components,
@@ -231,27 +260,21 @@ def test_end_to_end(record):
         latents=noise.clone(),
         max_sequence_length=512,
     )
-    _check(record, "flux2_e2e_latents", actual_latents, expected_latents)
-    expected = reference(
-        prompt=PROMPT,
-        num_inference_steps=4,
-        guidance_scale=1.0,
-        height=1024,
-        width=1024,
-        latents=noise.clone(),
-        output_type="np",
-    ).images
-    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
-    actual = pipeline("t2i", backend="flux2-klein-4b", model=root)(PROMPT, seed=42)
+    _check(record, _record_name("flux2_e2e_latents", model_id), actual_latents, expected_latents)
+    del components
+    gc.collect()
+
+    actual = pipeline("t2i", backend=model_id, model=root)(PROMPT, seed=42)
     pixels = torch.stack([image.tensor for image in actual.images])
     passed = torch.equal(pixels, expected)
     pixel_diff = int((pixels.to(torch.int16) - expected.to(torch.int16)).abs().max())
-    record("e2e_flux2-klein-4b", passed=passed, max_pixel_diff=pixel_diff)
+    record(f"e2e_{model_id}", passed=passed, max_pixel_diff=pixel_diff)
     assert passed
 
 
-def test_seed_end_to_end(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_seed_end_to_end(model_id, record):
+    root = snapshot_dir(model_id)
     reference = diffusers.Flux2KleinPipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     )
@@ -266,11 +289,14 @@ def test_seed_end_to_end(record):
         output_type="np",
     ).images
     expected = torch.from_numpy((expected * 255).round().astype("uint8"))[0]
-    actual = pipeline("t2i", backend="flux2-klein-4b", model=root)(PROMPT, seed=42).images[0].tensor
+    del reference
+    gc.collect()
+
+    actual = pipeline("t2i", backend=model_id, model=root)(PROMPT, seed=42).images[0].tensor
     passed = torch.equal(actual, expected)
     pixel_diff = int((actual.to(torch.int16) - expected.to(torch.int16)).abs().max())
     record(
-        "seed_e2e_flux2-klein-4b",
+        f"seed_e2e_{model_id}",
         passed=passed,
         max_pixel_diff=pixel_diff,
         seed=42,

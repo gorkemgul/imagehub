@@ -283,13 +283,15 @@ not distribute weights.
 # FLUX.2 klein
 
 Catalog: [`flux-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `flux2-klein-4b` · Task: `t2i`
+Models: `flux2-klein-4b`, `flux2-klein-9b` · Task: `t2i`
 
-**Architecture.** A Qwen3-4B text encoder supplies hidden states from layers 9, 18 and 27, which
-are stacked for prompt conditioning. A FLUX.2 transformer uses 5 double-stream blocks followed by
-20 single-stream blocks. The FLUX.2 VAE has 32 latent channels; its latents are patchified 2×2 and
-normalized with batch-norm statistics. The flow-match Euler scheduler uses an empirical shift. The
-native image size is 1024×1024.
+**Architecture.** The 4B checkpoint uses a Qwen3-4B text encoder, and its FLUX.2 transformer uses 5
+double-stream blocks followed by 20 single-stream blocks. The 9B checkpoint uses a Qwen3-8B text
+encoder, and its FLUX.2 transformer uses 8 double-stream blocks followed by 24 single-stream blocks.
+Both text encoders supply hidden states from layers 9, 18 and 27, which are stacked for prompt
+conditioning. The FLUX.2 VAE has 32 latent channels; its latents are patchified 2×2 and normalized
+with batch-norm statistics. The flow-match Euler scheduler uses an empirical shift. The native image
+size is 1024×1024.
 
 **Usage.**
 
@@ -315,7 +317,8 @@ equality on these devices.
 
 **Out of scope.** Image editing, condition images and fp16/bf16 parity are not supported.
 
-**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+**License.** The 4B weights use the Apache-2.0 license. The 9B weights use the
+FLUX Non-Commercial License; see the license. imagehub does not distribute weights.
 
 
 # Qwen-Image 2.1
