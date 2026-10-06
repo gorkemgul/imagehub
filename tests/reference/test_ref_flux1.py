@@ -266,7 +266,7 @@ def test_end_to_end(model_id, record, tmp_path):
         "height": 1024,
         "width": 1024,
         "max_sequence_length": MAX_LENGTH[model_id],
-        "latents": noise.clone(),
+        "latents": diffusers.FluxPipeline._pack_latents(noise.clone(), 1, 16, 128, 128),
     }
     expected_latents = reference(**kwargs, output_type="latent").images
     expected_pixels = reference(**kwargs, output_type="np").images
