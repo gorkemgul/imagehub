@@ -1,12 +1,12 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image, SD3 and FLUX.1 measurements are grouped in flat
-``components_sdxl``, ``components_qwen_image``, ``components_sd3`` and ``components_flux1``
-mappings: the base model keeps its historical unsuffixed keys, while other models use
-``<key>_<model-id>``. Each model entry may also contain its own ``seed_end_to_end`` measurement.
-When a model directory is missing, its existing entry in the output is retained unchanged; a
-missing directory without an existing entry is an error.
+measurements. SDXL, Qwen-Image, SD3, FLUX.1 and HunyuanDiT measurements are grouped in flat
+``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1`` and
+``components_hunyuan_dit`` mappings: the base model keeps its historical unsuffixed keys, while
+other models use ``<key>_<model-id>``. Each model entry may also contain its own
+``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
+output is retained unchanged; a missing directory without an existing entry is an error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -39,7 +39,7 @@ LIMITS = [
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing "
     "spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for "
     "Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic "
-    "shifting for FLUX.1 dev and Qwen-Image 2.1.",
+    "shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for HunyuanDiT.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -245,6 +245,9 @@ def main() -> None:
         },
         "components_flux2": {
             key: value for key, value in measured.items() if key.startswith("flux2_")
+        },
+        "components_hunyuan_dit": {
+            key: value for key, value in measured.items() if "hunyuan_dit" in key
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},
