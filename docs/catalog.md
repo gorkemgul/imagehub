@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**6 architecture families, 19 published checkpoints.** A model is a separately published set of weights;
+**6 architecture families, 20 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -23,6 +23,7 @@ tested with the original weights. In this release every model is `full`.
 | `sdxl-turbo` | `stable-diffusion-xl` | [stabilityai/sdxl-turbo](https://huggingface.co/stabilityai/sdxl-turbo) | `7115331` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` |
 | `ssd-1b` | `stable-diffusion-xl` | [segmind/SSD-1B](https://huggingface.co/segmind/SSD-1B) | `60987f3` | author | full | Apache-2.0 | `ssd-1b` |
 | `playground-v2.5` | `stable-diffusion-xl` | [playgroundai/playground-v2.5-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2.5-1024px-aesthetic) | `1e032f1` | author | full | playground-v2dot5-community | `playground-v2` |
+| `sd3-medium` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3-medium-diffusers](https://huggingface.co/stabilityai/stable-diffusion-3-medium-diffusers) | `ea42f8c` | author | full | Stability AI Community License | `stable-diffusion-3` |
 | `sd3.5-medium` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3.5-medium](https://huggingface.co/stabilityai/stable-diffusion-3.5-medium) | `b940f67` | author | full | Stability AI Community License | `stable-diffusion-3` |
 | `sd3.5-large` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3.5-large](https://huggingface.co/stabilityai/stable-diffusion-3.5-large) | `ceddf0a` | author | full | Stability AI Community License | `stable-diffusion-3` |
 | `sd3.5-large-turbo` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3.5-large-turbo](https://huggingface.co/stabilityai/stable-diffusion-3.5-large-turbo) | `ec07796` | author | full | Stability AI Community License | `stable-diffusion-3` |
@@ -40,5 +41,5 @@ The catalog uses the `deepseek-community/Janus-Pro-1B` and `deepseek-community/J
 transformers conversions with `community-conversion` provenance because the authors' repositories
 ship weights for the original `janus` package rather than the transformers layout.
 
-All three Stable Diffusion 3.5 repositories are gated. Accept their terms on Hugging Face, then set
-`HF_TOKEN` when downloading with `python -m imagehub.pretrained`.
+All four Stable Diffusion 3 and 3.5 repositories are gated. Accept their terms on Hugging Face,
+then set `HF_TOKEN` when downloading with `python -m imagehub.pretrained`.

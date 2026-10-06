@@ -313,6 +313,23 @@
       "pixels": 0
     }
   },
+  "e2e_sd3-medium": {
+    "guidance": 7.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "runtime_note": "Reduced from the 28-step model default.",
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 12
+  },
   "e2e_sd3.5-large": {
     "guidance": 3.5,
     "latents": {
@@ -668,6 +685,38 @@
       "tensors": 248
     }
   },
+  "header_sd3-medium": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder_3": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 683
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
   "header_sd3.5-large": {
     "text_encoder": {
       "extra": [],
@@ -974,6 +1023,18 @@
     },
     "tolerance": 0.0
   },
+  "sd3_scheduler_sd3-medium": {
+    "sigmas": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "steps": 28,
+    "timesteps": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0
+  },
   "sd3_scheduler_sd3.5-large": {
     "sigmas": {
       "max_abs": 0.0,
@@ -1024,6 +1085,19 @@
     },
     "tolerance": 0.0
   },
+  "sd3_text_encoder_2_sd3-medium": {
+    "hidden_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "pooled": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0
+  },
   "sd3_text_encoder_2_sd3.5-large": {
     "hidden_states": {
       "max_abs": 0.0,
@@ -1055,6 +1129,11 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sd3_text_encoder_3_sd3-medium": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sd3_text_encoder_3_sd3.5-large": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -1063,6 +1142,19 @@
   "sd3_text_encoder_3_sd3.5-large-turbo": {
     "max_abs": 0.0,
     "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd3_text_encoder_sd3-medium": {
+    "hidden_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "pooled": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
     "tolerance": 0.0
   },
   "sd3_text_encoder_sd3.5-large": {
@@ -1097,6 +1189,12 @@
     "tokenizers": 3,
     "tolerance": "exact"
   },
+  "sd3_tokenizers_sd3-medium": {
+    "mismatches": [],
+    "prompts": 3,
+    "tokenizers": 3,
+    "tolerance": "exact"
+  },
   "sd3_tokenizers_sd3.5-large": {
     "mismatches": [],
     "prompts": 3,
@@ -1110,6 +1208,19 @@
     "tolerance": "exact"
   },
   "sd3_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "size": [
+      1024,
+      1024
+    ],
+    "timesteps": [
+      1000.0,
+      500.0
+    ],
+    "tolerance": 0.0
+  },
+  "sd3_transformer_sd3-medium": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "size": [
@@ -1153,6 +1264,11 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sd3_vae_decode_sd3-medium": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sd3_vae_decode_sd3.5-large": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -1164,6 +1280,11 @@
     "tolerance": 0.0
   },
   "sd3_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd3_vae_encode_sd3-medium": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -1586,6 +1707,18 @@
     "passed": true,
     "pixels_max_abs": 0,
     "seed": 42
+  },
+  "seed_e2e_sd3-medium": {
+    "guidance": 7.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Reduced from the 28-step model default.",
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 12
   },
   "seed_e2e_sd3.5-large": {
     "guidance": 3.5,
