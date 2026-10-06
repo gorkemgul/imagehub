@@ -25,6 +25,9 @@ def test_catalog_contents():
             "sd3.5-large-turbo",
             "sd3.5-medium",
             "sdxl-base-1.0",
+            "sdxl-lightning-2step",
+            "sdxl-lightning-4step",
+            "sdxl-lightning-8step",
             "sdxl-turbo",
             "ssd-1b",
             "z-image",
@@ -98,6 +101,28 @@ def test_catalog_contents():
     assert sdxl.format == "diffusers"
     assert sdxl.license == "CreativeML-OpenRAIL++-M"
     assert len(set(sdxl.files)) == len(sdxl.files) == 18
+
+    for steps in (2, 4, 8):
+        lightning = model_info(f"sdxl-lightning-{steps}step")
+        assert lightning.task is Task.T2I
+        assert lightning.family == "stable-diffusion-xl"
+        assert lightning.repo_id == "ByteDance/SDXL-Lightning"
+        assert lightning.revision == "c9a24f48e1c025556787b0c58dd67a091ece2e44"
+        assert lightning.provenance == "author"
+        assert lightning.catalog_id == "sdxl-lightning"
+        assert lightning.format == "diffusers"
+        assert lightning.license == "CreativeML-OpenRAIL++-M"
+        assert lightning.base == "sdxl-base-1.0"
+        assert lightning.files == (f"sdxl_lightning_{steps}step_unet.safetensors",)
+        assert lightning.overlay == {
+            "unet/diffusion_pytorch_model.safetensors": (
+                f"sdxl_lightning_{steps}step_unet.safetensors"
+            )
+        }
+        assert lightning.config == {
+            "defaults": {"steps": steps, "guidance": 0.0},
+            "scheduler": {"timestep_spacing": "trailing"},
+        }
 
     turbo = model_info("sdxl-turbo")
     assert turbo.task is Task.T2I
@@ -257,3 +282,28 @@ def test_spec_validation():
         ModelSpec(**{**base.__dict__, "revision": "main"})
     with pytest.raises(ValueError, match="provenance"):
         ModelSpec(**{**base.__dict__, "provenance": "unknown"})
+    with pytest.raises(ValueError, match="base"):
+        ModelSpec(**{**base.__dict__, "id": "bad-base", "base": "missing"})
+    with pytest.raises(ValueError, match="overlay source"):
+        ModelSpec(
+            **{
+                **base.__dict__,
+                "id": "bad-source",
+                "base": "sdxl-base-1.0",
+                "overlay": {"unet/model.safetensors": "missing.safetensors"},
+            }
+        )
+    for overlay in (
+        {"../model.safetensors": base.files[0]},
+        {"unet/model.safetensors": "../model.safetensors"},
+    ):
+        with pytest.raises(ValueError, match="overlay"):
+            ModelSpec(
+                **{
+                    **base.__dict__,
+                    "id": "bad-path",
+                    "base": "sdxl-base-1.0",
+                    "files": (base.files[0], "../model.safetensors"),
+                    "overlay": overlay,
+                }
+            )

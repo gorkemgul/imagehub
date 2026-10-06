@@ -53,6 +53,45 @@ def fake_hub(monkeypatch, *, commit=SPEC.revision, corrupt=None, short=None, dro
     return contents, calls
 
 
+def fake_composite_hub(monkeypatch, *, drop=None, corrupt=None):
+    spec = model_info("sdxl-lightning-2step")
+    base = model_info(spec.base)
+    repositories = {
+        base.repo_id: {name: f"base content of {name}".encode() for name in base.files},
+        spec.repo_id: {name: f"overlay content of {name}".encode() for name in spec.files},
+    }
+    commits = {base.repo_id: base.revision, spec.repo_id: spec.revision}
+    calls = []
+
+    def request(url, headers):
+        calls.append((url, dict(headers)))
+        repo_id = next(repo for repo in repositories if f"/{repo}/" in url)
+        contents = repositories[repo_id]
+        commit = commits[repo_id]
+        if "/api/models/" in url:
+            siblings = []
+            for name, data in contents.items():
+                if (repo_id, name) == drop:
+                    continue
+                siblings.append(
+                    {
+                        "rfilename": name,
+                        "size": len(data),
+                        "lfs": {"sha256": hashlib.sha256(data).hexdigest()},
+                        "blobId": "f" * 40,
+                    }
+                )
+            return io.BytesIO(json.dumps({"sha": commit, "siblings": siblings}).encode())
+        name = url.split(f"/resolve/{commit}/", 1)[1]
+        data = contents[name]
+        if (repo_id, name) == corrupt:
+            data = b"X" + data[1:]
+        return io.BytesIO(data)
+
+    monkeypatch.setattr(download, "_open", request)
+    return spec, base, repositories, calls
+
+
 def test_downloads_pinned_verified_snapshot(monkeypatch, tmp_path):
     contents, calls = fake_hub(monkeypatch)
     dest = download_pretrained("sd-v1-5", tmp_path / "sd15")
@@ -70,6 +109,66 @@ def test_downloads_pinned_verified_snapshot(monkeypatch, tmp_path):
     assert all("Authorization" not in headers for _, headers in calls)
     with pytest.raises(FileExistsError):
         download_pretrained("sd-v1-5", dest)
+
+
+def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
+    spec = model_info("sdxl-lightning-2step")
+    base = model_info(spec.base)
+    overlay_source = spec.files[0]
+    overlay_path = next(iter(spec.overlay))
+    spec, base, repositories, calls = fake_composite_hub(
+        monkeypatch, drop=(base.repo_id, overlay_path)
+    )
+    dest = download_pretrained(spec.id, tmp_path / "lightning")
+    manifest = read_snapshot(dest)
+
+    assert manifest["model_id"] == spec.id
+    assert manifest["repo_id"] == spec.repo_id
+    assert manifest["revision"] == spec.revision
+    assert manifest["verified_revision"] is True
+    assert manifest["base"] == {"model_id": base.id, "revision": base.revision}
+    assert set(manifest["files"]) == (set(base.files) - {overlay_path}) | {overlay_path}
+    assert manifest["files"]["model_index.json"] == {
+        "repo_id": base.repo_id,
+        "revision": base.revision,
+        "sha256": hashlib.sha256(repositories[base.repo_id]["model_index.json"]).hexdigest(),
+    }
+    assert manifest["files"][overlay_path] == {
+        "repo_id": spec.repo_id,
+        "revision": spec.revision,
+        "sha256": hashlib.sha256(repositories[spec.repo_id][overlay_source]).hexdigest(),
+    }
+    assert (dest / overlay_path).read_bytes() == repositories[spec.repo_id][overlay_source]
+    assert not (dest / overlay_source).exists()
+    assert not any(
+        f"/{base.repo_id}/resolve/{base.revision}/{overlay_path}" in url for url, _ in calls
+    )
+
+
+def test_composite_missing_overlay_fails_before_downloading(monkeypatch, tmp_path):
+    spec = model_info("sdxl-lightning-2step")
+    _, _, _, calls = fake_composite_hub(monkeypatch, drop=(spec.repo_id, spec.files[0]))
+    with pytest.raises(DownloadError, match=spec.files[0]):
+        download_pretrained(spec.id, tmp_path / "lightning")
+    assert not any("/resolve/" in url for url, _ in calls)
+
+
+def test_composite_overlay_hash_mismatch_leaves_nothing(monkeypatch, tmp_path):
+    spec = model_info("sdxl-lightning-2step")
+    fake_composite_hub(monkeypatch, corrupt=(spec.repo_id, spec.files[0]))
+    with pytest.raises(DownloadError, match="Checksum"):
+        download_pretrained(spec.id, tmp_path / "lightning")
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_composite_base_cannot_be_composite(monkeypatch, tmp_path):
+    spec = model_info("sdxl-lightning-2step")
+    base = replace(model_info("sdxl-base-1.0"), base="sd-v1-5")
+    monkeypatch.setattr(
+        pretrained, "model_info", lambda model_id: base if model_id == base.id else spec
+    )
+    with pytest.raises(DownloadError, match="base.*composite"):
+        download_pretrained(spec.id, tmp_path / "lightning")
 
 
 def test_token_is_sent_to_hugging_face(monkeypatch, tmp_path):

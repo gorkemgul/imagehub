@@ -6,6 +6,7 @@ import math
 import os
 import secrets
 import warnings
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -93,6 +94,7 @@ class StableDiffusionXLComponents:
         device: torch.device,
         dtype: torch.dtype,
         model_id: str | None = None,
+        scheduler_overrides: Mapping[str, Any] | None = None,
     ) -> StableDiffusionXLComponents:
         root = Path(directory)
         missing = [name for name in COMPONENTS if not (root / name).is_dir()]
@@ -116,7 +118,8 @@ class StableDiffusionXLComponents:
                     root / "unet", device=device, dtype=dtype
                 ),
                 vae=AutoencoderKL.from_pretrained(root / "vae", device=device, dtype=dtype),
-                scheduler_config=read_json(root / "scheduler" / "scheduler_config.json"),
+                scheduler_config=read_json(root / "scheduler" / "scheduler_config.json")
+                | dict(scheduler_overrides or {}),
                 force_zeros_for_empty_prompt=bool(
                     model_index.get("force_zeros_for_empty_prompt", True)
                 ),
@@ -244,8 +247,10 @@ class StableDiffusionXLBackend(TextToImageBackend):
         self.components: StableDiffusionXLComponents | None = None
         self.snapshot: dict[str, Any] | None = None
         model_defaults = {}
+        self.scheduler_overrides: dict[str, Any] = {}
         if model_id is not None and model_id in MODEL_CATALOG:
             model_defaults = dict(MODEL_CATALOG[model_id].config.get("defaults", {}))
+            self.scheduler_overrides = dict(MODEL_CATALOG[model_id].config.get("scheduler", {}))
         self.option_defaults = OPTION_DEFAULTS | model_defaults
 
     def validate_options(self, inputs: T2IRequest, options: dict[str, Any]) -> dict[str, Any]:
@@ -307,7 +312,11 @@ class StableDiffusionXLBackend(TextToImageBackend):
 
     def _load(self) -> None:
         self.components = StableDiffusionXLComponents.load(
-            self.source, device=self.device, dtype=self.dtype, model_id=self.model_id
+            self.source,
+            device=self.device,
+            dtype=self.dtype,
+            model_id=self.model_id,
+            scheduler_overrides=self.scheduler_overrides,
         )
         self.snapshot = read_snapshot(self.source)
         recorded = (self.snapshot or {}).get("model_id")
@@ -368,6 +377,7 @@ class StableDiffusionXLBackend(TextToImageBackend):
             "height": o["height"],
             "negative_prompt": o["negative_prompt"],
             "scheduler": _scheduler(self.components.scheduler_config)[1],
+            "scheduler_overrides": self.scheduler_overrides,
             "device": str(self.device),
             "dtype": str(self.dtype).removeprefix("torch."),
         }

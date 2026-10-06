@@ -82,6 +82,22 @@ def test_playground_uses_model_guidance_and_edm_scheduler(tiny_playground):
     assert result.metadata["scheduler"] == "edm_dpmsolver_multistep"
 
 
+def test_lightning_uses_scheduler_overrides_and_model_defaults(tiny_sdxl):
+    backend = StableDiffusionXLBackend(tiny_sdxl, model_id="sdxl-lightning-2step").load()
+    assert backend.components is not None
+    assert backend.components.scheduler_config["timestep_spacing"] == "trailing"
+    result = backend.infer(
+        __import__("imagehub.types", fromlist=["T2IRequest"]).T2IRequest("cat"),
+        seed=0,
+        width=32,
+        height=32,
+    )
+    assert result.metadata["steps"] == 2
+    assert result.metadata["guidance"] == 0.0
+    assert result.metadata["scheduler"] == "euler"
+    assert result.metadata["scheduler_overrides"] == {"timestep_spacing": "trailing"}
+
+
 def test_unknown_scheduler_fails(tiny_sdxl, tmp_path):
     import shutil
 
