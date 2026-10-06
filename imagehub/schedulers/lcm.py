@@ -29,6 +29,8 @@ _DEFAULTS: dict[str, Any] = {
     "rescale_betas_zero_snr": False,
 }
 
+_IGNORED = frozenset({"steps_offset"})
+
 
 class LCMScheduler:
     """Stateful LCM sampler. Create one per trajectory and set its timesteps first."""
@@ -41,6 +43,9 @@ class LCMScheduler:
             raise ValueError(f"Unsupported LCM setting {unknown[0]}")
         cfg = _DEFAULTS | {key: value for key, value in config.items() if not key.startswith("_")}
         for key, expected in _DEFAULTS.items():
+            # The reference declares steps_offset but never uses it in LCM sampling.
+            if key in _IGNORED:
+                continue
             if cfg[key] != expected:
                 raise ValueError(f"Unsupported LCM setting {key}={cfg[key]!r}")
         self.config = cfg

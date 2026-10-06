@@ -34,6 +34,8 @@ def load_pair():
     ref = diffusers.LatentConsistencyModelPipeline.from_pretrained(
         root,
         safety_checker=None,
+        feature_extractor=None,
+        requires_safety_checker=False,
         local_files_only=True,
     )
     ref.set_progress_bar_config(disable=True)
