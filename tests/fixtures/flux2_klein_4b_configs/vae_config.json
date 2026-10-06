@@ -1,6 +1,7 @@
 {
   "_class_name": "AutoencoderKLFlux2",
-  "_diffusers_version": "0.40.0",
+  "_diffusers_version": "0.37.0.dev0",
+  "_name_or_path": "black-forest-labs/FLUX.2-dev",
   "act_fn": "silu",
   "batch_norm_eps": 0.0001,
   "batch_norm_momentum": 0.1,
@@ -10,7 +11,6 @@
     512,
     512
   ],
-  "decoder_block_out_channels": null,
   "down_block_types": [
     "DownEncoderBlock2D",
     "DownEncoderBlock2D",

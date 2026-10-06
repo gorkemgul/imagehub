@@ -240,7 +240,8 @@ class Qwen3Model(NativeModel):
         self.model = Qwen3Transformer(self.config)
 
     def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
-        """Prefix the published transformers Qwen3Model tensor names."""
+        """Map Qwen3Model or Qwen3ForCausalLM tensors to the decoder stack."""
+        state = {name: value for name, value in state.items() if name != "lm_head.weight"}
         if state and not next(iter(state)).startswith("model."):
             return {"model." + name: value for name, value in state.items()}
         return state

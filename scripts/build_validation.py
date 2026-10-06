@@ -238,6 +238,9 @@ def main() -> None:
                 if spec.family == "stable-diffusion-3" and spec.id != "sd3.5-medium"
             )
         },
+        "components_flux2": {
+            key: value for key, value in measured.items() if key.startswith("flux2_")
+        },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},
         "limits": LIMITS,
