@@ -408,6 +408,26 @@
       "pixels": 0
     }
   },
+  "e2e_z-image": {
+    "guidance": 4.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 8,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
   "e2e_z-image-turbo": {
     "guidance": 0.0,
     "latents": {
@@ -781,6 +801,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_z-image": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 398
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 521
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
     }
   },
   "header_z-image-turbo": {
@@ -1549,6 +1589,17 @@
     ],
     "steps": 30
   },
+  "seed_e2e_z-image": {
+    "guidance": 4.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 8
+  },
   "seed_e2e_z-image-turbo": {
     "guidance": 0.0,
     "passed": true,
@@ -1614,12 +1665,34 @@
     },
     "tolerance": 0.0
   },
+  "z_image_scheduler_z-image": {
+    "sigmas": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "timesteps": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0
+  },
   "z_image_text_encoder": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "z_image_text_encoder_z-image": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "z_image_tokenizer": {
+    "ids_match": true,
+    "masks_match": true,
+    "prompts": 3,
+    "tolerance": "exact"
+  },
+  "z_image_tokenizer_z-image": {
     "ids_match": true,
     "masks_match": true,
     "prompts": 3,
@@ -1634,12 +1707,31 @@
     ],
     "tolerance": 0.0
   },
+  "z_image_transformer_z-image": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      0.5,
+      0.25
+    ],
+    "tolerance": 0.0
+  },
   "z_image_vae_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "z_image_vae_decode_z-image": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "z_image_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "z_image_vae_encode_z-image": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0

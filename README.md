@@ -50,7 +50,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 | Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-turbo`, `ssd-1b`, `playground-v2.5` | `t2i` | CPU fp32 parity |
 | Stable Diffusion 3.5 | `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | CPU fp32 parity |
 | Qwen-Image | `qwen-image-2.1` | `t2i` | CPU fp32 parity |
-| Z-Image | `z-image-turbo` | `t2i` | CPU fp32 parity |
+| Z-Image | `z-image`, `z-image-turbo` | `t2i` | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | CPU fp32 parity |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
