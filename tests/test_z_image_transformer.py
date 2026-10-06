@@ -7,12 +7,16 @@ import torch
 from imagehub.models.z_image_transformer import ZImageTransformer2DModel
 
 FIXTURES = Path(__file__).parent / "fixtures"
-CONFIG_PATH = FIXTURES / "z_image_turbo_configs" / "transformer_config.json"
+CONFIG_PATHS = (
+    FIXTURES / "z_image_turbo_configs" / "transformer_config.json",
+    FIXTURES / "z_image_configs" / "transformer_config.json",
+)
 TENSORS_PATH = FIXTURES / "z_image_turbo_transformer_tensors.json"
 
 
-def test_matches_z_image_turbo_tensor_layout():
-    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+@pytest.mark.parametrize("config_path", CONFIG_PATHS)
+def test_matches_z_image_tensor_layout(config_path):
+    config = json.loads(config_path.read_text(encoding="utf-8"))
     expected_names = json.loads(TENSORS_PATH.read_text(encoding="utf-8"))
     with torch.device("meta"):
         model = ZImageTransformer2DModel(config)
@@ -105,3 +109,15 @@ def test_forward_shapes_and_rejects_omni_options():
     ):
         with pytest.raises(ValueError, match="text-to-image"):
             model(x, t, cap, **options)
+
+
+def test_base_config_is_text_to_image_and_uses_shift_six():
+    transformer = json.loads(CONFIG_PATHS[1].read_text(encoding="utf-8"))
+    scheduler = json.loads(
+        (FIXTURES / "z_image_configs" / "scheduler_scheduler_config.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert transformer["siglip_feat_dim"] is None
+    assert scheduler["shift"] == 6.0

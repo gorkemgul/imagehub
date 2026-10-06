@@ -180,34 +180,46 @@ missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_ch
 
 ## Z-Image
 
-Validated on CPU on October 5, 2026, in the same environment as above. `z-image-turbo` was loaded
-strictly from `Tongyi-MAI/Z-Image-Turbo`. The observed difference in every comparison is **exactly
-0**: on CPU in float32, the local implementation produces a bit-identical result to the reference.
+Validated on CPU on October 5, 2026, in the same environment as above. `z-image-turbo` and `z-image`
+were loaded strictly from `Tongyi-MAI/Z-Image-Turbo` and `Tongyi-MAI/Z-Image`, respectively. The
+observed difference in every comparison is **exactly 0**: on CPU in float32, the local implementation
+produces a bit-identical result to the reference.
 
 ### Comparisons (CPU, float32)
 
 | Comparison | Largest observed difference | Tolerance |
 | --- | --- | --- |
 | Tokenizer token ids and attention masks (3 fixed prompts, seeded fuzz, exhaustive per-code-point check) | identical | exact |
+| `z-image` tokenizer token ids and attention masks (3 fixed prompts) | identical | exact |
 | Qwen3 text encoder (`hidden_states[-2]`) | 0 | 0 |
+| `z-image` Qwen3 text encoder (`hidden_states[-2]`) | 0 | 0 |
 | Transformer single step (1024×1024, t = 0.5 and 0.25) | 0 | 0 |
+| `z-image` transformer single step (1024×1024, t = 0.5 and 0.25) | 0 | 0 |
 | VAE decode / encode | 0 / 0 | 0 |
+| `z-image` VAE decode / encode | 0 / 0 | 0 |
 | Flow-match scheduler timesteps / sigmas | 0 / 0 | 0 |
+| `z-image` flow-match scheduler timesteps / sigmas (shift 6.0) | 0 / 0 | 0 |
 | End to end: final latent / pixels (1024×1024, 9 steps, guidance 0.0) | 0 / 0 | 0 / 0 |
+| `z-image` end to end: final latent / pixels (1024×1024, 8 steps, guidance 4.0) | 0 / 0 | 0 / 0 |
 | Guided end to end: final latent / pixels (1024×1024, 4 steps, guidance 4.0, negative prompt) | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (1024×1024, 9 steps, guidance 0.0; pixels) | 0 | 0 |
+| `z-image` end to end, seed 42 (1024×1024, 8 steps, guidance 4.0; pixels) | 0 | 0 |
 
 The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
 `seed=1234`; the guided run uses a negative prompt. The tokenizer check covers fixed prompts, seeded
 fuzz and every Unicode code point. The reference tokenizer's Unicode tables are older than Python's
 for 108 combining marks, which it treats as unassigned.
 
+The `z-image` end-to-end checks use 8 steps instead of the default 50 only to shorten the CPU run.
+
 To fit the 96 GB machine, each component pair (ours and the reference) is loaded and freed one at a
 time, and in the end-to-end checks the reference pipeline runs first and is freed before ours runs.
 
-The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts
-398 / 521 / 244, with missing, extra and shape-mismatched tensors all **0**. Record:
+For each checkpoint, the header-only tensor check covered `text_encoder`, `transformer` and `vae`:
+tensor counts 398 / 521 / 244, with missing, extra and shape-mismatched tensors all **0**. Record:
 `tensor_header_check`, [validation.json](validation.json).
+
+The full validation run took 47 minutes.
 
 ## Qwen-Image 2.1
 
@@ -362,11 +374,11 @@ The large-turbo run took 17 minutes.
 
 ## Automated tests
 
-- Regular tests: 405 passed, 229 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 408 passed, 237 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 8 passed, 1 skipped for `playground-v2.5`, and 9 passed for
-  `z-image-turbo`, 6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, and 9 passed for
+  `z-image-turbo`, 8 passed for `z-image`, 6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, and 9 passed for
   `qwen-image-2.1`, 9 passed for `sd-turbo`, and 7 passed for `lcm-dreamshaper-v7`. These
   include structural parity with random weights, end-to-end parity with a small model,
   real-checkpoint parity and tokenizer fuzz tests.

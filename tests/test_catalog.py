@@ -26,6 +26,7 @@ def test_catalog_contents():
             "sdxl-base-1.0",
             "sdxl-turbo",
             "ssd-1b",
+            "z-image",
             "z-image-turbo",
         )
     }
@@ -121,6 +122,21 @@ def test_catalog_contents():
     assert z_image.license == "Apache-2.0"
     assert len(set(z_image.files)) == len(z_image.files) == 19
     assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in z_image.files)
+
+    z_image_base = model_info("z-image")
+    assert z_image_base.task is Task.T2I
+    assert z_image_base.family == "z-image"
+    assert z_image_base.repo_id == "Tongyi-MAI/Z-Image"
+    assert z_image_base.revision == "04cc4abb7c5069926f75c9bfde9ef43d49423021"
+    assert z_image_base.provenance == "author"
+    assert z_image_base.catalog_id == "z-image"
+    assert z_image_base.format == "diffusers"
+    assert z_image_base.license == "Apache-2.0"
+    assert z_image_base.config == {"defaults": {"steps": 50, "guidance": 4.0}}
+    assert len(set(z_image_base.files)) == len(z_image_base.files) == 18
+    assert not any(
+        "fp16" in name or name.endswith((".onnx", ".ckpt")) for name in z_image_base.files
+    )
 
     qwen_image = model_info("qwen-image-2.1")
     assert qwen_image.family == "qwen-image"

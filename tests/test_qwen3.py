@@ -7,12 +7,16 @@ import torch
 from imagehub.models.qwen3 import Qwen3Model
 
 FIXTURES = Path(__file__).parent / "fixtures"
-CONFIG_PATH = FIXTURES / "z_image_turbo_configs" / "text_encoder_config.json"
+CONFIG_PATHS = (
+    FIXTURES / "z_image_turbo_configs" / "text_encoder_config.json",
+    FIXTURES / "z_image_configs" / "text_encoder_config.json",
+)
 TENSORS_PATH = FIXTURES / "z_image_turbo_text_encoder_tensors.json"
 
 
-def test_matches_z_image_turbo_tensor_layout():
-    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+@pytest.mark.parametrize("config_path", CONFIG_PATHS)
+def test_matches_z_image_tensor_layout(config_path):
+    config = json.loads(config_path.read_text(encoding="utf-8"))
     expected_names = json.loads(TENSORS_PATH.read_text(encoding="utf-8"))
     with torch.device("meta"):
         model = Qwen3Model(config)
@@ -46,6 +50,6 @@ def test_matches_z_image_turbo_tensor_layout():
     ],
 )
 def test_rejects_unsupported_options(option, value):
-    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    config = json.loads(CONFIG_PATHS[0].read_text(encoding="utf-8"))
     with pytest.raises(ValueError, match="Unsupported Qwen3"):
         Qwen3Model(config | {option: value})
