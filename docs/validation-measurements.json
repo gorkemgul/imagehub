@@ -30,6 +30,10 @@
     "max_pixel_diff": 0,
     "passed": true
   },
+  "e2e_flux2-klein-9b": {
+    "max_pixel_diff": 0,
+    "passed": true
+  },
   "e2e_guided_qwen-image-2.1": {
     "latents": {
       "max_abs": 0.0,
@@ -556,12 +560,27 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "flux2_e2e_latents_flux2-klein-9b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "flux2_scheduler": {
     "exact": true,
     "mu": 2.291179894115571,
     "tolerance": "exact"
   },
+  "flux2_scheduler_flux2-klein-9b": {
+    "exact": true,
+    "mu": 2.291179894115571,
+    "tolerance": "exact"
+  },
   "flux2_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux2_text_encoder_flux2-klein-9b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -572,7 +591,18 @@
     "prompt_string_match": true,
     "tolerance": "exact"
   },
+  "flux2_tokenizer_flux2-klein-9b": {
+    "ids_match": true,
+    "masks_match": true,
+    "prompt_string_match": true,
+    "tolerance": "exact"
+  },
   "flux2_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux2_transformer_flux2-klein-9b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -582,7 +612,17 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "flux2_vae_decode_flux2-klein-9b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "flux2_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux2_vae_encode_flux2-klein-9b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -599,6 +639,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 169
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 251
+    }
+  },
+  "header_flux2-klein-9b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 399
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 233
     },
     "vae": {
       "extra": [],
@@ -1829,6 +1889,11 @@
     "tolerance": 0.0
   },
   "seed_e2e_flux2-klein-4b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42
+  },
+  "seed_e2e_flux2-klein-9b": {
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 42
