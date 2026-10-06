@@ -103,10 +103,10 @@ The header-only tensor check covered `text_encoder`, `unet` and `vae`: tensor co
 
 ## SDXL
 
-Validated on CPU on October 5, 2026, in the same environment as above. Four checkpoints, `full`:
-`sdxl-base-1.0`, `sdxl-turbo`, `ssd-1b` and `playground-v2.5`. The published tensors were loaded
-strictly. A generation at each model's native size was compared against diffusers from the same
-initial noise.
+Validated on CPU on October 5, 2026, in the same environment as above. Seven checkpoints, `full`:
+`sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`,
+`sdxl-turbo`, `ssd-1b` and `playground-v2.5`. The published tensors were loaded strictly. A
+generation at each model's native size was compared against diffusers from the same initial noise.
 
 ### Comparisons (CPU, float32)
 
@@ -120,6 +120,15 @@ initial noise.
 | Euler timesteps / sigmas (50 and 30 steps) | sdxl-base-1.0 | 0 / 0 | 0 |
 | End to end: final latent / pixels | sdxl-base-1.0 | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (pixels) | sdxl-base-1.0 | 0 | 0 |
+| U-Net single step (1024×1024, t = 999) | sdxl-lightning-2step | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 2 steps, guidance 0.0) | sdxl-lightning-2step | 0 / 0 | 0 / 0 |
+| End to end, seed 42 with the defaults (pixels) | sdxl-lightning-2step | 0 | 0 |
+| U-Net single step (1024×1024, t = 999) | sdxl-lightning-4step | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 4 steps, guidance 0.0) | sdxl-lightning-4step | 0 / 0 | 0 / 0 |
+| End to end, seed 42 with the defaults (pixels) | sdxl-lightning-4step | 0 | 0 |
+| U-Net single step (1024×1024, t = 999) | sdxl-lightning-8step | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 8 steps, guidance 0.0) | sdxl-lightning-8step | 0 / 0 | 0 / 0 |
+| End to end, seed 42 with the defaults (pixels) | sdxl-lightning-8step | 0 | 0 |
 | Tokenizer token ids (2 tokenizers, 18 prompts) | sdxl-turbo | identical | identical |
 | CLIP ViT-L/14 text encoder (penultimate layer) | sdxl-turbo | 0 | 0 |
 | OpenCLIP bigG text encoder (penultimate layer and pooled output) | sdxl-turbo | 0 / 0 | 0 / 0 |
@@ -158,10 +167,20 @@ and guidance 2.0. Its Euler ancestral scheduler draws the per-step ancestral noi
 seeded CPU generator as the initial noise. `playground-v2.5` uses 1024×1024, 30 steps and guidance
 3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable.
 
+The SDXL-Lightning reference is built exactly as described by the model card: a float32 U-Net from
+the SDXL base configuration loaded with the published U-Net file, placed in the base pipeline, and
+an Euler scheduler with trailing timestep spacing. The text encoders and VAE are the validated SDXL
+base components. The three defaults are respectively 2, 4 and 8 steps at 1024×1024 with guidance
+0.0. Each validation run took 2–4 minutes.
+
 For `sdxl-base-1.0`, the same header-only tensor check covered the four components
 (`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
 missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
+
+For each SDXL-Lightning checkpoint, the header-only tensor check covered its distilled U-Net: 1680
+tensors, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
 
 For `sdxl-turbo`, the same header-only tensor check covered the four components (`text_encoder`,
 `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and missing, extra and
@@ -382,14 +401,15 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
 
 ## Automated tests
 
-- Regular tests: 407 passed, 249 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 412 passed, 264 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 8 passed, 1 skipped for `playground-v2.5`, and 9 passed for
-  `z-image-turbo`, 8 passed for `z-image`, 6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, and 9 passed for
-  `qwen-image-2.1`, 9 passed for `sd-turbo`, and 7 passed for `lcm-dreamshaper-v7`. These
-  include structural parity with random weights, end-to-end parity with a small model,
-  real-checkpoint parity and tokenizer fuzz tests.
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models,
+  8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
+  6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 9 passed
+  for `sd-turbo`, and 7 passed for `lcm-dreamshaper-v7`. These include structural parity with
+  random weights, end-to-end parity with a small model, real-checkpoint parity and tokenizer fuzz
+  tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
 - MPS smoke test: 1 passed.
