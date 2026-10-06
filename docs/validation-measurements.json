@@ -26,6 +26,16 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_flux1-dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 4
+  },
+  "e2e_flux1-schnell": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 4
+  },
   "e2e_flux2-klein-4b": {
     "max_pixel_diff": 0,
     "passed": true
@@ -555,6 +565,92 @@
   "environment": {
     "torch_threads": 12
   },
+  "flux1_clip": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_clip_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_clip_tokenizer": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "flux1_clip_tokenizer_flux1-dev": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "flux1_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_e2e_latents_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_scheduler": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
+  "flux1_scheduler_flux1-dev": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
+  "flux1_t5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_t5_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_t5_tokenizer": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "flux1_t5_tokenizer_flux1-dev": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "flux1_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_transformer_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_vae_decode_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_vae_encode_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "flux2_e2e_latents": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -626,6 +722,58 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "header_flux1-dev": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1160
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_flux1-schnell": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1156
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
   },
   "header_flux2-klein-4b": {
     "text_encoder": {
@@ -1887,6 +2035,18 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "seed_e2e_flux1-dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 4
+  },
+  "seed_e2e_flux1-schnell": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 4
   },
   "seed_e2e_flux2-klein-4b": {
     "max_pixel_diff": 0,

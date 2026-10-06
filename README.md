@@ -49,6 +49,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 | Stable Diffusion | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`, `sd-turbo`, `lcm-dreamshaper-v7` | `t2i` | CPU fp32 parity |
 | Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`, `sdxl-turbo`, `ssd-1b`, `playground-v2.5` | `t2i` | CPU fp32 parity |
 | Stable Diffusion 3 and 3.5 | `sd3-medium`, `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | CPU fp32 parity |
+| FLUX.1 | `flux1-schnell`, `flux1-dev` | `t2i` | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | CPU fp32 parity |
 | Qwen-Image | `qwen-image-2.1` | `t2i` | CPU fp32 parity |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | CPU fp32 parity |

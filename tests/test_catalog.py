@@ -9,6 +9,8 @@ from imagehub.types import Task
 def test_catalog_contents():
     assert available_models() == {
         "t2i": (
+            "flux1-dev",
+            "flux1-schnell",
             "flux2-klein-4b",
             "flux2-klein-9b",
             "janus-pro-1b",
