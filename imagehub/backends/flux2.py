@@ -136,7 +136,7 @@ def encode_prompt(
     num_images: int,
     max_sequence_length: int,
 ) -> tuple[Tensor, Tensor]:
-    text = components.tokenizer.chat_prompt(prompt)
+    text = components.tokenizer.chat_prompt(prompt, enable_thinking=False)
     input_ids, attention_mask = components.tokenizer(text, max_sequence_length)
     input_ids = input_ids.to(device)
     attention_mask = attention_mask.to(device)

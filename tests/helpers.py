@@ -546,6 +546,7 @@ def write_tiny_z_image(directory: str | os.PathLike[str], *, seed: int = 0) -> P
 
 
 TINY_FLUX2_TEXT = TINY_Z_IMAGE_TEXT | {
+    "vocab_size": 36,
     "hidden_size": 8,
     "intermediate_size": 16,
     "num_hidden_layers": 27,
@@ -616,11 +617,28 @@ def write_tiny_flux2(directory: str | os.PathLike[str], *, seed: int = 0) -> Pat
     torch.manual_seed(seed)
     tokenizer = root / "tokenizer"
     shutil.copytree(FIXTURES / "qwen_tokenizer", tokenizer)
+    tokenizer_data = json.loads((tokenizer / "tokenizer.json").read_text())
+    for token_id, content in ((34, "<think>"), (35, "</think>")):
+        tokenizer_data["model"]["vocab"][content] = token_id
+        tokenizer_data["added_tokens"].append(
+            {
+                "id": token_id,
+                "content": content,
+                "single_word": False,
+                "lstrip": False,
+                "rstrip": False,
+                "normalized": False,
+                "special": False,
+            }
+        )
+    (tokenizer / "tokenizer.json").write_text(json.dumps(tokenizer_data))
     tokenizer_config = json.loads((tokenizer / "tokenizer_config.json").read_text())
     tokenizer_config["chat_template"] = (
         "{% for message in messages %}<|im_start|>{{ message['role'] }}\n"
         "{{ message['content'] }}<|im_end|>\n{% endfor %}"
-        "{% if add_generation_prompt %}<|im_start|>assistant\n{% endif %}"
+        "{% if add_generation_prompt %}<|im_start|>assistant\n"
+        "{% if enable_thinking is defined and enable_thinking is false %}"
+        "<think>\n\n</think>\n\n{% endif %}{% endif %}"
     )
     (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
     (root / "scheduler").mkdir()

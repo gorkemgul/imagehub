@@ -334,6 +334,9 @@ class Qwen2Tokenizer:
             masks.append([True] * len(ids) + [False] * padding)
         return torch.tensor(rows, dtype=torch.long), torch.tensor(masks, dtype=torch.bool)
 
-    def chat_prompt(self, prompt: str) -> str:
+    def chat_prompt(self, prompt: str, *, enable_thinking: bool = True) -> str:
         """Render the pipeline's single-user-message chat template."""
-        return f"<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+        text = f"<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+        if not enable_thinking:
+            text += "<think>\n\n</think>\n\n"
+        return text

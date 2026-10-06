@@ -23,7 +23,7 @@ def test_tiny_flux2_prompt_and_generation_match_diffusers_exactly(tmp_path):
         add_generation_prompt=True,
         enable_thinking=False,
     )
-    actual_text = components.tokenizer.chat_prompt(prompt)
+    actual_text = components.tokenizer.chat_prompt(prompt, enable_thinking=False)
     assert actual_text == expected_text
     actual_tokens, actual_mask = components.tokenizer(actual_text)
     expected_tokens = reference.tokenizer(

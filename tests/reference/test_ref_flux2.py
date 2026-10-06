@@ -97,7 +97,7 @@ def test_prompt_tokens_and_text_encoder(record):
         add_generation_prompt=True,
         enable_thinking=False,
     )
-    text_matches = native_tokenizer.chat_prompt(PROMPT) == expected_text
+    text_matches = native_tokenizer.chat_prompt(PROMPT, enable_thinking=False) == expected_text
     native_ids, native_mask = native_tokenizer(expected_text)
     expected_tokens = reference_tokenizer(
         expected_text,
@@ -252,8 +252,23 @@ def test_end_to_end(record):
 
 def test_seed_end_to_end(record):
     root = snapshot_dir(MODEL_ID)
-    a = pipeline("t2i", backend="flux2-klein-4b", model=root)(PROMPT, seed=42)
-    b = pipeline("t2i", backend="flux2-klein-4b", model=root)(PROMPT, seed=42)
-    passed = torch.equal(a.images[0].tensor, b.images[0].tensor)
-    record("seed_e2e_flux2-klein-4b", passed=passed, seed=42)
+    reference = diffusers.Flux2KleinPipeline.from_pretrained(
+        root, local_files_only=True, torch_dtype=torch.float32
+    )
+    reference.set_progress_bar_config(disable=True)
+    expected = reference(
+        PROMPT,
+        generator=torch.Generator("cpu").manual_seed(42),
+        output_type="np",
+    ).images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))[0]
+    actual = pipeline("t2i", backend="flux2-klein-4b", model=root)(PROMPT, seed=42).images[0].tensor
+    passed = torch.equal(actual, expected)
+    pixel_diff = int((actual.to(torch.int16) - expected.to(torch.int16)).abs().max())
+    record(
+        "seed_e2e_flux2-klein-4b",
+        passed=passed,
+        max_pixel_diff=pixel_diff,
+        seed=42,
+    )
     assert passed
