@@ -137,6 +137,18 @@ def test_text_time_conditioning_requires_both_inputs():
     )
 
 
+def test_timestep_conditioning_shape_and_requirement():
+    model = UNet2DConditionModel(TINY_UNET_CONFIG | {"time_cond_proj_dim": 16})
+    sample = torch.randn(2, 4, 8, 8)
+    context = torch.randn(2, 7, 32)
+    timestep_cond = torch.randn(2, 16)
+    with torch.inference_mode():
+        unconditioned = model(sample, torch.tensor(999), context)
+        output = model(sample, torch.tensor(999), context, timestep_cond=timestep_cond)
+    assert output.shape == unconditioned.shape == sample.shape
+    assert not torch.equal(output, unconditioned)
+
+
 @pytest.mark.parametrize(
     "option",
     [

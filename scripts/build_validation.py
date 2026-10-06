@@ -35,9 +35,9 @@ LIMITS = [
     "no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler for SDXL, "
-    "flow-match Euler for Z-Image and SD 3.5, and flow-match Euler with dynamic shifting for "
-    "Qwen-Image 2.1.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing "
+    "spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for "
+    "Z-Image and SD 3.5, and flow-match Euler with dynamic shifting for Qwen-Image 2.1.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -57,6 +57,13 @@ SD_TURBO_COMPONENT_KEYS = (
     "sd_turbo_vae_decode",
     "sd_turbo_vae_encode",
     "sd_turbo_scheduler",
+)
+LCM_COMPONENT_KEYS = (
+    "lcm_text_encoder",
+    "lcm_unet",
+    "lcm_vae_decode",
+    "lcm_vae_encode",
+    "lcm_scheduler",
 )
 Z_IMAGE_COMPONENT_KEYS = (
     "z_image_tokenizer",
@@ -189,6 +196,9 @@ def main() -> None:
         },
         "components_sd_turbo": {
             key: value for key, value in measured.items() if key in SD_TURBO_COMPONENT_KEYS
+        },
+        "components_lcm": {
+            key: value for key, value in measured.items() if key in LCM_COMPONENT_KEYS
         },
         "components_z_image": {
             key: value for key, value in measured.items() if key in Z_IMAGE_COMPONENT_KEYS
