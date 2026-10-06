@@ -1,11 +1,12 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image and SD3 measurements are grouped in flat ``components_sdxl``,
-``components_qwen_image`` and ``components_sd3`` mappings: the base model keeps its historical
-unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
-own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
-output is retained unchanged; a missing directory without an existing entry is an error.
+measurements. SDXL, Qwen-Image, SD3 and FLUX.1 measurements are grouped in flat
+``components_sdxl``, ``components_qwen_image``, ``components_sd3`` and ``components_flux1``
+mappings: the base model keeps its historical unsuffixed keys, while other models use
+``<key>_<model-id>``. Each model entry may also contain its own ``seed_end_to_end`` measurement.
+When a model directory is missing, its existing entry in the output is retained unchanged; a
+missing directory without an existing entry is an error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -37,7 +38,8 @@ LIMITS = [
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing "
     "spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for "
-    "Z-Image and SD 3.5, and flow-match Euler with dynamic shifting for Qwen-Image 2.1.",
+    "Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic "
+    "shifting for FLUX.1 dev and Qwen-Image 2.1.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -237,6 +239,9 @@ def main() -> None:
                 for spec in MODEL_CATALOG.values()
                 if spec.family == "stable-diffusion-3" and spec.id != "sd3.5-medium"
             )
+        },
+        "components_flux1": {
+            key: value for key, value in measured.items() if key.startswith("flux1_")
         },
         "components_flux2": {
             key: value for key, value in measured.items() if key.startswith("flux2_")

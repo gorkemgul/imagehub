@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**7 architecture families, 25 published checkpoints.** A model is a separately published set of weights;
+**8 architecture families, 27 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -30,6 +30,8 @@ tested with the original weights. In this release every model is `full`.
 | `sd3.5-medium` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3.5-medium](https://huggingface.co/stabilityai/stable-diffusion-3.5-medium) | `b940f67` | author | full | Stability AI Community License | `stable-diffusion-3` |
 | `sd3.5-large` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3.5-large](https://huggingface.co/stabilityai/stable-diffusion-3.5-large) | `ceddf0a` | author | full | Stability AI Community License | `stable-diffusion-3` |
 | `sd3.5-large-turbo` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3.5-large-turbo](https://huggingface.co/stabilityai/stable-diffusion-3.5-large-turbo) | `ec07796` | author | full | Stability AI Community License | `stable-diffusion-3` |
+| `flux1-schnell` | `flux` | [black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) | `741f7c3` | author | full | Apache-2.0 | `flux-1` |
+| `flux1-dev` | `flux` | [black-forest-labs/FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) | `3de623f` | author | full | FLUX.1-dev Non-Commercial License | `flux-1` |
 | `flux2-klein-4b` | `flux2` | [black-forest-labs/FLUX.2-klein-4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B) | `e7b7dc2` | author | full | Apache-2.0 | `flux-2` |
 | `flux2-klein-9b` | `flux2` | [black-forest-labs/FLUX.2-klein-9B](https://huggingface.co/black-forest-labs/FLUX.2-klein-9B) | `92196c8` | author | full | FLUX Non-Commercial License | `flux-2` |
 | `qwen-image-2.1` | `qwen-image` | [Qwen/Qwen-Image-2.1](https://huggingface.co/Qwen/Qwen-Image-2.1) | `d26bb61` | author | full | Qwen Research License (research use; see the license) | `qwen-image-2` |
@@ -52,6 +54,10 @@ ship weights for the original `janus` package rather than the transformers layou
 
 All four Stable Diffusion 3 and 3.5 repositories are gated. Accept their terms on Hugging Face,
 then set `HF_TOKEN` when downloading with `python -m imagehub.pretrained`.
+
+Both FLUX.1 repositories are gated. Accept their terms on Hugging Face, then set `HF_TOKEN` when
+downloading with `python -m imagehub.pretrained`. The schnell weights use Apache-2.0; the dev
+weights use the FLUX.1-dev Non-Commercial License.
 
 The `flux2-klein-9b` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN`
 when downloading with `python -m imagehub.pretrained`.

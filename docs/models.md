@@ -280,6 +280,47 @@ fp16/bf16 parity are not in this release.
 not distribute weights.
 
 
+# FLUX.1
+
+Catalog: [`flux-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `flux1-schnell`, `flux1-dev` · Task: `t2i`
+
+**Architecture.** CLIP-L supplies a pooled embedding and T5-XXL supplies sequence embeddings to a
+12B rectified-flow transformer with 19 double-stream blocks, 38 single-stream blocks, 24 attention
+heads of width 128 and 3-axis RoPE. The dev checkpoint adds a guidance embedding. A 16-channel VAE
+with a shift factor decodes latents packed in 2×2 patches. The flow-match Euler scheduler uses a
+static shift of 1.0 for schnell and dynamic shifting for dev. The native image size is 1024×1024.
+
+**Usage.** Both repositories are gated. Accept the repository terms and provide `HF_TOKEN` when
+downloading:
+
+```bash
+HF_TOKEN=... python -m imagehub.pretrained flux1-schnell checkpoints/flux1-schnell
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="flux1-schnell", model="checkpoints/flux1-schnell", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** Schnell defaults to 4 steps, guidance 0.0 and a maximum sequence length of 256. Dev
+defaults to 50 steps, guidance 3.5 and a maximum sequence length of 512. Both default to 1024×1024,
+and `width`/`height` must be multiples of 16. The other supported options are `num_images`, `seed`,
+`latents`, `negative_prompt` and `true_cfg_scale`. Unrecognized settings raise an error.
+
+**Validation.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** Kontext, Fill, Redux, Depth and Canny variants, ControlNet, LoRA and fp16/bf16
+parity are not supported.
+
+**License.** The schnell weights use the Apache-2.0 license. The dev weights use the FLUX.1-dev
+Non-Commercial License; see the license. imagehub does not distribute weights.
+
+
 # FLUX.2 klein
 
 Catalog: [`flux-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
