@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 import torch
 from helpers import (
+    LCM_SCHEDULER,
     SD1_SCHEDULER,
     SD1_UNET,
     SDXL_SCHEDULER,
@@ -32,6 +33,7 @@ from imagehub.schedulers.flow_match_euler import (
     FlowMatchEulerDiscreteScheduler,
     z_image_sigmas,
 )
+from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
 
 pytestmark = pytest.mark.reference
@@ -403,6 +405,28 @@ def test_unet_random_weights(config, sizes):
                 exact(ours(sample, t, context), ref(sample, t, context).sample)
 
 
+def test_lcm_unet_random_weights():
+    config = TINY_UNET_CONFIG | {"time_cond_proj_dim": 16}
+    torch.manual_seed(0)
+    ref = diffusers.UNet2DConditionModel.from_config(config).eval()
+    for parameter in ref.parameters():
+        parameter.data.normal_(0, 0.02)
+    ours = UNet2DConditionModel(config).eval()
+    ours.load_checkpoint(ref.state_dict())
+    sample = torch.randn(2, 4, 13, 9)
+    context = torch.randn(2, 7, config["cross_attention_dim"])
+    timestep_cond = torch.randn(2, config["time_cond_proj_dim"])
+    with torch.inference_mode():
+        actual = ours(sample, torch.tensor(999), context, timestep_cond=timestep_cond)
+        expected = ref(
+            sample,
+            torch.tensor(999),
+            context,
+            timestep_cond=timestep_cond,
+        ).sample
+    exact(actual, expected)
+
+
 TINY_SDXL_UNET = SDXL_UNET | {
     "block_out_channels": [32, 64, 64],
     "transformer_layers_per_block": [1, 2, 3],
@@ -508,6 +532,41 @@ def test_pndm_matches_diffusers():
         x_ref = ref.step(eps, t, x_ref).prev_sample
         x = ours.step(eps, t, x)
     exact(x, x_ref)
+
+
+def test_lcm_scheduler_matches_diffusers():
+    ref = diffusers.LCMScheduler.from_config(LCM_SCHEDULER)
+    ours = LCMScheduler(LCM_SCHEDULER)
+    for steps in (1, 2, 4, 10, 50):
+        ref.set_timesteps(steps)
+        ours.set_timesteps(steps)
+        exact(ours.timesteps, ref.timesteps)
+
+    sample = torch.randn(2, 4, 8, 8, generator=torch.Generator().manual_seed(1))
+    expected = sample.clone()
+    ref.set_timesteps(4)
+    ours.set_timesteps(4)
+    ref_generator = torch.Generator().manual_seed(42)
+    our_generator = torch.Generator().manual_seed(42)
+    for timestep in ref.timesteps:
+        model_output = torch.randn(
+            sample.shape, generator=torch.Generator().manual_seed(int(timestep))
+        )
+        expected, expected_denoised = ref.step(
+            model_output,
+            timestep,
+            expected,
+            generator=ref_generator,
+            return_dict=False,
+        )
+        sample, denoised = ours.step(
+            model_output,
+            timestep,
+            sample,
+            generator=our_generator,
+        )
+        exact(sample, expected)
+        exact(denoised, expected_denoised)
 
 
 def test_euler_matches_diffusers():

@@ -2,7 +2,7 @@ import json
 
 import pytest
 import torch
-from helpers import write_tiny_sd
+from helpers import write_tiny_lcm, write_tiny_sd
 
 from imagehub import pipeline
 from imagehub.backends.stable_diffusion import (
@@ -19,6 +19,11 @@ def tiny_sd(tmp_path_factory):
     return write_tiny_sd(tmp_path_factory.mktemp("tiny-sd"))
 
 
+@pytest.fixture(scope="module")
+def tiny_lcm(tmp_path_factory):
+    return write_tiny_lcm(tmp_path_factory.mktemp("tiny-lcm"))
+
+
 def test_generates_images_with_metadata(tiny_sd):
     with pipeline("t2i", backend="stable-diffusion", model=tiny_sd) as pipe:
         result = pipe("a cat", seed=3, steps=4, width=64, height=48, num_images=2)
@@ -28,6 +33,14 @@ def test_generates_images_with_metadata(tiny_sd):
     assert meta["seed"] == 3 and meta["steps"] == 4 and meta["scheduler"] == "pndm"
     assert meta["model_id"] is None and meta["revision"] is None
     assert meta["device"] == "cpu" and meta["dtype"] == "float32"
+
+
+def test_lcm_uses_checkpoint_scheduler_and_model_defaults(tiny_lcm):
+    result = pipeline("t2i", backend="lcm-dreamshaper-v7", model=tiny_lcm)("a cat", seed=3)
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["steps"] == 4
+    assert result.metadata["guidance"] == 8.0
+    assert result.metadata["scheduler"] == "lcm"
 
 
 def test_seed_is_reproducible_and_reported(tiny_sd):

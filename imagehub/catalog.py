@@ -143,6 +143,36 @@ for _version, _repo, _revision, _provenance, _weights in (
 
 _entries.append(
     ModelSpec(
+        id="lcm-dreamshaper-v7",
+        task=Task.T2I,
+        family="stable-diffusion",
+        source="https://huggingface.co/SimianLuo/LCM_Dreamshaper_v7",
+        repo_id="SimianLuo/LCM_Dreamshaper_v7",
+        revision="a85df6a8bd976cdd08b4fd8f3b73f229c9e54df5",
+        provenance="author",
+        catalog_id="lcm",
+        format="diffusers",
+        license="MIT",
+        config={"defaults": {"steps": 4, "guidance": 8.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-base-1.0",
         task=Task.T2I,
         family="stable-diffusion-xl",

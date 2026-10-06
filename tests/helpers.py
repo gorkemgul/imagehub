@@ -124,6 +124,26 @@ SD1_SCHEDULER = {
     "clip_sample": False,
 }
 
+LCM_SCHEDULER = {
+    "_class_name": "LCMScheduler",
+    "beta_end": 0.012,
+    "beta_schedule": "scaled_linear",
+    "beta_start": 0.00085,
+    "clip_sample": False,
+    "clip_sample_range": 1.0,
+    "dynamic_thresholding_ratio": 0.995,
+    "num_train_timesteps": 1000,
+    "original_inference_steps": 50,
+    "prediction_type": "epsilon",
+    "sample_max_value": 1.0,
+    "set_alpha_to_one": True,
+    "steps_offset": 0,
+    "thresholding": False,
+    "timestep_scaling": 10.0,
+    "timestep_spacing": "leading",
+    "trained_betas": None,
+}
+
 SDXL_SCHEDULER = {
     "beta_start": 0.00085,
     "beta_end": 0.012,
@@ -261,6 +281,47 @@ def write_tiny_sd(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
             "unet",
             UNet2DConditionModel,
             TINY_UNET_FILE_CONFIG,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_VAE_FILE_CONFIG, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
+def write_tiny_lcm(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight LCM snapshot in the published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.clip_text import CLIPTextModel
+    from imagehub.models.unet_2d import UNet2DConditionModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_tokenizer(root / "tokenizer")
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(LCM_SCHEDULER))
+    model_index = MODEL_INDEX | {
+        "_class_name": "LatentConsistencyModelPipeline",
+        "scheduler": ["diffusers", "LCMScheduler"],
+    }
+    (root / "model_index.json").write_text(json.dumps(model_index))
+    unet_config = TINY_UNET_FILE_CONFIG | {"sample_size": 4, "time_cond_proj_dim": 16}
+    for name, cls, config, weights in (
+        ("text_encoder", CLIPTextModel, TINY_TEXT_FILE_CONFIG, "model.safetensors"),
+        (
+            "unet",
+            UNet2DConditionModel,
+            unet_config,
             "diffusion_pytorch_model.safetensors",
         ),
         ("vae", AutoencoderKL, TINY_VAE_FILE_CONFIG, "diffusion_pytorch_model.safetensors"),
