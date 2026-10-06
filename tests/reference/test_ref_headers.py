@@ -131,8 +131,9 @@ def test_sdxl_published_tensor_headers_match_models(model_id, record):
     _assert_headers_match(result)
 
 
-def test_z_image_published_tensor_headers_match_models(record):
-    root = snapshot_dir("z-image-turbo")
+@pytest.mark.parametrize("model_id", ["z-image-turbo", "z-image"])
+def test_z_image_published_tensor_headers_match_models(model_id, record):
+    root = snapshot_dir(model_id)
     result = {}
     for component, cls in Z_IMAGE_COMPONENTS.items():
         with torch.device("meta"):
@@ -152,5 +153,5 @@ def test_z_image_published_tensor_headers_match_models(record):
             "mismatch": sorted(n for n in expected.keys() & got.keys() if expected[n] != got[n]),
             "tensors": len(shapes),
         }
-    record("header_z-image-turbo", **result)
+    record(f"header_{model_id}", **result)
     _assert_headers_match(result)
