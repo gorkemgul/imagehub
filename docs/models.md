@@ -37,6 +37,42 @@ fp16 parity are not in this release.
 bind whoever downloads and uses the weights. imagehub does not distribute weights.
 
 
+# Latent Consistency Model (LCM)
+
+Catalog: [`lcm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `lcm-dreamshaper-v7` · Task: `t2i`
+
+**Architecture.** The Stable Diffusion 1.x architecture distilled with latent consistency. Guidance
+enters the U-Net as an embedding instead of using classifier-free guidance. The checkpoint uses an
+LCM scheduler.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained lcm-dreamshaper-v7 checkpoints/lcm-dreamshaper-v7
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="lcm-dreamshaper-v7", model="checkpoints/lcm-dreamshaper-v7", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 4, `guidance` defaults to 8.0 and `width`/`height` default to 768.
+The other supported settings match Stable Diffusion 1.x. Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)), including the
+noise drawn between scheduler steps. MPS and CUDA runs are smoke tests only; there is no claim of
+exact equality on these devices.
+
+**Out of scope.** There is no safety checker or invisible watermark. img2img, other schedulers and
+fp16 parity are not in this release.
+
+**License.** The weights are licensed under MIT. imagehub does not distribute weights.
+
+
 # Stable Diffusion XL
 
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
