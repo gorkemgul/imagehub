@@ -11,6 +11,7 @@ def test_catalog_contents():
         "t2i": (
             "janus-pro-1b",
             "janus-pro-7b",
+            "lcm-dreamshaper-v7",
             "playground-v2.5",
             "qwen-image-2.1",
             "sd-turbo",
@@ -32,7 +33,7 @@ def test_catalog_contents():
     for spec in (
         value
         for value in MODEL_CATALOG.values()
-        if value.family == "stable-diffusion" and value.id != "sd-turbo"
+        if value.family == "stable-diffusion" and value.catalog_id == "stable-diffusion-1"
     ):
         assert spec.task is Task.T2I
         assert spec.family == "stable-diffusion"
@@ -70,6 +71,21 @@ def test_catalog_contents():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+    lcm = model_info("lcm-dreamshaper-v7")
+    assert lcm.task is Task.T2I
+    assert lcm.family == "stable-diffusion"
+    assert lcm.repo_id == "SimianLuo/LCM_Dreamshaper_v7"
+    assert lcm.revision == "a85df6a8bd976cdd08b4fd8f3b73f229c9e54df5"
+    assert lcm.provenance == "author"
+    assert lcm.catalog_id == "lcm"
+    assert lcm.format == "diffusers"
+    assert lcm.license == "MIT"
+    assert lcm.config == {"defaults": {"steps": 4, "guidance": 8.0}}
+    assert len(set(lcm.files)) == len(lcm.files) == 12
+    assert not any(
+        "fp16" in name or name.endswith((".onnx", ".ckpt", ".bin")) for name in lcm.files
+    )
+    assert not any(name.startswith(("safety_checker/", "feature_extractor/")) for name in lcm.files)
 
     sdxl = model_info("sdxl-base-1.0")
     assert sdxl.task is Task.T2I

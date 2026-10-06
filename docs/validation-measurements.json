@@ -114,6 +114,25 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_lcm-dreamshaper-v7": {
+    "guidance": 8.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      768,
+      768
+    ],
+    "steps": 4,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
   "e2e_multistep_sdxl-turbo": {
     "guidance": 2.0,
     "latents": {
@@ -462,6 +481,26 @@
     "mismatch": [],
     "missing": [],
     "tensors": 1018
+  },
+  "header_lcm-dreamshaper-v7": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 687
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
   },
   "header_playground-v2.5": {
     "text_encoder": {
@@ -861,6 +900,32 @@
     "tolerance": 0.0
   },
   "janus_vq_decode_janus-pro-7b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lcm_scheduler": {
+    "max_abs": 0.0,
+    "steps": 4,
+    "tolerance": 0.0
+  },
+  "lcm_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lcm_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timestep": 999,
+    "tolerance": 0.0
+  },
+  "lcm_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lcm_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -1482,6 +1547,11 @@
   "seed_e2e_janus-pro-7b": {
     "passed": true,
     "pixels_match": true,
+    "seed": 42
+  },
+  "seed_e2e_lcm-dreamshaper-v7": {
+    "passed": true,
+    "pixels_max_abs": 0,
     "seed": 42
   },
   "seed_e2e_playground-v2.5": {

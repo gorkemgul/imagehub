@@ -11,6 +11,7 @@ def test_family_and_model_aliases_are_registered():
     assert "stable-diffusion-xl" in names
     assert "stable-diffusion-3" in names
     assert {"sd-v1-1", "sd-v1-5"} <= set(names)
+    assert "lcm-dreamshaper-v7" in names
     assert "sdxl-base-1.0" in names
     assert "janus" in names
     assert "janus-pro-1b" in names
@@ -36,6 +37,10 @@ def test_catalog_alias_passes_model_id_but_family_does_not(tmp_path):
     family = backend_registry.create("t2i", "stable-diffusion", model=tmp_path)
     assert isinstance(alias, StableDiffusionBackend) and alias.model_id == "sd-v1-4"
     assert family.model_id is None
+
+    lcm_alias = backend_registry.create("t2i", "lcm-dreamshaper-v7", model=tmp_path)
+    assert isinstance(lcm_alias, StableDiffusionBackend)
+    assert lcm_alias.model_id == "lcm-dreamshaper-v7"
 
     xl_alias = backend_registry.create("t2i", "sdxl-base-1.0", model=tmp_path)
     xl_family = backend_registry.create("t2i", "stable-diffusion-xl", model=tmp_path)

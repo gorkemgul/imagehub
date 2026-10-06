@@ -47,6 +47,32 @@ For each of the five checkpoints, the tensor names and shapes of three component
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
 
+## LCM
+
+Validated on CPU in the same environment as above. `lcm-dreamshaper-v7` was loaded strictly from
+`SimianLuo/LCM_Dreamshaper_v7`. The observed difference in every comparison is **exactly 0**: on
+CPU in float32, the local implementation produces a bit-identical result to the reference. The
+full run took 3 minutes.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| CLIP text encoder | 0 | 0 |
+| U-Net single step with guidance embedding (t = 999) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 |
+| LCM scheduler (4 steps, seeded noise between steps) | 0 | 0 |
+| End to end: final latent / pixels (768×768, 4 steps, guidance 8.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse". The default run uses
+768×768, 4 steps and guidance 8.0. The LCM scheduler config's `steps_offset` is accepted and
+ignored because the reference never uses it.
+
+The header-only tensor check covered `text_encoder`, `unet` and `vae`: tensor counts
+196 / 687 / 248, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
 ## SD-Turbo
 
 Validated on CPU in the same environment as above. `sd-turbo` was loaded strictly from
@@ -340,20 +366,20 @@ The large-turbo run took 17 minutes.
 - There is no parity claim for float16 or bfloat16.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
 - Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
-  with trailing spacing for SD-Turbo, Euler for SDXL base and SSD-1B, Euler ancestral for SDXL
-  Turbo, EDM DPM-Solver++ for Playground v2.5, flow-match Euler for Z-Image and Stable Diffusion
-  3.5, and flow-match Euler with dynamic shifting for Qwen-Image 2.1.
+  with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
+  Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5, flow-match Euler for Z-Image
+  and Stable Diffusion 3.5, and flow-match Euler with dynamic shifting for Qwen-Image 2.1.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 396 passed, 227 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 408 passed, 237 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 8 passed, 1 skipped for `playground-v2.5`, and 9 passed for
-  `z-image-turbo`, 8 passed for `z-image`, 6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`,
-  9 passed for `qwen-image-2.1`, and 9 passed for `sd-turbo`. These
+  `z-image-turbo`, 8 passed for `z-image`, 6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, and 9 passed for
+  `qwen-image-2.1`, 9 passed for `sd-turbo`, and 7 passed for `lcm-dreamshaper-v7`. These
   include structural parity with random weights, end-to-end parity with a small model,
   real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3.5 reference tests (CPU): 10 passed each for `sd3.5-medium` and

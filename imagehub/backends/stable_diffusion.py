@@ -26,6 +26,7 @@ from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel
 from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.schedulers.euler import EulerDiscreteScheduler
+from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
 from imagehub.tokenization import CLIPTokenizer
 from imagehub.types import ImageResult, T2IRequest
@@ -46,12 +47,16 @@ LATENT_SCALE = 8
 _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
 
 
-def _scheduler(config: dict[str, Any]) -> tuple[PNDMScheduler | EulerDiscreteScheduler, str]:
+def _scheduler(
+    config: dict[str, Any],
+) -> tuple[PNDMScheduler | EulerDiscreteScheduler | LCMScheduler, str]:
     class_name = config.get("_class_name", "PNDMScheduler")
     if class_name == "PNDMScheduler":
         return PNDMScheduler(config), "pndm"
     if class_name == "EulerDiscreteScheduler":
         return EulerDiscreteScheduler(config), "euler"
+    if class_name == "LCMScheduler":
+        return LCMScheduler(config), "lcm"
     raise ValueError(f"Unsupported Stable Diffusion scheduler {class_name}")
 
 
@@ -76,6 +81,21 @@ def initial_latents(seed: int, shape: tuple[int, ...]) -> Tensor:
     """Noise drawn like diffusers with a CPU ``torch.Generator`` seeded by ``seed``."""
     generator = torch.Generator("cpu").manual_seed(seed)
     return torch.randn(shape, generator=generator, dtype=torch.float32)
+
+
+def guidance_scale_embedding(
+    guidance: Tensor, embedding_dim: int, dtype: torch.dtype = torch.float32
+) -> Tensor:
+    """Embed Imagen-form guidance weights exactly as the LCM reference pipeline."""
+    guidance = guidance * 1000.0
+    half_dim = embedding_dim // 2
+    scale = torch.log(torch.tensor(10000.0)) / (half_dim - 1)
+    frequencies = torch.exp(torch.arange(half_dim, dtype=dtype) * -scale)
+    embedding = guidance.to(dtype)[:, None] * frequencies[None, :]
+    embedding = torch.cat([torch.sin(embedding), torch.cos(embedding)], dim=1)
+    if embedding_dim % 2 == 1:
+        embedding = torch.nn.functional.pad(embedding, (0, 1))
+    return embedding
 
 
 def _hint(root: Path, model_id: str | None) -> str:
@@ -141,20 +161,43 @@ def denoise(
     steps: int,
     guidance: float,
     latents: Tensor,
+    generator: torch.Generator | None = None,
 ) -> Tensor:
-    """Run the PLMS loop from initial noise ``latents`` (on the model device); return latents."""
+    """Run the checkpoint scheduler from initial noise and return its final denoised latents."""
     dtype = components.unet.conv_in.weight.dtype
     batch = latents.shape[0]
     cond = encode_prompt(components, prompt, latents.device).to(dtype).repeat(batch, 1, 1)
+    scheduler, _ = _scheduler(components.scheduler_config)
+    scheduler.set_timesteps(steps)
+    latents = latents.to(dtype) * scheduler.init_noise_sigma
+    if isinstance(scheduler, LCMScheduler):
+        dimension = components.unet.config["time_cond_proj_dim"]
+        assert isinstance(dimension, int)
+        weights = torch.tensor(guidance - 1).repeat(batch)
+        timestep_cond = guidance_scale_embedding(weights, dimension).to(
+            device=latents.device, dtype=dtype
+        )
+        denoised = latents
+        for timestep in scheduler.timesteps:
+            model_output = components.unet(
+                latents,
+                timestep,
+                cond,
+                timestep_cond=timestep_cond,
+            )
+            latents, denoised = scheduler.step(
+                model_output,
+                timestep,
+                latents,
+                generator=generator,
+            )
+        return denoised
     use_cfg = guidance > 1.0
     if use_cfg:
         uncond = encode_prompt(components, negative_prompt or "", latents.device)
         context = torch.cat([uncond.to(dtype).repeat(batch, 1, 1), cond])
     else:
         context = cond
-    scheduler, _ = _scheduler(components.scheduler_config)
-    scheduler.set_timesteps(steps)
-    latents = latents.to(dtype) * scheduler.init_noise_sigma
     for t in scheduler.timesteps:
         model_input = torch.cat([latents] * 2) if use_cfg else latents
         if isinstance(scheduler, EulerDiscreteScheduler):
@@ -163,6 +206,7 @@ def denoise(
         if use_cfg:
             noise_uncond, noise_text = noise.chunk(2)
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
+        assert isinstance(scheduler, PNDMScheduler | EulerDiscreteScheduler)
         latents = scheduler.step(noise, t, latents)
     return latents
 
@@ -214,10 +258,12 @@ class StableDiffusionBackend(TextToImageBackend):
             raise ValueError("dtype must be torch.float32, torch.float16 or torch.bfloat16")
         self.components: StableDiffusionComponents | None = None
         self.snapshot: dict[str, Any] | None = None
-        model_defaults = {}
-        if model_id is not None and model_id in MODEL_CATALOG:
-            model_defaults = dict(MODEL_CATALOG[model_id].config.get("defaults", {}))
-        self.option_defaults = OPTION_DEFAULTS | model_defaults
+        defaults = (
+            dict(MODEL_CATALOG[model_id].config.get("defaults", {}))
+            if model_id is not None and model_id in MODEL_CATALOG
+            else {}
+        )
+        self.option_defaults = OPTION_DEFAULTS | defaults
 
     def validate_options(self, inputs: T2IRequest, options: dict[str, Any]) -> dict[str, Any]:
         merged = dict(inputs.parameters) | options
@@ -228,7 +274,7 @@ class StableDiffusionBackend(TextToImageBackend):
         if o["width"] is None or o["height"] is None:
             try:
                 sample_size = int(read_json(self.source / "unet" / "config.json")["sample_size"])
-            except (FileNotFoundError, KeyError):
+            except (FileNotFoundError, KeyError, TypeError):
                 sample_size = 64
             if o["width"] is None:
                 o["width"] = sample_size * LATENT_SCALE
@@ -292,6 +338,7 @@ class StableDiffusionBackend(TextToImageBackend):
     def _infer(self, inputs: T2IRequest, **o: Any) -> ImageResult:
         assert self.components is not None
         seed, latents = o["seed"], o["latents"]
+        generator = None
         if latents is None:
             if seed is None:
                 seed = secrets.randbits(63)
@@ -301,7 +348,8 @@ class StableDiffusionBackend(TextToImageBackend):
                 o["height"] // LATENT_SCALE,
                 o["width"] // LATENT_SCALE,
             )
-            latents = initial_latents(seed, shape)
+            generator = torch.Generator("cpu").manual_seed(seed)
+            latents = torch.randn(shape, generator=generator, dtype=torch.float32)
         final = denoise(
             self.components,
             prompt=inputs.prompt,
@@ -309,6 +357,7 @@ class StableDiffusionBackend(TextToImageBackend):
             steps=o["steps"],
             guidance=float(o["guidance"]),
             latents=latents.to(torch.float32).to(self.device),
+            generator=generator,
         )
         pixels = decode_latents(self.components, final)
         snapshot = self.snapshot or {}

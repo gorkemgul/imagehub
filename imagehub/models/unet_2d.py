@@ -41,6 +41,7 @@ UNET_DEFAULTS: dict[str, Any] = {
     "norm_eps": 1e-5,
     "flip_sin_to_cos": True,
     "freq_shift": 0,
+    "time_cond_proj_dim": None,
 }
 _UNSUPPORTED_DEFAULTS: dict[str, Any] = {
     "center_input_sample": False,
@@ -60,7 +61,6 @@ _UNSUPPORTED_DEFAULTS: dict[str, Any] = {
     "time_embedding_dim": None,
     "time_embedding_act_fn": None,
     "timestep_post_act": None,
-    "time_cond_proj_dim": None,
     "conv_in_kernel": 3,
     "conv_out_kernel": 3,
     "encoder_hid_dim": None,
@@ -344,12 +344,18 @@ class MidBlock(nn.Module):
 
 
 class TimestepEmbedding(nn.Module):
-    def __init__(self, in_dim: int, dim: int) -> None:
+    def __init__(self, in_dim: int, dim: int, cond_proj_dim: int | None = None) -> None:
         super().__init__()
         self.linear_1 = nn.Linear(in_dim, dim)
+        self.cond_proj = (
+            nn.Linear(cond_proj_dim, in_dim, bias=False) if cond_proj_dim is not None else None
+        )
         self.linear_2 = nn.Linear(dim, dim)
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x: Tensor, condition: Tensor | None = None) -> Tensor:
+        if condition is not None:
+            assert self.cond_proj is not None
+            x = x + self.cond_proj(condition)
         return self.linear_2(F.silu(self.linear_1(x)))
 
 
@@ -408,7 +414,7 @@ class UNet2DConditionModel(NativeModel):
         context_dims = per_block(cfg["cross_attention_dim"], "cross_attention_dim")
         temb = ch[0] * 4
         self.conv_in = nn.Conv2d(cfg["in_channels"], ch[0], 3, padding=1)
-        self.time_embedding = TimestepEmbedding(ch[0], temb)
+        self.time_embedding = TimestepEmbedding(ch[0], temb, cfg["time_cond_proj_dim"])
         self.down_blocks = nn.ModuleList()
         out_ch = ch[0]
         for i, kind in enumerate(cfg["down_block_types"]):
@@ -487,6 +493,7 @@ class UNet2DConditionModel(NativeModel):
         timestep: Tensor,
         context: Tensor,
         *,
+        timestep_cond: Tensor | None = None,
         text_embeds: Tensor | None = None,
         time_ids: Tensor | None = None,
     ) -> Tensor:
@@ -497,7 +504,7 @@ class UNet2DConditionModel(NativeModel):
             flip_sin_to_cos=self.config["flip_sin_to_cos"],
             shift=self.config["freq_shift"],
         ).to(sample.dtype)
-        temb = self.time_embedding(t)
+        temb = self.time_embedding(t, timestep_cond)
         if self.config["addition_embed_type"] == "text_time":
             if text_embeds is None:
                 raise ValueError("text_time conditioning requires text_embeds")
