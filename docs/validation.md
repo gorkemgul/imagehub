@@ -47,6 +47,34 @@ For each of the five checkpoints, the tensor names and shapes of three component
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
 
+## SD-Turbo
+
+Validated on CPU in the same environment as above. `sd-turbo` was loaded strictly from
+`stabilityai/sd-turbo`. The observed difference in every comparison is **exactly 0**: on CPU in
+float32, the local implementation produces a bit-identical result to the reference. The full run
+took 1 minute.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tokenizer token ids (5 prompts) | identical | exact |
+| OpenCLIP-H text encoder | 0 | 0 |
+| U-Net single step (t = 999, 499) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 |
+| Euler timesteps / sigmas with trailing spacing (1, 2 and 4 steps) | 0 / 0 | 0 |
+| End to end: final latent / pixels (512×512, 1 step, guidance 0.0) | 0 / 0 | 0 / 0 |
+| Guided end to end: final latent / pixels (512×512, 4 steps, guidance 2.0, negative prompt) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
+`seed=1234`. The default run uses 512×512, 1 step and guidance 0.0; the guided run uses 4 steps,
+guidance 2.0 and a negative prompt.
+
+The header-only tensor check covered `text_encoder`, `unet` and `vae`: tensor counts
+372 / 686 / 248, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
 ## SDXL
 
 Validated on CPU on October 5, 2026, in the same environment as above. Four checkpoints, `full`:
@@ -300,20 +328,20 @@ The large-turbo run took 17 minutes.
 - There is no parity claim for float16 or bfloat16.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
 - Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
-  for SDXL base and SSD-1B, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
-  flow-match Euler for Z-Image and Stable Diffusion 3.5, and flow-match Euler with dynamic shifting
-  for Qwen-Image 2.1.
+  with trailing spacing for SD-Turbo, Euler for SDXL base and SSD-1B, Euler ancestral for SDXL
+  Turbo, EDM DPM-Solver++ for Playground v2.5, flow-match Euler for Z-Image and Stable Diffusion
+  3.5, and flow-match Euler with dynamic shifting for Qwen-Image 2.1.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 387 passed, 232 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 393 passed, 219 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 8 passed, 1 skipped for `playground-v2.5`, and 9 passed for
   `z-image-turbo`, 6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, and 9 passed for
-  `qwen-image-2.1`. These
+  `qwen-image-2.1`, and 9 passed for `sd-turbo`. These
   include structural parity with random weights, end-to-end parity with a small model,
   real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3.5 reference tests (CPU): 10 passed each for `sd3.5-medium` and
@@ -353,3 +381,5 @@ The SDXL validation found three more differences:
 9. **Janus return-sequence configuration.** In transformers 5.18.0, setting
    `model.generation_config.num_return_sequences` as the model card shows fails validation. The
    equivalent `generate(num_return_sequences=...)` argument is used instead.
+10. **Euler initial noise scale with trailing spacing.** With `timestep_spacing="trailing"`, the
+    Euler scheduler's initial noise scale is the largest sigma itself, not `sqrt(sigma² + 1)`.

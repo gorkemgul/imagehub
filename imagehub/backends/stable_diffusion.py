@@ -18,12 +18,14 @@ import torch
 from torch import Tensor
 
 from imagehub.backends.base import TextToImageBackend
+from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
 from imagehub.tokenization import CLIPTokenizer
 from imagehub.types import ImageResult, T2IRequest
@@ -33,8 +35,8 @@ OPTION_DEFAULTS: dict[str, Any] = {
     "negative_prompt": None,
     "steps": 50,
     "guidance": 7.5,
-    "width": 512,
-    "height": 512,
+    "width": None,
+    "height": None,
     "num_images": 1,
     "seed": None,
     "latents": None,
@@ -42,6 +44,15 @@ OPTION_DEFAULTS: dict[str, Any] = {
 LATENT_CHANNELS = 4
 LATENT_SCALE = 8
 _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
+
+
+def _scheduler(config: dict[str, Any]) -> tuple[PNDMScheduler | EulerDiscreteScheduler, str]:
+    class_name = config.get("_class_name", "PNDMScheduler")
+    if class_name == "PNDMScheduler":
+        return PNDMScheduler(config), "pndm"
+    if class_name == "EulerDiscreteScheduler":
+        return EulerDiscreteScheduler(config), "euler"
+    raise ValueError(f"Unsupported Stable Diffusion scheduler {class_name}")
 
 
 def resolve_device(device: str | torch.device) -> torch.device:
@@ -141,11 +152,13 @@ def denoise(
         context = torch.cat([uncond.to(dtype).repeat(batch, 1, 1), cond])
     else:
         context = cond
-    scheduler = PNDMScheduler(components.scheduler_config)
+    scheduler, _ = _scheduler(components.scheduler_config)
     scheduler.set_timesteps(steps)
     latents = latents.to(dtype) * scheduler.init_noise_sigma
     for t in scheduler.timesteps:
         model_input = torch.cat([latents] * 2) if use_cfg else latents
+        if isinstance(scheduler, EulerDiscreteScheduler):
+            model_input = scheduler.scale_model_input(model_input, t)
         noise = components.unet(model_input, t, context)
         if use_cfg:
             noise_uncond, noise_text = noise.chunk(2)
@@ -201,13 +214,26 @@ class StableDiffusionBackend(TextToImageBackend):
             raise ValueError("dtype must be torch.float32, torch.float16 or torch.bfloat16")
         self.components: StableDiffusionComponents | None = None
         self.snapshot: dict[str, Any] | None = None
+        model_defaults = {}
+        if model_id is not None and model_id in MODEL_CATALOG:
+            model_defaults = dict(MODEL_CATALOG[model_id].config.get("defaults", {}))
+        self.option_defaults = OPTION_DEFAULTS | model_defaults
 
     def validate_options(self, inputs: T2IRequest, options: dict[str, Any]) -> dict[str, Any]:
         merged = dict(inputs.parameters) | options
         unknown = sorted(set(merged) - set(OPTION_DEFAULTS))
         if unknown:
             raise TypeError(f"Unknown Stable Diffusion options: {', '.join(unknown)}")
-        o = OPTION_DEFAULTS | merged
+        o = self.option_defaults | merged
+        if o["width"] is None or o["height"] is None:
+            try:
+                sample_size = int(read_json(self.source / "unet" / "config.json")["sample_size"])
+            except (FileNotFoundError, KeyError):
+                sample_size = 64
+            if o["width"] is None:
+                o["width"] = sample_size * LATENT_SCALE
+            if o["height"] is None:
+                o["height"] = sample_size * LATENT_SCALE
         if o["negative_prompt"] is not None and not isinstance(o["negative_prompt"], str):
             raise TypeError("negative_prompt must be a string or None")
         for name in ("steps", "num_images", "width", "height"):
@@ -295,7 +321,7 @@ class StableDiffusionBackend(TextToImageBackend):
             "width": o["width"],
             "height": o["height"],
             "negative_prompt": o["negative_prompt"],
-            "scheduler": "pndm",
+            "scheduler": _scheduler(self.components.scheduler_config)[1],
             "device": str(self.device),
             "dtype": str(self.dtype).removeprefix("torch."),
         }

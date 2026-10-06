@@ -37,6 +37,43 @@ fp16 parity are not in this release.
 bind whoever downloads and uses the weights. imagehub does not distribute weights.
 
 
+# SD-Turbo
+
+Catalog: [`sdxl-turbo`](https://github.com/gorkemgul/awesome-text-to-image-architectures) (variant
+"SD Turbo") · Models: `sd-turbo` · Task: `t2i`
+
+**Architecture.** A distilled Stable Diffusion 2.1-based model with a frozen OpenCLIP-H text
+encoder, U-Net and f=8 KL autoencoder. The checkpoint publishes an Euler scheduler with
+`timestep_spacing="trailing"`. Its native image size is 512×512.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained sd-turbo checkpoints/sd-turbo
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="sd-turbo", model="checkpoints/sd-turbo", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 1, `guidance` defaults to 0.0 and `width`/`height` default to
+512. `negative_prompt`, `num_images`, `seed` and `latents` are also supported. Unrecognized
+settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** There is no safety checker or invisible watermark. img2img, other schedulers and
+fp16 parity are not in this release.
+
+**License.** The weights use the `sai-nc-community` license; see the license for its restrictions.
+imagehub does not distribute weights.
+
+
 # Stable Diffusion XL
 
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

@@ -15,6 +15,11 @@ FIXTURES = Path(__file__).parent / "fixtures"
     ("scheduler_cls", "config_path", "training_tensor"),
     [
         (EulerDiscreteScheduler, "sdxl_configs/scheduler.json", "_training_sigmas"),
+        (
+            EulerDiscreteScheduler,
+            "sd_turbo_configs/scheduler_scheduler_config.json",
+            "_training_sigmas",
+        ),
         (PNDMScheduler, "sd1_configs/v1-5/scheduler.json", "alphas_cumprod"),
         (PNDMScheduler, "sd1_configs/v1-1/scheduler.json", "alphas_cumprod"),
     ],
@@ -47,11 +52,28 @@ def test_requires_supported_release_settings():
         {"prediction_type": "v_prediction"},
         {"interpolation_type": "log_linear"},
         {"use_karras_sigmas": True},
-        {"timestep_spacing": "trailing"},
         {"beta_schedule": "linear"},
     ):
         with pytest.raises(ValueError, match="Unsupported Euler setting"):
             EulerDiscreteScheduler(SDXL_SCHEDULER | option)
+
+
+@pytest.mark.parametrize(
+    ("steps", "timesteps"),
+    [(1, [999.0]), (2, [999.0, 499.0]), (4, [999.0, 749.0, 499.0, 249.0])],
+)
+def test_trailing_timesteps_match_sd_turbo(steps, timesteps):
+    config = json.loads(
+        (FIXTURES / "sd_turbo_configs/scheduler_scheduler_config.json").read_text(encoding="utf-8")
+    )
+    scheduler = EulerDiscreteScheduler(config)
+    scheduler.set_timesteps(steps)
+    assert scheduler.timesteps.tolist() == timesteps
+    indices = scheduler.timesteps.to(torch.int64)
+    expected_sigmas = torch.cat(
+        [scheduler._training_sigmas[indices], torch.zeros(1, dtype=torch.float32)]
+    )
+    assert torch.equal(scheduler.sigmas, expected_sigmas)
 
 
 def test_set_timesteps_resets_state_and_outputs_float32():
