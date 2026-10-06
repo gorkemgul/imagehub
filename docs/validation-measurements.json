@@ -26,6 +26,10 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_flux2-klein-4b": {
+    "max_pixel_diff": 0,
+    "passed": true
+  },
   "e2e_guided_qwen-image-2.1": {
     "latents": {
       "max_abs": 0.0,
@@ -546,6 +550,62 @@
   },
   "environment": {
     "torch_threads": 12
+  },
+  "flux2_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux2_scheduler": {
+    "exact": true,
+    "mu": 2.291179894115571,
+    "tolerance": "exact"
+  },
+  "flux2_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux2_tokenizer": {
+    "ids_match": true,
+    "masks_match": true,
+    "prompt_string_match": true,
+    "tolerance": "exact"
+  },
+  "flux2_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux2_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux2_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "header_flux2-klein-4b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 398
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 169
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 251
+    }
   },
   "header_janus-pro-1b": {
     "extra": [],
@@ -1767,6 +1827,11 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "seed_e2e_flux2-klein-4b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42
   },
   "seed_e2e_janus-pro-1b": {
     "passed": true,

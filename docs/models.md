@@ -280,6 +280,44 @@ fp16/bf16 parity are not in this release.
 not distribute weights.
 
 
+# FLUX.2 klein
+
+Catalog: [`flux-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `flux2-klein-4b` · Task: `t2i`
+
+**Architecture.** A Qwen3-4B text encoder supplies hidden states from layers 9, 18 and 27, which
+are stacked for prompt conditioning. A FLUX.2 transformer uses 5 double-stream blocks followed by
+20 single-stream blocks. The FLUX.2 VAE has 32 latent channels; its latents are patchified 2×2 and
+normalized with batch-norm statistics. The flow-match Euler scheduler uses an empirical shift. The
+native image size is 1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained flux2-klein-4b checkpoints/flux2-klein-4b
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="flux2-klein-4b", model="checkpoints/flux2-klein-4b", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 4, `guidance` defaults to 1.0 and `width`/`height` default to
+1024. The other supported options are `num_images`, `seed` and `latents`. Unrecognized settings
+raise an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as the pinned
+diffusers reference with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is no claim of exact
+equality on these devices.
+
+**Out of scope.** Image editing, condition images and fp16/bf16 parity are not supported.
+
+**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+
+
 # Qwen-Image 2.1
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
