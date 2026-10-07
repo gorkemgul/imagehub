@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -40,6 +41,9 @@ def _use_gqa_in_sdpa(attention_mask: Tensor | None, key: Tensor, value: Tensor) 
     if torch.backends.mps.is_available():
         return tuple(int(part) for part in torch.__version__.split(".")[:2]) >= (2, 13)
     return attention_mask is None and key.shape[-1] == value.shape[-1] <= 256
+
+
+_LEGACY_TEXT_PREFIX = re.compile(r"^model(?!\.(language_model|vit|vision_tower))")
 
 
 class Qwen25VLRMSNorm(Qwen3RMSNorm):
@@ -254,10 +258,18 @@ class Qwen25VLTextModel(NativeModel):
         self.lm_head = nn.Linear(text_config["hidden_size"], text_config["vocab_size"], bias=False)
 
     def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
-        """Discard the vision tower from a full conditional-generation checkpoint."""
+        """Discard the vision tower from a full conditional-generation checkpoint.
+
+        Checkpoints saved with transformers 4.x name the text model ``model.layers.*``; transformers
+        5 renames ``model.*`` (outside ``language_model``) to ``model.language_model.*`` on load.
+        """
+        renamed = {
+            _LEGACY_TEXT_PREFIX.sub("model.language_model", name, count=1): tensor
+            for name, tensor in state.items()
+        }
         return {
             name: tensor
-            for name, tensor in state.items()
+            for name, tensor in renamed.items()
             if name.startswith("model.language_model.") or name == "lm_head.weight"
         }
 
