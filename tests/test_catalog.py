@@ -18,6 +18,8 @@ def test_catalog_contents():
             "janus-pro-1b",
             "janus-pro-7b",
             "lcm-dreamshaper-v7",
+            "pixart-alpha-xl-1024",
+            "pixart-sigma-xl-1024",
             "playground-v2.5",
             "qwen-image-2.1",
             "sd-turbo",
@@ -367,6 +369,55 @@ def test_hunyuan_dit_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+
+
+def test_pixart_catalog_entries():
+    common = (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.json",
+        "text_encoder/model-00001-of-00002.safetensors",
+        "text_encoder/model-00002-of-00002.safetensors",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/spiece.model",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
+    expected = {
+        "pixart-sigma-xl-1024": (
+            "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+            "e102b3591cc82e97071b8b4cb90d834d0c487207",
+            "pixart-sigma",
+            300,
+            common,
+        ),
+        "pixart-alpha-xl-1024": (
+            "PixArt-alpha/PixArt-XL-2-1024-MS",
+            "b89adadeccd9ead2adcb9fa2825d3fabec48d404",
+            "pixart-alpha",
+            120,
+            common[:6] + ("tokenizer/added_tokens.json",) + common[6:],
+        ),
+    }
+    for model_id, (repo, revision, catalog_id, max_length, files) in expected.items():
+        spec = model_info(model_id)
+        assert spec.task is Task.T2I
+        assert spec.family == "pixart"
+        assert spec.repo_id == repo
+        assert spec.revision == revision
+        assert spec.provenance == "author"
+        assert spec.catalog_id == catalog_id
+        assert spec.format == "diffusers"
+        assert spec.license == "CreativeML-OpenRAIL++-M"
+        assert not spec.gated
+        assert spec.config == {
+            "defaults": {"steps": 20, "guidance": 4.5, "max_sequence_length": max_length}
+        }
+        assert spec.files == files
 
 
 def test_unknown_model_lists_available():
