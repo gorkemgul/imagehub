@@ -31,9 +31,9 @@ _REQUIRED = {
     "use_karras_sigmas": False,
     "use_exponential_sigmas": False,
     "use_beta_sigmas": False,
-    "time_shift_type": "exponential",
     "stochastic_sampling": False,
 }
+_TIME_SHIFT_TYPES = ("exponential", "linear")
 
 
 def z_image_sigmas(steps: int) -> list[float]:
@@ -57,8 +57,11 @@ def _float32(value: float) -> float:
     return struct.unpack("f", struct.pack("f", value))[0]
 
 
-def _time_shift_exponential(values: list[float], mu: float, *, float32: bool) -> list[float]:
-    exp_mu = math.exp(mu)
+def _time_shift(
+    values: list[float], mu: float, *, float32: bool, kind: str = "exponential"
+) -> list[float]:
+    """The reference's ``_time_shift_exponential`` / ``_time_shift_linear`` with sigma 1.0."""
+    exp_mu = math.exp(mu) if kind == "exponential" else mu
     if not float32:
         return [exp_mu / (exp_mu + (1 / value - 1)) for value in values]
     exp_mu = _float32(exp_mu)
@@ -100,6 +103,10 @@ class FlowMatchEulerDiscreteScheduler:
         for key, expected in _REQUIRED.items():
             if cfg[key] != expected:
                 raise ValueError(f"Unsupported FlowMatch Euler setting {key}={cfg[key]!r}")
+        if cfg["time_shift_type"] not in _TIME_SHIFT_TYPES:
+            raise ValueError(
+                f"Unsupported FlowMatch Euler setting time_shift_type={cfg['time_shift_type']!r}"
+            )
 
         self.config = cfg
         self.shift = float(cfg["shift"])
@@ -154,15 +161,18 @@ class FlowMatchEulerDiscreteScheduler:
                 values = [timestep / self.config["num_train_timesteps"] for timestep in timesteps]
             if self.config["use_dynamic_shifting"]:
                 assert mu is not None
-                values = _time_shift_exponential(values, mu, float32=False)
+                values = _time_shift(values, mu, float32=False, kind=self.config["time_shift_type"])
             else:
                 shifted = [self.shift * sigma / (1 + (self.shift - 1) * sigma) for sigma in values]
                 schedule = torch.tensor(shifted, dtype=torch.float32)
         else:
             if self.config["use_dynamic_shifting"]:
                 assert mu is not None
-                values = _time_shift_exponential(
-                    [float(value) for value in sigmas], mu, float32=True
+                values = _time_shift(
+                    [float(value) for value in sigmas],
+                    mu,
+                    float32=True,
+                    kind=self.config["time_shift_type"],
                 )
             else:
                 schedule = torch.tensor(sigmas, dtype=torch.float32)
