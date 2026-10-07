@@ -132,6 +132,10 @@ respectively 2, 4 and 8 steps, guidance 0.0, and Euler scheduling with
 LCM scheduler built from the SDXL scheduler configuration and defaults to 1 step, guidance 0.0,
 explicit timesteps `[800]` and 1024×1024.
 
+![hyper-sdxl-1step, seed 42 at the defaults: diffusers on the left, imagehub on the right](images/hyper-sdxl-1step.webp)
+
+*"a photograph of an astronaut riding a horse", seed 42, defaults. Left: diffusers; right: imagehub (pixel-identical).*
+
 **Usage.**
 
 ```bash
