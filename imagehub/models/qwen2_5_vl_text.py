@@ -43,7 +43,9 @@ def _use_gqa_in_sdpa(attention_mask: Tensor | None, key: Tensor, value: Tensor) 
     return attention_mask is None and key.shape[-1] == value.shape[-1] <= 256
 
 
-_LEGACY_TEXT_PREFIX = re.compile(r"^model(?!\.(language_model|vit|vision_tower))")
+_LEGACY_TEXT_PREFIX = re.compile(r"^model(?!\.(language_model|visual|vit|vision_tower))")
+
+KeyValueCache = list[tuple[Tensor, Tensor] | None]
 
 
 class Qwen25VLRMSNorm(Qwen3RMSNorm):
@@ -99,8 +101,9 @@ def apply_multimodal_rotary_pos_emb(
 
 
 class Qwen25VLAttention(nn.Module):
-    def __init__(self, config: Mapping[str, Any]) -> None:
+    def __init__(self, config: Mapping[str, Any], layer_index: int) -> None:
         super().__init__()
+        self.layer_index = layer_index
         hidden_size = config["hidden_size"]
         self.num_heads = config["num_attention_heads"]
         self.num_key_value_heads = config["num_key_value_heads"]
@@ -119,6 +122,7 @@ class Qwen25VLAttention(nn.Module):
         hidden_states: Tensor,
         position_embeddings: tuple[Tensor, Tensor],
         attention_mask: Tensor | None,
+        key_value_cache: KeyValueCache | None = None,
     ) -> Tensor:
         batch_size, sequence_length, _ = hidden_states.shape
         query = self.q_proj(hidden_states).view(
@@ -137,11 +141,19 @@ class Qwen25VLAttention(nn.Module):
             query, key, position_embeddings[0], position_embeddings[1]
         )
 
-        # The pipeline calls the text encoder with transformers' default ``use_cache=True``; the
-        # key-value cache stores keys and values as contiguous copies, and the SDPA kernel's
-        # summation order depends on that layout.
-        key = key.contiguous()
-        value = value.contiguous()
+        if key_value_cache is not None:
+            cached = key_value_cache[self.layer_index]
+            if cached is None:
+                cached_key = torch.tensor([], dtype=key.dtype, device=key.device)
+                cached_value = torch.tensor([], dtype=value.dtype, device=value.device)
+            else:
+                cached_key, cached_value = cached
+            key = torch.cat([cached_key, key], dim=-2)
+            value = torch.cat([cached_value, value], dim=-2)
+            key_value_cache[self.layer_index] = (key, value)
+        else:
+            key = key.contiguous()
+            value = value.contiguous()
 
         sdpa_kwargs: dict[str, bool] = {}
         if self.num_key_value_groups > 1:
@@ -157,7 +169,7 @@ class Qwen25VLAttention(nn.Module):
             attn_mask=attention_mask,
             dropout_p=self.attention_dropout if self.training else 0.0,
             scale=self.scaling,
-            is_causal=attention_mask is None,
+            is_causal=attention_mask is None and query.shape[2] > 1,
             **sdpa_kwargs,
         )
         output = output.transpose(1, 2).contiguous().reshape(batch_size, sequence_length, -1)
@@ -165,9 +177,9 @@ class Qwen25VLAttention(nn.Module):
 
 
 class Qwen25VLDecoderLayer(nn.Module):
-    def __init__(self, config: Mapping[str, Any]) -> None:
+    def __init__(self, config: Mapping[str, Any], layer_index: int) -> None:
         super().__init__()
-        self.self_attn = Qwen25VLAttention(config)
+        self.self_attn = Qwen25VLAttention(config, layer_index)
         self.mlp = Qwen25VLMLP(config)
         self.input_layernorm = Qwen25VLRMSNorm(config["hidden_size"], config["rms_norm_eps"])
         self.post_attention_layernorm = Qwen25VLRMSNorm(
@@ -179,10 +191,13 @@ class Qwen25VLDecoderLayer(nn.Module):
         hidden_states: Tensor,
         position_embeddings: tuple[Tensor, Tensor],
         attention_mask: Tensor | None,
+        key_value_cache: KeyValueCache | None = None,
     ) -> Tensor:
         residual = hidden_states
         hidden_states = self.input_layernorm(hidden_states)
-        hidden_states = self.self_attn(hidden_states, position_embeddings, attention_mask)
+        hidden_states = self.self_attn(
+            hidden_states, position_embeddings, attention_mask, key_value_cache
+        )
         hidden_states = residual + hidden_states
         residual = hidden_states
         hidden_states = self.post_attention_layernorm(hidden_states)
@@ -195,7 +210,7 @@ class Qwen25VLLanguageModel(nn.Module):
         super().__init__()
         self.embed_tokens = nn.Embedding(config["vocab_size"], config["hidden_size"])
         self.layers = nn.ModuleList(
-            Qwen25VLDecoderLayer(config) for _ in range(config["num_hidden_layers"])
+            Qwen25VLDecoderLayer(config, index) for index in range(config["num_hidden_layers"])
         )
         self.norm = Qwen25VLRMSNorm(config["hidden_size"], config["rms_norm_eps"])
         self.rotary_emb = Qwen25VLRotaryEmbedding(config)
@@ -203,12 +218,18 @@ class Qwen25VLLanguageModel(nn.Module):
     def forward(
         self,
         input_ids: Tensor,
-        attention_mask: Tensor,
+        attention_mask: Tensor | None,
         position_ids: Tensor | None = None,
+        key_value_cache: KeyValueCache | None = None,
     ) -> tuple[Tensor, ...]:
         hidden_states = self.embed_tokens(input_ids)
         sequence_length = hidden_states.shape[1]
-        positions = torch.arange(sequence_length, device=hidden_states.device)
+        past_length = 0
+        if key_value_cache is not None and key_value_cache[0] is not None:
+            past_length = key_value_cache[0][0].shape[-2]
+        positions = torch.arange(
+            past_length, past_length + sequence_length, device=hidden_states.device
+        )
         if position_ids is None:
             position_ids = positions.view(1, 1, -1).expand(3, hidden_states.shape[0], -1)
         elif position_ids.ndim == 2:
@@ -216,13 +237,14 @@ class Qwen25VLLanguageModel(nn.Module):
         position_embeddings = self.rotary_emb(hidden_states, position_ids)
 
         causal_mask = None
-        if not bool(attention_mask.bool().all()):
-            causal_mask = positions[:, None] >= positions[None, :]
+        if attention_mask is not None and not bool(attention_mask.bool().all()):
+            key_positions = torch.arange(attention_mask.shape[-1], device=hidden_states.device)
+            causal_mask = positions[:, None] >= key_positions[None, :]
             causal_mask = causal_mask[None, None] & attention_mask[:, None, None, :].bool()
 
         all_hidden_states = [hidden_states]
         for layer in self.layers:
-            hidden_states = layer(hidden_states, position_embeddings, causal_mask)
+            hidden_states = layer(hidden_states, position_embeddings, causal_mask, key_value_cache)
             all_hidden_states.append(hidden_states)
         all_hidden_states[-1] = self.norm(hidden_states)
         return tuple(all_hidden_states)
@@ -296,6 +318,9 @@ class Qwen25VLTextModel(NativeModel):
         """Generate rewritten-prompt tokens with the published deterministic sampler."""
         generated = input_ids.clone()
         mask = attention_mask.clone()
+        position_ids = mask.long().cumsum(-1) - 1
+        position_ids.masked_fill_(mask == 0, 0)
+        key_value_cache: KeyValueCache = [None] * len(self.model.language_model.layers)
         eos_token_ids = generation_config["eos_token_id"]
         if isinstance(eos_token_ids, int):
             eos_token_ids = [eos_token_ids]
@@ -303,11 +328,16 @@ class Qwen25VLTextModel(NativeModel):
         unfinished = torch.ones(input_ids.shape[0], dtype=torch.bool, device=input_ids.device)
         pad_token_id = int(generation_config["pad_token_id"])
 
+        next_input_ids = generated
         for _ in range(max_new_tokens):
-            position_ids = mask.long().cumsum(-1) - 1
-            position_ids.masked_fill_(mask == 0, 0)
-            hidden_states = self.model.language_model(generated, mask, position_ids)[-1]
-            scores = self.lm_head(hidden_states[:, -1])
+            model_attention_mask = None if bool(mask.bool().all()) else mask
+            hidden_states = self.model.language_model(
+                next_input_ids,
+                model_attention_mask,
+                position_ids[..., -next_input_ids.shape[1] :],
+                key_value_cache,
+            )[-1]
+            scores = self.lm_head(hidden_states[:, -1:])[:, -1].float()
             penalty = float(generation_config.get("repetition_penalty", 1.0))
             if penalty != 1.0:
                 gathered = torch.gather(scores, 1, generated)
@@ -335,6 +365,8 @@ class Qwen25VLTextModel(NativeModel):
             next_token = torch.where(unfinished, next_token, pad_token_id)
             generated = torch.cat((generated, next_token[:, None]), dim=1)
             mask = torch.cat((mask, torch.ones_like(next_token[:, None])), dim=1)
+            position_ids = torch.cat((position_ids, position_ids[:, -1:] + 1), dim=-1)
+            next_input_ids = next_token[:, None]
             unfinished &= ~torch.isin(next_token, eos)
             if not bool(unfinished.any()):
                 break
