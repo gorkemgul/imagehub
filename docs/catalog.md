@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**9 architecture families, 28 published checkpoints.** A model is a separately published set of weights;
+**9 architecture families, 29 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -23,6 +23,7 @@ tested with the original weights. In this release every model is `full`.
 | `sdxl-lightning-2step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
 | `sdxl-lightning-4step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
 | `sdxl-lightning-8step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
+| `hyper-sdxl-1step` | `stable-diffusion-xl` | [ByteDance/Hyper-SD](https://huggingface.co/ByteDance/Hyper-SD) | `bc08d97` | author | full | Unspecified | `hyper-sd` |
 | `sdxl-turbo` | `stable-diffusion-xl` | [stabilityai/sdxl-turbo](https://huggingface.co/stabilityai/sdxl-turbo) | `7115331` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` |
 | `ssd-1b` | `stable-diffusion-xl` | [segmind/SSD-1B](https://huggingface.co/segmind/SSD-1B) | `60987f3` | author | full | Apache-2.0 | `ssd-1b` |
 | `playground-v2.5` | `stable-diffusion-xl` | [playgroundai/playground-v2.5-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2.5-1024px-aesthetic) | `1e032f1` | author | full | playground-v2dot5-community | `playground-v2` |
@@ -48,6 +49,10 @@ files, so they are loaded with `weights_only=True`, containing tensors only.
 Composite checkpoints can name a base model and overlay their own files.
 `python -m imagehub.pretrained` downloads both sources, each pinned and verified, and the snapshot
 manifest records provenance for every file.
+
+The `hyper-sdxl-1step` model card has no license metadata. The `ByteDance/Hyper-SD` repository's
+license file covers only the FLUX-related files, so the Hyper-SDXL weights are recorded as
+`Unspecified`.
 
 The catalog uses the `deepseek-community/Janus-Pro-1B` and `deepseek-community/Janus-Pro-7B`
 transformers conversions with `community-conversion` provenance because the authors' repositories

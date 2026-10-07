@@ -37,9 +37,9 @@ LIMITS = [
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing "
-    "spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for "
-    "Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic "
-    "shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for HunyuanDiT.",
+    "spacing for SD-Turbo, LCM for LCM Dreamshaper v7 and Hyper-SDXL, Euler for SDXL, flow-match "
+    "Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and "
+    "dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for HunyuanDiT.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -191,6 +191,7 @@ def main() -> None:
             for key, value in measured.items()
             if key in SDXL_COMPONENT_KEYS
             or key.startswith("sdxl_lightning_unet_sdxl-lightning-")
+            or key.startswith("hyper_sd_")
             or any(
                 key == f"{component}_{spec.id}"
                 for component in SDXL_COMPONENT_KEYS

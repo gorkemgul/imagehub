@@ -173,6 +173,28 @@ an Euler scheduler with trailing timestep spacing. The text encoders and VAE are
 base components. The three defaults are respectively 2, 4 and 8 steps at 1024×1024 with guidance
 0.0. Each validation run took 2–4 minutes.
 
+### Hyper-SD
+
+`hyper-sdxl-1step` was validated on CPU in float32 from the composite snapshot: SDXL base at
+revision `4621659` plus `Hyper-SDXL-1step-Unet.safetensors` from `ByteDance/Hyper-SD` at revision
+`bc08d97`. Every comparison was exact.
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| LCM explicit-timestep schedules and trajectories (1 and 4 steps; unit and reference) | 0 | 0 |
+| Tiny-snapshot end to end with LCM and explicit timesteps (1 and 4 steps) | 0 | 0 |
+| Overlay U-Net header (1680 tensors) | 0 missing / extra / mismatched | exact |
+| U-Net single step (1024×1024, t = 800) | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 1 step, guidance 0.0, timesteps `[800]`) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 with the defaults (pixels) | 0 | 0 |
+
+The reference pipeline loads the composite snapshot with
+`StableDiffusionXLPipeline.from_pretrained`. Loading the U-Net in the model card's other documented
+way—an empty model followed by `load_state_dict`—places the weights in freshly allocated memory
+instead of preserving the file's memory-mapped layout. CPU summation order then differs, and one
+U-Net step differs by about `1e-4`; the same effect occurs with the SDXL base U-Net. The parity
+claim is therefore against `from_pretrained`. The real-checkpoint run took 2 minutes.
+
 For `sdxl-base-1.0`, the same header-only tensor check covered the four components
 (`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
 missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
@@ -506,18 +528,20 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
 - Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
-  Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5, flow-match Euler for Z-Image
-  and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic
-  shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for HunyuanDiT.
+  LCM for Hyper-SDXL, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
+  flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
+  for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for
+  HunyuanDiT.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 477 passed, 334 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 487 passed, 343 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models,
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
+  for `hyper-sdxl-1step`,
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and

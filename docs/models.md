@@ -114,7 +114,7 @@ imagehub does not distribute weights.
 
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
 Models: `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`,
-`sdxl-lightning-8step` · Task: `t2i`
+`sdxl-lightning-8step`, `hyper-sdxl-1step` · Task: `t2i`
 
 **Architecture.** Two frozen text encoders: CLIP ViT-L/14 (penultimate layer output) and OpenCLIP
 bigG (penultimate layer output and pooled output). The concatenated outputs condition a
@@ -127,6 +127,10 @@ scheduler is the Euler published with the checkpoint (`timestep_spacing="leading
 **SDXL-Lightning.** These three models place a distilled U-Net on the SDXL base. Their defaults are
 respectively 2, 4 and 8 steps, guidance 0.0, and Euler scheduling with
 `timestep_spacing="trailing"`.
+
+**Hyper-SD.** `hyper-sdxl-1step` places the published Hyper-SDXL U-Net on the SDXL base. It uses an
+LCM scheduler built from the SDXL scheduler configuration and defaults to 1 step, guidance 0.0,
+explicit timesteps `[800]` and 1024×1024.
 
 **Usage.**
 
@@ -141,11 +145,26 @@ with pipeline("t2i", backend="sdxl-base-1.0", model="checkpoints/sdxl-base-1.0",
     result.images[0].save("cat.png")
 ```
 
+Hyper-SD follows the model card's explicit-timestep recipe:
+
+```bash
+python -m imagehub.pretrained hyper-sdxl-1step checkpoints/hyper-sdxl-1step
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="hyper-sdxl-1step", model="checkpoints/hyper-sdxl-1step") as pipe:
+    result = pipe("a cat, oil painting", steps=1, guidance=0.0, timesteps=[800], seed=42)
+    result.images[0].save("cat.png")
+```
+
 **Settings.** `steps` (50, at most 1000), `guidance` (5.0; 1 and below turns guidance off),
 `width`/`height` (the U-Net config's native size, 1024 here, and multiples of 8), `negative_prompt`
 (None; with an empty negative prompt, zero embeddings are used), `num_images` (1), `seed`,
 `latents`, and the micro-conditioning inputs `original_size`, `crops_coords_top_left` and
-`target_size` (default to the generated size and `(0, 0)`). Unrecognized settings raise an error.
+`target_size` (default to the generated size and `(0, 0)`). The SDXL backend also supports the LCM
+scheduler and an explicit `timesteps` sequence; supplying `timesteps` sets the step count.
+Unrecognized settings raise an error.
 
 **Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). As with SD 1.x,
@@ -154,8 +173,10 @@ MPS and CUDA runs are smoke tests only; there is no claim of exact equality on t
 **Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
 refiner model, img2img, other schedulers and fp16 parity are not in this release.
 
-**License.** The weights are licensed under CreativeML Open RAIL++-M; the license's use
-restrictions bind whoever downloads and uses the weights. imagehub does not distribute weights.
+**License.** The SDXL base and SDXL-Lightning weights are licensed under CreativeML Open RAIL++-M;
+the license's use restrictions bind whoever downloads and uses the weights. The Hyper-SD model
+card has no license metadata, and the repository's license file covers only the FLUX-related files,
+so the Hyper-SDXL weights are recorded as `Unspecified`. imagehub does not distribute weights.
 
 
 # SDXL Turbo
