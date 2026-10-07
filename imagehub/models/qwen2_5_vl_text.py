@@ -31,6 +31,17 @@ QWEN25_VL_TEXT_DEFAULTS: dict[str, Any] = {
 }
 
 
+def _use_gqa_in_sdpa(attention_mask: Tensor | None, key: Tensor, value: Tensor) -> bool:
+    """Follow transformers: grouped heads go to SDPA directly when the host allows masked GQA.
+
+    The choice depends on the host, not on the tensors' device: with MPS available and torch
+    2.13 or newer, transformers passes masked attention with ``enable_gqa``.
+    """
+    if torch.backends.mps.is_available():
+        return tuple(int(part) for part in torch.__version__.split(".")[:2]) >= (2, 13)
+    return attention_mask is None and key.shape[-1] == value.shape[-1] <= 256
+
+
 class Qwen25VLRMSNorm(Qwen3RMSNorm):
     pass
 
@@ -122,9 +133,15 @@ class Qwen25VLAttention(nn.Module):
             query, key, position_embeddings[0], position_embeddings[1]
         )
 
+        # The pipeline calls the text encoder with transformers' default ``use_cache=True``; the
+        # key-value cache stores keys and values as contiguous copies, and the SDPA kernel's
+        # summation order depends on that layout.
+        key = key.contiguous()
+        value = value.contiguous()
+
         sdpa_kwargs: dict[str, bool] = {}
         if self.num_key_value_groups > 1:
-            if attention_mask is None:
+            if _use_gqa_in_sdpa(attention_mask, key, value):
                 sdpa_kwargs["enable_gqa"] = True
             else:
                 key = repeat_kv(key, self.num_key_value_groups)

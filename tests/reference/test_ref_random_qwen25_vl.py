@@ -78,7 +78,6 @@ def test_qwen25_vl_random_hidden_states_and_logits_exact() -> None:
             input_ids,
             attention_mask=attention_mask,
             output_hidden_states=True,
-            use_cache=False,
         )
         actual_hidden_states = model(input_ids, attention_mask)
         actual_logits = model.lm_head(actual_hidden_states[-1])
@@ -122,9 +121,7 @@ def test_qwen25_vl_rewrite_generation_early_eos_exact() -> None:
     input_ids = torch.tensor([[4, 5, 6], [4, 5, 6]])
     attention_mask = torch.ones_like(input_ids)
     with torch.inference_mode():
-        output = reference(
-            input_ids, attention_mask=attention_mask, output_hidden_states=True, use_cache=False
-        )
+        output = reference(input_ids, attention_mask=attention_mask, output_hidden_states=True)
         reference.lm_head.weight.zero_()
         reference.lm_head.weight[2].copy_(output.hidden_states[-1][0, -1] * 100)
     model.load_checkpoint(reference.state_dict())
