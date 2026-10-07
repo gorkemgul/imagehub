@@ -262,6 +262,11 @@
       "pixels": 0
     }
   },
+  "e2e_longcat_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 8
+  },
   "e2e_multistep_sdxl-turbo": {
     "guidance": 2.0,
     "latents": {
@@ -282,6 +287,40 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_pixart-alpha-xl-1024": {
+    "guidance": 4.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 7,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scheduler_seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 20
+  },
+  "e2e_pixart-sigma-xl-1024": {
+    "guidance": 4.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 7,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scheduler_seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 20
   },
   "e2e_playground-v2.5": {
     "guidance": 3.0,
@@ -1014,6 +1053,78 @@
       "tensors": 248
     }
   },
+  "header_longcat_image": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 729
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 612
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_pixart-alpha-xl-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 612
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_pixart-alpha-xl-1024_transformer": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 612
+  },
+  "header_pixart-sigma-xl-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 603
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_pixart-sigma-xl-1024_transformer": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 603
+  },
   "header_playground-v2.5": {
     "text_encoder": {
       "extra": [],
@@ -1561,6 +1672,100 @@
     "tolerance": 0.0
   },
   "lcm_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_rewrite": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "longcat_image_scheduler": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
+  "longcat_image_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-alpha-xl-1024_scheduler": {
+    "exact": true,
+    "steps": 20,
+    "tolerance": "exact"
+  },
+  "pixart-alpha-xl-1024_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-alpha-xl-1024_tokenizer": {
+    "ids_match": true,
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "pixart-alpha-xl-1024_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-alpha-xl-1024_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-alpha-xl-1024_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-sigma-xl-1024_scheduler": {
+    "exact": true,
+    "steps": 20,
+    "tolerance": "exact"
+  },
+  "pixart-sigma-xl-1024_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-sigma-xl-1024_tokenizer": {
+    "ids_match": true,
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "pixart-sigma-xl-1024_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-sigma-xl-1024_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-sigma-xl-1024_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -2363,6 +2568,22 @@
     "pixels_max_abs": 0,
     "seed": 42
   },
+  "seed_e2e_longcat_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 8
+  },
+  "seed_e2e_pixart-alpha-xl-1024": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42
+  },
+  "seed_e2e_pixart-sigma-xl-1024": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42
+  },
   "seed_e2e_playground-v2.5": {
     "guidance": 3.0,
     "passed": true,
@@ -2659,161 +2880,5 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
-  },
-  "e2e_pixart-alpha-xl-1024": {
-    "guidance": 4.5,
-    "latents": {
-      "max_abs": 0.0,
-      "max_rel": 0.0
-    },
-    "noise_seed": 7,
-    "passed": true,
-    "pixels_max_abs": 0,
-    "prompt": "a photograph of an astronaut riding a horse",
-    "scheduler_seed": 42,
-    "size": [
-      1024,
-      1024
-    ],
-    "steps": 20
-  },
-  "e2e_pixart-sigma-xl-1024": {
-    "guidance": 4.5,
-    "latents": {
-      "max_abs": 0.0,
-      "max_rel": 0.0
-    },
-    "noise_seed": 7,
-    "passed": true,
-    "pixels_max_abs": 0,
-    "prompt": "a photograph of an astronaut riding a horse",
-    "scheduler_seed": 42,
-    "size": [
-      1024,
-      1024
-    ],
-    "steps": 20
-  },
-  "header_pixart-alpha-xl-1024": {
-    "text_encoder": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 219
-    },
-    "transformer": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 612
-    },
-    "vae": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 248
-    }
-  },
-  "header_pixart-alpha-xl-1024_transformer": {
-    "extra": [],
-    "mismatch": [],
-    "missing": [],
-    "tensors": 612
-  },
-  "header_pixart-sigma-xl-1024": {
-    "text_encoder": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 219
-    },
-    "transformer": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 603
-    },
-    "vae": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 248
-    }
-  },
-  "header_pixart-sigma-xl-1024_transformer": {
-    "extra": [],
-    "mismatch": [],
-    "missing": [],
-    "tensors": 603
-  },
-  "pixart-alpha-xl-1024_scheduler": {
-    "exact": true,
-    "steps": 20,
-    "tolerance": "exact"
-  },
-  "pixart-alpha-xl-1024_text_encoder": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "pixart-alpha-xl-1024_tokenizer": {
-    "ids_match": true,
-    "masks_match": true,
-    "tolerance": "exact"
-  },
-  "pixart-alpha-xl-1024_transformer": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "pixart-alpha-xl-1024_vae_decode": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "pixart-alpha-xl-1024_vae_encode": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "pixart-sigma-xl-1024_scheduler": {
-    "exact": true,
-    "steps": 20,
-    "tolerance": "exact"
-  },
-  "pixart-sigma-xl-1024_text_encoder": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "pixart-sigma-xl-1024_tokenizer": {
-    "ids_match": true,
-    "masks_match": true,
-    "tolerance": "exact"
-  },
-  "pixart-sigma-xl-1024_transformer": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "pixart-sigma-xl-1024_vae_decode": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "pixart-sigma-xl-1024_vae_encode": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "seed_e2e_pixart-alpha-xl-1024": {
-    "max_pixel_diff": 0,
-    "passed": true,
-    "seed": 42
-  },
-  "seed_e2e_pixart-sigma-xl-1024": {
-    "max_pixel_diff": 0,
-    "passed": true,
-    "seed": 42
   }
 }
