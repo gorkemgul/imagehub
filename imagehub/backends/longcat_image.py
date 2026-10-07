@@ -326,12 +326,24 @@ def _decode_tokens(tokenizer: Qwen2Tokenizer, token_ids: Tensor, special_ids: se
 
 
 @torch.inference_mode()
+def _qwen2_vl_chat_prompt(text: str) -> str:
+    """The text processor's Qwen2-VL chat template for one text-only user message.
+
+    The template adds a default system turn when the conversation does not start with one, then
+    the generation prompt.
+    """
+    return (
+        "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n"
+        f"<|im_start|>user\n{text}<|im_end|>\n<|im_start|>assistant\n"
+    )
+
+
 def rewrite_prompt(components: LongCatImageComponents, prompt: str, device: torch.device) -> str:
     if get_prompt_language(prompt) == "zh":
         question = SYSTEM_PROMPT_ZH + f"\n用户输入为：{prompt}\n改写后的prompt为："
     else:
         question = SYSTEM_PROMPT_EN + f"\nUser Input: {prompt}\nRewritten prompt:"
-    rendered = components.text_processor.chat_prompt(question)
+    rendered = _qwen2_vl_chat_prompt(question)
     ids = components.text_processor.tokenize(rendered)
     input_ids = torch.tensor([ids], dtype=torch.long, device=device)
     attention_mask = torch.ones_like(input_ids, dtype=torch.bool)
