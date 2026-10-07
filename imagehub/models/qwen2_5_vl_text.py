@@ -239,8 +239,10 @@ class Qwen25VLTextModel(NativeModel):
         rope_scaling = text_config.get("rope_scaling") or text_config.get("rope_parameters") or {}
         unsupported = {
             "activation": text_config["hidden_act"] != "silu",
+            # Published configs use the legacy ``"type": "mrope"``, which transformers reads as the
+            # default RoPE with multimodal sections.
             "RoPE type": rope_scaling.get("rope_type", rope_scaling.get("type", "default"))
-            != "default",
+            not in {"default", "mrope"},
             "sliding window": text_config["use_sliding_window"],
             "tied embeddings": text_config["tie_word_embeddings"],
         }
