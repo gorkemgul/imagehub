@@ -52,6 +52,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 | FLUX.1 | `flux1-schnell`, `flux1-dev` | `t2i` | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | CPU fp32 parity |
 | HunyuanDiT | `hunyuan-dit-v1.1-distilled` | `t2i` | CPU fp32 parity |
+| PixArt | `pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` | `t2i` | CPU fp32 parity |
 | Qwen-Image | `qwen-image-2.1` | `t2i` | CPU fp32 parity |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | CPU fp32 parity |

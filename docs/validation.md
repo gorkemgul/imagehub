@@ -397,6 +397,50 @@ The reference tokenizers require `sentencepiece` and `protobuf`, which are inclu
 components were loaded together: in float32 the transformer used about 6.1 GB, mT5-XL about 6.7 GB
 and BERT about 1.4 GB. The end-to-end reference test file took 52 minutes.
 
+## PixArt
+
+Validated on CPU in the same environment as above. `pixart-sigma-xl-1024` and
+`pixart-alpha-xl-1024` were loaded strictly from `PixArt-alpha/PixArt-Sigma-XL-2-1024-MS` at
+revision `e102b35` and `PixArt-alpha/PixArt-XL-2-1024-MS` at revision `b89adad`, respectively. The
+observed difference in every comparison is **exactly 0**: on CPU in float32, the local
+implementation produces a bit-identical result to the reference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| T5 tokenizer ids / attention masks (300 tokens) | `pixart-sigma-xl-1024` | identical / identical | exact / exact |
+| T5-v1.1-XXL encoder | `pixart-sigma-xl-1024` | 0 | 0 |
+| Transformer single step (1024×1024, batch 2) | `pixart-sigma-xl-1024` | 0 | 0 |
+| VAE decode / encode | `pixart-sigma-xl-1024` | 0 / 0 | 0 / 0 |
+| DPM-Solver++ timesteps (20 steps) / trajectories | `pixart-sigma-xl-1024` | exact / 0 | exact / 0 |
+| End to end: final latent / pixels (1024×1024, 20 steps, guidance 4.5) | `pixart-sigma-xl-1024` | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | `pixart-sigma-xl-1024` | 0 | 0 |
+| T5 tokenizer ids / attention masks (120 tokens) | `pixart-alpha-xl-1024` | identical / identical | exact / exact |
+| T5-v1.1-XXL encoder | `pixart-alpha-xl-1024` | 0 | 0 |
+| Transformer single step (1024×1024, batch 2) | `pixart-alpha-xl-1024` | 0 | 0 |
+| VAE decode / encode | `pixart-alpha-xl-1024` | 0 / 0 | 0 / 0 |
+| DPM-Solver++ timesteps (20 steps) / trajectories | `pixart-alpha-xl-1024` | exact / 0 | exact / 0 |
+| End to end: final latent / pixels (1024×1024, 20 steps, guidance 4.5) | `pixart-alpha-xl-1024` | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | `pixart-alpha-xl-1024` | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with fixed initial noise
+`seed=7` and scheduler generator `seed=42`. It used the 20-step, guidance 4.5 defaults. The seed
+end-to-end check used `seed=42`.
+
+Random-weight parity also covered Sigma- and Alpha-style tiny and medium transformer
+configurations, and tiny-snapshot end-to-end parity covered both the PixArt Sigma and PixArt Alpha
+pipelines. Every comparison was exact.
+
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts were
+219 / 603 / 248 for Sigma and 219 / 612 / 248 for Alpha, with missing, extra and shape-mismatched
+tensors all **0**. Record: `tensor_header_check`, [validation.json](validation.json).
+
+Caption cleaning requires `bs4` and `ftfy` and is not implemented. Parity was measured with
+`clean_caption=False`, which is what diffusers uses when those packages are unavailable. The
+reference and native components were loaded together; T5-XXL used about 19 GB in float32. The
+real-checkpoint run for both models (19 tests) took 45 minutes.
+
 ## Qwen-Image 2.1
 
 The reference is the implementation the Qwen team contributed to diffusers. No released diffusers
@@ -553,14 +597,14 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for
-  HunyuanDiT.
+  for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, DDPM for
+  HunyuanDiT, and DPM-Solver++ for PixArt.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 488 passed, 353 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 521 passed, 379 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
@@ -568,8 +612,8 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
-  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 9 passed for `sd-turbo`, and 7 passed for
-  `lcm-dreamshaper-v7`. These include
+  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 19 passed for `pixart-sigma-xl-1024` and
+  `pixart-alpha-xl-1024`, 9 passed for `sd-turbo`, and 7 passed for `lcm-dreamshaper-v7`. These include
   structural parity with random weights, end-to-end parity with a small model, real-checkpoint
   parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
