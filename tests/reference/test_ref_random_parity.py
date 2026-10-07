@@ -351,6 +351,52 @@ def test_z_image_vae_full_config_layout():
     assert actual == expected
 
 
+COGVIEW4_VAE = {
+    "block_out_channels": [128, 512, 1024, 1024],
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "latent_channels": 16,
+    "layers_per_block": 3,
+    "norm_num_groups": 32,
+    "mid_block_add_attention": False,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "scaling_factor": 1.0,
+    "shift_factor": 0.0,
+    "sample_size": 1024,
+}
+TINY_COGVIEW4_VAE = COGVIEW4_VAE | {
+    "block_out_channels": [32, 32, 64, 64],
+    "norm_num_groups": 8,
+    "sample_size": 64,
+}
+
+
+def test_cogview4_vae_random_weights():
+    torch.manual_seed(0)
+    ref = diffusers.AutoencoderKL.from_config(TINY_COGVIEW4_VAE).eval()
+    for parameter in ref.parameters():
+        parameter.data.normal_(0, 0.02)
+    ours = AutoencoderKL(TINY_COGVIEW4_VAE).eval()
+    ours.load_checkpoint(legacy_vae_state(ref.state_dict()))
+    latents = torch.randn(1, 16, 8, 6)
+    image = torch.rand(1, 3, 64, 48) * 2 - 1
+    with torch.inference_mode():
+        exact(ours.decode(latents), ref.decode(latents).sample)
+        exact(ours.encode(image), ref.encode(image).latent_dist.mean)
+
+
+def test_cogview4_vae_full_config_layout():
+    with torch.device("meta"):
+        ref = diffusers.AutoencoderKL.from_config(COGVIEW4_VAE)
+        ours = AutoencoderKL(COGVIEW4_VAE)
+    expected = {
+        name: list(value.shape) for name, value in legacy_vae_state(ref.state_dict()).items()
+    }
+    actual = {name: list(value.shape) for name, value in ours.state_dict().items()}
+    assert actual == expected
+
+
 def test_z_image_transformer_random_weights():
     config = {
         "all_patch_size": [2],

@@ -877,6 +877,43 @@ for _id, _repo, _revision, _catalog_id, _max_length, _files in (
 
 _entries.append(
     ModelSpec(
+        id="cogview4-6b",
+        task=Task.T2I,
+        family="cogview4",
+        source="https://huggingface.co/zai-org/CogView4-6B",
+        repo_id="zai-org/CogView4-6B",
+        revision="63a52b7f6dace7033380cd6da14d0915eab3e6b5",
+        provenance="author",
+        catalog_id="cogview4",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-turbo",
         task=Task.T2I,
         family="stable-diffusion-xl",
