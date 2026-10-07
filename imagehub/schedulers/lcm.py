@@ -65,8 +65,42 @@ class LCMScheduler:
         self.num_inference_steps = 0
         self._step_index: int | None = None
 
-    def set_timesteps(self, num_inference_steps: int) -> None:
+    @classmethod
+    def from_config(cls, config: Mapping[str, Any]) -> LCMScheduler:
+        compatible = {
+            key: value
+            for key, value in config.items()
+            if key.startswith("_")
+            or key in _DEFAULTS
+            and (key in _IGNORED or value == _DEFAULTS[key])
+        }
+        return cls(compatible)
+
+    def set_timesteps(
+        self,
+        num_inference_steps: int | None = None,
+        *,
+        timesteps: list[int] | None = None,
+    ) -> None:
+        if num_inference_steps is None and timesteps is None:
+            raise ValueError("Must pass exactly one of num_inference_steps or timesteps")
+        if num_inference_steps is not None and timesteps is not None:
+            raise ValueError("Can only pass one of num_inference_steps or timesteps")
         original_steps = self.config["original_inference_steps"]
+        if timesteps is not None:
+            for index in range(1, len(timesteps)):
+                if timesteps[index] >= timesteps[index - 1]:
+                    raise ValueError("timesteps must be in descending order")
+            if timesteps[0] >= self.config["num_train_timesteps"]:
+                raise ValueError(
+                    "timesteps must start before num_train_timesteps: "
+                    f"{self.config['num_train_timesteps']}"
+                )
+            self.timesteps = torch.tensor(timesteps, dtype=torch.int64)
+            self.num_inference_steps = len(timesteps)
+            self._step_index = None
+            return
+        assert num_inference_steps is not None
         if type(num_inference_steps) is not int or not 0 < num_inference_steps <= original_steps:
             raise ValueError(f"num_inference_steps must be an int in [1, {original_steps}]")
         count = self.config["num_train_timesteps"]
@@ -79,6 +113,10 @@ class LCMScheduler:
         self.timesteps = original[torch.tensor(indices)]
         self.num_inference_steps = num_inference_steps
         self._step_index = None
+
+    def scale_model_input(self, sample: Tensor, timestep: Tensor | int) -> Tensor:
+        del timestep
+        return sample
 
     def _init_step_index(self, timestep: Tensor | int) -> None:
         indices = (self.timesteps == torch.as_tensor(timestep)).nonzero()

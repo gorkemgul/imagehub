@@ -277,6 +277,28 @@ for _steps in (2, 4, 8):
 
 _entries.append(
     ModelSpec(
+        id="hyper-sdxl-1step",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/ByteDance/Hyper-SD",
+        repo_id="ByteDance/Hyper-SD",
+        revision="bc08d970a87c74c71209491d64e3525845698863",
+        provenance="author",
+        catalog_id="hyper-sd",
+        format="diffusers",
+        license="Unspecified",
+        base="sdxl-base-1.0",
+        files=("Hyper-SDXL-1step-Unet.safetensors",),
+        overlay={"unet/diffusion_pytorch_model.safetensors": "Hyper-SDXL-1step-Unet.safetensors"},
+        config={
+            "defaults": {"steps": 1, "guidance": 0.0, "timesteps": [800]},
+            "scheduler": {"_class_name": "LCMScheduler"},
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="z-image",
         task=Task.T2I,
         family="z-image",

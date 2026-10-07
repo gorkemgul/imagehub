@@ -158,6 +158,37 @@ def test_lcm_scheduler(lcm_pair, record):
     record("lcm_scheduler", max_abs=worst, tolerance=0.0, steps=4)
 
 
+@pytest.mark.parametrize("timesteps", [[800], [999, 749, 499, 249]])
+def test_lcm_scheduler_explicit_timesteps(record, timesteps):
+    actual_scheduler = LCMScheduler({})
+    expected_scheduler = diffusers.LCMScheduler()
+    actual_scheduler.set_timesteps(timesteps=timesteps)
+    expected_scheduler.set_timesteps(timesteps=timesteps)
+    assert torch.equal(actual_scheduler.timesteps, expected_scheduler.timesteps)
+    actual = torch.randn(1, 4, 8, 8, generator=torch.Generator().manual_seed(1))
+    expected = actual.clone()
+    actual_generator = torch.Generator().manual_seed(42)
+    expected_generator = torch.Generator().manual_seed(42)
+    worst = 0.0
+    for timestep in actual_scheduler.timesteps:
+        output = torch.randn_like(actual)
+        expected, expected_denoised = expected_scheduler.step(
+            output, timestep, expected, generator=expected_generator, return_dict=False
+        )
+        actual, actual_denoised = actual_scheduler.step(
+            output, timestep, actual, generator=actual_generator
+        )
+        worst = max(worst, float((actual - expected).abs().max()))
+        torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+        torch.testing.assert_close(actual_denoised, expected_denoised, rtol=0, atol=0)
+    record(
+        f"lcm_scheduler_explicit_{len(timesteps)}step",
+        max_abs=worst,
+        tolerance=0.0,
+        timesteps=timesteps,
+    )
+
+
 def test_lcm_end_to_end(lcm_pair, record):
     root, ours, ref = lcm_pair
     latents = initial_latents(1234, (1, 4, 96, 96))
