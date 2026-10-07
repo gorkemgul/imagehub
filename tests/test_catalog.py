@@ -14,6 +14,7 @@ def test_catalog_contents():
             "flux2-klein-4b",
             "flux2-klein-9b",
             "hunyuan-dit-v1.1-distilled",
+            "hyper-sdxl-1step",
             "janus-pro-1b",
             "janus-pro-7b",
             "lcm-dreamshaper-v7",
@@ -128,6 +129,26 @@ def test_catalog_contents():
             "defaults": {"steps": steps, "guidance": 0.0},
             "scheduler": {"timestep_spacing": "trailing"},
         }
+
+    hyper = model_info("hyper-sdxl-1step")
+    assert hyper.task is Task.T2I
+    assert hyper.family == "stable-diffusion-xl"
+    assert hyper.source == "https://huggingface.co/ByteDance/Hyper-SD"
+    assert hyper.repo_id == "ByteDance/Hyper-SD"
+    assert hyper.revision == "bc08d970a87c74c71209491d64e3525845698863"
+    assert hyper.provenance == "author"
+    assert hyper.catalog_id == "hyper-sd"
+    assert hyper.format == "diffusers"
+    assert hyper.license == "Unspecified"
+    assert hyper.base == "sdxl-base-1.0"
+    assert hyper.files == ("Hyper-SDXL-1step-Unet.safetensors",)
+    assert hyper.overlay == {
+        "unet/diffusion_pytorch_model.safetensors": "Hyper-SDXL-1step-Unet.safetensors"
+    }
+    assert hyper.config == {
+        "defaults": {"steps": 1, "guidance": 0.0, "timesteps": [800]},
+        "scheduler": {"_class_name": "LCMScheduler"},
+    }
 
     turbo = model_info("sdxl-turbo")
     assert turbo.task is Task.T2I

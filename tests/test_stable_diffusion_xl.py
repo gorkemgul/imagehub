@@ -98,6 +98,32 @@ def test_lightning_uses_scheduler_overrides_and_model_defaults(tiny_sdxl):
     assert result.metadata["scheduler_overrides"] == {"timestep_spacing": "trailing"}
 
 
+def test_hyper_sd_uses_lcm_scheduler_and_explicit_timestep_defaults(tiny_sdxl):
+    backend = StableDiffusionXLBackend(tiny_sdxl, model_id="hyper-sdxl-1step").load()
+    assert backend.components is not None
+    assert backend.components.scheduler_config["_class_name"] == "LCMScheduler"
+    result = backend.infer(
+        __import__("imagehub.types", fromlist=["T2IRequest"]).T2IRequest("cat"),
+        seed=0,
+        width=32,
+        height=32,
+    )
+    assert result.metadata["steps"] == 1
+    assert result.metadata["guidance"] == 0.0
+    assert result.metadata["timesteps"] == [800]
+    assert result.metadata["scheduler"] == "lcm"
+    assert result.metadata["scheduler_overrides"] == {"_class_name": "LCMScheduler"}
+
+
+def test_explicit_timesteps_set_the_step_count(tiny_sdxl):
+    backend = StableDiffusionXLBackend(tiny_sdxl, model_id="hyper-sdxl-1step")
+    options = backend.validate_options(
+        __import__("imagehub.types", fromlist=["T2IRequest"]).T2IRequest("cat"),
+        {"timesteps": [999, 749, 499, 249]},
+    )
+    assert options["steps"] == 4
+
+
 def test_unknown_scheduler_fails(tiny_sdxl, tmp_path):
     import shutil
 
@@ -125,6 +151,9 @@ def test_unknown_scheduler_fails(tiny_sdxl, tmp_path):
         ({"original_size": (1,)}, ValueError, "original_size"),
         ({"target_size": [32, 32]}, ValueError, "target_size"),
         ({"crops_coords_top_left": (0, -1)}, ValueError, "crops_coords_top_left"),
+        ({"timesteps": (800,)}, ValueError, "timesteps"),
+        ({"timesteps": [800.0]}, ValueError, "timesteps"),
+        ({"steps": 2, "timesteps": [800]}, ValueError, r"len\(timesteps\)"),
     ],
 )
 def test_invalid_options_fail_before_loading(tiny_sdxl, options, error, match):

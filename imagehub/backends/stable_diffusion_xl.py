@@ -31,6 +31,7 @@ from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.euler_ancestral import EulerAncestralDiscreteScheduler
+from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.tokenization import CLIPTokenizer
 from imagehub.types import ImageResult, T2IRequest
 
@@ -55,6 +56,7 @@ OPTION_DEFAULTS: dict[str, Any] = {
     "original_size": None,
     "crops_coords_top_left": None,
     "target_size": None,
+    "timesteps": None,
 }
 _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
 
@@ -67,6 +69,8 @@ def _scheduler(config: dict[str, Any]) -> tuple[Any, str]:
         return EulerAncestralDiscreteScheduler(config), "euler_ancestral"
     if class_name == "EDMDPMSolverMultistepScheduler":
         return EDMDPMSolverMultistepScheduler(config), "edm_dpmsolver_multistep"
+    if class_name == "LCMScheduler":
+        return LCMScheduler.from_config(config), "lcm"
     raise ValueError(f"Unsupported SDXL scheduler {class_name}")
 
 
@@ -148,6 +152,7 @@ def denoise(
     prompt: str,
     negative_prompt: str | None,
     steps: int,
+    timesteps: list[int] | None = None,
     guidance: float,
     latents: Tensor,
     original_size: tuple[int, int],
@@ -185,7 +190,10 @@ def denoise(
     time_ids = time_ids.repeat(batch, 1)
 
     scheduler, _ = _scheduler(components.scheduler_config)
-    scheduler.set_timesteps(steps)
+    if timesteps is None:
+        scheduler.set_timesteps(steps)
+    else:
+        scheduler.set_timesteps(timesteps=timesteps)
     latents = latents.to(dtype) * scheduler.init_noise_sigma
     for timestep in scheduler.timesteps:
         model_input = torch.cat([latents] * 2) if use_cfg else latents
@@ -200,7 +208,9 @@ def denoise(
         if use_cfg:
             noise_uncond, noise_text = noise.chunk(2)
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
-        if isinstance(scheduler, EulerAncestralDiscreteScheduler):
+        if isinstance(scheduler, LCMScheduler):
+            latents, _ = scheduler.step(noise, timestep, latents, generator=generator)
+        elif isinstance(scheduler, EulerAncestralDiscreteScheduler):
             latents = scheduler.step(noise, timestep, latents, generator=generator)
         else:
             latents = scheduler.step(noise, timestep, latents)
@@ -272,6 +282,18 @@ class StableDiffusionXLBackend(TextToImageBackend):
             raise TypeError("negative_prompt must be a string or None")
         for name in ("steps", "num_images", "width", "height"):
             _positive_int(o, name)
+        timesteps = o["timesteps"]
+        if timesteps is not None:
+            if (
+                not isinstance(timesteps, list)
+                or not timesteps
+                or not all(type(timestep) is int for timestep in timesteps)
+            ):
+                raise ValueError("timesteps must be a non-empty list of ints")
+            if "timesteps" in merged and "steps" not in merged:
+                o["steps"] = len(timesteps)
+            elif o["steps"] != len(timesteps):
+                raise ValueError("steps must equal len(timesteps)")
         if o["steps"] > 1000:
             raise ValueError("steps must be at most 1000")
         for name in ("width", "height"):
@@ -358,6 +380,7 @@ class StableDiffusionXLBackend(TextToImageBackend):
             prompt=inputs.prompt,
             negative_prompt=o["negative_prompt"],
             steps=o["steps"],
+            timesteps=o["timesteps"],
             guidance=float(o["guidance"]),
             latents=latents.to(torch.float32).to(self.device),
             original_size=o["original_size"] or size,
@@ -372,6 +395,7 @@ class StableDiffusionXLBackend(TextToImageBackend):
             "revision": snapshot.get("revision"),
             "seed": seed,
             "steps": o["steps"],
+            "timesteps": o["timesteps"],
             "guidance": float(o["guidance"]),
             "width": o["width"],
             "height": o["height"],

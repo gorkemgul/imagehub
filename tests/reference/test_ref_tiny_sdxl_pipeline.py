@@ -6,6 +6,8 @@ import torch
 from helpers import write_tiny_sdxl
 
 from imagehub import pipeline
+from imagehub.backends.stable_diffusion import decode_latents
+from imagehub.backends.stable_diffusion_xl import StableDiffusionXLComponents, denoise
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
@@ -135,4 +137,51 @@ def test_tiny_playground_generation_matches_diffusers_exactly(tmp_path):
         "a cat", seed=42, steps=2, height=32, width=32
     )
     actual = torch.stack([image.tensor for image in result.images])
+    assert torch.equal(actual, expected)
+
+
+@pytest.mark.parametrize("timesteps", [[800], [999, 749, 499, 249]])
+def test_tiny_lcm_generation_with_explicit_timesteps_matches_diffusers(tmp_path, timesteps):
+    root = write_tiny_sdxl(tmp_path / f"tiny-lcm-{len(timesteps)}", sample_size=4)
+    ref = diffusers.StableDiffusionXLPipeline.from_pretrained(
+        root, local_files_only=True, add_watermarker=False
+    )
+    ref.scheduler = diffusers.LCMScheduler.from_config(ref.scheduler.config)
+    ref.set_progress_bar_config(disable=True)
+    latents = torch.randn(1, 4, 4, 4, generator=torch.Generator("cpu").manual_seed(7))
+    expected_latents = ref(
+        "a cat",
+        num_inference_steps=len(timesteps),
+        timesteps=timesteps,
+        guidance_scale=0.0,
+        height=32,
+        width=32,
+        latents=latents.clone(),
+        generator=torch.Generator("cpu").manual_seed(42),
+        output_type="latent",
+    ).images
+    decoded = ref.vae.decode(expected_latents / ref.vae.config.scaling_factor).sample.detach()
+    expected = ref.image_processor.postprocess(decoded, output_type="np")
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
+    components = StableDiffusionXLComponents.load(
+        root,
+        device=torch.device("cpu"),
+        dtype=torch.float32,
+        scheduler_overrides={"_class_name": "LCMScheduler"},
+    )
+    actual_latents = denoise(
+        components,
+        prompt="a cat",
+        negative_prompt=None,
+        steps=len(timesteps),
+        timesteps=timesteps,
+        guidance=0.0,
+        latents=latents.clone(),
+        original_size=(32, 32),
+        crops_coords_top_left=(0, 0),
+        target_size=(32, 32),
+        generator=torch.Generator("cpu").manual_seed(42),
+    )
+    torch.testing.assert_close(actual_latents, expected_latents, rtol=0, atol=0)
+    actual = decode_latents(components, actual_latents)
     assert torch.equal(actual, expected)
