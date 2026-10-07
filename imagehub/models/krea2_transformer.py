@@ -329,6 +329,9 @@ class Krea2RotaryPosEmbed(nn.Module):
 
 
 class Krea2Transformer2DModel(NativeModel):
+    # The reference keeps its float32 tensors at their file offsets (see NativeModel).
+    clone_shards = False
+
     def __init__(self, config: Mapping[str, Any]) -> None:
         cfg = KREA2_TRANSFORMER_DEFAULTS | {
             name: value for name, value in config.items() if not name.startswith("_")

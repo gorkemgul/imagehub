@@ -30,6 +30,16 @@ pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 
+
+@pytest.fixture(autouse=True)
+def _float32_reference(monkeypatch):
+    # The reference keeps a few norms in float32 for low-precision runs; that path requires
+    # accelerate. Every comparison here already runs in float32, so turning it off changes
+    # nothing numerically. Without accelerate, diffusers leaves the bfloat16 checkpoint tensors
+    # in place, so each reference transformer is cast to float32 after loading (exact).
+    monkeypatch.setattr(diffusers.Krea2Transformer2DModel, "_keep_in_fp32_modules", None)
+
+
 CPU = torch.device("cpu")
 PROMPT = "a photograph of an astronaut riding a horse"
 PREFIX = (
@@ -76,7 +86,7 @@ def test_header(record):
             model = cls(read_json(root / component / "config.json"))
         shapes = _checkpoint_shapes(root / component)
         expected = {name: tuple(value.shape) for name, value in model.state_dict().items()}
-        actual = {name: tuple(value.shape) for name, value in shapes.items()}
+        actual = {name: tuple(value) for name, value in shapes.items()}
         result[component] = {
             "missing": sorted(expected.keys() - actual.keys()),
             "extra": sorted(actual.keys() - expected.keys()),
@@ -144,7 +154,6 @@ def test_prompt_template_tokens_and_text_encoder(record, tmp_path):
             attention_mask=expected_mask,
             position_ids=position_ids,
             output_hidden_states=True,
-            use_cache=False,
         )
         expected_hidden = torch.stack([outputs.hidden_states[index] for index in SELECTED], dim=2)
         expected_hidden = expected_hidden[:, 34:]
@@ -185,7 +194,7 @@ def test_transformer_single_step_1024(record, tmp_path):
     timestep = torch.tensor([0.5])
     reference = diffusers.Krea2Transformer2DModel.from_pretrained(
         root / "transformer", local_files_only=True, torch_dtype=torch.float32
-    )
+    ).to(torch.float32)
     with torch.inference_mode():
         expected = reference(
             hidden_states=hidden,
@@ -269,6 +278,7 @@ def test_end_to_end_defaults_with_fixed_noise(record, tmp_path):
     reference = diffusers.Krea2Pipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     )
+    reference.transformer.to(torch.float32)
     reference.set_progress_bar_config(disable=True)
     kwargs = {
         "prompt": PROMPT,
@@ -318,6 +328,7 @@ def test_seed_end_to_end_42(record, tmp_path):
     reference = diffusers.Krea2Pipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     )
+    reference.transformer.to(torch.float32)
     reference.set_progress_bar_config(disable=True)
     expected = reference(
         PROMPT,

@@ -322,10 +322,11 @@ def decode_latents(components: Krea2Components, latents: Tensor, height: int, wi
     mean = torch.tensor(components.vae.latents_mean, device=latents.device, dtype=dtype).view(
         1, channels, 1, 1, 1
     )
-    std = torch.tensor(components.vae.latents_std, device=latents.device, dtype=dtype).view(
-        1, channels, 1, 1, 1
-    )
-    image = components.vae.decode(latents.to(dtype) * std + mean)[:, :, 0]
+    # As the reference: divide by the reciprocal of the standard deviation (not multiply by it).
+    inverse_std = 1.0 / torch.tensor(
+        components.vae.latents_std, device=latents.device, dtype=dtype
+    ).view(1, channels, 1, 1, 1)
+    image = components.vae.decode(latents.to(dtype) / inverse_std + mean)[:, :, 0]
     image = (image / 2 + 0.5).clamp(0, 1).permute(0, 2, 3, 1).float().cpu()
     return (image * 255).round().to(torch.uint8)
 

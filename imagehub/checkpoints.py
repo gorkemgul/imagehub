@@ -201,7 +201,10 @@ def _load_pickle(source: Path, container_key: str | None = None) -> dict[str, Te
 
 
 def load_weights(
-    path: str | os.PathLike[str], *, container_key: str | None = None
+    path: str | os.PathLike[str],
+    *,
+    container_key: str | None = None,
+    clone_shards: bool = True,
 ) -> dict[str, Tensor]:
     """Read safetensors, tensor-only PT/BIN, or a (sharded) model directory."""
     source = Path(path)
@@ -234,7 +237,7 @@ def load_weights(
                     # The reference loaders copy sharded checkpoints into fresh (64-byte
                     # aligned) tensors; CPU BLAS summation order depends on that alignment.
                     values = {
-                        name: tensor.clone()
+                        name: tensor.clone() if clone_shards else tensor
                         for name, tensor in load_weights(shard, container_key=container_key).items()
                     }
                     if result.keys() & values.keys():
@@ -267,6 +270,11 @@ def _describe(missing: list[str], unexpected: list[str]) -> str:
 
 class NativeModel(nn.Module):
     """Base for native model definitions; checkpoints are always loaded strictly."""
+
+    # Copy sharded checkpoints into fresh (64-byte aligned) tensors, as the transformers
+    # loader does. A model whose reference keeps tensors at their memory-mapped file offsets
+    # (diffusers without accelerate) sets this to False; CPU summation order depends on it.
+    clone_shards = True
 
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
@@ -311,7 +319,9 @@ class NativeModel(nn.Module):
         config = read_json(path / "config.json")
         with torch.device("meta"):
             model = cls(config)
-        model.load_checkpoint(load_weights(path, container_key=container_key))
+        model.load_checkpoint(
+            load_weights(path, container_key=container_key, clone_shards=cls.clone_shards)
+        )
         model.init_non_persistent_buffers()
         meta = [
             name
