@@ -114,7 +114,7 @@ imagehub does not distribute weights.
 
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
 Models: `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`,
-`sdxl-lightning-8step`, `hyper-sdxl-1step` · Task: `t2i`
+`sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step` · Task: `t2i`
 
 **Architecture.** Two frozen text encoders: CLIP ViT-L/14 (penultimate layer output) and OpenCLIP
 bigG (penultimate layer output and pooled output). The concatenated outputs condition a
@@ -131,6 +131,11 @@ respectively 2, 4 and 8 steps, guidance 0.0, and Euler scheduling with
 **Hyper-SD.** `hyper-sdxl-1step` places the published Hyper-SDXL U-Net on the SDXL base. It uses an
 LCM scheduler built from the SDXL scheduler configuration and defaults to 1 step, guidance 0.0,
 explicit timesteps `[800]` and 1024×1024.
+
+**DMD2.** `dmd2-sdxl-4step` and `dmd2-sdxl-1step` place the published full float32 DMD2 U-Net on
+the SDXL base. Both use an LCM scheduler built from the SDXL scheduler configuration, guidance
+0.0, and 1024×1024. Their defaults are respectively 4 steps with explicit timesteps
+`[999, 749, 499, 249]` and 1 step with `[399]`.
 
 **Usage.**
 
@@ -158,6 +163,26 @@ with pipeline("t2i", backend="hyper-sdxl-1step", model="checkpoints/hyper-sdxl-1
     result.images[0].save("cat.png")
 ```
 
+DMD2 follows the model card's explicit-timestep recipes:
+
+```bash
+python -m imagehub.pretrained dmd2-sdxl-4step checkpoints/dmd2-sdxl-4step
+python -m imagehub.pretrained dmd2-sdxl-1step checkpoints/dmd2-sdxl-1step
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="dmd2-sdxl-4step", model="checkpoints/dmd2-sdxl-4step") as pipe:
+    result = pipe(
+        "a cat, oil painting",
+        steps=4,
+        guidance=0.0,
+        timesteps=[999, 749, 499, 249],
+        seed=42,
+    )
+    result.images[0].save("cat.png")
+```
+
 **Settings.** `steps` (50, at most 1000), `guidance` (5.0; 1 and below turns guidance off),
 `width`/`height` (the U-Net config's native size, 1024 here, and multiples of 8), `negative_prompt`
 (None; with an empty negative prompt, zero embeddings are used), `num_images` (1), `seed`,
@@ -176,7 +201,8 @@ refiner model, img2img, other schedulers and fp16 parity are not in this release
 **License.** The SDXL base and SDXL-Lightning weights are licensed under CreativeML Open RAIL++-M;
 the license's use restrictions bind whoever downloads and uses the weights. The Hyper-SD model
 card has no license metadata, and the repository's license file covers only the FLUX-related files,
-so the Hyper-SDXL weights are recorded as `Unspecified`. imagehub does not distribute weights.
+so the Hyper-SDXL weights are recorded as `Unspecified`. The DMD2 weights are licensed under
+CC-BY-NC-4.0, which prohibits commercial use. imagehub does not distribute weights.
 
 
 # SDXL Turbo
