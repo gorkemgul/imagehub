@@ -2537,6 +2537,135 @@
       }
     },
     {
+      "model_id": "pixart-sigma-xl-1024",
+      "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+      "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+      "provenance": "author",
+      "catalog_id": "pixart-sigma",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "48717b6754c57ffc40baafd747dafaa3ddfbc4b4c6b7932ab7f472c88665cd06",
+        "scheduler/scheduler_config.json": "ec1638ad7fce60b92870623ae6d9472ca4f005cdb2694b74cf86ae78e1d1e0d5",
+        "text_encoder/config.json": "a0d07392b904954847f901e6ccf25538efc4142fb4c7b59065a06bbdb7eabff8",
+        "text_encoder/model.safetensors.index.json": "fb4665a1a122b7e5270f0e4494c653839c11a5a978e03b0df6dfa714258716e6",
+        "text_encoder/model-00001-of-00002.safetensors": "eb529f693f4b17773a24e787fcba29486d5e1700dadcc20bb91e4c8b00212d08",
+        "text_encoder/model-00002-of-00002.safetensors": "58f33f4acba7a5502b6b3e4cb7863f8fd503d5012016428099bb460c98e2fe77",
+        "tokenizer/special_tokens_map.json": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f",
+        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer/tokenizer_config.json": "8463612fde6595bf924e405f08192e1c58887e71332db2b9b287052dd3e180e1",
+        "transformer/config.json": "0177a2e8a9480c52ba339d1bcdc89c2ec63f2f846c49f8aae24dd1ae1654f939",
+        "transformer/diffusion_pytorch_model.safetensors": "2fa4dee9229c02b03163f57bdb8e80c7a5ee364b7161796abe9c05e8dd13f239",
+        "vae/config.json": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7",
+        "vae/diffusion_pytorch_model.safetensors": "1b909373b28f2137098b0fd9dbc6f97f8410854f31f84ddc9fa04b077b0ace2c"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 603,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
+      "model_id": "pixart-alpha-xl-1024",
+      "repo_id": "PixArt-alpha/PixArt-XL-2-1024-MS",
+      "revision": "b89adadeccd9ead2adcb9fa2825d3fabec48d404",
+      "provenance": "author",
+      "catalog_id": "pixart-alpha",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "e56aa549036ba94ed16747379e8a2c84b77612b298090fbcdfc2ded43d0e20a6",
+        "scheduler/scheduler_config.json": "ec1638ad7fce60b92870623ae6d9472ca4f005cdb2694b74cf86ae78e1d1e0d5",
+        "text_encoder/config.json": "9a2865cce66d6dbfdc0fd185faed2394344fc5f61b2cbf9579ca2e6dc882f927",
+        "text_encoder/model.safetensors.index.json": "fb4665a1a122b7e5270f0e4494c653839c11a5a978e03b0df6dfa714258716e6",
+        "text_encoder/model-00001-of-00002.safetensors": "eb529f693f4b17773a24e787fcba29486d5e1700dadcc20bb91e4c8b00212d08",
+        "text_encoder/model-00002-of-00002.safetensors": "58f33f4acba7a5502b6b3e4cb7863f8fd503d5012016428099bb460c98e2fe77",
+        "tokenizer/added_tokens.json": "4b1c1345a66fdd00264819c5adfc3142debfbd3b03767a04f95a39ac2277ca21",
+        "tokenizer/special_tokens_map.json": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f",
+        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer/tokenizer_config.json": "71730771351a8f0463bd2e545fbfaadc9dc01a7a222306ff4795cc48dfe168c0",
+        "transformer/config.json": "6373a74a97f86ccb8de29d697ec45429d701d157134ece2ed0a314d68ee4e4c0",
+        "transformer/diffusion_pytorch_model.safetensors": "809a92d52a4a228f381a4b4f4b76051294b73285fb0cbb02f0ad24f9372217a8",
+        "vae/config.json": "9d90ec977f9742aa150fa8c771f74e333e87142bcd927e295c5d43d24fc4661d",
+        "vae/diffusion_pytorch_model.safetensors": "703abdcd7c389316b5128faa9b750a530ea1680b453170b27afebac5e4db30c4"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 612,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
       "model_id": "sdxl-turbo",
       "repo_id": "stabilityai/sdxl-turbo",
       "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
@@ -3986,6 +4115,164 @@
       "tolerance": 0.0
     }
   },
+  "components_pixart": {
+    "e2e_pixart-alpha-xl-1024": {
+      "guidance": 4.5,
+      "latents": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "noise_seed": 7,
+      "passed": true,
+      "pixels_max_abs": 0,
+      "prompt": "a photograph of an astronaut riding a horse",
+      "scheduler_seed": 42,
+      "size": [
+        1024,
+        1024
+      ],
+      "steps": 20
+    },
+    "e2e_pixart-sigma-xl-1024": {
+      "guidance": 4.5,
+      "latents": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "noise_seed": 7,
+      "passed": true,
+      "pixels_max_abs": 0,
+      "prompt": "a photograph of an astronaut riding a horse",
+      "scheduler_seed": 42,
+      "size": [
+        1024,
+        1024
+      ],
+      "steps": 20
+    },
+    "header_pixart-alpha-xl-1024": {
+      "text_encoder": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 219
+      },
+      "transformer": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 612
+      },
+      "vae": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 248
+      }
+    },
+    "header_pixart-alpha-xl-1024_transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 612
+    },
+    "header_pixart-sigma-xl-1024": {
+      "text_encoder": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 219
+      },
+      "transformer": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 603
+      },
+      "vae": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 248
+      }
+    },
+    "header_pixart-sigma-xl-1024_transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 603
+    },
+    "pixart-alpha-xl-1024_scheduler": {
+      "exact": true,
+      "steps": 20,
+      "tolerance": "exact"
+    },
+    "pixart-alpha-xl-1024_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-alpha-xl-1024_tokenizer": {
+      "ids_match": true,
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "pixart-alpha-xl-1024_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-alpha-xl-1024_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-alpha-xl-1024_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-1024_scheduler": {
+      "exact": true,
+      "steps": 20,
+      "tolerance": "exact"
+    },
+    "pixart-sigma-xl-1024_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-1024_tokenizer": {
+      "ids_match": true,
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "pixart-sigma-xl-1024_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-1024_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-1024_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "seed_e2e_pixart-alpha-xl-1024": {
+      "max_pixel_diff": 0,
+      "passed": true,
+      "seed": 42
+    },
+    "seed_e2e_pixart-sigma-xl-1024": {
+      "max_pixel_diff": 0,
+      "passed": true,
+      "seed": 42
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -4008,11 +4295,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for HunyuanDiT.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (dmd2-sdxl-4step, dmd2-sdxl-1step, 4 min)"
+    "reference_summary": "19 passed (pixart-sigma-xl-1024, pixart-alpha-xl-1024, 45 min)"
   }
 }

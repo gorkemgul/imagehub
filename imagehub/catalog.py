@@ -818,6 +818,63 @@ _entries.append(
     )
 )
 
+_PIXART_COMMON = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00002.safetensors",
+    "text_encoder/model-00002-of-00002.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/spiece.model",
+    "tokenizer/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _id, _repo, _revision, _catalog_id, _max_length, _files in (
+    (
+        "pixart-sigma-xl-1024",
+        "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+        "e102b3591cc82e97071b8b4cb90d834d0c487207",
+        "pixart-sigma",
+        300,
+        _PIXART_COMMON,
+    ),
+    (
+        "pixart-alpha-xl-1024",
+        "PixArt-alpha/PixArt-XL-2-1024-MS",
+        "b89adadeccd9ead2adcb9fa2825d3fabec48d404",
+        "pixart-alpha",
+        120,
+        _PIXART_COMMON[:6] + ("tokenizer/added_tokens.json",) + _PIXART_COMMON[6:],
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="pixart",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id=_catalog_id,
+            format="diffusers",
+            license="CreativeML-OpenRAIL++-M",
+            gated=False,
+            config={
+                "defaults": {
+                    "steps": 20,
+                    "guidance": 4.5,
+                    "max_sequence_length": _max_length,
+                }
+            },
+            files=_files,
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="sdxl-turbo",

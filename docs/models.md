@@ -449,6 +449,50 @@ European Union, the United Kingdom and South Korea; see the license. imagehub do
 weights.
 
 
+# PixArt
+
+Catalog: [`pixart-sigma`](https://github.com/gorkemgul/awesome-text-to-image-architectures),
+[`pixart-alpha`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` · Task: `t2i`
+
+**Architecture.** A T5-v1.1-XXL text encoder supplies up to 300 tokens for Sigma and 120 for Alpha
+to a 0.6B diffusion transformer with 28 blocks, width 1152 and 16 attention heads of width 72. The
+transformer uses shared `ada_norm_single` timestep modulation, caption projection, a 2D sine-cosine
+position embedding and learned sigma prediction. Sigma uses interpolation scale 2 and the SDXL VAE
+with scaling factor 0.13025. Alpha adds resolution and aspect-ratio embeddings and uses the SD VAE
+with scaling factor 0.18215. Both use the order-2 midpoint DPM-Solver++ multistep scheduler and bin
+requested resolutions to their supported aspect-ratio tables.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained pixart-sigma-xl-1024 checkpoints/pixart-sigma-xl-1024
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="pixart-sigma-xl-1024", model="checkpoints/pixart-sigma-xl-1024", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
+    result.images[0].save("cat.png")
+```
+
+**Settings.** Both models default to 20 steps, guidance 4.5 and 1024×1024. Sigma defaults to a
+maximum sequence length of 300 and Alpha to 120. The other supported options are `seed`, `latents`,
+`negative_prompt`, `use_resolution_binning` and `max_sequence_length`. Unrecognized settings raise
+an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The 256×256, 512×512 and 2K releases, PixArt-LCM, PixArt-DMD, ControlNet,
+fp16/bf16 parity and caption cleaning are not supported. Caption cleaning requires `bs4` and `ftfy`;
+parity is against `clean_caption=False`, which diffusers uses when those packages are unavailable.
+
+**License.** Both models use the CreativeML-OpenRAIL++-M license. imagehub does not distribute
+weights.
+
+
 # Qwen-Image 2.1
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
