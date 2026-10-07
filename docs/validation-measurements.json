@@ -14,6 +14,26 @@
     "prompts": 13,
     "tolerance": "exact"
   },
+  "dmd2-sdxl-1step_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "size": [
+      1024,
+      1024
+    ],
+    "timestep": 399,
+    "tolerance": 0.0
+  },
+  "dmd2-sdxl-4step_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "size": [
+      1024,
+      1024
+    ],
+    "timestep": 999,
+    "tolerance": 0.0
+  },
   "e2e_batch2_janus-pro-1b": {
     "num_images": 2,
     "passed": true,
@@ -25,6 +45,57 @@
     "passed": true,
     "pixels_match": true,
     "tokens_match": true
+  },
+  "e2e_dmd2-sdxl-1step": {
+    "guidance": 0.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scheduler_seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 1,
+    "timesteps": [
+      399
+    ],
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "e2e_dmd2-sdxl-4step": {
+    "guidance": 0.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scheduler_seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4,
+    "timesteps": [
+      999,
+      749,
+      499,
+      249
+    ],
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
   },
   "e2e_flux1-dev": {
     "max_pixel_diff": 0,
@@ -762,6 +833,18 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "header_dmd2-sdxl-1step": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 1680
+  },
+  "header_dmd2-sdxl-4step": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 1680
   },
   "header_flux1-dev": {
     "text_encoder": {
@@ -2192,6 +2275,37 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "seed_e2e_dmd2-sdxl-1step": {
+    "guidance": 0.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 1,
+    "timesteps": [
+      399
+    ]
+  },
+  "seed_e2e_dmd2-sdxl-4step": {
+    "guidance": 0.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4,
+    "timesteps": [
+      999,
+      749,
+      499,
+      249
+    ]
   },
   "seed_e2e_flux1-dev": {
     "max_pixel_diff": 0,

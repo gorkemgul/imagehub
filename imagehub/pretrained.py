@@ -57,7 +57,11 @@ def download_pretrained(
         assert base.repo_id is not None
         base_commit, base_siblings = download.resolve_revision(base.repo_id, base.revision, headers)
         missing += [
-            name for name in base.files if name not in spec.overlay and name not in base_siblings
+            name
+            for name in base.files
+            if name not in spec.overlay
+            and name not in spec.base_exclude
+            and name not in base_siblings
         ]
     if missing:
         raise DownloadError(f"Published artifacts are missing at {commit}: {', '.join(missing)}")
@@ -78,7 +82,7 @@ def download_pretrained(
             assert base_commit is not None
             assert base_siblings is not None
             for name in base.files:
-                if name not in spec.overlay:
+                if name not in spec.overlay and name not in spec.base_exclude:
                     file_plan.append((name, name, base.repo_id, base_commit, base_siblings[name]))
             overlaid_sources = set(spec.overlay.values())
             file_plan.extend(

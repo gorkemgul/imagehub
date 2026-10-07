@@ -53,8 +53,8 @@ def fake_hub(monkeypatch, *, commit=SPEC.revision, corrupt=None, short=None, dro
     return contents, calls
 
 
-def fake_composite_hub(monkeypatch, *, drop=None, corrupt=None):
-    spec = model_info("sdxl-lightning-2step")
+def fake_composite_hub(monkeypatch, *, model_id="sdxl-lightning-2step", drop=None, corrupt=None):
+    spec = model_info(model_id)
     base = model_info(spec.base)
     repositories = {
         base.repo_id: {name: f"base content of {name}".encode() for name in base.files},
@@ -143,6 +143,26 @@ def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
     assert not any(
         f"/{base.repo_id}/resolve/{base.revision}/{overlay_path}" in url for url, _ in calls
     )
+
+
+def test_composite_excludes_base_file_from_snapshot(monkeypatch, tmp_path):
+    spec = model_info("dmd2-sdxl-1step")
+    base = model_info(spec.base)
+    excluded = spec.base_exclude[0]
+    spec, base, repositories, calls = fake_composite_hub(
+        monkeypatch,
+        model_id=spec.id,
+        drop=(base.repo_id, excluded),
+    )
+    dest = download_pretrained(spec.id, tmp_path / "dmd2")
+    manifest = read_snapshot(dest)
+
+    assert set(manifest["files"]) == (set(base.files) - set(spec.base_exclude)) | set(spec.overlay)
+    assert not (dest / excluded).exists()
+    assert (dest / "unet/diffusion_pytorch_model.bin").read_bytes() == repositories[spec.repo_id][
+        spec.files[0]
+    ]
+    assert not any(f"/{base.repo_id}/resolve/{base.revision}/{excluded}" in url for url, _ in calls)
 
 
 def test_composite_missing_overlay_fails_before_downloading(monkeypatch, tmp_path):

@@ -44,6 +44,7 @@ class ModelSpec:
     gated: bool = False
     license: str = "See model card"
     base: str | None = None
+    base_exclude: tuple[str, ...] = ()
     overlay: Mapping[str, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -59,6 +60,7 @@ class ModelSpec:
             ),
         )
         object.__setattr__(self, "files", tuple(self.files))
+        object.__setattr__(self, "base_exclude", tuple(self.base_exclude))
         object.__setattr__(self, "overlay", MappingProxyType(dict(self.overlay)))
         if not re.fullmatch(r"[0-9a-f]{40}", self.revision):
             raise ValueError("revision must be a 40-character lowercase commit hash")
@@ -68,6 +70,12 @@ class ModelSpec:
             raise ValueError(f"base model {self.base!r} does not exist")
         if self.overlay and self.base is None:
             raise ValueError("overlay requires a base model")
+        if self.base_exclude and self.base is None:
+            raise ValueError("base_exclude requires a base model")
+        for name in self.base_exclude:
+            path = PurePosixPath(name)
+            if not name or path.is_absolute() or "." in path.parts or ".." in path.parts:
+                raise ValueError(f"base_exclude path {name!r} is not a safe relative path")
         for destination, source in self.overlay.items():
             for name in (destination, source):
                 path = PurePosixPath(name)
@@ -292,6 +300,56 @@ _entries.append(
         overlay={"unet/diffusion_pytorch_model.safetensors": "Hyper-SDXL-1step-Unet.safetensors"},
         config={
             "defaults": {"steps": 1, "guidance": 0.0, "timesteps": [800]},
+            "scheduler": {"_class_name": "LCMScheduler"},
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="dmd2-sdxl-4step",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/tianweiy/DMD2",
+        repo_id="tianweiy/DMD2",
+        revision="be22767697a1f3ca656b73c776e15fa335c86c6c",
+        provenance="author",
+        catalog_id="dmd2",
+        format="diffusers",
+        license="CC-BY-NC-4.0",
+        base="sdxl-base-1.0",
+        base_exclude=("unet/diffusion_pytorch_model.safetensors",),
+        files=("dmd2_sdxl_4step_unet.bin",),
+        overlay={"unet/diffusion_pytorch_model.bin": "dmd2_sdxl_4step_unet.bin"},
+        config={
+            "defaults": {
+                "steps": 4,
+                "guidance": 0.0,
+                "timesteps": [999, 749, 499, 249],
+            },
+            "scheduler": {"_class_name": "LCMScheduler"},
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="dmd2-sdxl-1step",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/tianweiy/DMD2",
+        repo_id="tianweiy/DMD2",
+        revision="be22767697a1f3ca656b73c776e15fa335c86c6c",
+        provenance="author",
+        catalog_id="dmd2",
+        format="diffusers",
+        license="CC-BY-NC-4.0",
+        base="sdxl-base-1.0",
+        base_exclude=("unet/diffusion_pytorch_model.safetensors",),
+        files=("dmd2_sdxl_1step_unet.bin",),
+        overlay={"unet/diffusion_pytorch_model.bin": "dmd2_sdxl_1step_unet.bin"},
+        config={
+            "defaults": {"steps": 1, "guidance": 0.0, "timesteps": [399]},
             "scheduler": {"_class_name": "LCMScheduler"},
         },
     )

@@ -9,6 +9,7 @@ import mmap
 import os
 import pickle
 import struct
+import zipfile
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Self
@@ -168,7 +169,11 @@ def _is_tensor_state(value: object) -> bool:
 
 def _load_pickle(source: Path, container_key: str | None = None) -> dict[str, Tensor]:
     try:
-        state = torch.load(source, map_location="cpu", weights_only=True)
+        # As diffusers: zip-format pickles are memory-mapped, which keeps the file's tensor
+        # layout; CPU summation order depends on that alignment.
+        state = torch.load(
+            source, map_location="cpu", weights_only=True, mmap=zipfile.is_zipfile(source)
+        )
     except (pickle.UnpicklingError, EOFError, RuntimeError) as error:
         raise CheckpointError(
             f"{source} is not a tensor-only checkpoint and was not loaded: {error}"
