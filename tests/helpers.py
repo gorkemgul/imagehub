@@ -877,6 +877,187 @@ def write_tiny_qwen_image21(directory: str | os.PathLike[str], *, seed: int = 0)
     return root
 
 
+TINY_KREA2_TEXT = {
+    "vocab_size": 260,
+    "hidden_size": 16,
+    "intermediate_size": 32,
+    "num_hidden_layers": 13,
+    "num_attention_heads": 2,
+    "num_key_value_heads": 1,
+    "head_dim": 8,
+    "max_position_embeddings": 256,
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 5_000_000.0,
+    "rope_scaling": {
+        "mrope_interleaved": True,
+        "mrope_section": [2, 1, 1],
+        "rope_type": "default",
+    },
+    "attention_bias": False,
+    "attention_dropout": 0.0,
+    "hidden_act": "silu",
+}
+TINY_KREA2_TRANSFORMER = {
+    "_class_name": "Krea2Transformer2DModel",
+    "in_channels": 16,
+    "num_layers": 1,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "num_key_value_heads": 1,
+    "intermediate_size": 32,
+    "timestep_embed_dim": 16,
+    "text_hidden_dim": 16,
+    "num_text_layers": 12,
+    "text_num_attention_heads": 2,
+    "text_num_key_value_heads": 1,
+    "text_intermediate_size": 32,
+    "num_layerwise_text_blocks": 1,
+    "num_refiner_text_blocks": 1,
+    "axes_dims_rope": [2, 2, 4],
+    "rope_theta": 1000.0,
+    "norm_eps": 1e-5,
+}
+TINY_KREA2_VAE = {
+    "_class_name": "AutoencoderKLQwenImage",
+    "base_dim": 4,
+    "z_dim": 4,
+    "dim_mult": [1, 2, 2, 2],
+    "num_res_blocks": 1,
+    "attn_scales": [],
+    "temperal_downsample": [False, True, True],
+    "dropout": 0.0,
+    "input_channels": 3,
+    "latents_mean": [0.1, -0.2, 0.3, -0.4],
+    "latents_std": [1.1, 0.9, 1.2, 0.8],
+}
+TINY_KREA2_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "base_image_seq_len": 1,
+    "base_shift": 0.5,
+    "invert_sigmas": False,
+    "max_image_seq_len": 16,
+    "max_shift": 0.9,
+    "num_train_timesteps": 1000,
+    "shift": 1.0,
+    "shift_terminal": None,
+    "stochastic_sampling": False,
+    "time_shift_type": "exponential",
+    "use_beta_sigmas": False,
+    "use_dynamic_shifting": True,
+    "use_exponential_sigmas": False,
+    "use_karras_sigmas": False,
+}
+
+
+def write_tiny_krea2(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """Write a random tiny Krea 2 snapshot in the published layout."""
+    import shutil
+
+    import transformers
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl_qwen_image import AutoencoderKLQwenImage
+    from imagehub.models.krea2_transformer import Krea2Transformer2DModel
+    from imagehub.tokenization_qwen import bytes_to_unicode as qwen_bytes_to_unicode
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    tokenizer_data = json.loads((FIXTURES / "qwen_tokenizer/tokenizer.json").read_text())
+    vocab = {character: index for index, character in enumerate(qwen_bytes_to_unicode().values())}
+    special_tokens = ("<|endoftext|>", "<|im_start|>", "<|im_end|>", "<|image_pad|>")
+    for token in special_tokens:
+        vocab[token] = len(vocab)
+    tokenizer_data["model"]["vocab"] = vocab
+    tokenizer_data["model"]["merges"] = []
+    tokenizer_data["added_tokens"] = [
+        {
+            "id": vocab[token],
+            "content": token,
+            "single_word": False,
+            "lstrip": False,
+            "rstrip": False,
+            "normalized": False,
+            "special": True,
+        }
+        for token in special_tokens
+    ]
+    (tokenizer / "tokenizer.json").write_text(json.dumps(tokenizer_data))
+    shutil.copyfile(FIXTURES / "qwen_tokenizer/merges.txt", tokenizer / "merges.txt")
+    (tokenizer / "vocab.json").write_text(json.dumps(vocab))
+    tokenizer_config = {
+        "tokenizer_class": "Qwen2Tokenizer",
+        "model_max_length": 256,
+        "eos_token": "<|im_end|>",
+        "pad_token": "<|endoftext|>",
+        "additional_special_tokens": list(special_tokens[1:]),
+    }
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (tokenizer / "special_tokens_map.json").write_text(json.dumps(tokenizer_config))
+    (tokenizer / "chat_template.jinja").write_text("")
+
+    text_config = {
+        "architectures": ["Qwen3VLForConditionalGeneration"],
+        "model_type": "qwen3_vl",
+        "text_config": TINY_KREA2_TEXT,
+        "vision_config": {
+            "deepstack_visual_indexes": [],
+            "depth": 1,
+            "hidden_act": "gelu_pytorch_tanh",
+            "hidden_size": 16,
+            "in_channels": 3,
+            "intermediate_size": 32,
+            "model_type": "qwen3_vl",
+            "num_heads": 2,
+            "num_position_embeddings": 64,
+            "out_hidden_size": 16,
+            "patch_size": 2,
+            "spatial_merge_size": 2,
+            "temporal_patch_size": 2,
+        },
+        "image_token_id": vocab["<|image_pad|>"],
+        "video_token_id": vocab["<|image_pad|>"],
+        "vision_start_token_id": vocab["<|im_start|>"],
+        "vision_end_token_id": vocab["<|im_end|>"],
+        "tie_word_embeddings": False,
+    }
+    torch.manual_seed(seed)
+    text_encoder = transformers.Qwen3VLModel(transformers.Qwen3VLConfig(**text_config))
+    (root / "text_encoder").mkdir()
+    (root / "text_encoder/config.json").write_text(json.dumps(text_config))
+    save_safetensors(text_encoder.state_dict(), root / "text_encoder/model.safetensors")
+
+    for name, cls, config in (
+        ("transformer", Krea2Transformer2DModel, TINY_KREA2_TRANSFORMER),
+        ("vae", AutoencoderKLQwenImage, TINY_KREA2_VAE),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(model.state_dict(), root / name / "diffusion_pytorch_model.safetensors")
+    (root / "scheduler").mkdir()
+    (root / "scheduler/scheduler_config.json").write_text(json.dumps(TINY_KREA2_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "Krea2Pipeline",
+                "is_distilled": True,
+                "patch_size": 2,
+                "text_encoder_select_layers": list(range(1, 13)),
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen3VLModel"],
+                "tokenizer": ["transformers", "Qwen2Tokenizer"],
+                "transformer": ["diffusers", "Krea2Transformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKLQwenImage"],
+            }
+        )
+    )
+    return root
+
+
 TINY_SD3_T5 = {
     "architectures": ["T5EncoderModel"],
     "vocab_size": 11,

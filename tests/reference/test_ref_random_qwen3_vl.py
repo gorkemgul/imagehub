@@ -92,3 +92,43 @@ def test_qwen3_vl_text_random_weights_exact(config: dict[str, Any]) -> None:
     finally:
         handle.remove()
     torch.testing.assert_close(actual, expected, atol=0, rtol=0)
+
+
+def test_qwen3_vl_explicit_three_axis_position_ids_exact() -> None:
+    torch.manual_seed(1)
+    reference = transformers.Qwen3VLTextModel(_reference_config(TINY)).eval()
+    model = Qwen3VLTextModel(TINY).eval()
+    model.load_checkpoint(reference.state_dict())
+    input_ids = torch.randint(0, TINY["vocab_size"], (2, 9))
+    attention_mask = torch.tensor(
+        [[1, 1, 1, 0, 0, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1]], dtype=torch.bool
+    )
+    positions = (attention_mask.long().cumsum(-1) - 1).clamp(min=0)
+    position_ids = positions.unsqueeze(0).expand(3, -1, -1)
+    pre_norm: list[torch.Tensor] = []
+    handle = reference.norm.register_forward_hook(
+        lambda module, args, output: pre_norm.append(args[0])
+    )
+    try:
+        with torch.inference_mode():
+            expected = list(
+                reference(
+                    input_ids,
+                    attention_mask=attention_mask,
+                    position_ids=position_ids,
+                    output_hidden_states=True,
+                    use_cache=False,
+                ).hidden_states
+            )
+            actual = model(
+                input_ids,
+                attention_mask,
+                position_ids=position_ids,
+                output_hidden_states=True,
+            )
+    finally:
+        handle.remove()
+    expected[-1] = pre_norm[0]
+    assert len(actual) == len(expected)
+    for actual_state, expected_state in zip(actual, expected, strict=True):
+        torch.testing.assert_close(actual_state, expected_state, atol=0, rtol=0)

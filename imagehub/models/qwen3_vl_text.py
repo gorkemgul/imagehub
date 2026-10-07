@@ -192,11 +192,19 @@ class Qwen3VLTextModel(NativeModel):
             base ** (torch.arange(0, dim, 2, dtype=torch.float32) / dim)
         )
 
-    def forward(self, input_ids: Tensor, attention_mask: Tensor) -> tuple[Tensor, ...]:
+    def forward(
+        self,
+        input_ids: Tensor,
+        attention_mask: Tensor,
+        *,
+        position_ids: Tensor | None = None,
+        output_hidden_states: bool = True,
+    ) -> tuple[Tensor, ...]:
         """Return decoder hidden states, ending with the pre-norm state used by the pipeline."""
         hidden_states = self.embed_tokens(input_ids)
         positions = torch.arange(hidden_states.shape[1], device=hidden_states.device)
-        position_ids = positions.view(1, 1, -1).expand(3, hidden_states.shape[0], -1)
+        if position_ids is None:
+            position_ids = positions.view(1, 1, -1).expand(3, hidden_states.shape[0], -1)
         position_embeddings = self.rotary_emb(hidden_states, position_ids)
 
         causal_mask = None
@@ -204,8 +212,9 @@ class Qwen3VLTextModel(NativeModel):
             causal_mask = positions[:, None] >= positions[None, :]
             causal_mask = causal_mask[None, None] & attention_mask[:, None, None, :].bool()
 
-        all_hidden_states = [hidden_states]
+        all_hidden_states = [hidden_states] if output_hidden_states else []
         for layer in self.layers:
             hidden_states = layer(hidden_states, position_embeddings, causal_mask)
-            all_hidden_states.append(hidden_states)
-        return tuple(all_hidden_states)
+            if output_hidden_states:
+                all_hidden_states.append(hidden_states)
+        return tuple(all_hidden_states) if output_hidden_states else (hidden_states,)
