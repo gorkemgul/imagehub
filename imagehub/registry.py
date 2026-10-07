@@ -100,6 +100,11 @@ for _task, _name, _path in (
     (Task.T2I, "flux", "imagehub.backends.flux:FluxBackend"),
     (Task.T2I, "hunyuan-dit", "imagehub.backends.hunyuan_dit:HunyuanDiTBackend"),
     (Task.T2I, "pixart", "imagehub.backends.pixart:PixArtBackend"),
+    (
+        Task.T2I,
+        "longcat-image",
+        "imagehub.backends.longcat_image:LongCatImageBackend",
+    ),
     (Task.T2I, "janus", "imagehub.backends.janus:JanusBackend"),
 ):
     backend_registry.register(_task, _name, _path)

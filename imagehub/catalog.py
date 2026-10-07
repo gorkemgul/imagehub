@@ -877,6 +877,60 @@ for _id, _repo, _revision, _catalog_id, _max_length, _files in (
 
 _entries.append(
     ModelSpec(
+        id="longcat-image",
+        task=Task.T2I,
+        family="longcat-image",
+        source="https://huggingface.co/meituan-longcat/LongCat-Image",
+        repo_id="meituan-longcat/LongCat-Image",
+        revision="d2ea50b79a930074c37b9b97ce45e3b2ea8cf4d8",
+        provenance="author",
+        catalog_id="longcat-image",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 4.5,
+                "enable_cfg_renorm": True,
+                "cfg_renorm_min": 0.0,
+                "enable_prompt_rewrite": True,
+            }
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00005.safetensors",
+            "text_encoder/model-00002-of-00005.safetensors",
+            "text_encoder/model-00003-of-00005.safetensors",
+            "text_encoder/model-00004-of-00005.safetensors",
+            "text_encoder/model-00005-of-00005.safetensors",
+            "text_processor/chat_template.json",
+            "text_processor/preprocessor_config.json",
+            "text_processor/tokenizer.json",
+            "text_processor/tokenizer_config.json",
+            "text_processor/video_preprocessor_config.json",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-turbo",
         task=Task.T2I,
         family="stable-diffusion-xl",
