@@ -9,6 +9,8 @@ from imagehub.types import Task
 def test_catalog_contents():
     assert available_models() == {
         "t2i": (
+            "dmd2-sdxl-1step",
+            "dmd2-sdxl-4step",
             "flux1-dev",
             "flux1-schnell",
             "flux2-klein-4b",
@@ -149,6 +151,27 @@ def test_catalog_contents():
         "defaults": {"steps": 1, "guidance": 0.0, "timesteps": [800]},
         "scheduler": {"_class_name": "LCMScheduler"},
     }
+
+    for steps, timesteps in ((4, [999, 749, 499, 249]), (1, [399])):
+        dmd2 = model_info(f"dmd2-sdxl-{steps}step")
+        source = f"dmd2_sdxl_{steps}step_unet.bin"
+        assert dmd2.task is Task.T2I
+        assert dmd2.family == "stable-diffusion-xl"
+        assert dmd2.source == "https://huggingface.co/tianweiy/DMD2"
+        assert dmd2.repo_id == "tianweiy/DMD2"
+        assert dmd2.revision == "be22767697a1f3ca656b73c776e15fa335c86c6c"
+        assert dmd2.provenance == "author"
+        assert dmd2.catalog_id == "dmd2"
+        assert dmd2.format == "diffusers"
+        assert dmd2.license == "CC-BY-NC-4.0"
+        assert dmd2.base == "sdxl-base-1.0"
+        assert dmd2.base_exclude == ("unet/diffusion_pytorch_model.safetensors",)
+        assert dmd2.files == (source,)
+        assert dmd2.overlay == {"unet/diffusion_pytorch_model.bin": source}
+        assert dmd2.config == {
+            "defaults": {"steps": steps, "guidance": 0.0, "timesteps": timesteps},
+            "scheduler": {"_class_name": "LCMScheduler"},
+        }
 
     turbo = model_info("sdxl-turbo")
     assert turbo.task is Task.T2I
@@ -382,6 +405,8 @@ def test_spec_validation():
         ModelSpec(**{**base.__dict__, "provenance": "unknown"})
     with pytest.raises(ValueError, match="base"):
         ModelSpec(**{**base.__dict__, "id": "bad-base", "base": "missing"})
+    with pytest.raises(ValueError, match="base_exclude"):
+        ModelSpec(**{**base.__dict__, "id": "excluded-without-base", "base_exclude": ("x",)})
     with pytest.raises(ValueError, match="overlay source"):
         ModelSpec(
             **{
@@ -403,5 +428,15 @@ def test_spec_validation():
                     "base": "sdxl-base-1.0",
                     "files": (base.files[0], "../model.safetensors"),
                     "overlay": overlay,
+                }
+            )
+    for base_exclude in ("../model.safetensors", "/model.safetensors"):
+        with pytest.raises(ValueError, match="base_exclude"):
+            ModelSpec(
+                **{
+                    **base.__dict__,
+                    "id": "bad-exclude",
+                    "base": "sdxl-base-1.0",
+                    "base_exclude": (base_exclude,),
                 }
             )
