@@ -8,6 +8,8 @@ import os
 import re
 import struct
 import unicodedata
+from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -17,8 +19,8 @@ import torch
 class _PrecompiledNormalizer:
     """SentencePiece precompiled normalizer backed by its Darts double-array trie."""
 
-    def __init__(self, encoded: str) -> None:
-        data = base64.b64decode(encoded)
+    def __init__(self, encoded: str | bytes) -> None:
+        data = base64.b64decode(encoded) if isinstance(encoded, str) else encoded
         trie_size = struct.unpack_from("<I", data)[0]
         if trie_size % 4:
             raise ValueError("invalid precompiled normalizer trie")
@@ -68,6 +70,162 @@ class _PrecompiledNormalizer:
             output.extend(source[position : position + width])
             position += width
         return output.decode("utf-8")
+
+
+def _read_varint(data: bytes, position: int) -> tuple[int, int]:
+    value = 0
+    shift = 0
+    while position < len(data):
+        byte = data[position]
+        position += 1
+        value |= (byte & 0x7F) << shift
+        if byte < 0x80:
+            return value, position
+        shift += 7
+        if shift >= 70:
+            break
+    raise ValueError("invalid protobuf varint")
+
+
+def _protobuf_fields(data: bytes) -> Iterator[tuple[int, int, int | bytes]]:
+    position = 0
+    while position < len(data):
+        tag, position = _read_varint(data, position)
+        field_number, wire_type = tag >> 3, tag & 7
+        value: int | bytes
+        if wire_type == 0:
+            value, position = _read_varint(data, position)
+        elif wire_type == 1:
+            end = position + 8
+            value, position = data[position:end], end
+        elif wire_type == 2:
+            size, position = _read_varint(data, position)
+            end = position + size
+            value, position = data[position:end], end
+        elif wire_type == 5:
+            end = position + 4
+            value, position = data[position:end], end
+        else:
+            raise ValueError(f"unsupported protobuf wire type: {wire_type}")
+        if position > len(data):
+            raise ValueError("truncated protobuf field")
+        yield field_number, wire_type, value
+
+
+def _signed_int32(value: int) -> int:
+    value &= 0xFFFFFFFF
+    return value - 0x100000000 if value & 0x80000000 else value
+
+
+@dataclass(frozen=True)
+class _TrainerSpec:
+    model_type: int = 1
+    unk_id: int = 0
+    bos_id: int = 1
+    eos_id: int = 2
+    pad_id: int = -1
+    byte_fallback: bool = False
+
+
+@dataclass(frozen=True)
+class _NormalizerSpec:
+    name: str = ""
+    precompiled_charsmap: bytes = b""
+    add_dummy_prefix: bool = True
+    remove_extra_whitespaces: bool = True
+    escape_whitespaces: bool = True
+
+
+@dataclass(frozen=True)
+class _SentencePieceModel:
+    pieces: list[tuple[str, float, int]]
+    trainer_spec: _TrainerSpec
+    normalizer_spec: _NormalizerSpec
+
+
+def _parse_trainer_spec(data: bytes) -> _TrainerSpec:
+    values: dict[str, Any] = {
+        "model_type": 1,
+        "unk_id": 0,
+        "bos_id": 1,
+        "eos_id": 2,
+        "pad_id": -1,
+        "byte_fallback": False,
+    }
+    fields = {
+        3: "model_type",
+        35: "byte_fallback",
+        40: "unk_id",
+        41: "bos_id",
+        42: "eos_id",
+        43: "pad_id",
+    }
+    for field_number, wire_type, value in _protobuf_fields(data):
+        name = fields.get(field_number)
+        if name is None or wire_type != 0 or not isinstance(value, int):
+            continue
+        values[name] = bool(value) if name == "byte_fallback" else _signed_int32(value)
+    return _TrainerSpec(**values)
+
+
+def _parse_normalizer_spec(data: bytes) -> _NormalizerSpec:
+    values: dict[str, Any] = {
+        "name": "",
+        "precompiled_charsmap": b"",
+        "add_dummy_prefix": True,
+        "remove_extra_whitespaces": True,
+        "escape_whitespaces": True,
+    }
+    fields = {
+        1: "name",
+        2: "precompiled_charsmap",
+        3: "add_dummy_prefix",
+        4: "remove_extra_whitespaces",
+        5: "escape_whitespaces",
+    }
+    for field_number, wire_type, value in _protobuf_fields(data):
+        name = fields.get(field_number)
+        if name is None:
+            continue
+        if field_number == 1 and wire_type == 2 and isinstance(value, bytes):
+            values[name] = value.decode("utf-8")
+        elif field_number == 2 and wire_type == 2 and isinstance(value, bytes):
+            values[name] = value
+        elif field_number >= 3 and wire_type == 0 and isinstance(value, int):
+            values[name] = bool(value)
+    return _NormalizerSpec(**values)
+
+
+def _parse_piece(data: bytes) -> tuple[str, float, int]:
+    piece = ""
+    score = 0.0
+    piece_type = 1
+    for field_number, wire_type, value in _protobuf_fields(data):
+        if field_number == 1 and wire_type == 2 and isinstance(value, bytes):
+            piece = value.decode("utf-8")
+        elif field_number == 2 and wire_type == 5 and isinstance(value, bytes):
+            score = struct.unpack("<f", value)[0]
+        elif field_number == 3 and wire_type == 0 and isinstance(value, int):
+            piece_type = value
+    return piece, score, piece_type
+
+
+def _load_sentencepiece(path: Path) -> _SentencePieceModel:
+    pieces: list[tuple[str, float, int]] = []
+    trainer_spec = _TrainerSpec()
+    normalizer_spec = _NormalizerSpec()
+    for field_number, wire_type, value in _protobuf_fields(path.read_bytes()):
+        if wire_type != 2 or not isinstance(value, bytes):
+            continue
+        if field_number == 1:
+            pieces.append(_parse_piece(value))
+        elif field_number == 2:
+            trainer_spec = _parse_trainer_spec(value)
+        elif field_number == 3:
+            normalizer_spec = _parse_normalizer_spec(value)
+    if not pieces:
+        raise ValueError("SentencePiece model has no pieces")
+    return _SentencePieceModel(pieces, trainer_spec, normalizer_spec)
 
 
 class _Unigram:
@@ -155,11 +313,20 @@ def _content(value: object) -> str | None:
 
 
 class T5Tokenizer:
-    """Tokenizer loaded entirely from a Hugging Face ``tokenizer.json`` directory."""
+    """Tokenizer loaded from a Hugging Face T5 tokenizer directory."""
 
     def __init__(self, directory: str | os.PathLike[str]) -> None:
         path = Path(directory)
-        config: dict[str, Any] = json.loads((path / "tokenizer.json").read_text(encoding="utf-8"))
+        tokenizer_config: dict[str, Any] = {}
+        tokenizer_config_path = path / "tokenizer_config.json"
+        if tokenizer_config_path.is_file():
+            tokenizer_config = json.loads(tokenizer_config_path.read_text(encoding="utf-8"))
+
+        tokenizer_json_path = path / "tokenizer.json"
+        if tokenizer_json_path.is_file():
+            config: dict[str, Any] = json.loads(tokenizer_json_path.read_text(encoding="utf-8"))
+        else:
+            config = self._config_from_sentencepiece(path / "spiece.model", tokenizer_config)
         if config["model"]["type"] != "Unigram":
             raise ValueError("T5Tokenizer requires a Unigram model")
         self.model = _Unigram(config["model"])
@@ -179,15 +346,63 @@ class T5Tokenizer:
         self._normalized_added = self._added_pattern(normalized)
 
         self.post_processor = self._load_post_processor(config.get("post_processor"))
-        tokenizer_config: dict[str, Any] = {}
-        tokenizer_config_path = path / "tokenizer_config.json"
-        if tokenizer_config_path.is_file():
-            tokenizer_config = json.loads(tokenizer_config_path.read_text(encoding="utf-8"))
         pad_token = _content(tokenizer_config.get("pad_token")) or "<pad>"
         pad_id = self.added_ids.get(pad_token, self.model.byte_ids.get(pad_token))
         if pad_id is None:
             raise ValueError("tokenizer has no configured padding token")
         self.pad_id = pad_id
+
+    @staticmethod
+    def _config_from_sentencepiece(
+        model_path: Path, tokenizer_config: dict[str, Any]
+    ) -> dict[str, Any]:
+        model = _load_sentencepiece(model_path)
+        if model.trainer_spec.model_type != 1:
+            raise ValueError("T5Tokenizer requires a SentencePiece Unigram model")
+        normalizers: list[dict[str, Any]] = []
+        if model.normalizer_spec.precompiled_charsmap:
+            normalizers.append(
+                {
+                    "type": "Precompiled",
+                    "precompiled_charsmap": base64.b64encode(
+                        model.normalizer_spec.precompiled_charsmap
+                    ).decode("ascii"),
+                }
+            )
+        add_prefix_space = bool(tokenizer_config.get("add_prefix_space", True))
+        legacy = bool(tokenizer_config.get("legacy", True))
+        prepend = add_prefix_space and legacy
+        added_decoder = tokenizer_config.get("added_tokens_decoder", {})
+        added_tokens = [
+            {"id": int(token_id), **item}
+            for token_id, item in added_decoder.items()
+            if isinstance(item, dict)
+        ]
+        eos_id = model.trainer_spec.eos_id
+        eos_token = _content(tokenizer_config.get("eos_token")) or "</s>"
+        return {
+            "model": {
+                "type": "Unigram",
+                "vocab": [(piece, score) for piece, score, _ in model.pieces],
+                "unk_id": model.trainer_spec.unk_id,
+                "byte_fallback": False,
+            },
+            "normalizer": {"type": "Sequence", "normalizers": normalizers},
+            "pre_tokenizer": {
+                "type": "Metaspace",
+                "replacement": "▁",
+                "add_prefix_space": prepend,
+            },
+            "added_tokens": added_tokens,
+            "post_processor": {
+                "type": "TemplateProcessing",
+                "single": [
+                    {"Sequence": {"id": "A", "type_id": 0}},
+                    {"SpecialToken": {"id": eos_token, "type_id": 0}},
+                ],
+                "special_tokens": {eos_token: {"ids": [eos_id], "tokens": [eos_token]}},
+            },
+        }
 
     @staticmethod
     def _added_pattern(tokens: list[str]) -> re.Pattern[str] | None:

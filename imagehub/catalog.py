@@ -703,6 +703,43 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="hunyuan-dit-v1.1-distilled",
+        task=Task.T2I,
+        family="hunyuan-dit",
+        source="https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled",
+        repo_id="Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled",
+        revision="527cf2ecce7c04021975938f8b0e44e35d2b1ed9",
+        provenance="author",
+        catalog_id="hunyuan-dit",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 25, "guidance": 5.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors.index.json",
+            "text_encoder_2/model-00001-of-00002.safetensors",
+            "text_encoder_2/model-00002-of-00002.safetensors",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/spiece.model",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-turbo",
         task=Task.T2I,
         family="stable-diffusion-xl",

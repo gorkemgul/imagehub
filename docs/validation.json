@@ -2001,6 +2001,66 @@
       }
     },
     {
+      "model_id": "hunyuan-dit-v1.1-distilled",
+      "repo_id": "Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled",
+      "revision": "527cf2ecce7c04021975938f8b0e44e35d2b1ed9",
+      "provenance": "author",
+      "catalog_id": "hunyuan-dit",
+      "license": "Tencent Hunyuan Community License",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "4a3db9cdb500fd3933362cd4e9c2eef1fb3d9a4f437a1fbde5ac4e98f3eafbd4",
+        "scheduler/scheduler_config.json": "5b2adf0166a009ad4637967e555b69102b38240c46294cea0fabb6882973f759",
+        "text_encoder/config.json": "968833abc78add3eeb3d2a06db3d6c7a8f1ec8b5ae1100305a6e0d5cee8aa8b2",
+        "text_encoder/model.safetensors": "c6c6348af2cb4d5852fe51102ce39605903dbe7925c005cf8995506cc21ea914",
+        "text_encoder_2/config.json": "e5e73dc1b19e8a61543714a7f61e7873e1b69a774b2a9fe238b1421cc88a5e11",
+        "text_encoder_2/model.safetensors.index.json": "7d1c96db95f747494d7c9000a04e24a65ad2ae8f80d40def94d26c8aa278052a",
+        "text_encoder_2/model-00001-of-00002.safetensors": "2c0c539ab8e8fba3877cc94bc483e427f74c525f817a809b028ebc8d96d75a94",
+        "text_encoder_2/model-00002-of-00002.safetensors": "3b49976cb1fe40da28a600d783f4686024c97eb01f224c54305cce55ddcd8a5e",
+        "tokenizer/special_tokens_map.json": "5d5b662e421ea9fac075174bb0688ee0d9431699900b90662acd44b2a350503a",
+        "tokenizer/tokenizer_config.json": "83a1be3898d73c1f884980d96e0fb94b2728b8165be1804b8d2da077279fb1ff",
+        "tokenizer/vocab.txt": "e4d5b58fd3e4756d6973acd3019f5de1f68114d4e6c1c11b5f61f4cec82a12aa",
+        "tokenizer_2/special_tokens_map.json": "80f4c6c5cf3867d7669ff8aa8f6aebb8a7499322e62d7faae06262d6014edd61",
+        "tokenizer_2/spiece.model": "ef78f86560d809067d12bac6c09f19a462cb3af3f54d2b8acbba26e1433125d6",
+        "tokenizer_2/tokenizer_config.json": "1a58e10cd96de03535d55f2706031b7c7c8a6c5d0ee452cc58408d5890ad51f1",
+        "transformer/config.json": "fd4098637d05cd955a91dfa354511985a5ac7bc82c55913668c8e51326e96f7b",
+        "transformer/diffusion_pytorch_model.safetensors": "7d31ac8fa389ff39dd0a81430010e52c43b59f15adc00c83625a47881e16830e",
+        "vae/config.json": "19f943986c9511fc143dd78233ba31bd1b701a1125213a6b2072fa299fc396d3",
+        "vae/diffusion_pytorch_model.safetensors": "98a14dc6fe8d71c83576f135a87c61a16561c9c080abba418d2cc976ee034f88"
+      },
+      "tensor_header_check": null,
+      "end_to_end": {
+        "guidance": 5.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 25
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
       "model_id": "sdxl-turbo",
       "repo_id": "stabilityai/sdxl-turbo",
       "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
@@ -3317,6 +3377,109 @@
       "tolerance": 0.0
     }
   },
+  "components_hunyuan_dit": {
+    "header_hunyuan_dit": {
+      "text_encoder": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 391
+      },
+      "text_encoder_2": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 219
+      },
+      "transformer": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 1545
+      },
+      "vae": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 248
+      }
+    },
+    "header_hunyuan_dit_bert": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 391
+    },
+    "header_hunyuan_dit_transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1545
+    },
+    "hunyuan_dit_bert": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "prompts": 3,
+      "tolerance": 0.0
+    },
+    "hunyuan_dit_ddpm_epsilon": {
+      "max_abs": 0.0,
+      "steps": 25,
+      "tolerance": 0.0
+    },
+    "hunyuan_dit_ddpm_timesteps_25": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "hunyuan_dit_ddpm_timesteps_50": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "hunyuan_dit_ddpm_v_prediction": {
+      "max_abs": 0.0,
+      "steps": 25,
+      "tolerance": 0.0
+    },
+    "hunyuan_dit_mt5_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hunyuan_dit_mt5_tokenizer": {
+      "ids_match": true,
+      "masks_match": true,
+      "prompts": [
+        "a photograph of an astronaut riding a horse",
+        "\u4e00\u4e2a\u5b87\u822a\u5458\u5728\u9a91\u9a6c",
+        ""
+      ],
+      "tolerance": "exact"
+    },
+    "hunyuan_dit_scheduler": {
+      "exact": true,
+      "steps": 25,
+      "tolerance": "exact"
+    },
+    "hunyuan_dit_transformer": {
+      "batch": 2,
+      "height": 1024,
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
+      "tolerance": 0.0,
+      "width": 1024
+    },
+    "hunyuan_dit_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hunyuan_dit_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -3339,11 +3502,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for HunyuanDiT.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (flux1-dev, 25 min)"
+    "reference_summary": "6 passed (hunyuan-dit-v1.1-distilled, 52 min)"
   }
 }

@@ -318,6 +318,40 @@ shape-mismatched tensors all **0**. Record: `tensor_header_check`,
 For the 9B run, one reference/native component pair was loaded at a time; peak memory use was about
 65 GB. The 4B validation run took 12 minutes and the 9B validation run took 29 minutes.
 
+## HunyuanDiT
+
+Validated on CPU in the same environment as above. `hunyuan-dit-v1.1-distilled` was loaded strictly
+from `Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled` at revision `527cf2e`. The observed
+difference in every comparison is **exactly 0**: on CPU in float32, the local implementation
+produces a bit-identical result to the reference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| BERT and mT5 tokenizers: fixed prompts and 2500 seeded fuzz strings, ids / masks at 77 / 256 tokens | identical | exact |
+| BERT-large encoder (3 prompts, including Chinese and the empty negative prompt) | 0 | 0 |
+| mT5-XL encoder (3 prompts) | 0 | 0 |
+| HunyuanDiT transformer single step (1024×1024, batch 2, timestep 500) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 / 0 |
+| DDPM timesteps (25 / 50 steps) | exact / exact | exact / exact |
+| DDPM 25-step trajectory with generator noise (v-prediction / epsilon) | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels (1024×1024, 25 steps, guidance 5.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with fixed initial noise
+`seed=7` and scheduler generator `seed=42`. It used the 25-step, guidance 5.0 defaults. The seed
+end-to-end check used `seed=42`.
+
+The header-only tensor check covered `text_encoder`, `text_encoder_2`, `transformer` and `vae`:
+tensor counts 391 / 219 / 1545 / 248, with missing, extra and shape-mismatched tensors all **0**.
+Record: `tensor_header_check`, [validation.json](validation.json).
+
+The reference tokenizers require `sentencepiece` and `protobuf`, which are included in the
+`reference` extra; imagehub reads `spiece.model` natively at runtime. The reference and native
+components were loaded together: in float32 the transformer used about 6.1 GB, mT5-XL about 6.7 GB
+and BERT about 1.4 GB. The end-to-end reference test file took 52 minutes.
+
 ## Qwen-Image 2.1
 
 The reference is the implementation the Qwen team contributed to diffusers. No released diffusers
@@ -474,20 +508,21 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
   Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5, flow-match Euler for Z-Image
   and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic
-  shifting for FLUX.1 dev and Qwen-Image 2.1.
+  shifting for FLUX.1 dev and Qwen-Image 2.1, and DDPM for HunyuanDiT.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 445 passed, 311 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 477 passed, 334 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models,
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
-  `flux1-dev`, 9 passed for `sd-turbo`, and 7 passed for `lcm-dreamshaper-v7`. These include
+  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 9 passed for `sd-turbo`, and 7 passed for
+  `lcm-dreamshaper-v7`. These include
   structural parity with random weights, end-to-end parity with a small model, real-checkpoint
   parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

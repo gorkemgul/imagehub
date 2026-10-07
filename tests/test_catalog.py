@@ -13,6 +13,7 @@ def test_catalog_contents():
             "flux1-schnell",
             "flux2-klein-4b",
             "flux2-klein-9b",
+            "hunyuan-dit-v1.1-distilled",
             "janus-pro-1b",
             "janus-pro-7b",
             "lcm-dreamshaper-v7",
@@ -308,6 +309,40 @@ def test_flux2_klein_9b_catalog_entry():
         "transformer/diffusion_pytorch_model.safetensors.index.json",
         "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
         "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
+def test_hunyuan_dit_catalog_entry():
+    spec = model_info("hunyuan-dit-v1.1-distilled")
+    assert spec.task is Task.T2I
+    assert spec.family == "hunyuan-dit"
+    assert spec.repo_id == "Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled"
+    assert spec.revision == "527cf2ecce7c04021975938f8b0e44e35d2b1ed9"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "hunyuan-dit"
+    assert spec.format == "diffusers"
+    assert spec.license == "Tencent Hunyuan Community License"
+    assert not spec.gated
+    assert spec.config == {"defaults": {"steps": 25, "guidance": 5.0}}
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors",
+        "text_encoder_2/config.json",
+        "text_encoder_2/model.safetensors.index.json",
+        "text_encoder_2/model-00001-of-00002.safetensors",
+        "text_encoder_2/model-00002-of-00002.safetensors",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer_config.json",
+        "tokenizer/vocab.txt",
+        "tokenizer_2/special_tokens_map.json",
+        "tokenizer_2/spiece.model",
+        "tokenizer_2/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors",
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
