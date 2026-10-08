@@ -14,7 +14,7 @@ import tempfile
 import urllib.parse
 import warnings
 from collections.abc import Callable
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from imagehub import download
 from imagehub.catalog import model_info
@@ -51,6 +51,13 @@ def download_pretrained(
     headers = download.hf_headers(token)
     commit, siblings = download.resolve_revision(spec.repo_id, revision or spec.revision, headers)
     missing = [name for name in spec.files if name not in siblings]
+    subrepositories = {}
+    for subfolder, repository in spec.subfolders.items():
+        sub_commit, sub_siblings = download.resolve_revision(
+            repository.repo_id, repository.revision, headers
+        )
+        subrepositories[subfolder] = (repository, sub_commit, sub_siblings)
+        missing += [f"{subfolder}/{name}" for name in repository.files if name not in sub_siblings]
     base_commit = None
     base_siblings = None
     if base is not None:
@@ -65,7 +72,14 @@ def download_pretrained(
         ]
     if missing:
         raise DownloadError(f"Published artifacts are missing at {commit}: {', '.join(missing)}")
-    verified = commit == spec.revision and (base is None or base_commit == base.revision)
+    verified = (
+        commit == spec.revision
+        and (base is None or base_commit == base.revision)
+        and all(
+            sub_commit == repository.revision
+            for repository, sub_commit, _ in subrepositories.values()
+        )
+    )
     if not verified:
         warnings.warn(
             f"{model_id}: commit {commit} is not the validated revision {spec.revision}; "
@@ -98,6 +112,17 @@ def download_pretrained(
             file_plan.extend(
                 (name, name, spec.repo_id, commit, siblings[name]) for name in spec.files
             )
+        for subfolder, (repository, sub_commit, sub_siblings) in subrepositories.items():
+            file_plan.extend(
+                (
+                    str(PurePosixPath(subfolder) / name),
+                    name,
+                    repository.repo_id,
+                    sub_commit,
+                    sub_siblings[name],
+                )
+                for name in repository.files
+            )
         files: dict[str, str | dict[str, str]] = {}
         for destination_name, source_name, repo_id, file_commit, entry in file_plan:
             relative = download.safe_relative(destination_name)
@@ -119,7 +144,7 @@ def download_pretrained(
             )
             files[destination_name] = (
                 {"repo_id": repo_id, "revision": file_commit, "sha256": digest}
-                if base is not None
+                if base is not None or subrepositories
                 else digest
             )
         manifest = {

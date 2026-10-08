@@ -2,7 +2,7 @@ import re
 
 import pytest
 
-from imagehub.catalog import MODEL_CATALOG, ModelSpec, available_models, model_info
+from imagehub.catalog import MODEL_CATALOG, ModelSpec, SubRepo, available_models, model_info
 from imagehub.types import Task
 
 
@@ -21,6 +21,7 @@ def test_catalog_contents():
             "ideogram4-fp8",
             "janus-pro-1b",
             "janus-pro-7b",
+            "kandinsky-2.2",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
             "longcat-image",
@@ -513,6 +514,75 @@ def test_ideogram4_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+
+
+def test_kandinsky22_catalog_entry():
+    spec = model_info("kandinsky-2.2")
+    assert spec.task is Task.T2I
+    assert spec.family == "kandinsky22"
+    assert spec.source == "https://huggingface.co/kandinsky-community/kandinsky-2-2-decoder"
+    assert spec.repo_id == "kandinsky-community/kandinsky-2-2-decoder"
+    assert spec.revision == "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3"
+    assert spec.files == (
+        "model_index.json",
+        "movq/config.json",
+        "movq/diffusion_pytorch_model.safetensors",
+        "scheduler/scheduler_config.json",
+        "unet/config.json",
+        "unet/diffusion_pytorch_model.safetensors",
+    )
+    assert spec.subfolders == {
+        "prior": SubRepo(
+            repo_id="kandinsky-community/kandinsky-2-2-prior",
+            revision="9fc51ad5732afc5d031724219d22e6c42179c5a8",
+            files=(
+                "model_index.json",
+                "image_encoder/config.json",
+                "image_encoder/model.safetensors",
+                "image_processor/preprocessor_config.json",
+                "prior/config.json",
+                "prior/diffusion_pytorch_model.safetensors",
+                "scheduler/scheduler_config.json",
+                "text_encoder/config.json",
+                "text_encoder/model.safetensors",
+                "tokenizer/merges.txt",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/vocab.json",
+            ),
+        )
+    }
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "kandinsky-2"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {
+            "steps": 100,
+            "guidance": 4.0,
+            "prior_steps": 25,
+            "prior_guidance": 4.0,
+        }
+    }
+
+
+def test_subrepo_validation_and_immutability():
+    base = model_info("sd-v1-5")
+    subrepo = SubRepo("owner/repo", "a" * 40, ("config.json",))
+    spec = ModelSpec(**{**base.__dict__, "id": "subrepo-test", "subfolders": {"prior": subrepo}})
+    assert spec.subfolders == {"prior": subrepo}
+    with pytest.raises(TypeError):
+        spec.subfolders["other"] = subrepo
+    for revision in ("main", "A" * 40):
+        with pytest.raises(ValueError, match="revision"):
+            SubRepo("owner/repo", revision, ("config.json",))
+    for folder in ("", "/prior", "../prior", "prior/../bad"):
+        with pytest.raises(ValueError, match="subfolder"):
+            ModelSpec(**{**base.__dict__, "id": f"bad-{folder}", "subfolders": {folder: subrepo}})
+    for name in ("", "/config.json", "../config.json"):
+        with pytest.raises(ValueError, match="file"):
+            SubRepo("owner/repo", "a" * 40, (name,))
 
 
 def test_unknown_model_lists_available():

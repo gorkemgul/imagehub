@@ -397,6 +397,41 @@ The reference tokenizers require `sentencepiece` and `protobuf`, which are inclu
 components were loaded together: in float32 the transformer used about 6.1 GB, mT5-XL about 6.7 GB
 and BERT about 1.4 GB. The end-to-end reference test file took 52 minutes.
 
+## Kandinsky 2.2
+
+Validated on CPU in the same environment as above. `kandinsky-2.2` was loaded strictly from the
+decoder repository `kandinsky-community/kandinsky-2-2-decoder` at revision `9ae140d` and the prior
+repository `kandinsky-community/kandinsky-2-2-prior` at revision `9fc51ad`. The prior is stored in
+the snapshot's `prior/` subfolder. The observed difference in every comparison is **exactly 0**: on
+CPU in float32, the local implementation produces a bit-identical result to the reference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Token ids | identical | exact |
+| CLIP text embeddings | 0 | 0 |
+| CLIP vision zero image embedding | 0 | 0 |
+| PriorTransformer single step | 0 | 0 |
+| Prior output after 25 steps | 0 | 0 |
+| Decoder U-Net single step (512×512) | 0 | 0 |
+| MoVQ decode | 0 | 0 |
+| End to end at the defaults (pixels) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The defaults are 25 prior steps with guidance 4.0, followed by 100 decoder steps with guidance 4.0
+at 512×512. Random-weight tests also established exact parity for the CLIP vision model,
+PriorTransformer, image-conditioned U-Net, MoVQ, UnCLIP scheduler and the Kandinsky DDPM options.
+A tiny end-to-end test matched `KandinskyV22CombinedPipeline` exactly.
+
+The header-only tensor check covered `movq`, `prior/image_encoder`, `prior/prior`,
+`prior/text_encoder` and `unet`: tensor counts 431 / 777 / 338 / 518 / 724, with missing, extra and
+shape-mismatched tensors all **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
+The reference and native models were loaded together and used about 16 GB in float32. The
+real-checkpoint run took about 13 minutes.
+
 ## PixArt
 
 Validated on CPU in the same environment as above. `pixart-sigma-xl-1024` and
@@ -770,13 +805,13 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
-  and DPM-Solver++ for PixArt.
+  UnCLIP and DDPM for Kandinsky 2.2, and DPM-Solver++ for PixArt.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 586 passed, 441 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 595 passed, 461 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
@@ -784,8 +819,8 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
-  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 19 passed for `pixart-sigma-xl-1024` and
-  `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
+  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 19 passed
+  for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.

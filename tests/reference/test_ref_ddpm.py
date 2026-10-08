@@ -1,6 +1,7 @@
 """DDPM scheduler parity for the HunyuanDiT release configuration."""
 
 import json
+from pathlib import Path
 
 import pytest
 import torch
@@ -58,3 +59,28 @@ def test_ddpm_trajectory_matches_reference(prediction_type, record):
         steps=25,
         tolerance=0.0,
     )
+
+
+def test_kandinsky22_decoder_config_trajectory_exact():
+    config = json.loads(
+        (
+            Path(__file__).parents[1] / "fixtures/kandinsky22_configs/scheduler_config.json"
+        ).read_text()
+    )
+    reference = diffusers.DDPMScheduler.from_config(config)
+    native = DDPMScheduler(config)
+    reference.set_timesteps(100)
+    native.set_timesteps(100)
+    assert torch.equal(native.timesteps, reference.timesteps)
+    generator = torch.Generator().manual_seed(0)
+    sample = torch.randn(2, 4, 8, 12, generator=generator)
+    expected, actual = sample.clone(), sample.clone()
+    for timestep in reference.timesteps:
+        output = torch.randn(2, 4, 8, 12, generator=generator)
+        expected = reference.step(
+            output, timestep, expected, generator=torch.Generator().manual_seed(int(timestep))
+        ).prev_sample
+        actual = native.step(
+            output, timestep, actual, generator=torch.Generator().manual_seed(int(timestep))
+        )
+    torch.testing.assert_close(actual, expected, atol=0, rtol=0)

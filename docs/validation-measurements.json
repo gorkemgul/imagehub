@@ -297,6 +297,10 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_kandinsky-2.2": {
+    "passed": true,
+    "pixels_max_abs": 0
+  },
   "e2e_krea2_turbo": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -1134,6 +1138,38 @@
     "missing": [],
     "tensors": 1018
   },
+  "header_kandinsky-2.2": {
+    "movq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 431
+    },
+    "prior/image_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 777
+    },
+    "prior/prior": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 338
+    },
+    "prior/text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 518
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 724
+    }
+  },
   "header_krea2_turbo": {
     "text_encoder": {
       "extra": [],
@@ -1796,6 +1832,40 @@
     "tolerance": 0.0
   },
   "janus_vq_decode_janus-pro-7b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky22_decoder_unet_512": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky22_movq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky22_prior_25_steps": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky22_prior_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky22_text": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky22_tokens": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "kandinsky22_zero_image": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -2756,6 +2826,10 @@
   "seed_e2e_janus-pro-7b": {
     "passed": true,
     "pixels_match": true,
+    "seed": 42
+  },
+  "seed_e2e_kandinsky-2.2": {
+    "passed": true,
     "seed": 42
   },
   "seed_e2e_krea2_turbo": {

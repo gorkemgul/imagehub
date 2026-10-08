@@ -27,6 +27,30 @@ def _released_reference() -> dict[str, dict[str, str]]:
     }
 
 
+def _safe_relative(name: str, field_name: str) -> None:
+    path = PurePosixPath(name)
+    if not name or path.is_absolute() or "." in path.parts or ".." in path.parts:
+        raise ValueError(f"{field_name} path {name!r} is not a safe relative path")
+
+
+@dataclass(frozen=True)
+class SubRepo:
+    repo_id: str
+    revision: str
+    files: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "files", tuple(self.files))
+        if not self.repo_id or self.repo_id.strip() != self.repo_id:
+            raise ValueError("repo_id must be nonempty and have no surrounding whitespace")
+        if not re.fullmatch(r"[0-9a-f]{40}", self.revision):
+            raise ValueError("revision must be a 40-character lowercase commit hash")
+        if len(set(self.files)) != len(self.files):
+            raise ValueError("subrepository files must not contain duplicates")
+        for name in self.files:
+            _safe_relative(name, "subrepository file")
+
+
 @dataclass(frozen=True)
 class ModelSpec:
     id: str
@@ -46,6 +70,7 @@ class ModelSpec:
     base: str | None = None
     base_exclude: tuple[str, ...] = ()
     overlay: Mapping[str, str] = field(default_factory=dict)
+    subfolders: Mapping[str, SubRepo] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "config", MappingProxyType(dict(self.config)))
@@ -62,6 +87,7 @@ class ModelSpec:
         object.__setattr__(self, "files", tuple(self.files))
         object.__setattr__(self, "base_exclude", tuple(self.base_exclude))
         object.__setattr__(self, "overlay", MappingProxyType(dict(self.overlay)))
+        object.__setattr__(self, "subfolders", MappingProxyType(dict(self.subfolders)))
         if not re.fullmatch(r"[0-9a-f]{40}", self.revision):
             raise ValueError("revision must be a 40-character lowercase commit hash")
         if self.provenance not in PROVENANCES:
@@ -73,16 +99,16 @@ class ModelSpec:
         if self.base_exclude and self.base is None:
             raise ValueError("base_exclude requires a base model")
         for name in self.base_exclude:
-            path = PurePosixPath(name)
-            if not name or path.is_absolute() or "." in path.parts or ".." in path.parts:
-                raise ValueError(f"base_exclude path {name!r} is not a safe relative path")
+            _safe_relative(name, "base_exclude")
         for destination, source in self.overlay.items():
             for name in (destination, source):
-                path = PurePosixPath(name)
-                if not name or path.is_absolute() or "." in path.parts or ".." in path.parts:
-                    raise ValueError(f"overlay path {name!r} is not a safe relative path")
+                _safe_relative(name, "overlay")
             if source not in self.files:
                 raise ValueError(f"overlay source {source!r} is not listed in files")
+        for subfolder, repository in self.subfolders.items():
+            _safe_relative(subfolder, "subfolder")
+            if not isinstance(repository, SubRepo):
+                raise TypeError("subfolders values must be SubRepo objects")
 
 
 _entries: list[ModelSpec] = []
@@ -1140,6 +1166,59 @@ _entries.append(
             "unet/diffusion_pytorch_model.safetensors",
             "vae/diffusion_pytorch_model.safetensors",
         ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="kandinsky-2.2",
+        task=Task.T2I,
+        family="kandinsky22",
+        source="https://huggingface.co/kandinsky-community/kandinsky-2-2-decoder",
+        repo_id="kandinsky-community/kandinsky-2-2-decoder",
+        revision="9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+        provenance="author",
+        catalog_id="kandinsky-2",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={
+            "defaults": {
+                "steps": 100,
+                "guidance": 4.0,
+                "prior_steps": 25,
+                "prior_guidance": 4.0,
+            }
+        },
+        files=(
+            "model_index.json",
+            "movq/config.json",
+            "movq/diffusion_pytorch_model.safetensors",
+            "scheduler/scheduler_config.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+        ),
+        subfolders={
+            "prior": SubRepo(
+                repo_id="kandinsky-community/kandinsky-2-2-prior",
+                revision="9fc51ad5732afc5d031724219d22e6c42179c5a8",
+                files=(
+                    "model_index.json",
+                    "image_encoder/config.json",
+                    "image_encoder/model.safetensors",
+                    "image_processor/preprocessor_config.json",
+                    "prior/config.json",
+                    "prior/diffusion_pytorch_model.safetensors",
+                    "scheduler/scheduler_config.json",
+                    "text_encoder/config.json",
+                    "text_encoder/model.safetensors",
+                    "tokenizer/merges.txt",
+                    "tokenizer/special_tokens_map.json",
+                    "tokenizer/tokenizer_config.json",
+                    "tokenizer/vocab.json",
+                ),
+            )
+        },
     )
 )
 

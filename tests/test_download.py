@@ -145,6 +145,58 @@ def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
     )
 
 
+def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path):
+    spec = model_info("kandinsky-2.2")
+    prior = spec.subfolders["prior"]
+    repositories = {
+        spec.repo_id: {name: f"decoder {name}".encode() for name in spec.files},
+        prior.repo_id: {name: f"prior {name}".encode() for name in prior.files},
+    }
+    commits = {spec.repo_id: spec.revision, prior.repo_id: prior.revision}
+    calls = []
+
+    def request(url, headers):
+        calls.append(url)
+        repo_id = next(repo for repo in repositories if f"/{repo}/" in url)
+        contents = repositories[repo_id]
+        commit = commits[repo_id]
+        if "/api/models/" in url:
+            siblings = [
+                {
+                    "rfilename": name,
+                    "size": len(data),
+                    "lfs": {"sha256": hashlib.sha256(data).hexdigest()},
+                    "blobId": "f" * 40,
+                }
+                for name, data in contents.items()
+            ]
+            return io.BytesIO(json.dumps({"sha": commit, "siblings": siblings}).encode())
+        name = url.split(f"/resolve/{commit}/", 1)[1]
+        return io.BytesIO(contents[name])
+
+    monkeypatch.setattr(download, "_open", request)
+    dest = download_pretrained(spec.id, tmp_path / "kandinsky")
+    manifest = read_snapshot(dest)
+    assert manifest["verified_revision"] is True
+    assert set(manifest["files"]) == set(spec.files) | {f"prior/{name}" for name in prior.files}
+    for name, data in repositories[spec.repo_id].items():
+        assert (dest / name).read_bytes() == data
+        assert manifest["files"][name] == {
+            "repo_id": spec.repo_id,
+            "revision": spec.revision,
+            "sha256": hashlib.sha256(data).hexdigest(),
+        }
+    for name, data in repositories[prior.repo_id].items():
+        destination = f"prior/{name}"
+        assert (dest / destination).read_bytes() == data
+        assert manifest["files"][destination] == {
+            "repo_id": prior.repo_id,
+            "revision": prior.revision,
+            "sha256": hashlib.sha256(data).hexdigest(),
+        }
+    assert any(f"/{prior.repo_id}/revision/{prior.revision}" in url for url in calls)
+
+
 def test_composite_excludes_base_file_from_snapshot(monkeypatch, tmp_path):
     spec = model_info("dmd2-sdxl-1step")
     base = model_info(spec.base)

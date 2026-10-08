@@ -51,8 +51,8 @@ def test_ddpm_step_requires_timesteps():
 @pytest.mark.parametrize(
     "option",
     [
-        {"beta_schedule": "linear"},
-        {"clip_sample": True},
+        {"beta_schedule": "squaredcos_cap_v2"},
+        {"variance_type": "fixed_large"},
         {"prediction_type": "sample"},
         {"rescale_betas_zero_snr": True},
         {"thresholding": True},
