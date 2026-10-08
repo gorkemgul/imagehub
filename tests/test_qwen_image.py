@@ -13,6 +13,7 @@ from imagehub.exceptions import CheckpointError
 
 @pytest.fixture(scope="module")
 def tiny_qwen_image(tmp_path_factory):
+    pytest.importorskip("transformers")  # builds the tiny text encoder
     return write_tiny_qwen_image21(tmp_path_factory.mktemp("tiny-qwen-image"))
 
 
