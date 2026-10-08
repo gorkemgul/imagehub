@@ -1,7 +1,16 @@
 import torch
 from torch import nn
 
+from imagehub.caption_verifier import CaptionVerifier
 from imagehub.models.fp8 import Fp8Linear, load_fp8_state_dict, swap_linears_to_fp8
+from imagehub.models.ideogram4_text import (
+    IMAGE_POSITION_OFFSET,
+    LLM_TOKEN_INDICATOR,
+    OUTPUT_IMAGE_INDICATOR,
+    SEQUENCE_PADDING_INDICATOR,
+    build_text_inputs,
+    tokenize_prompt,
+)
 from imagehub.models.ideogram4_transformer import Ideogram4Transformer
 from imagehub.schedulers.ideogram4 import PRESETS, get_schedule_for_resolution, ideogram4_step
 
@@ -11,6 +20,14 @@ class _Linears(nn.Module):
         super().__init__()
         self.quantized = nn.Linear(3, 2)
         self.regular = nn.Linear(2, 1)
+
+
+class _Tokenizer:
+    def chat_prompt(self, prompt: str) -> str:
+        return f"<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+
+    def tokenize(self, text: str) -> list[int]:
+        return list(range(1, len(text.split()) + 1))
 
 
 def test_fp8_linear_forward_matches_dequantized_linear() -> None:
@@ -93,3 +110,54 @@ def test_ideogram4_schedule_presets_and_euler_step() -> None:
     torch.testing.assert_close(
         ideogram4_step(sample, positive, negative, guidance, t, s), expected, atol=0, rtol=0
     )
+
+
+def test_ideogram4_prompt_inputs_use_left_padding_and_image_positions() -> None:
+    tokenizer = _Tokenizer()
+    tokens, count = tokenize_prompt(tokenizer, "red fox")
+    assert count == len(tokens)
+
+    inputs = build_text_inputs(tokenizer, ["red fox", "fox"], 32, 48)
+    assert inputs["num_image_tokens"] == 6
+    assert inputs["grid_h"] == 2
+    assert inputs["grid_w"] == 3
+    assert inputs["max_text_tokens"] == count
+
+    token_ids = inputs["token_ids"]
+    indicator = inputs["indicator"]
+    segment_ids = inputs["segment_ids"]
+    position_ids = inputs["position_ids"]
+    assert isinstance(token_ids, torch.Tensor)
+    assert isinstance(indicator, torch.Tensor)
+    assert isinstance(segment_ids, torch.Tensor)
+    assert isinstance(position_ids, torch.Tensor)
+    assert token_ids[1, 0].item() == 0
+    assert indicator[1, 0].item() == 0
+    assert segment_ids[1, 0].item() == SEQUENCE_PADDING_INDICATOR
+    assert torch.all(indicator[:, -6:] == OUTPUT_IMAGE_INDICATOR)
+    assert torch.all(indicator[0, :count] == LLM_TOKEN_INDICATOR)
+    assert position_ids[0, count:].tolist() == [
+        [IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET],
+        [IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET + 1],
+        [IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET + 2],
+        [IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET + 1, IMAGE_POSITION_OFFSET],
+        [IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET + 1, IMAGE_POSITION_OFFSET + 1],
+        [IMAGE_POSITION_OFFSET, IMAGE_POSITION_OFFSET + 1, IMAGE_POSITION_OFFSET + 2],
+    ]
+
+
+def test_ideogram4_caption_verifier_accepts_valid_caption_and_reports_issues() -> None:
+    valid = (
+        '{"high_level_description":"A sign",'
+        '"style_description":{"aesthetics":"clean","lighting":"daylight",'
+        '"photo":"product","medium":"digital","color_palette":["#AABBCC"]},'
+        '"compositional_deconstruction":{"background":"white","elements":['
+        '{"type":"text","bbox":[100,200,300,800],"text":"HELLO",'
+        '"desc":"black letters","color_palette":["#000000"]}]}}'
+    )
+    verifier = CaptionVerifier()
+    assert verifier.verify_raw(valid) == []
+    assert verifier.verify_raw("plain text")[0].startswith("invalid JSON:")
+    assert verifier.verify_raw('{"compositional_deconstruction": {}}') == [
+        "compositional_deconstruction: 'background' must exist"
+    ]
