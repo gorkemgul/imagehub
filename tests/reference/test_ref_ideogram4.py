@@ -14,6 +14,7 @@ from imagehub.models.autoencoder_ideogram4 import AutoencoderIdeogram4
 from imagehub.models.fp8 import FP8_SCALE_SUFFIX, FP8_WEIGHT_DTYPE
 from imagehub.models.ideogram4_text import build_text_inputs, encode_text, tokenize_prompt
 from imagehub.schedulers.ideogram4 import PRESETS, get_schedule_for_resolution, make_step_intervals
+from imagehub.tokenization_qwen import Qwen2Tokenizer
 
 pytestmark = pytest.mark.reference
 ideogram4 = pytest.importorskip("ideogram4")
@@ -82,70 +83,94 @@ def test_ideogram4_headers_include_all_components_and_fp8_scales(record):
     record("header_ideogram4-fp8", **result)
 
 
-def test_ideogram4_tokens_and_text_features(record, monkeypatch):
+def test_ideogram4_tokens_and_text_features(record, monkeypatch, tmp_path):
+    # Save-then-compare: the official pipeline briefly peaks near 52 GB while loading.
     root = snapshot_dir(MODEL_ID)
+    tokenizer = Qwen2Tokenizer(root / "tokenizer")
+    inputs = build_text_inputs(tokenizer, [PROMPT], 1024, 1024)
     reference = _local_reference(root, monkeypatch)
-    native = Ideogram4Components.load(root, device=torch.device("cpu"), dtype=torch.float32)
     expected_tokens = reference._tokenize(PROMPT)
-    actual_tokens = tokenize_prompt(native.tokenizer, PROMPT)
-    assert (
-        torch.equal(actual_tokens[0], expected_tokens[0]) and actual_tokens[1] == expected_tokens[1]
-    )
-    inputs = build_text_inputs(native.tokenizer, [PROMPT], 1024, 1024)
     expected = reference._encode_text(
         inputs["token_ids"], inputs["text_position_ids"], inputs["indicator"]
     )
+    torch.save({"tokens": expected_tokens, "features": expected}, tmp_path / "text.pt")
+    del reference, expected_tokens, expected
+    gc.collect()
+
+    saved = torch.load(tmp_path / "text.pt", weights_only=False)
+    actual_tokens = tokenize_prompt(tokenizer, PROMPT)
+    assert (
+        torch.equal(actual_tokens[0], saved["tokens"][0]) and actual_tokens[1] == saved["tokens"][1]
+    )
+    native = Ideogram4Components.load(root, device=torch.device("cpu"), dtype=torch.float32)
     actual = encode_text(
         native.text_encoder,
         inputs["token_ids"],
         inputs["text_position_ids"],
         inputs["indicator"],
     )
-    _check(record, "ideogram4_text_features", actual, expected)
+    _check(record, "ideogram4_text_features", actual, saved["features"])
 
 
-def test_ideogram4_transformers_single_step_1024(record, monkeypatch):
+def test_ideogram4_transformers_single_step_1024(record, monkeypatch, tmp_path):
+    # Save-then-compare, as above; both sides get the reference's text features.
     root = snapshot_dir(MODEL_ID)
-    reference = _local_reference(root, monkeypatch)
-    native = Ideogram4Components.load(root, device=torch.device("cpu"), dtype=torch.float32)
-    inputs = build_text_inputs(native.tokenizer, [PROMPT], 1024, 1024)
-    features = encode_text(
-        native.text_encoder,
-        inputs["token_ids"],
-        inputs["text_position_ids"],
-        inputs["indicator"],
-    )
+    tokenizer = Qwen2Tokenizer(root / "tokenizer")
+    inputs = build_text_inputs(tokenizer, [PROMPT], 1024, 1024)
     generator = torch.Generator("cpu").manual_seed(0)
     noise = torch.randn(1, inputs["position_ids"].shape[1], 128, generator=generator)
     timestep = torch.tensor([0.75])
-    kwargs = dict(
-        llm_features=features,
-        x=noise,
-        t=timestep,
-        position_ids=inputs["position_ids"],
-        segment_ids=inputs["segment_ids"],
-        indicator=inputs["indicator"],
+    image = slice(int(inputs["max_text_tokens"]), None)
+
+    def arguments(features):
+        conditional = dict(
+            llm_features=features,
+            x=noise,
+            t=timestep,
+            position_ids=inputs["position_ids"],
+            segment_ids=inputs["segment_ids"],
+            indicator=inputs["indicator"],
+        )
+        unconditional = dict(
+            llm_features=torch.zeros_like(features[:, image]),
+            x=noise[:, image],
+            t=timestep,
+            position_ids=inputs["position_ids"][:, image],
+            segment_ids=inputs["segment_ids"][:, image],
+            indicator=inputs["indicator"][:, image],
+        )
+        return conditional, unconditional
+
+    reference = _local_reference(root, monkeypatch)
+    features = reference._encode_text(
+        inputs["token_ids"], inputs["text_position_ids"], inputs["indicator"]
     )
+    conditional, unconditional = arguments(features)
+    torch.save(
+        {
+            "features": features,
+            "conditional": reference.conditional_transformer(**conditional),
+            "unconditional": reference.unconditional_transformer(**unconditional),
+        },
+        tmp_path / "step.pt",
+    )
+    del reference, features, conditional, unconditional
+    gc.collect()
+
+    saved = torch.load(tmp_path / "step.pt", weights_only=True)
+    native = Ideogram4Components.load(root, device=torch.device("cpu"), dtype=torch.float32)
+    conditional, unconditional = arguments(saved["features"])
     _check(
         record,
         "ideogram4_transformer_conditional",
-        native.conditional_transformer(**kwargs),
-        reference.conditional_transformer(**kwargs),
-    )
-    image = slice(int(inputs["max_text_tokens"]), None)
-    negative = dict(
-        llm_features=torch.zeros_like(features[:, image]),
-        x=noise[:, image],
-        t=timestep,
-        position_ids=inputs["position_ids"][:, image],
-        segment_ids=inputs["segment_ids"][:, image],
-        indicator=inputs["indicator"][:, image],
+        native.conditional_transformer(**conditional),
+        saved["conditional"],
     )
     _check(
         record,
         "ideogram4_transformer_unconditional",
-        native.unconditional_transformer(**negative),
-        reference.unconditional_transformer(**negative),
+        native.unconditional_transformer(**unconditional),
+        saved["unconditional"],
     )
 
 
