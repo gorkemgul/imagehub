@@ -1,9 +1,10 @@
 """Ideogram 4 fp8 checkpoint parity on CPU float32."""
 
-import gc
 import json
+import multiprocessing
 import struct
 
+import numpy
 import pytest
 import torch
 from helpers import max_diff, snapshot_dir
@@ -56,6 +57,75 @@ def _headers(directory):
     return result
 
 
+def _load_reference(root):
+    def local_file(repo_id, filename, **kwargs):
+        path = root / filename
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        return str(path)
+
+    reference_pipeline.hf_hub_download = local_file
+    config = reference_pipeline.Ideogram4PipelineConfig(weights_repo=str(root))
+    return reference_pipeline.Ideogram4Pipeline.from_pretrained(
+        config=config, device="cpu", dtype=torch.float32
+    )
+
+
+def _in_subprocess(function, *args):
+    """Run a reference computation in a fresh process.
+
+    The official pipeline peaks near 52 GB while loading and the native one near 40 GB; memory
+    freed in one process is not returned to the system, so the reference runs in its own process.
+    """
+    context = multiprocessing.get_context("spawn")
+    with context.Pool(1) as pool:
+        return pool.apply(function, args)
+
+
+def _reference_text(root, inputs, output):
+    reference = _load_reference(root)
+    tokens = reference._tokenize(PROMPT)
+    features = reference._encode_text(
+        inputs["token_ids"], inputs["text_position_ids"], inputs["indicator"]
+    )
+    torch.save({"tokens": tokens, "features": features}, output)
+
+
+def _reference_step(root, inputs, conditional, unconditional, output):
+    reference = _load_reference(root)
+    features = reference._encode_text(
+        inputs["token_ids"], inputs["text_position_ids"], inputs["indicator"]
+    )
+    conditional = dict(conditional, llm_features=features)
+    image = slice(int(inputs["max_text_tokens"]), None)
+    unconditional = dict(unconditional, llm_features=torch.zeros_like(features[:, image]))
+    with torch.inference_mode():
+        torch.save(
+            {
+                "features": features,
+                "conditional": reference.conditional_transformer(**conditional),
+                "unconditional": reference.unconditional_transformer(**unconditional),
+            },
+            output,
+        )
+
+
+def _reference_image(root, preset_name, seed, output):
+    reference = _load_reference(root)
+    preset = PRESETS[preset_name]
+    image = reference(
+        PROMPT,
+        height=1024,
+        width=1024,
+        num_steps=preset.num_steps,
+        guidance_schedule=preset.guidance_schedule,
+        mu=preset.mu,
+        std=preset.std,
+        seed=seed,
+    )[0]
+    torch.save(torch.from_numpy(numpy.array(image)), output)
+
+
 def _local_reference(root, monkeypatch):
     def local_file(repo_id, filename, **kwargs):
         path = root / filename
@@ -83,19 +153,11 @@ def test_ideogram4_headers_include_all_components_and_fp8_scales(record):
     record("header_ideogram4-fp8", **result)
 
 
-def test_ideogram4_tokens_and_text_features(record, monkeypatch, tmp_path):
-    # Save-then-compare: the official pipeline briefly peaks near 52 GB while loading.
+def test_ideogram4_tokens_and_text_features(record, tmp_path):
     root = snapshot_dir(MODEL_ID)
     tokenizer = Qwen2Tokenizer(root / "tokenizer")
     inputs = build_text_inputs(tokenizer, [PROMPT], 1024, 1024)
-    reference = _local_reference(root, monkeypatch)
-    expected_tokens = reference._tokenize(PROMPT)
-    expected = reference._encode_text(
-        inputs["token_ids"], inputs["text_position_ids"], inputs["indicator"]
-    )
-    torch.save({"tokens": expected_tokens, "features": expected}, tmp_path / "text.pt")
-    del reference, expected_tokens, expected
-    gc.collect()
+    _in_subprocess(_reference_text, root, inputs, tmp_path / "text.pt")
 
     saved = torch.load(tmp_path / "text.pt", weights_only=False)
     actual_tokens = tokenize_prompt(tokenizer, PROMPT)
@@ -103,16 +165,17 @@ def test_ideogram4_tokens_and_text_features(record, monkeypatch, tmp_path):
         torch.equal(actual_tokens[0], saved["tokens"][0]) and actual_tokens[1] == saved["tokens"][1]
     )
     native = Ideogram4Components.load(root, device=torch.device("cpu"), dtype=torch.float32)
-    actual = encode_text(
-        native.text_encoder,
-        inputs["token_ids"],
-        inputs["text_position_ids"],
-        inputs["indicator"],
-    )
+    with torch.inference_mode():
+        actual = encode_text(
+            native.text_encoder,
+            inputs["token_ids"],
+            inputs["text_position_ids"],
+            inputs["indicator"],
+        )
     _check(record, "ideogram4_text_features", actual, saved["features"])
 
 
-def test_ideogram4_transformers_single_step_1024(record, monkeypatch, tmp_path):
+def test_ideogram4_transformers_single_step_1024(record, tmp_path):
     # Save-then-compare, as above; both sides get the reference's text features.
     root = snapshot_dir(MODEL_ID)
     tokenizer = Qwen2Tokenizer(root / "tokenizer")
@@ -141,36 +204,20 @@ def test_ideogram4_transformers_single_step_1024(record, monkeypatch, tmp_path):
         )
         return conditional, unconditional
 
-    reference = _local_reference(root, monkeypatch)
-    features = reference._encode_text(
-        inputs["token_ids"], inputs["text_position_ids"], inputs["indicator"]
-    )
-    conditional, unconditional = arguments(features)
-    torch.save(
-        {
-            "features": features,
-            "conditional": reference.conditional_transformer(**conditional),
-            "unconditional": reference.unconditional_transformer(**unconditional),
-        },
-        tmp_path / "step.pt",
-    )
-    del reference, features, conditional, unconditional
-    gc.collect()
+    conditional, unconditional = arguments(torch.empty(1, 0))
+    conditional.pop("llm_features")
+    unconditional.pop("llm_features")
+    _in_subprocess(_reference_step, root, inputs, conditional, unconditional, tmp_path / "step.pt")
 
     saved = torch.load(tmp_path / "step.pt", weights_only=True)
     native = Ideogram4Components.load(root, device=torch.device("cpu"), dtype=torch.float32)
     conditional, unconditional = arguments(saved["features"])
+    with torch.inference_mode():
+        actual_conditional = native.conditional_transformer(**conditional)
+        actual_unconditional = native.unconditional_transformer(**unconditional)
+    _check(record, "ideogram4_transformer_conditional", actual_conditional, saved["conditional"])
     _check(
-        record,
-        "ideogram4_transformer_conditional",
-        native.conditional_transformer(**conditional),
-        saved["conditional"],
-    )
-    _check(
-        record,
-        "ideogram4_transformer_unconditional",
-        native.unconditional_transformer(**unconditional),
-        saved["unconditional"],
+        record, "ideogram4_transformer_unconditional", actual_unconditional, saved["unconditional"]
     )
 
 
@@ -208,24 +255,9 @@ def test_ideogram4_sampler_intervals_exact(record):
 
 
 @pytest.mark.parametrize("seed", [0, 42])
-def test_ideogram4_end_to_end_1024(record, monkeypatch, tmp_path, seed):
+def test_ideogram4_end_to_end_1024(record, tmp_path, seed):
     root = snapshot_dir(MODEL_ID)
-    reference = _local_reference(root, monkeypatch)
-    preset = PRESETS["V4_TURBO_12"]
-    expected = reference(
-        PROMPT,
-        height=1024,
-        width=1024,
-        num_steps=preset.num_steps,
-        guidance_schedule=preset.guidance_schedule,
-        mu=preset.mu,
-        std=preset.std,
-        seed=seed,
-    )[0]
-    expected_tensor = torch.from_numpy(__import__("numpy").array(expected))
-    torch.save(expected_tensor, tmp_path / f"expected-{seed}.pt")
-    del reference, expected, expected_tensor
-    gc.collect()
+    _in_subprocess(_reference_image, root, "V4_TURBO_12", seed, tmp_path / f"expected-{seed}.pt")
     actual = (
         pipeline("t2i", backend="ideogram4", model=root)(PROMPT, preset="V4_TURBO_12", seed=seed)
         .images[0]
