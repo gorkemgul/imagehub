@@ -15,7 +15,7 @@ scheduler to `timestep_spacing="trailing"`. A catalog entry today has one reposi
 ## Design
 
 A catalog entry may name a **base model** (another catalog entry) and **overlay files** from its own
-repository, as VoiceHub's OpenVoice names its base MeloTTS model and revision.
+repository.
 
 - `ModelSpec.base`: the catalog id of the base model (pinned through that entry's revision).
 - `ModelSpec.files` keeps listing files of the entry's own repository; `ModelSpec.overlay` maps a
