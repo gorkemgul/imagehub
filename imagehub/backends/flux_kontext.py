@@ -56,9 +56,9 @@ def preprocess_kontext_image(image: Any, height: int, width: int) -> Tensor:
 
     pil = as_pil(image).resize((width, height), resample=PILImage.Resampling.LANCZOS)
     data = torch.frombuffer(bytearray(pil.tobytes()), dtype=torch.uint8)
-    pixels = (
-        data.reshape(1, pil.height, pil.width, 3).permute(0, 3, 1, 2).float() / 255.0
-    ).contiguous()
+    # Like the reference preprocessing, keep the channels-last memory layout of the permuted
+    # array: CPU convolutions and group norms sum in a layout-dependent order.
+    pixels = data.reshape(1, pil.height, pil.width, 3).permute(0, 3, 1, 2).float() / 255.0
     return 2.0 * pixels - 1.0
 
 

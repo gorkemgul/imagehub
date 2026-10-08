@@ -45,7 +45,7 @@ class VAEAttention(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         b, c, h, w = x.shape
         residual = x
-        hidden = self.group_norm(x).view(b, c, h * w).transpose(1, 2)
+        hidden = self.group_norm(x.reshape(b, c, h * w)).transpose(1, 2)
         out = attention(self.query(hidden), self.key(hidden), self.value(hidden), heads=1)
         out = self.proj_attn(out).transpose(1, 2).reshape(b, c, h, w)
         return out + residual

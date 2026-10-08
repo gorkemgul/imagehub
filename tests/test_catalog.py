@@ -13,6 +13,7 @@ def test_catalog_contents():
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
             "flux1-dev",
+            "flux1-kontext-dev",
             "flux1-schnell",
             "flux2-klein-4b",
             "flux2-klein-9b",
@@ -691,7 +692,8 @@ def test_spec_validation():
 
 def test_image_input_field():
     base = MODEL_CATALOG["sdxl-base-1.0"]
-    assert all(spec.image_input is None for spec in MODEL_CATALOG.values())
+    with_image = {spec.id: spec.image_input for spec in MODEL_CATALOG.values() if spec.image_input}
+    assert with_image == {"flux1-kontext-dev": "optional"}
     for value in (None, "optional", "required"):
         assert ModelSpec(**{**base.__dict__, "id": "x", "image_input": value}).image_input == value
     with pytest.raises(ValueError, match="image_input"):
