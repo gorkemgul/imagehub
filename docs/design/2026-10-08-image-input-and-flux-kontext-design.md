@@ -34,6 +34,8 @@ Rules:
   option with `TypeError`, before loading.
 - `image` accepts a `PIL.Image.Image` (the `image` extra) or an `imagehub.Image`. The backend converts it exactly as the
   reference pipeline preprocesses it; any resizing is part of the parity target.
+  Non-RGB PIL images (RGBA, L, …) are converted with `.convert("RGB")` first; the reference pipeline does not convert
+  them and fails on them, so parity is defined on the converted image.
 - Whether `image` is optional or required is a property of the model and is documented. For Kontext it is optional:
   without an image the reference pipeline runs plain text-to-image, and so does ours.
 - Result metadata records whether an input image was used and its preprocessed size; it never stores the image.
@@ -67,7 +69,7 @@ Reference: diffusers 0.40.0 `FluxKontextPipeline` (`pipelines/flux/pipeline_flux
 | FLUX.1 transformer | exists unchanged: the published config and all 1160 tensor names equal FLUX.1-dev's. The pipeline appends the image tokens to the sequence with their own position ids (first id component 1) and keeps only the generated tokens of the output |
 | VAE encoder (mode of the posterior, shift and scale) | the encoder exists; the FLUX latent normalization on encode is checked |
 | Input preprocessing: snap to the preferred Kontext resolution closest to the input's aspect ratio (`PREFERRED_KONTEXT_RESOLUTIONS`, `max_area = 1024²`, multiples of 16), resize as diffusers' `VaeImageProcessor`, normalize to `[-1, 1]` | **new** |
-| Output size follows the preprocessed input size unless `height`/`width` are given | **new** |
+| Output size: `height`/`width` (default 1024×1024), rescaled to `max_area` at the same aspect ratio and rounded down to multiples of 16, independent of the input image size | **new** |
 
 Defaults as the `FluxKontextPipeline` signature: 28 steps, guidance 3.5, `max_sequence_length` 512, `true_cfg_scale`
 1.0 (no negative prompt). The model card's examples use guidance 2.5; that stays a call option.
