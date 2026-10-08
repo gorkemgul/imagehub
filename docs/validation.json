@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-07",
+  "date": "2026-10-08",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -2666,6 +2666,64 @@
       }
     },
     {
+      "model_id": "cogview4-6b",
+      "repo_id": "zai-org/CogView4-6B",
+      "revision": "63a52b7f6dace7033380cd6da14d0915eab3e6b5",
+      "provenance": "author",
+      "catalog_id": "cogview4",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "00a088b221b0d9452cf25a16b41877134ebb29dbc66c246308776baa9e540413",
+        "scheduler/scheduler_config.json": "f28c348ae2ad5ca9b74fa7d1872dd795c9134f34db3d225d20efcd2c1df3fa67",
+        "text_encoder/config.json": "82239559819730177e5bf2632e6610b5f6425ba2024a39438ce32716e80bc5a0",
+        "text_encoder/model.safetensors.index.json": "59b6cfe948812281d1b9b7034bb086611f1cabee346c59728746097b8ccd9fbd",
+        "text_encoder/model-00001-of-00004.safetensors": "d33a01dba14c62a0d5c471aba9f57902a1d6155080b2cf07e1360b9600fa60a8",
+        "text_encoder/model-00002-of-00004.safetensors": "f2913605db189102456ad417a4c38903fb038b9e9fb2a96c95e2de56da224667",
+        "text_encoder/model-00003-of-00004.safetensors": "f81bd5307c4f6175c7b080abad40eb869fafa263ff13c8550d6928330ae749a6",
+        "text_encoder/model-00004-of-00004.safetensors": "224b322bd87949a50d36adea784bb4d7203b219023b1efec1ee4fd5a7ad05056",
+        "tokenizer/special_tokens_map.json": "35a6dd9ff6e2474ba72b180db853851d2a84fce3d12095089285f447c7474541",
+        "tokenizer/tokenizer.json": "8a7269d6daa6328de533def0082ff9d3a825bb89036cbcc665c324f941f67fbf",
+        "tokenizer/tokenizer_config.json": "8456de22f67c9627ae01b397052e2b5f5ec2c0183f563e3ad316f328f463aeaa",
+        "transformer/config.json": "dcbbca0b4e574b52f2722e40eada5b331c0798f8ce1f471a6cbfd882e7f2b431",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "b72b3fa25ff74aa78d3b39e1f8b7f69e30545cd8aa87a9620efa596da04a7856",
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors": "fe197664340943dd4b1ec30af012a4e136bdfd80c53e6520378928e084de8b0d",
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors": "63bc1152f337fb89ae9cfca5cb0d11451c5b456a345db9b008a14f129916beeb",
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors": "5f196554fd09958d69e1491ed9a7d63a5a29384dbb73848d819285dd5124b478",
+        "vae/config.json": "c1833854a568b8e76bc4a6500ac7355d3b40102cd45a6072fa8e7c4522117181",
+        "vae/diffusion_pytorch_model.safetensors": "40aabe789e1591a3a3d8a2f598eda99f60a42275c410e7292a714b5270b97747"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 442,
+          "transformer": 408,
+          "vae": 288
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "steps": 8
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 8
+      }
+    },
+    {
       "model_id": "sdxl-turbo",
       "repo_id": "stabilityai/sdxl-turbo",
       "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
@@ -4273,6 +4331,52 @@
       "seed": 42
     }
   },
+  "components_cogview4": {
+    "cogview4_e2e_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview4_scheduler": {
+      "exact": true,
+      "mu": 3.25,
+      "tolerance": "exact"
+    },
+    "cogview4_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview4_tokenizer": {
+      "mismatches": 0,
+      "prompts": 8,
+      "tolerance": "exact"
+    },
+    "cogview4_tokenizer_fuzz": {
+      "mismatches": 0,
+      "prompts": 2000,
+      "tolerance": "exact"
+    },
+    "cogview4_tokens": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "cogview4_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview4_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview4_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -4295,11 +4399,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, flow-match Euler with linear shifting for CogView4, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "19 passed (pixart-sigma-xl-1024, pixart-alpha-xl-1024, 45 min)"
+    "reference_summary": "9 passed (cogview4-6b)"
   }
 }
