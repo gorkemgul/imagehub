@@ -1,6 +1,8 @@
+import pytest
 import torch
 from torch import nn
 
+from imagehub.backends.ideogram4 import Ideogram4Backend
 from imagehub.caption_verifier import CaptionVerifier
 from imagehub.models.fp8 import Fp8Linear, load_fp8_state_dict, swap_linears_to_fp8
 from imagehub.models.ideogram4_text import (
@@ -13,6 +15,7 @@ from imagehub.models.ideogram4_text import (
 )
 from imagehub.models.ideogram4_transformer import Ideogram4Transformer
 from imagehub.schedulers.ideogram4 import PRESETS, get_schedule_for_resolution, ideogram4_step
+from imagehub.types import T2IRequest
 
 
 class _Linears(nn.Module):
@@ -161,3 +164,54 @@ def test_ideogram4_caption_verifier_accepts_valid_caption_and_reports_issues() -
     assert verifier.verify_raw('{"compositional_deconstruction": {}}') == [
         "compositional_deconstruction: 'background' must exist"
     ]
+
+
+def test_ideogram4_backend_validates_options_before_loading(tmp_path) -> None:
+    backend = Ideogram4Backend(tmp_path, model_id="ideogram4-fp8")
+    request = T2IRequest("a valid caption")
+
+    options = backend.validate_options(request, {})
+    assert options["preset"] == "V4_QUALITY_48"
+    assert options["steps"] == 48
+    assert options["guidance_schedule"] == PRESETS["V4_QUALITY_48"].guidance_schedule
+    assert options["guidance"] is None
+    assert options["width"] == options["height"] == 1024
+
+    with pytest.raises(TypeError, match="Unknown Ideogram 4 options: typo"):
+        backend.validate_options(request, {"typo": 1})
+    with pytest.raises(ValueError, match="preset"):
+        backend.validate_options(request, {"preset": "missing"})
+    with pytest.raises(ValueError, match="multiple of 16"):
+        backend.validate_options(request, {"width": 1000})
+    with pytest.raises(ValueError, match="guidance_schedule must have length 2"):
+        backend.validate_options(request, {"steps": 2, "guidance_schedule": [7.0]})
+    with pytest.raises(ValueError, match="either seed or latents"):
+        backend.validate_options(
+            request,
+            {
+                "seed": 0,
+                "latents": torch.zeros(1, 4096, 128),
+            },
+        )
+
+
+def test_ideogram4_backend_latent_shape_and_overrides(tmp_path) -> None:
+    backend = Ideogram4Backend(tmp_path)
+    request = T2IRequest("a valid caption")
+    latents = torch.zeros(1, 6, 128)
+    options = backend.validate_options(
+        request,
+        {
+            "preset": "V4_TURBO_12",
+            "steps": 3,
+            "guidance": 5.5,
+            "guidance_schedule": (2.0, 3.0, 4.0),
+            "width": 48,
+            "height": 32,
+            "latents": latents,
+        },
+    )
+    assert options["steps"] == 3
+    assert options["guidance"] == 5.5
+    assert options["guidance_schedule"] == (2.0, 3.0, 4.0)
+    assert options["latents"] is latents

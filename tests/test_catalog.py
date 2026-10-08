@@ -18,6 +18,7 @@ def test_catalog_contents():
             "flux2-klein-9b",
             "hunyuan-dit-v1.1-distilled",
             "hyper-sdxl-1step",
+            "ideogram4-fp8",
             "janus-pro-1b",
             "janus-pro-7b",
             "krea2-turbo",
@@ -476,6 +477,39 @@ def test_cogview4_catalog_entry():
         "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
         "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
         "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
+def test_ideogram4_catalog_entry():
+    spec = model_info("ideogram4-fp8")
+    assert spec.task is Task.T2I
+    assert spec.family == "ideogram4"
+    assert spec.source == "https://huggingface.co/ideogram-ai/ideogram-4-fp8"
+    assert spec.repo_id == "ideogram-ai/ideogram-4-fp8"
+    assert spec.revision == "ee79a7237b519f1402ceacf952f30c8a31ec5073"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "ideogram-4"
+    assert spec.format == "diffusers"
+    assert spec.license == "Ideogram 4 Non-Commercial License"
+    assert spec.gated
+    assert spec.config == {"defaults": {"preset": "V4_QUALITY_48"}}
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors",
+        "text_encoder/model.safetensors.index.json",
+        "tokenizer/chat_template.jinja",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors",
+        "transformer/diffusion_pytorch_model.safetensors.index.json",
+        "unconditional_transformer/config.json",
+        "unconditional_transformer/diffusion_pytorch_model.safetensors",
+        "unconditional_transformer/diffusion_pytorch_model.safetensors.index.json",
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
