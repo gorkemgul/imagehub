@@ -26,26 +26,10 @@ DDPM_DEFAULTS: dict[str, Any] = {
     "rescale_betas_zero_snr": False,
 }
 _IGNORED = frozenset({"set_alpha_to_one", "skip_prk_steps"})
-_HUNYUAN_CONFIG = {
-    "num_train_timesteps": 1000,
-    "beta_start": 0.00085,
-    "beta_end": 0.03,
-    "beta_schedule": "scaled_linear",
-    "trained_betas": None,
-    "variance_type": "fixed_small",
-    "clip_sample": False,
-    "thresholding": False,
-    "dynamic_thresholding_ratio": 0.995,
-    "clip_sample_range": 1.0,
-    "sample_max_value": 1.0,
-    "timestep_spacing": "leading",
-    "steps_offset": 1,
-    "rescale_betas_zero_snr": False,
-}
 
 
 class DDPMScheduler:
-    """Stateful DDPM sampler for the HunyuanDiT release configuration."""
+    """Stateful DDPM sampler for the release configurations of HunyuanDiT and Kandinsky 2.2."""
 
     init_noise_sigma = 1.0
 
@@ -59,20 +43,6 @@ class DDPMScheduler:
             for key, value in config.items()
             if not key.startswith("_") and key not in _IGNORED
         }
-        is_hunyuan = all(cfg[key] == expected for key, expected in _HUNYUAN_CONFIG.items())
-        is_kandinsky = (
-            cfg["beta_schedule"] == "linear"
-            and cfg["clip_sample"] is True
-            and cfg["prediction_type"] == "epsilon"
-            and cfg["variance_type"] == "learned_range"
-            and cfg["steps_offset"] == 0
-        )
-        if not is_hunyuan and not is_kandinsky:
-            changed = next(
-                (key for key, expected in _HUNYUAN_CONFIG.items() if cfg[key] != expected),
-                "configuration",
-            )
-            raise ValueError(f"Unsupported DDPM setting {changed}={cfg.get(changed)!r}")
         if cfg["trained_betas"] is not None:
             raise ValueError("Unsupported DDPM setting trained_betas")
         if cfg["beta_schedule"] not in ("linear", "scaled_linear"):
