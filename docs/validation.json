@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-07",
+  "date": "2026-10-08",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -2666,6 +2666,60 @@
       }
     },
     {
+      "model_id": "krea2-turbo",
+      "repo_id": "krea/Krea-2-Turbo",
+      "revision": "98e0fe118d17c9e3547fbb2e25acdbae2cadf7c7",
+      "provenance": "author",
+      "catalog_id": "krea-2",
+      "license": "Krea 2 Community License",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "7d6c1206e369286df31244670a9a38fc73b077d8f64b4d273abb20ef9a8a8b93",
+        "scheduler/scheduler_config.json": "4d8ea4471195528cdb84fcb8d37cd54ff442b9c02ff74f7d16d0a7a2f14b9467",
+        "text_encoder/config.json": "1a1006851200920f53ab7e17ca14a8b3d1b91075dfbbff493307ba894cab0abb",
+        "text_encoder/model.safetensors": "8434db05292f95e0041589a7c82abeb39385be59c85b54ae11caa7b45e9f4f13",
+        "tokenizer/chat_template.jinja": "3636d0f0bd6bef02654cdffdc447b79cb2cef8ab02cc75267345946291a489e4",
+        "tokenizer/tokenizer.json": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+        "tokenizer/tokenizer_config.json": "c871ed314285a377eccf509b906aa5fe015d5e79a3ddab2c198467329127ead6",
+        "transformer/config.json": "65b85015e515bbfc3ffe6c03e10537a47121bd3756e0d21a1a87126da60bc4a8",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "805104fc89272b7d5fb5aea4d7d7d0281691a1b97368adf1d7f57cbc2de5cf97",
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors": "9ca6a4951e447d8465cf64e0d7324b65da1a44d373d7d1b7d610fc395b164861",
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors": "d092b7b22d2febe37354a54f2cfa4891b4fda397e27a3a465ee64f7597ecaad3",
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors": "df51a0e537a56ba2ebf06c0d190d3f8571f967ae1f8e7b8acf05c33b5821cdce",
+        "vae/config.json": "54949c79def0d1060353c3fbfd4d2d2c4815ae241da6d6d28c99634c4eac6e6e",
+        "vae/diffusion_pytorch_model.safetensors": "ab1b61103959913d6c7e628cf793dbb2ca4726a40a3b3ae206c52b8e75bf6f08"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 713,
+          "transformer": 430,
+          "vae": 194
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "steps": 8
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 8
+      }
+    },
+    {
       "model_id": "sdxl-turbo",
       "repo_id": "stabilityai/sdxl-turbo",
       "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
@@ -3938,6 +3992,42 @@
       "tolerance": 0.0
     }
   },
+  "components_krea2": {
+    "krea2_e2e_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "krea2_prompt_tokens": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "krea2_scheduler": {
+      "exact": true,
+      "mu": 0.90625,
+      "tolerance": "exact"
+    },
+    "krea2_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "krea2_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "krea2_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "krea2_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_flux2": {
     "flux2_e2e_latents": {
       "max_abs": 0.0,
@@ -4295,11 +4385,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, flow-match Euler with exponential shifting for Krea 2, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "19 passed (pixart-sigma-xl-1024, pixart-alpha-xl-1024, 45 min)"
+    "reference_summary": "7 passed (krea2-turbo, 63 min)"
   }
 }
