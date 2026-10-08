@@ -40,8 +40,8 @@ MEDIUM_UNET = TINY_UNET | {
 TINY_MOVQ = {
     "in_channels": 3,
     "out_channels": 3,
-    "down_block_types": ["DownEncoderBlock2D"],
-    "up_block_types": ["UpDecoderBlock2D"],
+    "down_block_types": ["AttnDownEncoderBlock2D"],
+    "up_block_types": ["AttnUpDecoderBlock2D"],
     "block_out_channels": [32],
     "layers_per_block": 1,
     "latent_channels": 4,
@@ -51,8 +51,8 @@ TINY_MOVQ = {
     "norm_type": "spatial",
 }
 MEDIUM_MOVQ = TINY_MOVQ | {
-    "down_block_types": ["DownEncoderBlock2D", "DownEncoderBlock2D"],
-    "up_block_types": ["UpDecoderBlock2D", "UpDecoderBlock2D"],
+    "down_block_types": ["DownEncoderBlock2D", "AttnDownEncoderBlock2D"],
+    "up_block_types": ["AttnUpDecoderBlock2D", "UpDecoderBlock2D"],
     "block_out_channels": [32, 64],
     "num_vq_embeddings": 64,
 }
@@ -142,6 +142,26 @@ def test_published_unet_layout():
     )
     with torch.device("meta"):
         model = UNet2DConditionModel(config)
+    with checkpoint.open("rb") as source:
+        (length,) = struct.unpack("<Q", source.read(8))
+        header = json.loads(source.read(length))
+    published = {
+        name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"
+    }
+    actual = {name: tuple(tensor.shape) for name, tensor in model.state_dict().items()}
+    assert actual == published
+
+
+def test_published_movq_layout():
+    root = Path("checkpoints/kandinsky-2.2/movq")
+    checkpoint = root / "diffusion_pytorch_model.safetensors"
+    if not checkpoint.exists():
+        pytest.skip("Kandinsky 2.2 MoVQ checkpoint is not present")
+    config = json.loads(
+        Path("tests/fixtures/kandinsky22_configs/movq_config.json").read_text(encoding="utf-8")
+    )
+    with torch.device("meta"):
+        model = VQModel(config)
     with checkpoint.open("rb") as source:
         (length,) = struct.unpack("<Q", source.read(8))
         header = json.loads(source.read(length))

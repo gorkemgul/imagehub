@@ -68,10 +68,9 @@ class VQAttention(nn.Module):
         if self.spatial_norm is not None:
             assert latents is not None
             x = self.spatial_norm(x, latents)
-        else:
-            assert self.group_norm is not None
-            x = self.group_norm(x)
         x = x.view(batch, channels, height * width).transpose(1, 2)
+        if self.group_norm is not None:
+            x = self.group_norm(x.transpose(1, 2)).transpose(1, 2)
         x = attention(self.to_q(x), self.to_k(x), self.to_v(x), heads=1)
         x = self.to_out[0](x).transpose(1, 2).reshape(batch, channels, height, width)
         return x + residual
@@ -120,7 +119,9 @@ class VQMidBlock(nn.Module):
 
 
 class EncoderBlock(nn.Module):
-    def __init__(self, in_ch: int, out_ch: int, layers: int, groups: int, down: bool) -> None:
+    def __init__(
+        self, in_ch: int, out_ch: int, layers: int, groups: int, down: bool, attention: bool
+    ) -> None:
         super().__init__()
         self.resnets = nn.ModuleList(
             ResnetBlock(
@@ -132,11 +133,16 @@ class EncoderBlock(nn.Module):
             )
             for i in range(layers)
         )
+        self.attentions = (
+            nn.ModuleList(VQAttention(out_ch, groups) for _ in range(layers)) if attention else None
+        )
         self.downsamplers = nn.ModuleList([Downsample(out_ch, padding=0)]) if down else None
 
     def forward(self, x: Tensor) -> Tensor:
-        for resnet in self.resnets:
+        for i, resnet in enumerate(self.resnets):
             x = resnet(x)
+            if self.attentions is not None:
+                x = self.attentions[i](x)
         if self.downsamplers is not None:
             x = self.downsamplers[0](x)
         return x
@@ -156,6 +162,7 @@ class Encoder(nn.Module):
                 layers,
                 groups,
                 down=i < len(channels) - 1,
+                attention=cfg["down_block_types"][i] == "AttnDownEncoderBlock2D",
             )
             for i in range(len(channels))
         )
@@ -173,18 +180,31 @@ class Encoder(nn.Module):
 
 class DecoderBlock(nn.Module):
     def __init__(
-        self, in_ch: int, out_ch: int, layers: int, latent_channels: int, up: bool
+        self,
+        in_ch: int,
+        out_ch: int,
+        layers: int,
+        latent_channels: int,
+        up: bool,
+        attention: bool,
     ) -> None:
         super().__init__()
         self.resnets = nn.ModuleList(
             SpatialResnetBlock(in_ch if i == 0 else out_ch, out_ch, latent_channels)
             for i in range(layers)
         )
+        self.attentions = (
+            nn.ModuleList(VQAttention(out_ch, 32, latent_channels) for _ in range(layers))
+            if attention
+            else None
+        )
         self.upsamplers = nn.ModuleList([Upsample(out_ch)]) if up else None
 
     def forward(self, x: Tensor, latents: Tensor) -> Tensor:
-        for resnet in self.resnets:
+        for i, resnet in enumerate(self.resnets):
             x = resnet(x, latents)
+            if self.attentions is not None:
+                x = self.attentions[i](x, latents)
         if self.upsamplers is not None:
             x = self.upsamplers[0](x)
         return x
@@ -207,6 +227,7 @@ class Decoder(nn.Module):
                 layers + 1,
                 latent,
                 up=i < len(reverse) - 1,
+                attention=cfg["up_block_types"][i] == "AttnUpDecoderBlock2D",
             )
             for i in range(len(reverse))
         )
@@ -248,9 +269,10 @@ class VQModel(NativeModel):
             raise ValueError(f"Unsupported VQ setting norm_type={cfg['norm_type']!r}")
         if cfg["act_fn"] != "silu":
             raise ValueError(f"Unsupported VQ setting act_fn={cfg['act_fn']!r}")
-        if set(cfg["down_block_types"]) != {"DownEncoderBlock2D"} or set(cfg["up_block_types"]) != {
-            "UpDecoderBlock2D"
-        }:
+        if not set(cfg["down_block_types"]) <= {
+            "DownEncoderBlock2D",
+            "AttnDownEncoderBlock2D",
+        } or not set(cfg["up_block_types"]) <= {"UpDecoderBlock2D", "AttnUpDecoderBlock2D"}:
             raise ValueError("Unsupported VQ block type")
         dimension = cfg["vq_embed_dim"] or cfg["latent_channels"]
         self.encoder = Encoder(cfg)
