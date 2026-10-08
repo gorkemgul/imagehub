@@ -489,6 +489,62 @@ supported.
 weights.
 
 
+# Stable Cascade
+
+Catalog: [`wuerstchen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `stable-cascade`, `stable-cascade-lite` · Task: `t2i`
+
+**Architecture.** Three stages work at very different resolutions. Stage C (the prior) denoises a
+small 16-channel image embedding that is about 42 times smaller than the output, conditioned on the
+CLIP ViT-bigG text states and pooled text embedding. Stage B (the decoder) denoises a 4-channel
+latent about 10.7 times smaller than the output, conditioned on the stage C embedding and the same
+pooled text embedding. Stage A, a Paella VQGAN, decodes that latent to pixels. Stages B and C use the
+same U-Net module with a different block layout, and both use a DDPM Wuerstchen scheduler with a
+cosine schedule.
+
+| Model | Stage C (prior) | Stage B (decoder) |
+| --- | --- | --- |
+| `stable-cascade` | `prior`, 3.6B parameters | `decoder`, 1.5B parameters |
+| `stable-cascade-lite` | `prior_lite`, 1B parameters | `decoder_lite`, 700M parameters |
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained stable-cascade-lite checkpoints/stable-cascade-lite
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", model="stable-cascade-lite", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The prior defaults to 60 steps and guidance 4.0; the decoder defaults to 12 steps,
+guidance 0.0 and 512×512 output. The supported options are `steps`, `guidance`, `prior_steps`,
+`prior_guidance`, `width`, `height`, `seed` and `negative_prompt`. Width and height must be
+multiples of 8. Decoder guidance above 1 needs the negative embeddings, so it also requires
+`prior_guidance` above 1. Unrecognized settings raise an error.
+
+**Memory.** In float32 the weights take about 14.4 GB for the stage C prior (4.1 GB for lite), 6.3 GB
+for the stage B decoder (2.8 GB for lite), 2.8 GB for the text encoder and 0.07 GB for stage A.
+The full pair therefore needs about 24 GB, and the lite pair about 10 GB.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers
+`StableCascadeCombinedPipeline` with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). Both stages draw from the one generator. MPS and CUDA runs are smoke
+tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** Only text-to-image is supported. Image variation (the prior's CLIP image encoder),
+ControlNet, the stage A encoder, the previewer and fp16/bf16 parity are not implemented. The decoder
+repository's own text encoder is not used: the combined pipeline passes the prior's text embeddings
+to the decoder, and so does imagehub.
+
+**License.** The weights use the Stable Cascade Non-Commercial Community License
+(`stable-cascade-nc-community`), which prohibits commercial use; see the license. imagehub does not
+distribute weights.
+
+
 # PixArt
 
 Catalog: [`pixart-sigma`](https://github.com/gorkemgul/awesome-text-to-image-architectures),

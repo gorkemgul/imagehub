@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**15 architecture families, 38 published checkpoints.** A model is a separately published set of weights;
+**16 architecture families, 40 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -50,6 +50,8 @@ tested with the original weights. In this release every model is `full`.
 | `z-image-turbo` | `z-image` | [Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) | `f332072` | author | full | Apache-2.0 | `z-image` |
 | `janus-pro-1b` | `janus` | [deepseek-community/Janus-Pro-1B](https://huggingface.co/deepseek-community/Janus-Pro-1B) | `1655280` | community conversion | full | DeepSeek Model License | `janus-pro` |
 | `janus-pro-7b` | `janus` | [deepseek-community/Janus-Pro-7B](https://huggingface.co/deepseek-community/Janus-Pro-7B) | `8f23139` | community conversion | full | DeepSeek Model License | `janus-pro` |
+| `stable-cascade` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
+| `stable-cascade-lite` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
 repository used is a community mirror. The v1.1–v1.3 fp32 weights are published only as `.bin`
@@ -60,6 +62,7 @@ own files. They can also use `subfolders` to place files from a second repositor
 snapshot subfolder. DMD2 excludes the base U-Net safetensors because its replacement U-Net is a
 PyTorch pickle under a different name. Kandinsky 2.2 places the prior repository at revision
 `9fc51ad` in the snapshot's `prior/` subfolder while the decoder remains at the snapshot root.
+Stable Cascade does the same with `stabilityai/stable-cascade-prior` at revision `7ca32c2`.
 `python -m imagehub.pretrained` downloads both sources, each pinned and verified, and the snapshot
 manifest records provenance for every file.
 
@@ -94,3 +97,9 @@ see the license.
 The `ideogram4-fp8` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN` when
 downloading with `python -m imagehub.pretrained`. The weights use the Ideogram 4 Non-Commercial
 License; see the license.
+
+The `stable-cascade` and `stable-cascade-lite` weights use the Stable Cascade Non-Commercial
+Community License (`stable-cascade-nc-community`), which prohibits commercial use; see the license
+before downloading or using the weights. Both models share one decoder repository and one prior
+repository and differ only in the stage C and stage B files they select (`prior` and `decoder`, or
+`prior_lite` and `decoder_lite`).

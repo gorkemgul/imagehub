@@ -134,3 +134,32 @@ def test_returns_penultimate_hidden_state_and_projected_eos():
     pooled = last_hidden_state[torch.arange(2), ids.argmax(dim=-1)]
     torch.testing.assert_close(text_embeds, model.text_projection(pooled), rtol=0, atol=0)
     assert hidden_states[-2].shape == last_hidden_state.shape
+
+
+def test_attention_mask_none_and_all_ones_agree_in_shape():
+    config = {
+        "vocab_size": 64,
+        "hidden_size": 16,
+        "intermediate_size": 32,
+        "num_hidden_layers": 2,
+        "num_attention_heads": 2,
+        "max_position_embeddings": 8,
+        "projection_dim": 8,
+        "eos_token_id": 63,
+    }
+    torch.manual_seed(0)
+    model = CLIPTextModelWithProjection(config).eval()
+    ids = torch.randint(0, 62, (2, 8))
+    ids[:, 5] = 63
+    mask = torch.tensor([[1] * 6 + [0] * 2, [1] * 8])
+    with torch.inference_mode():
+        plain = model(ids)
+        ones = model(ids, attention_mask=torch.ones_like(ids))
+        masked = model(ids, attention_mask=mask)
+    for left, right in zip(plain, ones, strict=True):
+        assert left.shape == right.shape
+        assert torch.isfinite(left).all() and torch.isfinite(right).all()
+    assert torch.equal(plain[1], ones[1])
+    assert torch.isfinite(masked[1]).all()
+    # Padding keys are hidden from the real tokens' attention, so real positions are unchanged.
+    assert torch.equal(masked[1][:, :6], plain[1][:, :6])

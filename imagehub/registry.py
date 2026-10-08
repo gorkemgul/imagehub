@@ -110,6 +110,7 @@ for _task, _name, _path in (
     (Task.T2I, "ideogram4", "imagehub.backends.ideogram4:Ideogram4Backend"),
     (Task.T2I, "janus", "imagehub.backends.janus:JanusBackend"),
     (Task.T2I, "kandinsky22", "imagehub.backends.kandinsky22:Kandinsky22Backend"),
+    (Task.T2I, "stable_cascade", "imagehub.backends.stable_cascade:StableCascadeBackend"),
 ):
     backend_registry.register(_task, _name, _path)
 

@@ -432,6 +432,44 @@ shape-mismatched tensors all **0**. Record: `tensor_header_check`,
 The reference and native models were loaded together and used about 16 GB in float32. The
 real-checkpoint run took about 13 minutes.
 
+## Stable Cascade
+
+Validated on CPU in the same environment as above. `stable-cascade` and `stable-cascade-lite` were
+loaded strictly from the decoder repository `stabilityai/stable-cascade` at revision `a89f66d` and
+the prior repository `stabilityai/stable-cascade-prior` at revision `7ca32c2`. The prior is stored
+in the snapshot's `prior/` subfolder. The reference is diffusers 0.40.0
+`StableCascadeCombinedPipeline`. The observed difference in every comparison is **exactly 0**: on
+CPU in float32, the local implementation produces a bit-identical result to the reference.
+
+### Comparisons (CPU, float32, both weight sets)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Masked CLIP text embeddings, pooled embeddings and negative branch | 0 | 0 |
+| Stage C U-Net single step (ratio 1 and 0.5) | 0 | 0 |
+| Stage C latents after 60 steps | 0 | 0 |
+| Stage B U-Net single step (ratio 1 and 0.5) | 0 | 0 |
+| Stage B latents after 12 steps | 0 | 0 |
+| Stage A decode | 0 | 0 |
+| End to end at the defaults (pixels) | 0 | 0 |
+| End to end, second seed (pixels) | 0 | 0 |
+
+The defaults are 60 prior steps with guidance 4.0, followed by 12 decoder steps with guidance 0.0 at
+512×512. Random-weight tests also established exact parity for both U-Net configurations (tiny and
+with the published layer layout, including odd latent sizes), the DDPM Wuerstchen scheduler with
+generator noise and several `scaler` values, Paella decoding and encoding, and the CLIP text model
+with an attention mask (GELU and QuickGELU, all-ones and padded masks). A tiny end-to-end test
+matched `StableCascadeCombinedPipeline` exactly, including a non-square size and decoder guidance.
+
+The header-only tensor check covered the stage C U-Net, the stage B U-Net, the text encoder and stage
+A. For `stable-cascade-lite`: `prior/prior_lite` 782, `decoder_lite` 970, `prior/text_encoder` 517
+and `vqgan` 122 tensors. For `stable-cascade`: `prior/prior` 1550 and `decoder` 1726, with the same
+text encoder and stage A. Missing, extra and shape-mismatched tensors were all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
+The stages were compared one at a time so that the reference and native models were never all
+resident together.
+
 ## PixArt
 
 Validated on CPU in the same environment as above. `pixart-sigma-xl-1024` and
@@ -805,13 +843,13 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
-  UnCLIP and DDPM for Kandinsky 2.2, and DPM-Solver++ for PixArt.
+  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 595 passed, 461 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
@@ -819,7 +857,7 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
-  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 19 passed
+  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with

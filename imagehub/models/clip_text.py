@@ -34,13 +34,16 @@ class CLIPAttention(nn.Module):
         self.v_proj = nn.Linear(dim, dim)
         self.out_proj = nn.Linear(dim, dim)
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x: Tensor, mask: Tensor | None = None) -> Tensor:
         b, n, d = x.shape
         q, k, v = (
             proj(x).view(b, n, self.heads, d // self.heads).transpose(1, 2)
             for proj in (self.q_proj, self.k_proj, self.v_proj)
         )
-        out = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+        if mask is None:
+            out = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+        else:
+            out = F.scaled_dot_product_attention(q, k, v, attn_mask=mask)
         return self.out_proj(out.transpose(1, 2).reshape(b, n, d))
 
 
@@ -69,8 +72,8 @@ class CLIPEncoderLayer(nn.Module):
         self.mlp = CLIPMLP(dim, cfg["intermediate_size"], cfg["hidden_act"])
         self.layer_norm2 = nn.LayerNorm(dim, eps=eps)
 
-    def forward(self, x: Tensor) -> Tensor:
-        x = x + self.self_attn(self.layer_norm1(x))
+    def forward(self, x: Tensor, mask: Tensor | None = None) -> Tensor:
+        x = x + self.self_attn(self.layer_norm1(x), mask)
         return x + self.mlp(self.layer_norm2(x))
 
 
@@ -99,12 +102,22 @@ class CLIPTextTransformer(nn.Module):
         self.final_layer_norm = nn.LayerNorm(cfg["hidden_size"], eps=cfg["layer_norm_eps"])
 
     def forward(
-        self, input_ids: Tensor, *, output_hidden_states: bool = False
+        self,
+        input_ids: Tensor,
+        *,
+        attention_mask: Tensor | None = None,
+        output_hidden_states: bool = False,
     ) -> Tensor | tuple[Tensor, tuple[Tensor, ...]]:
         x = self.embeddings(input_ids)
+        mask = None
+        # An all-ones padding mask is plain causal attention; only real padding needs a mask.
+        if attention_mask is not None and not bool(attention_mask.all()):
+            n = input_ids.shape[1]
+            causal = torch.ones(n, n, dtype=torch.bool, device=input_ids.device).tril()
+            mask = causal[None, None] & attention_mask.to(torch.bool)[:, None, None, :]
         hidden_states = [x]
         for layer in self.encoder.layers:
-            x = layer(x)
+            x = layer(x, mask)
             hidden_states.append(x)
         x = self.final_layer_norm(x)
         if output_hidden_states:
@@ -126,10 +139,16 @@ class CLIPTextModel(NativeModel):
         return state
 
     def forward(
-        self, input_ids: Tensor, *, output_hidden_states: bool = False
+        self,
+        input_ids: Tensor,
+        *,
+        attention_mask: Tensor | None = None,
+        output_hidden_states: bool = False,
     ) -> Tensor | tuple[Tensor, tuple[Tensor, ...]]:
         """Return ``last_hidden_state`` of shape (batch, tokens, hidden_size)."""
-        return self.text_model(input_ids, output_hidden_states=output_hidden_states)
+        return self.text_model(
+            input_ids, attention_mask=attention_mask, output_hidden_states=output_hidden_states
+        )
 
 
 class CLIPTextModelWithProjection(NativeModel):
@@ -148,9 +167,15 @@ class CLIPTextModelWithProjection(NativeModel):
         return state
 
     def forward(
-        self, input_ids: Tensor, *, output_hidden_states: bool = False
+        self,
+        input_ids: Tensor,
+        *,
+        attention_mask: Tensor | None = None,
+        output_hidden_states: bool = False,
     ) -> tuple[Tensor, Tensor] | tuple[Tensor, Tensor, tuple[Tensor, ...]]:
-        last_hidden_state, hidden_states = self.text_model(input_ids, output_hidden_states=True)
+        last_hidden_state, hidden_states = self.text_model(
+            input_ids, attention_mask=attention_mask, output_hidden_states=True
+        )
         if self.config["eos_token_id"] == 2:
             positions = input_ids.to(dtype=torch.int).argmax(dim=-1)
         else:
