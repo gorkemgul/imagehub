@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pytest
 import torch
-from tokenizers import Tokenizer, decoders, models, pre_tokenizers, processors
 
 from imagehub import pipeline
 from imagehub.backends.cogview4 import CogView4Components, denoise
@@ -18,6 +17,14 @@ from imagehub.tokenization import bytes_to_unicode
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 pytest.importorskip("transformers")
+tokenizers = pytest.importorskip("tokenizers")
+Tokenizer = tokenizers.Tokenizer
+decoders, models, pre_tokenizers, processors = (
+    tokenizers.decoders,
+    tokenizers.models,
+    tokenizers.pre_tokenizers,
+    tokenizers.processors,
+)
 
 TEXT_CONFIG = {
     "vocab_size": 259,

@@ -1,13 +1,14 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image, SD3, FLUX.1, HunyuanDiT, PixArt and CogView4 measurements are
-grouped in flat ``components_sdxl``, ``components_qwen_image``, ``components_sd3``,
-``components_flux1``, ``components_hunyuan_dit``, ``components_pixart`` and
-``components_cogview4`` mappings: the base model keeps its historical unsuffixed keys, while other
-models use ``<key>_<model-id>``. Each model entry may also contain its own ``seed_end_to_end``
-measurement. When a model directory is missing, its existing entry in the output is retained
-unchanged; a missing directory without an existing entry is an error.
+measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, PixArt, LongCat-Image and CogView4
+measurements are grouped in flat ``components_sdxl``, ``components_qwen_image``,
+``components_sd3``, ``components_flux1``, ``components_krea2``, ``components_hunyuan_dit``,
+``components_pixart``, ``components_longcat_image`` and ``components_cogview4`` mappings: the base
+model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
+entry may also contain its own ``seed_end_to_end`` measurement. When a model directory is missing,
+its existing entry in the output is retained unchanged; a missing directory without an existing
+entry is an error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -40,8 +41,9 @@ LIMITS = [
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing "
     "spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, "
     "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
-    "schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, flow-match Euler with linear "
-    "shifting for CogView4, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
+    "schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match "
+    "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
+    "HunyuanDiT, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -140,12 +142,15 @@ def main() -> None:
         snapshot = read_snapshot(snapshot_dir)
         if snapshot is None or snapshot["revision"] != spec.revision:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
-        e2e = measured.get(f"e2e_{spec.id}")
+        measurement_id = {"krea2-turbo": "krea2_turbo", "longcat-image": "longcat_image"}.get(
+            spec.id, spec.id
+        )
+        e2e = measured.get(f"e2e_{measurement_id}")
         e2e_batch2 = measured.get(f"e2e_batch2_{spec.id}")
         e2e_multistep = measured.get(f"e2e_multistep_{spec.id}")
         e2e_guided = measured.get(f"e2e_guided_{spec.id}")
-        seed_e2e = measured.get(f"seed_e2e_{spec.id}")
-        header = measured.get(f"header_{spec.id}")
+        seed_e2e = measured.get(f"seed_e2e_{measurement_id}")
+        header = measured.get(f"header_{measurement_id}")
         models.append(
             {
                 "model_id": spec.id,
@@ -247,6 +252,9 @@ def main() -> None:
         "components_flux1": {
             key: value for key, value in measured.items() if key.startswith("flux1_")
         },
+        "components_krea2": {
+            key: value for key, value in measured.items() if key.startswith("krea2_")
+        },
         "components_flux2": {
             key: value for key, value in measured.items() if key.startswith("flux2_")
         },
@@ -254,6 +262,9 @@ def main() -> None:
             key: value for key, value in measured.items() if "hunyuan_dit" in key
         },
         "components_pixart": {key: value for key, value in measured.items() if "pixart" in key},
+        "components_longcat_image": {
+            key: value for key, value in measured.items() if key.startswith("longcat_image_")
+        },
         "components_cogview4": {
             key: value for key, value in measured.items() if key.startswith("cogview4_")
         },

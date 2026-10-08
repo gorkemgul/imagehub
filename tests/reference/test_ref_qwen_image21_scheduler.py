@@ -3,7 +3,6 @@
 import json
 from pathlib import Path
 
-import numpy as np
 import pytest
 import torch
 
@@ -11,6 +10,7 @@ from imagehub.schedulers.flow_match_euler import FlowMatchEulerDiscreteScheduler
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
+np = pytest.importorskip("numpy")
 if not hasattr(diffusers, "QwenImage21Pipeline"):
     pytest.skip(
         "needs the diffusers commit pinned for Qwen-Image 2.1 (.venv-ref-qwen-image-2.1)",

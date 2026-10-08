@@ -441,6 +441,85 @@ Caption cleaning requires `bs4` and `ftfy` and is not implemented. Parity was me
 reference and native components were loaded together; T5-XXL used about 19 GB in float32. The
 real-checkpoint run for both models (19 tests) took 45 minutes.
 
+## Krea 2
+
+Validated on CPU in the same environment as above. `krea2-turbo` was loaded strictly from
+`krea/Krea-2-Turbo` at revision `98e0fe1`. The weights are published in bfloat16 and were upcast
+to float32. The observed difference in every comparison is **exactly 0**: on CPU in float32, the
+local implementation produces a bit-identical result to the reference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes | identical | exact |
+| Prompt template token ids / attention masks | identical / identical | exact / exact |
+| Qwen3-VL text encoder (12 selected hidden layers, stacked) | 0 | 0 |
+| Transformer single step (1024×1024) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 / 0 |
+| Flow-match Euler scheduler with exponential dynamic shifting, including `mu` | exact | exact |
+| End to end: final latent / pixels (1024×1024, 8 steps, guidance 0.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse". The fixed-noise and
+seed checks used the 8-step, guidance 0.0, 1024×1024 defaults.
+
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts were
+713 / 430 / 194, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
+The reference pipeline calls the text encoder with transformers' default key-value cache. Its
+contiguous key/value copies and masked grouped-query attention on hosts with MPS set the SDPA
+summation order. The transformer's float32 tensors remain at their file offsets as diffusers loads
+them (`clone_shards = False`). Latents are de-normalized by dividing by the reciprocal standard
+deviation, matching the reference. The reference transformer was loaded without
+`_keep_in_fp32_modules` because that path requires `accelerate`; all components ran in float32,
+and the transformer was cast to float32 after loading.
+
+The roughly 13B transformer uses about 52 GB in float32, so the reference and native transformers
+were never loaded together. Each comparison ran the reference first, saved its outputs, freed it,
+then ran the native model. The full real-checkpoint run on the Apple M2 Max took about 1 hour.
+
+## LongCat-Image
+
+Validated on CPU in the same environment as above. `longcat-image` was loaded strictly from
+`meituan-longcat/LongCat-Image` at revision `d2ea50b`. The published bfloat16 weights were upcast to
+float32. The observed difference in every comparison is **exactly 0**: on CPU in float32, the local
+implementation produces a bit-identical result to the reference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Rewritten prompt string and token ids | identical | exact |
+| Qwen2.5-VL text encoder | 0 | 0 |
+| LongCat-Image transformer single step (1024×1024) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 / 0 |
+| Flow-match Euler scheduler with dynamic shifting, including `mu` | exact | exact |
+| End to end: final latent / pixels (1024×1024, 8 steps, guidance 4.5) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end run used 8 steps instead of the 50-step default and fixed initial noise. Prompt
+rewrite and CFG renormalization were enabled. The seed end-to-end check used `seed=42`.
+
+Random-weight parity covered the Qwen2.5-VL text model, including per-step generation logits, and
+the transformer. Tiny-snapshot end-to-end parity covered configurations with and without prompt
+rewrite and CFG renormalization. Every comparison was exact.
+
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts were
+729 / 612 / 244, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
+Reference-matching details: rewrite generation uses a key-value cache with one new token per step,
+as transformers' `generate` does; recomputing the whole sequence changed logits and flipped tokens.
+The Qwen2-VL chat template adds a default system turn. Published Qwen2.5-VL checkpoints use
+transformers 4.x `model.layers.*` key names and the legacy `"type": "mrope"`, which are read as
+transformers 5 does. The text encoder uses the default key-value cache, with contiguous keys and
+values and the masked GQA rule on MPS hosts.
+
+In float32 the text encoder used about 33 GB and the transformer about 25 GB. End-to-end validation
+used the save-then-compare sequence. The real-checkpoint runs took about 26, 25 and 47 minutes.
+
 ## CogView4
 
 Validated on CPU in the same environment as above. `cogview4-6b` was loaded strictly from
@@ -635,14 +714,15 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, flow-match Euler with
-  linear shifting for CogView4, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.
+  for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
+  Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
+  and DPM-Solver++ for PixArt.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 540 passed, 399 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 576 passed, 435 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
@@ -651,7 +731,8 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 19 passed for `pixart-sigma-xl-1024` and
-  `pixart-alpha-xl-1024`, 9 passed for `cogview4-6b`, 9 passed for `sd-turbo`, and 7 passed for
+  `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
+  `cogview4-6b`, 9 passed for `sd-turbo`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
