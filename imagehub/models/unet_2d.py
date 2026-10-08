@@ -359,6 +359,29 @@ class TimestepEmbedding(nn.Module):
         return self.linear_2(F.silu(self.linear_1(x)))
 
 
+class ImageTimeEmbedding(nn.Module):
+    def __init__(self, image_dim: int, time_dim: int) -> None:
+        super().__init__()
+        self.image_proj = nn.Linear(image_dim, time_dim)
+        self.image_norm = nn.LayerNorm(time_dim)
+
+    def forward(self, image_embeds: Tensor) -> Tensor:
+        return self.image_norm(self.image_proj(image_embeds))
+
+
+class ImageProjection(nn.Module):
+    def __init__(self, image_dim: int, context_dim: int) -> None:
+        super().__init__()
+        self.num_image_text_embeds = 32
+        self.image_embeds = nn.Linear(image_dim, self.num_image_text_embeds * context_dim)
+        self.norm = nn.LayerNorm(context_dim)
+
+    def forward(self, image_embeds: Tensor) -> Tensor:
+        batch = image_embeds.shape[0]
+        image_embeds = self.image_embeds(image_embeds.to(self.image_embeds.weight.dtype))
+        return self.norm(image_embeds.reshape(batch, self.num_image_text_embeds, -1))
+
+
 class UNet2DConditionModel(NativeModel):
     def __init__(self, config: Mapping[str, Any]) -> None:
         unknown = sorted(
@@ -384,11 +407,13 @@ class UNet2DConditionModel(NativeModel):
         ):
             raise ValueError("Unsupported U-Net block type")
         for key, default in _UNSUPPORTED_DEFAULTS.items():
+            if key in ("encoder_hid_dim", "encoder_hid_dim_type"):
+                continue
             if key == "upcast_attention" and not cfg[key]:
                 continue
             if cfg[key] != default:
                 raise ValueError(f"Unsupported U-Net setting {key}={cfg[key]!r}")
-        if cfg["addition_embed_type"] not in (None, "text_time"):
+        if cfg["addition_embed_type"] not in (None, "text_time", "image"):
             raise ValueError(
                 f"Unsupported U-Net setting addition_embed_type={cfg['addition_embed_type']!r}"
             )
@@ -474,6 +499,7 @@ class UNet2DConditionModel(NativeModel):
                     transformer_layers=rev_transformer_layers[i],
                 )
             )
+        self.add_embedding: TimestepEmbedding | ImageTimeEmbedding
         if cfg["addition_embed_type"] == "text_time":
             if (
                 cfg["addition_time_embed_dim"] is None
@@ -484,6 +510,20 @@ class UNet2DConditionModel(NativeModel):
             self.add_embedding = TimestepEmbedding(
                 cfg["projection_class_embeddings_input_dim"], temb
             )
+        elif cfg["addition_embed_type"] == "image":
+            if cfg["encoder_hid_dim"] is None:
+                raise ValueError("image conditioning requires encoder_hid_dim")
+            self.add_embedding = ImageTimeEmbedding(cfg["encoder_hid_dim"], temb)
+        if cfg["encoder_hid_dim_type"] == "image_proj":
+            if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
+                raise ValueError("image projection requires scalar embedding dimensions")
+            self.encoder_hid_proj = ImageProjection(
+                cfg["encoder_hid_dim"], cfg["cross_attention_dim"]
+            )
+        elif cfg["encoder_hid_dim_type"] is not None:
+            raise ValueError(
+                f"Unsupported U-Net setting encoder_hid_dim_type={cfg['encoder_hid_dim_type']!r}"
+            )
         self.conv_norm_out = nn.GroupNorm(cfg["norm_num_groups"], ch[0], eps=cfg["norm_eps"])
         self.conv_out = nn.Conv2d(ch[0], cfg["out_channels"], 3, padding=1)
 
@@ -491,11 +531,12 @@ class UNet2DConditionModel(NativeModel):
         self,
         sample: Tensor,
         timestep: Tensor,
-        context: Tensor,
+        context: Tensor | None,
         *,
         timestep_cond: Tensor | None = None,
         text_embeds: Tensor | None = None,
         time_ids: Tensor | None = None,
+        image_embeds: Tensor | None = None,
     ) -> Tensor:
         timesteps = timestep.reshape(-1).to(sample.device).expand(sample.shape[0])
         t = timestep_embedding(
@@ -518,6 +559,16 @@ class UNet2DConditionModel(NativeModel):
             ).reshape(text_embeds.shape[0], -1)
             add_embeds = torch.cat([text_embeds, time_features], dim=-1).to(temb.dtype)
             temb = temb + self.add_embedding(add_embeds)
+        elif self.config["addition_embed_type"] == "image":
+            if image_embeds is None:
+                raise ValueError("image conditioning requires image_embeds")
+            temb = temb + self.add_embedding(image_embeds)
+        if self.config["encoder_hid_dim_type"] == "image_proj":
+            if image_embeds is None:
+                raise ValueError("image projection requires image_embeds")
+            context = self.encoder_hid_proj(image_embeds)
+        if context is None:
+            raise ValueError("U-Net context is required")
         x = self.conv_in(sample)
         skips = [x]
         for down in self.down_blocks:

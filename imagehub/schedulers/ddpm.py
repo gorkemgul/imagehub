@@ -26,7 +26,7 @@ DDPM_DEFAULTS: dict[str, Any] = {
     "rescale_betas_zero_snr": False,
 }
 _IGNORED = frozenset({"set_alpha_to_one", "skip_prk_steps"})
-_REQUIRED = {
+_HUNYUAN_CONFIG = {
     "num_train_timesteps": 1000,
     "beta_start": 0.00085,
     "beta_end": 0.03,
@@ -59,22 +59,52 @@ class DDPMScheduler:
             for key, value in config.items()
             if not key.startswith("_") and key not in _IGNORED
         }
-        for key, expected in _REQUIRED.items():
-            if cfg[key] != expected:
-                raise ValueError(f"Unsupported DDPM setting {key}={cfg[key]!r}")
+        is_hunyuan = all(cfg[key] == expected for key, expected in _HUNYUAN_CONFIG.items())
+        is_kandinsky = (
+            cfg["beta_schedule"] == "linear"
+            and cfg["clip_sample"] is True
+            and cfg["prediction_type"] == "epsilon"
+            and cfg["variance_type"] == "learned_range"
+            and cfg["steps_offset"] == 0
+        )
+        if not is_hunyuan and not is_kandinsky:
+            changed = next(
+                (key for key, expected in _HUNYUAN_CONFIG.items() if cfg[key] != expected),
+                "configuration",
+            )
+            raise ValueError(f"Unsupported DDPM setting {changed}={cfg.get(changed)!r}")
+        if cfg["trained_betas"] is not None:
+            raise ValueError("Unsupported DDPM setting trained_betas")
+        if cfg["beta_schedule"] not in ("linear", "scaled_linear"):
+            raise ValueError(f"Unsupported DDPM setting beta_schedule={cfg['beta_schedule']!r}")
+        if cfg["variance_type"] not in ("fixed_small", "learned_range"):
+            raise ValueError(f"Unsupported DDPM setting variance_type={cfg['variance_type']!r}")
+        if cfg["thresholding"]:
+            raise ValueError("Unsupported DDPM setting thresholding=True")
+        if cfg["rescale_betas_zero_snr"]:
+            raise ValueError("Unsupported DDPM setting rescale_betas_zero_snr=True")
+        if cfg["timestep_spacing"] != "leading":
+            raise ValueError(
+                f"Unsupported DDPM setting timestep_spacing={cfg['timestep_spacing']!r}"
+            )
         if cfg["prediction_type"] not in ("epsilon", "v_prediction"):
             raise ValueError(f"Unsupported DDPM setting prediction_type={cfg['prediction_type']!r}")
         self.config = cfg
         count = cfg["num_train_timesteps"]
-        self.betas = (
-            torch.linspace(
-                cfg["beta_start"] ** 0.5,
-                cfg["beta_end"] ** 0.5,
-                count,
-                dtype=torch.float32,
+        if cfg["beta_schedule"] == "scaled_linear":
+            self.betas = (
+                torch.linspace(
+                    cfg["beta_start"] ** 0.5,
+                    cfg["beta_end"] ** 0.5,
+                    count,
+                    dtype=torch.float32,
+                )
+                ** 2
             )
-            ** 2
-        )
+        else:
+            self.betas = torch.linspace(
+                cfg["beta_start"], cfg["beta_end"], count, dtype=torch.float32
+            )
         self.alphas = 1.0 - self.betas
         self.alphas_cumprod = torch.cumprod(self.alphas, dim=0)
         self.one = torch.tensor(1.0)
@@ -104,7 +134,9 @@ class DDPMScheduler:
             return torch.tensor(-1)
         return self.timesteps[index + 1]
 
-    def _get_variance(self, timestep: Tensor | int) -> Tensor:
+    def _get_variance(
+        self, timestep: Tensor | int, predicted_variance: Tensor | None = None
+    ) -> Tensor:
         previous_timestep = self.previous_timestep(timestep)
         alpha_prod_t = self.alphas_cumprod[timestep]
         alpha_prod_t_prev = (
@@ -112,7 +144,17 @@ class DDPMScheduler:
         )
         current_beta_t = 1 - alpha_prod_t / alpha_prod_t_prev
         variance = (1 - alpha_prod_t_prev) / (1 - alpha_prod_t) * current_beta_t
-        return torch.clamp(variance, min=1e-20)
+        variance = torch.clamp(variance, min=1e-20)
+        if self.config["variance_type"] == "learned":
+            assert predicted_variance is not None
+            return predicted_variance
+        if self.config["variance_type"] == "learned_range":
+            assert predicted_variance is not None
+            minimum = torch.log(variance)
+            maximum = torch.log(current_beta_t)
+            fraction = (predicted_variance + 1) / 2
+            return fraction * maximum + (1 - fraction) * minimum
+        return variance
 
     def step(
         self,
@@ -126,6 +168,13 @@ class DDPMScheduler:
             raise ValueError("Call set_timesteps before step")
         t = timestep
         previous_timestep = self.previous_timestep(t)
+        if model_output.shape[1] == sample.shape[1] * 2 and self.config["variance_type"] in (
+            "learned",
+            "learned_range",
+        ):
+            model_output, predicted_variance = model_output.split(sample.shape[1], dim=1)
+        else:
+            predicted_variance = None
         alpha_prod_t = self.alphas_cumprod[t]
         alpha_prod_t_prev = (
             self.alphas_cumprod[previous_timestep] if previous_timestep >= 0 else self.one
@@ -141,6 +190,10 @@ class DDPMScheduler:
             ) / alpha_prod_t ** (0.5)
         else:
             pred_original_sample = alpha_prod_t**0.5 * sample - beta_prod_t**0.5 * model_output
+
+        if self.config["clip_sample"]:
+            limit = self.config["clip_sample_range"]
+            pred_original_sample = pred_original_sample.clamp(-limit, limit)
 
         pred_original_sample_coeff = (alpha_prod_t_prev ** (0.5) * current_beta_t) / beta_prod_t
         current_sample_coeff = current_alpha_t ** (0.5) * beta_prod_t_prev / beta_prod_t
@@ -159,5 +212,9 @@ class DDPMScheduler:
                 device=random_device,
                 dtype=model_output.dtype,
             ).to(model_output.device)
-            variance = self._get_variance(t) ** 0.5 * variance_noise
+            variance_value = self._get_variance(t, predicted_variance)
+            if self.config["variance_type"] == "learned_range":
+                variance = torch.exp(0.5 * variance_value) * variance_noise
+            else:
+                variance = variance_value**0.5 * variance_noise
         return pred_prev_sample + variance
