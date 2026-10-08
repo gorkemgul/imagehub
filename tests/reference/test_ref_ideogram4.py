@@ -4,7 +4,6 @@ import json
 import multiprocessing
 import struct
 
-import numpy
 import pytest
 import torch
 from helpers import max_diff, snapshot_dir
@@ -19,6 +18,7 @@ from imagehub.tokenization_qwen import Qwen2Tokenizer
 
 pytestmark = pytest.mark.reference
 ideogram4 = pytest.importorskip("ideogram4")
+numpy = pytest.importorskip("numpy")
 reference_pipeline = pytest.importorskip("ideogram4.pipeline_ideogram4")
 reference_scheduler = pytest.importorskip("ideogram4.scheduler")
 transformers = pytest.importorskip("transformers")
