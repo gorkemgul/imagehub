@@ -75,20 +75,25 @@ The header-only tensor check covered `text_encoder`, `unet` and `vae`: tensor co
 
 ## Stable Diffusion 2.1
 
-Validation of `sd-v2-1` against `sd2-community/stable-diffusion-2-1` (revision `bb21548`) is
-**to be filled** once the reference run on CPU in float32 has been measured.
+`sd-v2-1` was loaded strictly from `sd2-community/stable-diffusion-2-1` (revision `bb21548`, a copy of the withdrawn
+`stabilityai/stable-diffusion-2-1` release) and compared with diffusers 0.40.0 `StableDiffusionPipeline` on CPU in
+float32. Every comparison is exact. The real-checkpoint run takes about 14 minutes on an M2 Max (CPU).
 
 ### Comparisons (CPU, float32)
 
 | Comparison | Largest observed difference | Tolerance |
 | --- | --- | --- |
-| Tokenizer token ids (5 prompts) | to be filled | exact |
-| OpenCLIP-H text encoder | to be filled | 0 |
-| U-Net single step (t = 981, 481, 1) | to be filled | 0 |
-| VAE decode / encode (768×768) | to be filled | 0 |
-| DDIM timesteps with leading spacing (25 and 50 steps) | to be filled | 0 |
-| End to end: final latent / pixels (768×768, 50 steps, guidance 7.5) | to be filled | 0 / 0 |
-| End to end, seed 42 (pixels) | to be filled | 0 |
+| Tokenizer token ids (5 prompts) | identical | exact |
+| OpenCLIP-H text encoder | 0 | 0 |
+| U-Net single step (t = 981, 481, 1) | 0 | 0 |
+| VAE decode / encode (768×768) | 0 | 0 |
+| DDIM timesteps with leading spacing (25 and 50 steps) | 0 | 0 |
+| End to end: final latent / pixels (768×768, 50 steps, guidance 7.5) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The tokenizer exposed a loading rule that now applies to every CLIP tokenizer: when `tokenizer_config.json` has no
+`added_tokens_decoder`, transformers merges `special_tokens_map.json` over it (this repository pads with `!`, which
+only the map names), and it registers the named special tokens in the order bos, eos, unk, pad.
 
 Without weights, a tiny random v-prediction model with the DDIM scheduler and `upcast_attention`
 matches `StableDiffusionPipeline` exactly, and the DDIM scheduler matches diffusers exactly for
@@ -880,7 +885,7 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, and 7 passed for
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `sd-v2-1`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

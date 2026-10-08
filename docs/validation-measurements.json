@@ -592,6 +592,26 @@
       "pixels": 0
     }
   },
+  "e2e_sd-v2-1": {
+    "guidance": 7.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "size": [
+      768,
+      768
+    ],
+    "steps": 50,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
   "e2e_sd3-medium": {
     "guidance": 7.0,
     "latents": {
@@ -1506,6 +1526,26 @@
       "tensors": 248
     }
   },
+  "header_sd-v2-1": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 372
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 686
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
   "header_sd3-medium": {
     "text_encoder": {
       "extra": [],
@@ -2202,6 +2242,57 @@
     "tolerance": 0.0
   },
   "qwen_image_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd21_scheduler": {
+    "measurements": {
+      "25": {
+        "timesteps": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        }
+      },
+      "50": {
+        "timesteps": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        }
+      }
+    },
+    "steps": [
+      25,
+      50
+    ],
+    "tolerance": 0.0
+  },
+  "sd21_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd21_tokenizer": {
+    "mismatches": [],
+    "prompts": 5,
+    "tolerance": "exact"
+  },
+  "sd21_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      981.0,
+      481.0,
+      1.0
+    ],
+    "tolerance": 0.0
+  },
+  "sd21_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd21_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -3038,6 +3129,11 @@
     "seed": 42
   },
   "seed_e2e_sd-v1-5": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42
+  },
+  "seed_e2e_sd-v2-1": {
     "passed": true,
     "pixels_max_abs": 0,
     "seed": 42
