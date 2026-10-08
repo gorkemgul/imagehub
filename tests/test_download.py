@@ -145,6 +145,37 @@ def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
     )
 
 
+@pytest.mark.parametrize("model_id", ["sana-1600m-1024", "sana-600m-1024"])
+def test_downloads_sana_snapshot_pinned_to_its_revision(monkeypatch, tmp_path, model_id):
+    spec = model_info(model_id)
+    contents = {name: f"content of {name}".encode() for name in spec.files}
+
+    def request(url, headers):
+        assert f"/{spec.repo_id}/" in url
+        if "/api/models/" in url:
+            siblings = [
+                {
+                    "rfilename": name,
+                    "size": len(data),
+                    "lfs": {"sha256": hashlib.sha256(data).hexdigest()},
+                    "blobId": "f" * 40,
+                }
+                for name, data in contents.items()
+            ]
+            return io.BytesIO(json.dumps({"sha": spec.revision, "siblings": siblings}).encode())
+        return io.BytesIO(contents[url.split(f"/resolve/{spec.revision}/", 1)[1]])
+
+    monkeypatch.setattr(download, "_open", request)
+    dest = download_pretrained(model_id, tmp_path / "snapshot")
+    manifest = read_snapshot(dest)
+    assert manifest["model_id"] == model_id
+    assert manifest["revision"] == spec.revision
+    assert manifest["verified_revision"] is True
+    assert set(manifest["files"]) == set(spec.files)
+    for name, data in contents.items():
+        assert (dest / name).read_bytes() == data
+
+
 @pytest.mark.parametrize("model_id", ["kandinsky-2.2", "stable-cascade", "stable-cascade-lite"])
 def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, model_id):
     spec = model_info(model_id)

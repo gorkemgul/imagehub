@@ -29,6 +29,8 @@ def test_catalog_contents():
             "pixart-sigma-xl-1024",
             "playground-v2.5",
             "qwen-image-2.1",
+            "sana-1600m-1024",
+            "sana-600m-1024",
             "sd-turbo",
             "sd-v1-1",
             "sd-v1-2",
@@ -567,6 +569,60 @@ def test_kandinsky22_catalog_entry():
             "prior_guidance": 4.0,
         }
     }
+
+
+@pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "transformer"),
+    [
+        (
+            "sana-1600m-1024",
+            "Efficient-Large-Model/Sana_1600M_1024px_diffusers",
+            "ac0da2ff55fbe434795be0dce883042e4d49e2fc",
+            (
+                "transformer/diffusion_pytorch_model.safetensors.index.json",
+                "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+                "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            ),
+        ),
+        (
+            "sana-600m-1024",
+            "Efficient-Large-Model/Sana_600M_1024px_diffusers",
+            "28f3af7689de15f3883d5863059a2fca0aa9b829",
+            ("transformer/diffusion_pytorch_model.safetensors",),
+        ),
+    ],
+)
+def test_sana_catalog_entries(model_id, repo, revision, transformer):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "sana"
+    assert spec.source == f"https://huggingface.co/{repo}"
+    assert spec.repo_id == repo
+    assert spec.revision == revision
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "sana"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 20, "guidance": 4.5, "width": 1024, "height": 1024}
+    }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.json",
+        "text_encoder/model-00001-of-00002.safetensors",
+        "text_encoder/model-00002-of-00002.safetensors",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer.model",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        *transformer,
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
 
 
 @pytest.mark.parametrize(

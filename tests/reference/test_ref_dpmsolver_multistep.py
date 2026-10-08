@@ -59,3 +59,57 @@ def test_twenty_step_trajectory_matches_reference():
         expected = expected_scheduler.step(model_output, timestep, expected).prev_sample
         actual = actual_scheduler.step(model_output, timestep, actual)
         exact(actual, expected)
+
+
+FLOW_CONFIG = CONFIG | {
+    "prediction_type": "flow_prediction",
+    "use_flow_sigmas": True,
+    "flow_shift": 3.0,
+    "final_sigmas_type": "zero",
+}
+
+
+def _sana_config():
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).parents[1] / "fixtures/sana_configs/1600m/scheduler_scheduler_config.json"
+    return {k: v for k, v in json.loads(path.read_text()).items() if not k.startswith("_")}
+
+
+@pytest.mark.parametrize("steps", [1, 2, 5, 14, 20, 25, 50])
+@pytest.mark.parametrize("shift", [1.0, 3.0, 7.5])
+def test_flow_timesteps_match_reference(steps, shift):
+    config = FLOW_CONFIG | {"flow_shift": shift}
+    expected = diffusers.DPMSolverMultistepScheduler.from_config(config)
+    actual = DPMSolverMultistepScheduler(config)
+    expected.set_timesteps(steps)
+    actual.set_timesteps(steps)
+    exact(actual.timesteps, expected.timesteps)
+    exact(actual.sigmas, expected.sigmas)
+
+
+def test_published_sana_config_is_accepted_and_matches_reference():
+    config = _sana_config()
+    expected = diffusers.DPMSolverMultistepScheduler.from_config(config)
+    actual = DPMSolverMultistepScheduler(config)
+    expected.set_timesteps(20)
+    actual.set_timesteps(20)
+    exact(actual.timesteps, expected.timesteps)
+    exact(actual.sigmas, expected.sigmas)
+
+
+@pytest.mark.parametrize("steps", [3, 14, 20])
+def test_flow_trajectory_matches_reference(steps):
+    expected_scheduler = diffusers.DPMSolverMultistepScheduler.from_config(_sana_config())
+    actual_scheduler = DPMSolverMultistepScheduler(_sana_config())
+    expected_scheduler.set_timesteps(steps)
+    actual_scheduler.set_timesteps(steps)
+    generator = torch.Generator("cpu").manual_seed(0)
+    expected = torch.randn(2, 32, 6, 10, generator=generator)
+    actual = expected.clone()
+    for timestep in expected_scheduler.timesteps:
+        model_output = torch.randn(expected.shape, generator=generator)
+        expected = expected_scheduler.step(model_output, timestep, expected).prev_sample
+        actual = actual_scheduler.step(model_output, timestep, actual)
+        exact(actual, expected)

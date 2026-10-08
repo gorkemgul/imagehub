@@ -55,6 +55,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 | Kandinsky 2.2 | `kandinsky-2.2` | `t2i` | CPU fp32 parity |
 | Stable Cascade | `stable-cascade`, `stable-cascade-lite` | `t2i` | CPU fp32 parity |
 | PixArt | `pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` | `t2i` | CPU fp32 parity |
+| Sana | `sana-1600m-1024`, `sana-600m-1024` | `t2i` | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | CPU fp32 parity |
 | LongCat-Image | `longcat-image` | `t2i` | CPU fp32 parity |
 | CogView4 | `cogview4-6b` | `t2i` | CPU fp32 parity |

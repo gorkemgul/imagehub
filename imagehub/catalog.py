@@ -901,6 +901,61 @@ for _id, _repo, _revision, _catalog_id, _max_length, _files in (
         )
     )
 
+_SANA_COMMON = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00002.safetensors",
+    "text_encoder/model-00002-of-00002.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer.model",
+    "tokenizer/tokenizer_config.json",
+    "transformer/config.json",
+)
+_SANA_VARIANTS: tuple[tuple[str, str, str, tuple[str, ...]], ...] = (
+    (
+        "sana-1600m-1024",
+        "Efficient-Large-Model/Sana_1600M_1024px_diffusers",
+        "ac0da2ff55fbe434795be0dce883042e4d49e2fc",
+        (
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+        ),
+    ),
+    (
+        "sana-600m-1024",
+        "Efficient-Large-Model/Sana_600M_1024px_diffusers",
+        "28f3af7689de15f3883d5863059a2fca0aa9b829",
+        ("transformer/diffusion_pytorch_model.safetensors",),
+    ),
+)
+for _sana_id, _sana_repo, _sana_revision, _sana_weights in _SANA_VARIANTS:
+    _entries.append(
+        ModelSpec(
+            id=_sana_id,
+            task=Task.T2I,
+            family="sana",
+            source=f"https://huggingface.co/{_sana_repo}",
+            repo_id=_sana_repo,
+            revision=_sana_revision,
+            provenance="author",
+            catalog_id="sana",
+            format="diffusers",
+            license="Apache-2.0",
+            gated=False,
+            config={"defaults": {"steps": 20, "guidance": 4.5, "width": 1024, "height": 1024}},
+            files=(
+                *_SANA_COMMON,
+                *_sana_weights,
+                "vae/config.json",
+                "vae/diffusion_pytorch_model.safetensors",
+            ),
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="krea2-turbo",
