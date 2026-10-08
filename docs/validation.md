@@ -520,6 +520,44 @@ values and the masked GQA rule on MPS hosts.
 In float32 the text encoder used about 33 GB and the transformer about 25 GB. End-to-end validation
 used the save-then-compare sequence. The real-checkpoint runs took about 26, 25 and 47 minutes.
 
+## CogView4
+
+Validated on CPU in the same environment as above. `cogview4-6b` was loaded strictly from
+`zai-org/CogView4-6B` at revision `63a52b7`. The published bfloat16 weights were upcast to float32.
+The observed difference in every comparison is **exactly 0**: on CPU in float32, the local
+implementation produces a bit-identical result to the reference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| GLM tokenizer: 8 fixed prompts and 2000 seeded fuzz strings | identical | exact |
+| GLM token ids | identical | exact |
+| GLM-4-9B text encoder, second-to-last hidden state | 0 | 0 |
+| CogView4 transformer single step (1024×1024) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 / 0 |
+| Flow-match Euler scheduler with linear dynamic shifting, including `mu` | exact | exact |
+| End to end: final latent / pixels (1024×1024, 8 steps, guidance 5.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with fixed initial noise.
+It used 8 steps instead of the 50-step default to shorten the CPU run, with guidance 5.0. The seed
+end-to-end check used `seed=42`.
+
+Random-weight parity also covered the GLM text model and CogView4 transformer, and tiny-snapshot
+end-to-end parity covered the complete pipeline. Every comparison was exact. The reference text
+encoder was called exactly as the pipeline calls it: with the default key-value cache, contiguous
+keys and values, and the masked grouped-query attention rule.
+
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts were
+442 / 408 / 288, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
+The text encoder used about 36 GB and the transformer about 25 GB in float32. End-to-end tests used
+the save-then-compare sequence: the reference pipeline ran first, saved its outputs and was freed
+before the native pipeline ran. The real-checkpoint component and end-to-end runs took about 31 and
+53 minutes, respectively.
+
 ## Qwen-Image 2.1
 
 The reference is the implementation the Qwen team contributed to diffusers. No released diffusers
@@ -677,13 +715,14 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
-  Euler with exponential shifting for Krea 2, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.
+  Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
+  and DPM-Solver++ for PixArt.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
 ## Automated tests
 
-- Regular tests: 557 passed, 415 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 576 passed, 435 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
@@ -692,7 +731,8 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 19 passed for `pixart-sigma-xl-1024` and
-  `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for `sd-turbo`, and 7 passed for
+  `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
+  `cogview4-6b`, 9 passed for `sd-turbo`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

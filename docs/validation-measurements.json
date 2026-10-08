@@ -2945,5 +2945,80 @@
     "passed": true,
     "seed": 42,
     "steps": 8
+  },
+  "cogview4_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview4_scheduler": {
+    "exact": true,
+    "mu": 3.25,
+    "tolerance": "exact"
+  },
+  "cogview4_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview4_tokenizer": {
+    "mismatches": 0,
+    "prompts": 8,
+    "tolerance": "exact"
+  },
+  "cogview4_tokenizer_fuzz": {
+    "mismatches": 0,
+    "prompts": 2000,
+    "tolerance": "exact"
+  },
+  "cogview4_tokens": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cogview4_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview4_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview4_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "e2e_cogview4-6b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 8
+  },
+  "header_cogview4-6b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 442
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 408
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    }
+  },
+  "seed_e2e_cogview4-6b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 8
   }
 }

@@ -9,6 +9,7 @@ from imagehub.types import Task
 def test_catalog_contents():
     assert available_models() == {
         "t2i": (
+            "cogview4-6b",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
             "flux1-dev",
@@ -443,6 +444,41 @@ def test_pixart_catalog_entries():
             "defaults": {"steps": 20, "guidance": 4.5, "max_sequence_length": max_length}
         }
         assert spec.files == files
+
+
+def test_cogview4_catalog_entry():
+    spec = model_info("cogview4-6b")
+    assert spec.task is Task.T2I
+    assert spec.family == "cogview4"
+    assert spec.source == "https://huggingface.co/zai-org/CogView4-6B"
+    assert spec.repo_id == "zai-org/CogView4-6B"
+    assert spec.revision == "63a52b7f6dace7033380cd6da14d0915eab3e6b5"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "cogview4"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {"defaults": {"steps": 50, "guidance": 5.0}}
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.json",
+        "text_encoder/model-00001-of-00004.safetensors",
+        "text_encoder/model-00002-of-00004.safetensors",
+        "text_encoder/model-00003-of-00004.safetensors",
+        "text_encoder/model-00004-of-00004.safetensors",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors.index.json",
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
 
 
 def test_unknown_model_lists_available():

@@ -61,7 +61,7 @@ def test_dynamic_shifting_requires_mu_and_stretches_to_terminal():
         ("use_exponential_sigmas", True),
         ("use_beta_sigmas", True),
         ("stochastic_sampling", True),
-        ("time_shift_type", "linear"),
+        ("time_shift_type", "cosine"),
         ("invert_sigmas", True),
     ],
 )

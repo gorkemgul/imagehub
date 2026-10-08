@@ -579,6 +579,46 @@ are bfloat16; validated parity is in float32 after upcasting.
 **License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
 
 
+# CogView4
+
+Catalog: [`cogview4`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `cogview4-6b` · Task: `t2i`
+
+**Architecture.** A GLM-4-9B text model with 40 layers, width 4096, 32 query heads, 2 key-value
+heads and partial rotary factor 0.5 supplies its second-to-last hidden state. A 6B transformer uses
+28 blocks, 32 attention heads of width 128, 2D RoPE, and timestep, original-size, target-size and
+crop conditioning. A 16-channel VAE with scaling factor 1.0 and shift factor 0.0 decodes the
+latents. The flow-match Euler scheduler uses linear dynamic shifting. The native image size is
+1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained cogview4-6b checkpoints/cogview4-6b
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="cogview4-6b", model="checkpoints/cogview4-6b", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 5.0, `width`/`height` default to 1024
+and `max_sequence_length` defaults to 1024. The other supported options are `seed`, `latents` and
+`negative_prompt`; `width` and `height` must be multiples of 16. Unrecognized settings raise an
+error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** CogView4 control pipelines and fp16/bf16 parity are not supported. The published
+weights are bfloat16; CPU parity was measured in float32 after upcasting.
+
+**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+
+
 # Qwen-Image 2.1
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

@@ -4399,6 +4399,52 @@
       "tolerance": 0.0
     }
   },
+  "components_cogview4": {
+    "cogview4_e2e_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview4_scheduler": {
+      "exact": true,
+      "mu": 3.25,
+      "tolerance": "exact"
+    },
+    "cogview4_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview4_tokenizer": {
+      "mismatches": 0,
+      "prompts": 8,
+      "tolerance": "exact"
+    },
+    "cogview4_tokenizer_fuzz": {
+      "mismatches": 0,
+      "prompts": 2000,
+      "tolerance": "exact"
+    },
+    "cogview4_tokens": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "cogview4_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview4_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview4_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -4421,11 +4467,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (longcat-image)"
+    "reference_summary": "9 passed (cogview4-6b)"
   }
 }
