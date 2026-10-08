@@ -160,7 +160,7 @@ def test_timestep_conditioning_shape_and_requirement():
         {"center_input_sample": True},
         {"act_fn": "gelu"},
         {"conv_in_kernel": 5},
-        {"mid_block_type": "UNetMidBlock2DSimpleCrossAttn"},
+        {"resnet_time_scale_shift": "ada_group"},
         {"attention_mask": True},
         {"unknown_option": True},
     ],

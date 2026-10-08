@@ -194,6 +194,99 @@ def _transformers(
     )
 
 
+class ScaleShiftResnetBlock(nn.Module):
+    def __init__(
+        self,
+        in_ch: int,
+        out_ch: int,
+        *,
+        temb: int,
+        eps: float,
+        groups: int,
+        up: bool = False,
+        down: bool = False,
+    ) -> None:
+        super().__init__()
+        self.up = up
+        self.down = down
+        self.norm1 = nn.GroupNorm(groups, in_ch, eps=eps)
+        self.conv1 = nn.Conv2d(in_ch, out_ch, 3, padding=1)
+        self.time_emb_proj = nn.Linear(temb, out_ch * 2)
+        self.norm2 = nn.GroupNorm(groups, out_ch, eps=eps)
+        self.conv2 = nn.Conv2d(out_ch, out_ch, 3, padding=1)
+        self.conv_shortcut = nn.Conv2d(in_ch, out_ch, 1) if in_ch != out_ch else None
+
+    def forward(self, x: Tensor, temb: Tensor) -> Tensor:
+        residual = x
+        hidden = F.silu(self.norm1(x))
+        if self.up:
+            residual = F.interpolate(residual, scale_factor=2.0, mode="nearest")
+            hidden = F.interpolate(hidden, scale_factor=2.0, mode="nearest")
+        elif self.down:
+            residual = F.avg_pool2d(residual, 2, stride=2)
+            hidden = F.avg_pool2d(hidden, 2, stride=2)
+        hidden = self.conv1(hidden)
+        scale, shift = self.time_emb_proj(F.silu(temb))[:, :, None, None].chunk(2, dim=1)
+        hidden = self.norm2(hidden) * (1 + scale) + shift
+        hidden = self.conv2(F.silu(hidden))
+        if self.conv_shortcut is not None:
+            residual = self.conv_shortcut(residual)
+        return residual + hidden
+
+
+class AddedKVAttention(nn.Module):
+    def __init__(self, channels: int, context_dim: int, head_dim: int, groups: int) -> None:
+        super().__init__()
+        self.heads = channels // head_dim
+        self.group_norm = nn.GroupNorm(groups, channels, eps=1e-5)
+        self.to_q = nn.Linear(channels, channels)
+        self.to_k = nn.Linear(channels, channels)
+        self.to_v = nn.Linear(channels, channels)
+        self.add_k_proj = nn.Linear(context_dim, channels)
+        self.add_v_proj = nn.Linear(context_dim, channels)
+        self.to_out = nn.ModuleList([nn.Linear(channels, channels), nn.Identity()])
+
+    def forward(self, x: Tensor, context: Tensor) -> Tensor:
+        residual = x
+        batch, channels, height, width = x.shape
+        hidden = x.view(batch, channels, -1).transpose(1, 2)
+        hidden = self.group_norm(hidden.transpose(1, 2)).transpose(1, 2)
+        query = self.to_q(hidden)
+        key = torch.cat([self.add_k_proj(context), self.to_k(hidden)], dim=1)
+        value = torch.cat([self.add_v_proj(context), self.to_v(hidden)], dim=1)
+        hidden = attention(query, key, value, self.heads)
+        hidden = self.to_out[0](hidden)
+        return hidden.transpose(1, 2).reshape(batch, channels, height, width) + residual
+
+
+def _resnet(
+    cfg: Mapping[str, Any],
+    in_ch: int,
+    out_ch: int,
+    temb: int,
+    *,
+    up: bool = False,
+    down: bool = False,
+) -> nn.Module:
+    if cfg["resnet_time_scale_shift"] == "scale_shift":
+        return ScaleShiftResnetBlock(
+            in_ch,
+            out_ch,
+            temb=temb,
+            eps=cfg["norm_eps"],
+            groups=cfg["norm_num_groups"],
+            up=up,
+            down=down,
+        )
+    return ResnetBlock(
+        in_ch,
+        out_ch,
+        temb_channels=temb,
+        eps=cfg["norm_eps"],
+        groups=cfg["norm_num_groups"],
+    )
+
+
 class DownBlock(nn.Module):
     def __init__(
         self,
@@ -203,22 +296,24 @@ class DownBlock(nn.Module):
         cfg: Mapping[str, Any],
         temb: int,
         layers: int,
-        attn: bool,
+        kind: str,
         down: bool,
         context_dim: int,
         heads: int,
         transformer_layers: int,
     ) -> None:
         super().__init__()
-        eps, groups = cfg["norm_eps"], cfg["norm_num_groups"]
         self.resnets = nn.ModuleList(
-            ResnetBlock(
-                in_ch if i == 0 else out_ch, out_ch, temb_channels=temb, eps=eps, groups=groups
-            )
-            for i in range(layers)
+            _resnet(cfg, in_ch if i == 0 else out_ch, out_ch, temb) for i in range(layers)
         )
-        self.attentions = (
-            _transformers(
+        self.attentions: nn.ModuleList | None
+        if kind == "SimpleCrossAttnDownBlock2D":
+            self.attentions = nn.ModuleList(
+                AddedKVAttention(out_ch, context_dim, heads, cfg["norm_num_groups"])
+                for _ in range(layers)
+            )
+        elif kind == "CrossAttnDownBlock2D":
+            self.attentions = _transformers(
                 cfg,
                 out_ch,
                 layers,
@@ -226,10 +321,14 @@ class DownBlock(nn.Module):
                 heads=heads,
                 layers=transformer_layers,
             )
-            if attn
-            else None
-        )
-        self.downsamplers = nn.ModuleList([Downsample(out_ch, padding=1)]) if down else None
+        else:
+            self.attentions = None
+        if not down:
+            self.downsamplers = None
+        elif kind in ("ResnetDownsampleBlock2D", "SimpleCrossAttnDownBlock2D"):
+            self.downsamplers = nn.ModuleList([_resnet(cfg, out_ch, out_ch, temb, down=True)])
+        else:
+            self.downsamplers = nn.ModuleList([Downsample(out_ch, padding=1)])
 
     def forward(self, x: Tensor, temb: Tensor, context: Tensor) -> tuple[Tensor, list[Tensor]]:
         skips = []
@@ -239,7 +338,11 @@ class DownBlock(nn.Module):
                 x = self.attentions[i](x, context)
             skips.append(x)
         if self.downsamplers is not None:
-            x = self.downsamplers[0](x)
+            x = (
+                self.downsamplers[0](x, temb)
+                if isinstance(self.downsamplers[0], ScaleShiftResnetBlock)
+                else self.downsamplers[0](x)
+            )
             skips.append(x)
         return x, skips
 
@@ -254,23 +357,27 @@ class UpBlock(nn.Module):
         cfg: Mapping[str, Any],
         temb: int,
         layers: int,
-        attn: bool,
+        kind: str,
         up: bool,
         context_dim: int,
         heads: int,
         transformer_layers: int,
     ) -> None:
         super().__init__()
-        layers, eps, groups = layers + 1, cfg["norm_eps"], cfg["norm_num_groups"]
+        layers = layers + 1
         self.resnets = nn.ModuleList()
         for i in range(layers):
             skip_ch = in_ch if i == layers - 1 else out_ch
             res_in = prev_ch if i == 0 else out_ch
-            self.resnets.append(
-                ResnetBlock(res_in + skip_ch, out_ch, temb_channels=temb, eps=eps, groups=groups)
+            self.resnets.append(_resnet(cfg, res_in + skip_ch, out_ch, temb))
+        self.attentions: nn.ModuleList | None
+        if kind == "SimpleCrossAttnUpBlock2D":
+            self.attentions = nn.ModuleList(
+                AddedKVAttention(out_ch, context_dim, heads, cfg["norm_num_groups"])
+                for _ in range(layers)
             )
-        self.attentions = (
-            _transformers(
+        elif kind == "CrossAttnUpBlock2D":
+            self.attentions = _transformers(
                 cfg,
                 out_ch,
                 layers,
@@ -278,10 +385,14 @@ class UpBlock(nn.Module):
                 heads=heads,
                 layers=transformer_layers,
             )
-            if attn
-            else None
-        )
-        self.upsamplers = nn.ModuleList([Upsample(out_ch)]) if up else None
+        else:
+            self.attentions = None
+        if not up:
+            self.upsamplers = None
+        elif kind in ("ResnetUpsampleBlock2D", "SimpleCrossAttnUpBlock2D"):
+            self.upsamplers = nn.ModuleList([_resnet(cfg, out_ch, out_ch, temb, up=True)])
+        else:
+            self.upsamplers = nn.ModuleList([Upsample(out_ch)])
 
     def forward(
         self,
@@ -296,7 +407,11 @@ class UpBlock(nn.Module):
             if self.attentions is not None:
                 x = self.attentions[i](x, context)
         if self.upsamplers is not None:
-            x = self.upsamplers[0](x, size)
+            x = (
+                self.upsamplers[0](x, temb)
+                if isinstance(self.upsamplers[0], ScaleShiftResnetBlock)
+                else self.upsamplers[0](x, size)
+            )
         return x
 
 
@@ -312,10 +427,9 @@ class MidBlock(nn.Module):
         transformer_layers: int | Sequence[int],
     ) -> None:
         super().__init__()
-        eps, groups = cfg["norm_eps"], cfg["norm_num_groups"]
 
-        def resnet() -> ResnetBlock:
-            return ResnetBlock(ch, ch, temb_channels=temb, eps=eps, groups=groups)
+        def resnet() -> nn.Module:
+            return _resnet(cfg, ch, ch, temb)
 
         self.attentions: nn.ModuleList | None
         if cfg["mid_block_type"] == "UNetMidBlock2DCrossAttn":
@@ -327,6 +441,11 @@ class MidBlock(nn.Module):
                 context_dim=context_dim,
                 heads=heads,
                 layers=transformer_layers,
+            )
+        elif cfg["mid_block_type"] == "UNetMidBlock2DSimpleCrossAttn":
+            self.resnets = nn.ModuleList([resnet(), resnet()])
+            self.attentions = nn.ModuleList(
+                [AddedKVAttention(ch, context_dim, heads, cfg["norm_num_groups"])]
             )
         else:
             # diffusers builds the conditional UNet's UNetMidBlock2D with a single residual
@@ -399,15 +518,25 @@ class UNet2DConditionModel(NativeModel):
         blocks = len(ch)
         if len(cfg["down_block_types"]) != blocks or len(cfg["up_block_types"]) != blocks:
             raise ValueError("U-Net block type lists must match block_out_channels")
-        supported_blocks = {"DownBlock2D", "CrossAttnDownBlock2D"}
-        supported_up_blocks = {"UpBlock2D", "CrossAttnUpBlock2D"}
+        supported_blocks = {
+            "DownBlock2D",
+            "CrossAttnDownBlock2D",
+            "ResnetDownsampleBlock2D",
+            "SimpleCrossAttnDownBlock2D",
+        }
+        supported_up_blocks = {
+            "UpBlock2D",
+            "CrossAttnUpBlock2D",
+            "SimpleCrossAttnUpBlock2D",
+            "ResnetUpsampleBlock2D",
+        }
         if (
             not set(cfg["down_block_types"]) <= supported_blocks
             or not set(cfg["up_block_types"]) <= supported_up_blocks
         ):
             raise ValueError("Unsupported U-Net block type")
         for key, default in _UNSUPPORTED_DEFAULTS.items():
-            if key in ("encoder_hid_dim", "encoder_hid_dim_type"):
+            if key in ("encoder_hid_dim", "encoder_hid_dim_type", "resnet_time_scale_shift"):
                 continue
             if key == "upcast_attention" and not cfg[key]:
                 continue
@@ -417,7 +546,16 @@ class UNet2DConditionModel(NativeModel):
             raise ValueError(
                 f"Unsupported U-Net setting addition_embed_type={cfg['addition_embed_type']!r}"
             )
-        if cfg["mid_block_type"] not in ("UNetMidBlock2DCrossAttn", "UNetMidBlock2D"):
+        if cfg["resnet_time_scale_shift"] not in ("default", "scale_shift"):
+            raise ValueError(
+                "Unsupported U-Net setting "
+                f"resnet_time_scale_shift={cfg['resnet_time_scale_shift']!r}"
+            )
+        if cfg["mid_block_type"] not in (
+            "UNetMidBlock2DCrossAttn",
+            "UNetMidBlock2DSimpleCrossAttn",
+            "UNetMidBlock2D",
+        ):
             raise ValueError(f"Unsupported U-Net setting mid_block_type={cfg['mid_block_type']!r}")
 
         def per_block(value: Any, name: str) -> list[Any]:
@@ -451,7 +589,7 @@ class UNet2DConditionModel(NativeModel):
                     cfg=cfg,
                     temb=temb,
                     layers=layers[i],
-                    attn=kind == "CrossAttnDownBlock2D",
+                    kind=kind,
                     down=i < len(ch) - 1,
                     context_dim=context_dims[i],
                     heads=heads[i],
@@ -492,7 +630,7 @@ class UNet2DConditionModel(NativeModel):
                     cfg=cfg,
                     temb=temb,
                     layers=rev_layers[i],
-                    attn=kind == "CrossAttnUpBlock2D",
+                    kind=kind,
                     up=i < len(ch) - 1,
                     context_dim=rev_context_dims[i],
                     heads=rev_heads[i],

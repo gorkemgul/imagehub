@@ -1,6 +1,7 @@
 """Random-weight parity for the Kandinsky 2.2 decoder components."""
 
 import json
+import struct
 from pathlib import Path
 
 import pytest
@@ -18,22 +19,22 @@ TINY_UNET = {
     "sample_size": 8,
     "in_channels": 4,
     "out_channels": 8,
-    "down_block_types": ["CrossAttnDownBlock2D"],
-    "up_block_types": ["CrossAttnUpBlock2D"],
-    "block_out_channels": [32],
+    "down_block_types": ["ResnetDownsampleBlock2D", "SimpleCrossAttnDownBlock2D"],
+    "up_block_types": ["SimpleCrossAttnUpBlock2D", "ResnetUpsampleBlock2D"],
+    "block_out_channels": [32, 64],
     "layers_per_block": 1,
-    "attention_head_dim": 4,
+    "attention_head_dim": 8,
     "cross_attention_dim": 24,
     "encoder_hid_dim": 40,
     "encoder_hid_dim_type": "image_proj",
     "addition_embed_type": "image",
+    "mid_block_type": "UNetMidBlock2DSimpleCrossAttn",
     "norm_num_groups": 8,
+    "resnet_time_scale_shift": "scale_shift",
 }
 MEDIUM_UNET = TINY_UNET | {
-    "down_block_types": ["CrossAttnDownBlock2D", "CrossAttnDownBlock2D"],
-    "up_block_types": ["CrossAttnUpBlock2D", "CrossAttnUpBlock2D"],
-    "block_out_channels": [32, 64],
-    "attention_head_dim": [4, 8],
+    "block_out_channels": [64, 96],
+    "layers_per_block": 2,
 }
 
 TINY_MOVQ = {
@@ -67,7 +68,7 @@ def test_image_conditioned_unet_random_weights(config):
     reference = diffusers.UNet2DConditionModel(**config).eval()
     ours = UNet2DConditionModel(config).eval()
     ours.load_checkpoint(reference.state_dict())
-    sample = torch.randn(2, 4, 7, 9)
+    sample = torch.randn(2, 4, 8, 12)
     timestep = torch.tensor(37)
     image_embeds = torch.randn(2, config["encoder_hid_dim"])
     with torch.inference_mode():
@@ -131,14 +132,21 @@ def test_kandinsky_ddpm_100_step_trajectory():
         exact(actual, expected)
 
 
-@pytest.mark.parametrize("component", ["unet", "movq"])
-def test_published_config_layout(component):
-    root = Path("checkpoints/kandinsky22-decoder") / component
-    config_path = root / "config.json"
-    if not config_path.exists():
-        pytest.skip("Kandinsky 2.2 decoder snapshot is not present")
-    config = json.loads(config_path.read_text(encoding="utf-8"))
-    model_type = UNet2DConditionModel if component == "unet" else VQModel
+def test_published_unet_layout():
+    root = Path("checkpoints/kandinsky-2.2/unet")
+    checkpoint = root / "diffusion_pytorch_model.safetensors"
+    if not checkpoint.exists():
+        pytest.skip("Kandinsky 2.2 decoder U-Net checkpoint is not present")
+    config = json.loads(
+        Path("tests/fixtures/kandinsky22_configs/unet_config.json").read_text(encoding="utf-8")
+    )
     with torch.device("meta"):
-        model = model_type(config)
-    assert model.state_dict()
+        model = UNet2DConditionModel(config)
+    with checkpoint.open("rb") as source:
+        (length,) = struct.unpack("<Q", source.read(8))
+        header = json.loads(source.read(length))
+    published = {
+        name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"
+    }
+    actual = {name: tuple(tensor.shape) for name, tensor in model.state_dict().items()}
+    assert actual == published
