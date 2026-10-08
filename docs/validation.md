@@ -823,6 +823,39 @@ For end-to-end validation, the reference pipeline ran first and was freed before
 pipeline ran. The `sd3-medium` run took 13 minutes, the `sd3.5-medium` run took 16 minutes and the
 large run took 27 minutes. The large-turbo run took 17 minutes.
 
+## Sana
+
+Validated on CPU in the same environment as above. `sana-1600m-1024` and `sana-600m-1024` are
+loaded strictly from `Efficient-Large-Model/Sana_1600M_1024px_diffusers` at revision `ac0da2f` and
+`Efficient-Large-Model/Sana_600M_1024px_diffusers` at revision `28f3af7`. Every comparison below is
+required to be **exactly 0** (tolerance 0; identical bytes for images).
+
+### Comparisons (CPU, float32, both weight sets)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: text encoder, transformer, DC-AE (names and shapes) | 0 missing, extra or mismatched | 0 |
+| Gemma tokenizer ids / attention masks (prompt with the complex human instruction, and `""`) | identical / identical | exact / exact |
+| `SanaPipeline.encode_prompt` embeddings and masks (prompt and negative) | measured by the real-checkpoint run | 0 |
+| Transformer single step (batch 2, 32×32 latents, two timesteps, real conditioning) | measured by the real-checkpoint run | 0 |
+| DC-AE decode (32×32 latents, scaled as the pipeline does) | measured by the real-checkpoint run | 0 |
+| End to end: final latent / pixels (1024×1024, 20 steps, guidance 4.5, seed 0) | measured by the real-checkpoint run | 0 / 0 |
+| End to end, seed 1234, 1360×768 request (binning, resize and crop back; pixels) | measured by the real-checkpoint run | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse". The reference text encoder
+was loaded exactly as `SanaPipeline.from_pretrained(..., torch_dtype=torch.float32)` loads it. The
+non-square seed test exercises resolution binning and the resize and centre crop of the decoded
+image back to the requested size.
+
+Random-weight parity covered the Gemma-2 text model, the transformer and DC-AE with tiny and with the
+published configurations at small spatial sizes, and tiny-snapshot end-to-end parity covered binning
+on and off, guidance on and off and non-square sizes. The Gemma tokenizer is additionally covered by
+fixed-prompt and seeded fuzz tests. The scheduler is checked against diffusers with flow sigmas and
+`flow_prediction`.
+
+The reference and native components were loaded one model id at a time; the float32 reference
+needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -843,7 +876,7 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
-  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt.
+  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
