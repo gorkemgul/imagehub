@@ -24,6 +24,7 @@ def test_family_and_model_aliases_are_registered():
     assert "longcat-image" in names
     assert {"cogview4", "cogview4-6b"} <= set(names)
     assert {"ideogram4", "ideogram4-fp8"} <= set(names)
+    assert {"kandinsky22", "kandinsky-2.2"} <= set(names)
 
 
 def test_registration_rules():
