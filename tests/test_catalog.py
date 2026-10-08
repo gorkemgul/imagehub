@@ -21,6 +21,7 @@ def test_catalog_contents():
             "janus-pro-7b",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
+            "longcat-image",
             "pixart-alpha-xl-1024",
             "pixart-sigma-xl-1024",
             "playground-v2.5",

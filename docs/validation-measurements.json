@@ -2880,5 +2880,70 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "e2e_longcat_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 8
+  },
+  "header_longcat_image": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 729
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 612
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "longcat_image_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_rewrite": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "longcat_image_scheduler": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
+  "longcat_image_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "longcat_image_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "seed_e2e_longcat_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 8
   }
 }

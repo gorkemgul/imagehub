@@ -534,6 +534,51 @@ LoRA and fp16/bf16 parity are not supported.
 distribute weights.
 
 
+# LongCat-Image
+
+Catalog: [`longcat-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `longcat-image` · Task: `t2i`
+
+**Architecture.** A Qwen2.5-VL 7B text model with 28 layers, width 3584, 28 query heads, 4
+key-value heads and 16/24/24 multimodal RoPE sections first rewrites the prompt deterministically
+with the published generation configuration and up to 512 new tokens, then encodes it. A FLUX-style
+transformer has 10 double-stream blocks, 20 single-stream blocks and 24 attention heads of width
+128, with no guidance embedding. The 16-channel FLUX VAE decodes the latents. The flow-match Euler
+scheduler uses dynamic shifting, and classifier-free guidance is renormalized by default.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained longcat-image checkpoints/longcat-image
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="longcat-image", model="checkpoints/longcat-image", device="mps") as pipe:
+    result = pipe(
+        "a cat, oil painting",
+        seed=42,
+        enable_prompt_rewrite=True,
+        enable_cfg_renorm=True,
+    )
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 4.5, `enable_prompt_rewrite` and
+`enable_cfg_renorm` default to true, and `width`/`height` default to 1024. The other supported
+options are `seed`, `latents`, `negative_prompt` and `cfg_renorm_min`. Unrecognized settings raise
+an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** LongCat-Image-Edit and fp16/bf16 parity are not supported. The published weights
+are bfloat16; validated parity is in float32 after upcasting.
+
+**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+
+
 # Qwen-Image 2.1
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

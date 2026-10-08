@@ -4363,6 +4363,42 @@
       "seed": 42
     }
   },
+  "components_longcat_image": {
+    "longcat_image_e2e_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "longcat_image_rewrite": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "longcat_image_scheduler": {
+      "exact": true,
+      "mu": 1.15,
+      "tolerance": "exact"
+    },
+    "longcat_image_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "longcat_image_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "longcat_image_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "longcat_image_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -4385,11 +4421,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, flow-match Euler with exponential shifting for Krea 2, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "7 passed (krea2-turbo, 63 min)"
+    "reference_summary": "8 passed (longcat-image)"
   }
 }

@@ -1,13 +1,14 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT and PixArt measurements are grouped
-in flat ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
-``components_krea2``, ``components_hunyuan_dit`` and ``components_pixart`` mappings: the base
-model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
-entry may also contain its own ``seed_end_to_end`` measurement. When a model directory is missing,
-its existing entry in the output is retained unchanged; a missing directory without an existing
-entry is an error.
+measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, PixArt and LongCat-Image
+measurements are grouped in flat ``components_sdxl``, ``components_qwen_image``,
+``components_sd3``, ``components_flux1``, ``components_krea2``, ``components_hunyuan_dit``,
+``components_pixart`` and ``components_longcat_image`` mappings: the base model keeps its
+historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also
+contain its own ``seed_end_to_end`` measurement. When a model directory is missing, its existing
+entry in the output is retained unchanged; a missing directory without an existing entry is an
+error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -40,8 +41,8 @@ LIMITS = [
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing "
     "spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, "
     "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
-    "schnell and dynamic shifting for FLUX.1 dev and Qwen-Image 2.1, flow-match Euler with "
-    "exponential shifting for Krea 2, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
+    "schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match "
+    "Euler with exponential shifting for Krea 2, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -140,7 +141,9 @@ def main() -> None:
         snapshot = read_snapshot(snapshot_dir)
         if snapshot is None or snapshot["revision"] != spec.revision:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
-        measurement_id = "krea2_turbo" if spec.id == "krea2-turbo" else spec.id
+        measurement_id = {"krea2-turbo": "krea2_turbo", "longcat-image": "longcat_image"}.get(
+            spec.id, spec.id
+        )
         e2e = measured.get(f"e2e_{measurement_id}")
         e2e_batch2 = measured.get(f"e2e_batch2_{spec.id}")
         e2e_multistep = measured.get(f"e2e_multistep_{spec.id}")
@@ -258,6 +261,9 @@ def main() -> None:
             key: value for key, value in measured.items() if "hunyuan_dit" in key
         },
         "components_pixart": {key: value for key, value in measured.items() if "pixart" in key},
+        "components_longcat_image": {
+            key: value for key, value in measured.items() if key.startswith("longcat_image_")
+        },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},
         "limits": LIMITS,
