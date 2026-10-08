@@ -35,6 +35,7 @@ def test_catalog_contents():
             "sd-v1-3",
             "sd-v1-4",
             "sd-v1-5",
+            "sd-v2-1",
             "sd3-medium",
             "sd3.5-large",
             "sd3.5-large-turbo",
@@ -67,6 +68,19 @@ def test_catalog_contents():
         assert not any(
             name.startswith(("safety_checker/", "feature_extractor/")) for name in spec.files
         )
+
+    sd21 = model_info("sd-v2-1")
+    assert sd21.task is Task.T2I
+    assert sd21.family == "stable-diffusion"
+    assert sd21.repo_id == "sd2-community/stable-diffusion-2-1"
+    assert sd21.source == "https://huggingface.co/sd2-community/stable-diffusion-2-1"
+    assert sd21.revision == "bb2154823665391b4fb29b0b9cf82a198964ee05"
+    assert sd21.provenance == "community-mirror"
+    assert sd21.catalog_id == "stable-diffusion-2"
+    assert sd21.format == "diffusers"
+    assert sd21.license == "CreativeML-OpenRAIL++-M"
+    assert sd21.config == {"defaults": {"steps": 50, "guidance": 7.5}}
+    assert sd21.files == model_info("sd-turbo").files
 
     sd_turbo = model_info("sd-turbo")
     assert sd_turbo.task is Task.T2I

@@ -1,7 +1,7 @@
-"""Stable Diffusion 1.x text-to-image backend over a local diffusers-layout snapshot.
+"""Stable Diffusion 1.x and 2.x text-to-image backend over a local diffusers-layout snapshot.
 
 The sampling order (prompt encoding, classifier-free guidance batch order, noise scaling,
-PLMS steps, VAE decoding and uint8 rounding) follows diffusers' StableDiffusionPipeline.
+PLMS/DDIM steps, VAE decoding and uint8 rounding) follows diffusers' StableDiffusionPipeline.
 """
 
 from __future__ import annotations
@@ -25,6 +25,7 @@ from imagehub.image import Image
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.ddim import DDIMScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
@@ -49,8 +50,10 @@ _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
 
 def _scheduler(
     config: dict[str, Any],
-) -> tuple[PNDMScheduler | EulerDiscreteScheduler | LCMScheduler, str]:
+) -> tuple[PNDMScheduler | DDIMScheduler | EulerDiscreteScheduler | LCMScheduler, str]:
     class_name = config.get("_class_name", "PNDMScheduler")
+    if class_name == "DDIMScheduler":
+        return DDIMScheduler(config), "ddim"
     if class_name == "PNDMScheduler":
         return PNDMScheduler(config), "pndm"
     if class_name == "EulerDiscreteScheduler":
@@ -206,7 +209,7 @@ def denoise(
         if use_cfg:
             noise_uncond, noise_text = noise.chunk(2)
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
-        assert isinstance(scheduler, PNDMScheduler | EulerDiscreteScheduler)
+        assert isinstance(scheduler, PNDMScheduler | DDIMScheduler | EulerDiscreteScheduler)
         latents = scheduler.step(noise, t, latents)
     return latents
 
@@ -326,7 +329,7 @@ class StableDiffusionBackend(TextToImageBackend):
         if recorded is not None and self.model_id is not None and recorded != self.model_id:
             warnings.warn(
                 f"{self.source} is a snapshot of {recorded!r} but {self.model_id!r} was "
-                "selected; both share the Stable Diffusion 1.x architecture, so it was loaded",
+                "selected; both use the Stable Diffusion layout, so it was loaded",
                 UserWarning,
                 stacklevel=2,
             )

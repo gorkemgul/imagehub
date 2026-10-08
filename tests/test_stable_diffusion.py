@@ -55,6 +55,32 @@ def test_sd_turbo_uses_model_defaults_and_unet_size(tiny_sd):
     assert result.metadata["scheduler"] == "euler"
 
 
+def test_sd21_uses_ddim_v_prediction_defaults_and_unet_size(tmp_path):
+    root = write_tiny_sd(tmp_path / "tiny")
+    scheduler_path = root / "scheduler" / "scheduler_config.json"
+    scheduler = json.loads(scheduler_path.read_text(encoding="utf-8"))
+    scheduler |= {"_class_name": "DDIMScheduler", "prediction_type": "v_prediction"}
+    scheduler["set_alpha_to_one"] = False
+    scheduler_path.write_text(json.dumps(scheduler), encoding="utf-8")
+    unet_path = root / "unet" / "config.json"
+    unet = json.loads(unet_path.read_text(encoding="utf-8"))
+    unet |= {"sample_size": 4, "upcast_attention": True}
+    unet_path.write_text(json.dumps(unet), encoding="utf-8")
+
+    result = pipeline("t2i", backend="sd-v2-1", model=root)("a cat", seed=3, steps=3)
+
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["steps"] == 3
+    assert result.metadata["guidance"] == 7.5
+    assert result.metadata["scheduler"] == "ddim"
+
+
+def test_sd21_default_steps_and_guidance():
+    backend = StableDiffusionBackend("unused", model_id="sd-v2-1")
+    assert backend.option_defaults["steps"] == 50
+    assert backend.option_defaults["guidance"] == 7.5
+
+
 def test_rejects_unknown_scheduler():
     with pytest.raises(ValueError, match="Unsupported Stable Diffusion scheduler Unknown"):
         _scheduler({"_class_name": "Unknown"})

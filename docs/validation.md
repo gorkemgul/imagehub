@@ -73,6 +73,27 @@ The header-only tensor check covered `text_encoder`, `unet` and `vae`: tensor co
 196 / 687 / 248, with missing, extra and shape-mismatched tensors all **0**. Record:
 `tensor_header_check`, [validation.json](validation.json).
 
+## Stable Diffusion 2.1
+
+Validation of `sd-v2-1` against `sd2-community/stable-diffusion-2-1` (revision `bb21548`) is
+**to be filled** once the reference run on CPU in float32 has been measured.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tokenizer token ids (5 prompts) | to be filled | exact |
+| OpenCLIP-H text encoder | to be filled | 0 |
+| U-Net single step (t = 981, 481, 1) | to be filled | 0 |
+| VAE decode / encode (768×768) | to be filled | 0 |
+| DDIM timesteps with leading spacing (25 and 50 steps) | to be filled | 0 |
+| End to end: final latent / pixels (768×768, 50 steps, guidance 7.5) | to be filled | 0 / 0 |
+| End to end, seed 42 (pixels) | to be filled | 0 |
+
+Without weights, a tiny random v-prediction model with the DDIM scheduler and `upcast_attention`
+matches `StableDiffusionPipeline` exactly, and the DDIM scheduler matches diffusers exactly for
+epsilon, sample and v-prediction trajectories at 25 and 50 steps.
+
 ## SD-Turbo
 
 Validated on CPU in the same environment as above. `sd-turbo` was loaded strictly from

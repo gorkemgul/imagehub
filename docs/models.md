@@ -73,6 +73,47 @@ fp16 parity are not in this release.
 **License.** The weights are licensed under MIT. imagehub does not distribute weights.
 
 
+# Stable Diffusion 2.1
+
+Catalog: [`stable-diffusion-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `sd-v2-1` · Task: `t2i`
+
+**Architecture.** A latent diffusion model with a frozen OpenCLIP-H text encoder, a U-Net with
+linear-projection attention and an f=8 KL autoencoder. It is trained with v-prediction and sampled
+with the checkpoint's DDIM scheduler (`eta=0`, `set_alpha_to_one=false`, `steps_offset=1`). The
+U-Net config sets `upcast_attention`; the reference uses scaled dot-product attention, where the
+flag has no effect, so the same output is produced. Its native image size is 768×768. The weights
+come from `sd2-community/stable-diffusion-2-1`, a community copy of the withdrawn
+`stabilityai/stable-diffusion-2-1`.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained sd-v2-1 checkpoints/sd-v2-1
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="sd-v2-1", model="checkpoints/sd-v2-1", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 7.5 and `width`/`height` default to
+768. `negative_prompt`, `num_images`, `seed` and `latents` are also supported. Unrecognized
+settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** There is no safety checker or invisible watermark. img2img, other schedulers and
+fp16 parity are not in this release.
+
+**License.** The weights use the CreativeML-OpenRAIL++-M license. imagehub does not distribute
+weights.
+
+
 # SD-Turbo
 
 Catalog: [`sdxl-turbo`](https://github.com/gorkemgul/awesome-text-to-image-architectures) (variant
