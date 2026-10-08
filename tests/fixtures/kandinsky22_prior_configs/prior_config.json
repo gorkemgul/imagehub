@@ -1,0 +1,11 @@
+{
+  "additional_embeddings": 4,
+  "attention_head_dim": 64,
+  "clip_embed_dim": 1280,
+  "embedding_dim": 1280,
+  "embedding_proj_dim": 1280,
+  "encoder_hid_proj_type": "linear",
+  "num_attention_heads": 32,
+  "num_embeddings": 77,
+  "num_layers": 20
+}
