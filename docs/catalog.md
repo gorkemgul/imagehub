@@ -1,12 +1,12 @@
 # Model catalog — imagehub 0.1
 
-**13 architecture families, 36 published checkpoints.** A model is a separately published set of weights;
+**14 architecture families, 37 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
 `model` folder determines which weights are used.
 
-**Validation levels:** `full` — tensors loaded strictly and parity with diffusers proven on CPU in
+**Validation levels:** `full` — tensors loaded strictly and parity with the recorded reference proven on CPU in
 fp32. `header_only` — tensor names and shapes matched, generation not tested. `experimental` — not
 tested with the original weights. In this release every model is `full`.
 
@@ -43,6 +43,7 @@ tested with the original weights. In this release every model is `full`.
 | `krea2-turbo` | `krea2` | [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) | `98e0fe1` | author | full | Krea 2 Community License | `krea-2` |
 | `longcat-image` | `longcat-image` | [meituan-longcat/LongCat-Image](https://huggingface.co/meituan-longcat/LongCat-Image) | `d2ea50b` | author | full | Apache-2.0 | `longcat-image` |
 | `cogview4-6b` | `cogview4` | [zai-org/CogView4-6B](https://huggingface.co/zai-org/CogView4-6B) | `63a52b7` | author | full | Apache-2.0 | `cogview4` |
+| `ideogram4-fp8` | `ideogram4` | [ideogram-ai/ideogram-4-fp8](https://huggingface.co/ideogram-ai/ideogram-4-fp8) | `ee79a72` | author | full | Ideogram 4 Non-Commercial License | `ideogram-4` |
 | `qwen-image-2.1` | `qwen-image` | [Qwen/Qwen-Image-2.1](https://huggingface.co/Qwen/Qwen-Image-2.1) | `d26bb61` | author | full | Qwen Research License (research use; see the license) | `qwen-image-2` |
 | `z-image` | `z-image` | [Tongyi-MAI/Z-Image](https://huggingface.co/Tongyi-MAI/Z-Image) | `04cc4ab` | author | full | Apache-2.0 | `z-image` |
 | `z-image-turbo` | `z-image` | [Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) | `f332072` | author | full | Apache-2.0 | `z-image` |
@@ -86,3 +87,7 @@ European Union, the United Kingdom and South Korea; see the license.
 The `krea2-turbo` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN` when
 downloading with `python -m imagehub.pretrained`. The weights use the Krea 2 Community License;
 see the license.
+
+The `ideogram4-fp8` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN` when
+downloading with `python -m imagehub.pretrained`. The weights use the Ideogram 4 Non-Commercial
+License; see the license.

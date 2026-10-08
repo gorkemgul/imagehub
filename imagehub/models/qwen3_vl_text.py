@@ -198,9 +198,14 @@ class Qwen3VLTextModel(NativeModel):
 
     def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
         """Strip the published conditional-generation text-model prefix."""
-        prefix = "model.language_model."
-        if state and all(name.startswith(prefix) for name in state):
-            return {name.removeprefix(prefix): value for name, value in state.items()}
+        for prefix in ("model.language_model.", "language_model."):
+            matching = {
+                name.removeprefix(prefix): value
+                for name, value in state.items()
+                if name.startswith(prefix)
+            }
+            if matching:
+                return matching
         return state
 
     def init_non_persistent_buffers(self) -> None:

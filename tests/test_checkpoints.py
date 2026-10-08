@@ -430,3 +430,18 @@ def test_pretrained_reexports_snapshot_helpers():
 
     assert pretrained.read_snapshot is checkpoints.read_snapshot
     assert pretrained.SNAPSHOT_FILE == checkpoints.SNAPSHOT_FILE
+
+
+def test_loads_float8_safetensors_tensors(tmp_path):
+    safetensors = pytest.importorskip("safetensors.torch")
+    weights = {
+        "e4m3": (torch.linspace(-3, 3, 24).reshape(4, 6)).to(torch.float8_e4m3fn),
+        "e5m2": (torch.linspace(-2, 2, 8)).to(torch.float8_e5m2),
+        "scale": torch.linspace(0.5, 1.5, 4),
+    }
+    path = tmp_path / "fp8.safetensors"
+    safetensors.save_file(weights, str(path))
+    loaded = load_safetensors(path)
+    for name, tensor in weights.items():
+        assert loaded[name].dtype == tensor.dtype
+        assert torch.equal(loaded[name].view(torch.uint8), tensor.view(torch.uint8))

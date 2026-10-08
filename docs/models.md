@@ -619,6 +619,54 @@ weights are bfloat16; CPU parity was measured in float32 after upcasting.
 **License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
 
 
+# Ideogram 4
+
+Catalog: [`ideogram-4`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `ideogram4-fp8` · Task: `t2i`
+
+**Architecture.** A Qwen3-VL 8B text model uses fp8 linears and supplies 53,248-wide features
+formed by stacking selected hidden states. Two separate 9.3B single-stream diffusion transformers
+provide the conditional and unconditional classifier-free-guidance passes. Each transformer has 34
+layers, 18 attention heads of width 256, adaLN and 24/20/20 multimodal RoPE. The official
+32-channel autoencoder applies latent normalization. The official sampler supplies the
+`V4_QUALITY_48` (default), `V4_DEFAULT_20` and `V4_TURBO_12` presets, including each preset's
+per-step guidance schedule. The native image size is 1024×1024.
+
+The published checkpoint contains only quantized weights: large linear weights are float8 e4m3
+with per-row float32 scales. imagehub keeps those weights in fp8 and dequantizes each forward pass
+as `weight.to(dtype) * weight_scale.to(dtype).unsqueeze(1)`, exactly as the official
+implementation does. The result is bit-identical when the compute dtype is float32.
+
+**Usage.** The repository is gated. Accept its terms and provide `HF_TOKEN` when downloading:
+
+```bash
+HF_TOKEN=... python -m imagehub.pretrained ideogram4-fp8 checkpoints/ideogram4-fp8
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="ideogram4-fp8", model="checkpoints/ideogram4-fp8", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42, preset="V4_QUALITY_48")
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `preset` defaults to `V4_QUALITY_48`, and `width`/`height` default to 1024 and must
+be multiples of 16. `V4_DEFAULT_20` and `V4_TURBO_12` select the official 20-step and 12-step
+sampler configurations. The other supported options are `steps`, `guidance`, `guidance_schedule`,
+`seed` and `latents`. Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU in float32, the same seed and settings give the same image as the
+official `ideogram-oss/ideogram4` implementation at commit `990fe1c`; this validation is not
+against diffusers ([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is
+no claim of exact equality on these devices.
+
+**Out of scope.** The CUDA-only nf4 releases, magic prompt, safety moderation, LoRA and fp16/bf16
+parity are not supported. Magic prompt and safety moderation call external paid APIs.
+
+**License.** The weights use the Ideogram 4 Non-Commercial License; see the license. imagehub does
+not distribute weights.
+
+
 # Qwen-Image 2.1
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

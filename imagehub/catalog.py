@@ -1003,6 +1003,41 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="ideogram4-fp8",
+        task=Task.T2I,
+        family="ideogram4",
+        source="https://huggingface.co/ideogram-ai/ideogram-4-fp8",
+        repo_id="ideogram-ai/ideogram-4-fp8",
+        revision="ee79a7237b519f1402ceacf952f30c8a31ec5073",
+        provenance="author",
+        catalog_id="ideogram-4",
+        format="diffusers",
+        license="Ideogram 4 Non-Commercial License",
+        gated=True,
+        config={"defaults": {"preset": "V4_QUALITY_48"}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder/model.safetensors.index.json",
+            "tokenizer/chat_template.jinja",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "unconditional_transformer/config.json",
+            "unconditional_transformer/diffusion_pytorch_model.safetensors",
+            "unconditional_transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-turbo",
         task=Task.T2I,
         family="stable-diffusion-xl",

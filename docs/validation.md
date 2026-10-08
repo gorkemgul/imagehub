@@ -558,6 +558,60 @@ the save-then-compare sequence: the reference pipeline ran first, saved its outp
 before the native pipeline ran. The real-checkpoint component and end-to-end runs took about 31 and
 53 minutes, respectively.
 
+## Ideogram 4
+
+`ideogram4-fp8` was loaded strictly from `ideogram-ai/ideogram-4-fp8` at revision `ee79a72` and
+validated on CPU in float32. The reference is the official `ideogram-oss/ideogram4` implementation
+at commit `990fe1c4e950bb9e9dc90e01c0ad98ba434f83c2`, not diffusers: the model card lists no diffusers
+support for the fp8 release. The official reference ran with PyTorch 2.14.1 and transformers 5.18.0
+in its own Python 3.13 environment. Every comparison against that official implementation is
+**exactly 0**.
+
+The official reference environment was created with:
+
+```bash
+uv venv -p 3.13 .venv-ref-ideogram4
+uv pip install --python .venv-ref-ideogram4 git+https://github.com/ideogram-oss/ideogram4@990fe1c4e950bb9e9dc90e01c0ad98ba434f83c2 "transformers==5.18.0" pytest numpy
+```
+
+The official-reference tests run with:
+
+```bash
+IMAGEHUB_REFERENCE_TESTS=1 PYTHONPATH=$PWD .venv-ref-ideogram4/bin/python -m pytest tests/reference/test_ref_ideogram4.py tests/reference/test_ref_tiny_ideogram4.py
+```
+
+### Comparisons with the official implementation (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Published headers: fp8 tensors and per-row scales for every quantized component | identical | exact |
+| Prompt token ids | identical | exact |
+| Qwen3-VL text features (53,248 wide from stacked hidden states) | 0 | 0 |
+| Conditional transformer single step (1024×1024) | 0 | 0 |
+| Unconditional transformer single step (1024×1024) | 0 | 0 |
+| Autoencoder decode / encode | 0 / 0 | 0 / 0 |
+| Official sampler intervals and per-step guidance schedule | identical | exact |
+| End to end, seed 0 (`V4_TURBO_12`, 1024×1024 pixels) | 0 | 0 |
+| End to end, seed 42 (`V4_TURBO_12`, 1024×1024 pixels) | 0 | 0 |
+
+The published header check covered `text_encoder`, `transformer`, `unconditional_transformer` and
+`vae`: 1117 / 669 / 669 / 251 tensors. The three quantized components contained 368 / 211 / 211
+float8 e4m3 weights and the same number of float32 scales; the VAE contained neither. imagehub
+keeps the published fp8 weights and dequantizes each forward pass as
+`weight.to(dtype) * weight_scale.to(dtype).unsqueeze(1)`, exactly like the official implementation.
+The float32 result is bit-identical. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
+Random-weight parity covered fp8 linears and the transformer, and a tiny end-to-end test covered
+the complete pipeline against the official implementation. Every comparison was exact. The
+real-checkpoint end-to-end comparisons used the official `V4_TURBO_12` preset rather than the
+48-step `V4_QUALITY_48` default to shorten the CPU run.
+
+The official pipeline peaks near 52 GB while loading in float32 and the native pipeline near 40 GB.
+The official reference therefore ran in a child process with the same thread count, saved its
+outputs and exited before the native outputs were compared. The real-checkpoint run took about two
+hours.
+
 ## Qwen-Image 2.1
 
 The reference is the implementation the Qwen team contributed to diffusers. No released diffusers
@@ -722,7 +776,7 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
 
 ## Automated tests
 
-- Regular tests: 576 passed, 435 skipped (the skipped ones are the optional reference tests). Tests do
+- Regular tests: 586 passed, 441 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
@@ -732,7 +786,7 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 19 passed for `pixart-sigma-xl-1024` and
   `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 9 passed for `sd-turbo`, and 7 passed for
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

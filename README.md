@@ -3,8 +3,8 @@
 An inference library for open-weight image generation architectures, natively reimplemented in
 PyTorch behind a single API. **PyTorch is the only required runtime dependency.** A model is added
 only once it is shown to reproduce the original implementation's output
-([validation](docs/validation.md)). On CPU in float32, outputs are bit-identical to diffusers
-for all six model families; the details are on the [validation](docs/validation.md) page.
+([validation](docs/validation.md)). On CPU in float32, outputs are bit-identical to their recorded
+reference implementations; the details are on the [validation](docs/validation.md) page.
 Architectures are linked to the
 [awesome-text-to-image-architectures](https://github.com/gorkemgul/awesome-text-to-image-architectures)
 catalog.
@@ -56,6 +56,7 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 | Krea 2 | `krea2-turbo` | `t2i` | CPU fp32 parity |
 | LongCat-Image | `longcat-image` | `t2i` | CPU fp32 parity |
 | CogView4 | `cogview4-6b` | `t2i` | CPU fp32 parity |
+| Ideogram 4 | `ideogram4-fp8` | `t2i` | CPU fp32 parity with the official implementation |
 | Qwen-Image | `qwen-image-2.1` | `t2i` | CPU fp32 parity |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | CPU fp32 parity |
