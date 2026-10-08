@@ -1,11 +1,11 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, PixArt,
-LongCat-Image, CogView4 and Ideogram 4 measurements are grouped in flat ``components_sdxl``,
-``components_qwen_image``,
-``components_sd3``, ``components_flux1``, ``components_krea2``, ``components_hunyuan_dit``,
-``components_kandinsky22``, ``components_pixart``, ``components_longcat_image``,
+measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
+PixArt, LongCat-Image, CogView4 and Ideogram 4 measurements are grouped in flat
+``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
+``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
+``components_stable_cascade``, ``components_pixart``, ``components_longcat_image``,
 ``components_cogview4`` and ``components_ideogram4`` mappings: the base model keeps its historical
 unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
 own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
@@ -44,7 +44,8 @@ LIMITS = [
     "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
     "schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match "
     "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
-    "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, and DPM-Solver++ for PixArt.",
+    "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and "
+    "DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -279,6 +280,21 @@ def main() -> None:
         },
         "components_kandinsky22": {
             key: value for key, value in measured.items() if "kandinsky22" in key
+        },
+        "components_stable_cascade": {
+            key: value
+            for key, value in measured.items()
+            if not key.startswith(("header_", "e2e_", "seed_e2e_"))
+            and any(
+                marker in key
+                for marker in (
+                    "stable_cascade",
+                    "stable-cascade",
+                    "paella",
+                    "ddpm_wuerstchen",
+                    "clip_text_mask",
+                )
+            )
         },
         "components_pixart": {key: value for key, value in measured.items() if "pixart" in key},
         "components_longcat_image": {
