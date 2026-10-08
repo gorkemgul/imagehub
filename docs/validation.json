@@ -2720,6 +2720,133 @@
       }
     },
     {
+      "model_id": "longcat-image",
+      "repo_id": "meituan-longcat/LongCat-Image",
+      "revision": "d2ea50b79a930074c37b9b97ce45e3b2ea8cf4d8",
+      "provenance": "author",
+      "catalog_id": "longcat-image",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "170ca9901753a629a65381cb42f3a4fcb2aeff8482023d7854cb8695f3bb7b23",
+        "scheduler/scheduler_config.json": "63b6d2fa93579e383a308009bfd5ae12e61f8950017dd749302f8d54bb3520b6",
+        "text_encoder/config.json": "77d9ec7321cc572e3579e2c84799c9cadaded63c49ce93b101733349fc330c43",
+        "text_encoder/generation_config.json": "ee519655686f42fee1560c63107ef1e1b40e7a98084c16733f7a5716b5d17a04",
+        "text_encoder/model-00001-of-00005.safetensors": "e97b877e47fde53a6c6e77aafb36e58e91ee9d95c4a3eeac6f1b5c0e6a1c986e",
+        "text_encoder/model-00002-of-00005.safetensors": "a9a300a43b4724eee2abe7c18ceb26768d0ab011eb0cad19d9bfd2476a24d024",
+        "text_encoder/model-00003-of-00005.safetensors": "111223d173e00bbee81cba1216fad28668df3476706b7fd26f4d5b50f8b3a507",
+        "text_encoder/model-00004-of-00005.safetensors": "ef47f634fa57d46ee134edcc09f34085a47da1e16c12a2abe0d67118be6d72ed",
+        "text_encoder/model-00005-of-00005.safetensors": "0c859795ad3a627a9b95bcb762e059d5b768a4a36fdd4affeff269d93fdecc67",
+        "text_encoder/model.safetensors.index.json": "73b333b0b16e5286ddba615d2caebcd495cf7e616f52eb217a81781393d79de9",
+        "text_processor/chat_template.json": "ad60d90252ed0b0705ba14e2d0ad0fec0beac1ea955642b54059b36052d8bc96",
+        "text_processor/config.json": "77d9ec7321cc572e3579e2c84799c9cadaded63c49ce93b101733349fc330c43",
+        "text_processor/merges.txt": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+        "text_processor/preprocessor_config.json": "b768ac359f15303a500de73a5f218c266969156ed9822e86cdeb26fe4b690f2b",
+        "text_processor/special_tokens_map.json": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+        "text_processor/tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+        "text_processor/tokenizer_config.json": "7d0fc4691628c9f6b0c77f8138a80517896a307e074dd5ac87e279ea85515774",
+        "text_processor/vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+        "tokenizer/chat_template.json": "ad60d90252ed0b0705ba14e2d0ad0fec0beac1ea955642b54059b36052d8bc96",
+        "tokenizer/config.json": "77d9ec7321cc572e3579e2c84799c9cadaded63c49ce93b101733349fc330c43",
+        "tokenizer/merges.txt": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+        "tokenizer/preprocessor_config.json": "b768ac359f15303a500de73a5f218c266969156ed9822e86cdeb26fe4b690f2b",
+        "tokenizer/tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+        "tokenizer/tokenizer_config.json": "7d0fc4691628c9f6b0c77f8138a80517896a307e074dd5ac87e279ea85515774",
+        "tokenizer/vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+        "transformer/config.json": "f9986407ca52128116822b9d07730d680d336d90ec1c792f6cf064b132b03686",
+        "transformer/diffusion_pytorch_model.safetensors": "df81cbd7da1371c3d0c04af91efbb3c358fd18a4229ea0f3680d62d892b4e4ee",
+        "vae/config.json": "ad6f0acb584ceb3d136d1e32b684dec65db24bffe9223df2bac0b45539d4e6b5",
+        "vae/diffusion_pytorch_model.safetensors": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 729,
+          "transformer": 612,
+          "vae": 244
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "steps": 8
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 8
+      }
+    },
+    {
+      "model_id": "cogview4-6b",
+      "repo_id": "zai-org/CogView4-6B",
+      "revision": "63a52b7f6dace7033380cd6da14d0915eab3e6b5",
+      "provenance": "author",
+      "catalog_id": "cogview4",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "00a088b221b0d9452cf25a16b41877134ebb29dbc66c246308776baa9e540413",
+        "scheduler/scheduler_config.json": "f28c348ae2ad5ca9b74fa7d1872dd795c9134f34db3d225d20efcd2c1df3fa67",
+        "text_encoder/config.json": "82239559819730177e5bf2632e6610b5f6425ba2024a39438ce32716e80bc5a0",
+        "text_encoder/model.safetensors.index.json": "59b6cfe948812281d1b9b7034bb086611f1cabee346c59728746097b8ccd9fbd",
+        "text_encoder/model-00001-of-00004.safetensors": "d33a01dba14c62a0d5c471aba9f57902a1d6155080b2cf07e1360b9600fa60a8",
+        "text_encoder/model-00002-of-00004.safetensors": "f2913605db189102456ad417a4c38903fb038b9e9fb2a96c95e2de56da224667",
+        "text_encoder/model-00003-of-00004.safetensors": "f81bd5307c4f6175c7b080abad40eb869fafa263ff13c8550d6928330ae749a6",
+        "text_encoder/model-00004-of-00004.safetensors": "224b322bd87949a50d36adea784bb4d7203b219023b1efec1ee4fd5a7ad05056",
+        "tokenizer/special_tokens_map.json": "35a6dd9ff6e2474ba72b180db853851d2a84fce3d12095089285f447c7474541",
+        "tokenizer/tokenizer.json": "8a7269d6daa6328de533def0082ff9d3a825bb89036cbcc665c324f941f67fbf",
+        "tokenizer/tokenizer_config.json": "8456de22f67c9627ae01b397052e2b5f5ec2c0183f563e3ad316f328f463aeaa",
+        "transformer/config.json": "dcbbca0b4e574b52f2722e40eada5b331c0798f8ce1f471a6cbfd882e7f2b431",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "b72b3fa25ff74aa78d3b39e1f8b7f69e30545cd8aa87a9620efa596da04a7856",
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors": "fe197664340943dd4b1ec30af012a4e136bdfd80c53e6520378928e084de8b0d",
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors": "63bc1152f337fb89ae9cfca5cb0d11451c5b456a345db9b008a14f129916beeb",
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors": "5f196554fd09958d69e1491ed9a7d63a5a29384dbb73848d819285dd5124b478",
+        "vae/config.json": "c1833854a568b8e76bc4a6500ac7355d3b40102cd45a6072fa8e7c4522117181",
+        "vae/diffusion_pytorch_model.safetensors": "40aabe789e1591a3a3d8a2f598eda99f60a42275c410e7292a714b5270b97747"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 442,
+          "transformer": 408,
+          "vae": 288
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "steps": 8
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 8
+      }
+    },
+    {
       "model_id": "ideogram4-fp8",
       "repo_id": "ideogram-ai/ideogram-4-fp8",
       "revision": "ee79a7237b519f1402ceacf952f30c8a31ec5073",
@@ -3183,6 +3310,244 @@
       "seed_end_to_end": {
         "passed": true,
         "seed": 42
+      }
+    },
+    {
+      "model_id": "stable-cascade",
+      "repo_id": "stabilityai/stable-cascade",
+      "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+      "provenance": "author",
+      "catalog_id": "wuerstchen",
+      "license": "stable-cascade-nc-community",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "0c8c28b033d3f7462c7b63ba0e891efad044766a147f5fdee8257e03aaa749f9"
+        },
+        "decoder/config.json": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "19c24bc45601f47185dfb4f740f88adc7044659f94106d023ec948fd7b2b01ba"
+        },
+        "decoder/diffusion_pytorch_model.safetensors": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "76f506c71dbaac04ade47f31f9eb546f7fb6543adc4d7f44d24ab9e6177476fe"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "e2c72481b491f9e219ca487580f14a9c83269545dd40ce1de4174b180fdef95c"
+        },
+        "vqgan/config.json": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "2431aea24ee1438b0ccabcfc8a5b47dfc10ab09500a730161b8530ccd057775d"
+        },
+        "vqgan/diffusion_pytorch_model.safetensors": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "052db8852c0d8b117e6d2a59ae3e0c7d7aaae3d00f247e392ef8e9837e11d6c4"
+        },
+        "prior/model_index.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "8e98f1353f0c9f91f145034b0d503893abb61fe1cb9f6ad24f5fe76e9e129c5f"
+        },
+        "prior/prior/config.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "a1251310772bceb7092629d110d55c4d1d46d1c19a35c3fce3e1cc6cc83e5ab6"
+        },
+        "prior/prior/diffusion_pytorch_model.safetensors": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "0a2c7aa62c503780b85f74fd513b1b99c12ea4f83422bdbad5ac264aa68efb4b"
+        },
+        "prior/scheduler/scheduler_config.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "e2c72481b491f9e219ca487580f14a9c83269545dd40ce1de4174b180fdef95c"
+        },
+        "prior/text_encoder/config.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "260bcdc16b5ec4529c4004e8bfa30c33ac4cccc99366189cc7a7910850427a86"
+        },
+        "prior/text_encoder/model.safetensors": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "fa5b2e6f4c2efc2d82e4b8312faec1a5540eabfc6415126c9a05c8436a530ef4"
+        },
+        "prior/tokenizer/merges.txt": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "prior/tokenizer/special_tokens_map.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e"
+        },
+        "prior/tokenizer/tokenizer_config.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881"
+        },
+        "prior/tokenizer/vocab.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "decoder": 1726,
+          "prior/prior": 1550,
+          "prior/text_encoder": 517,
+          "vqgan": 122
+        }
+      },
+      "end_to_end": {
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "seed": 1234
+      }
+    },
+    {
+      "model_id": "stable-cascade-lite",
+      "repo_id": "stabilityai/stable-cascade",
+      "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+      "provenance": "author",
+      "catalog_id": "wuerstchen",
+      "license": "stable-cascade-nc-community",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "0c8c28b033d3f7462c7b63ba0e891efad044766a147f5fdee8257e03aaa749f9"
+        },
+        "decoder_lite/config.json": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "eee850bfb204c810fc8f7c493d5182f0ed836376ada93e949125827b685d0c69"
+        },
+        "decoder_lite/diffusion_pytorch_model.safetensors": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "7dcb3fc8b1e3f2a1756503472043a7d6810003a418b60b08674633b20b452ffb"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "e2c72481b491f9e219ca487580f14a9c83269545dd40ce1de4174b180fdef95c"
+        },
+        "vqgan/config.json": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "2431aea24ee1438b0ccabcfc8a5b47dfc10ab09500a730161b8530ccd057775d"
+        },
+        "vqgan/diffusion_pytorch_model.safetensors": {
+          "repo_id": "stabilityai/stable-cascade",
+          "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+          "sha256": "052db8852c0d8b117e6d2a59ae3e0c7d7aaae3d00f247e392ef8e9837e11d6c4"
+        },
+        "prior/model_index.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "8e98f1353f0c9f91f145034b0d503893abb61fe1cb9f6ad24f5fe76e9e129c5f"
+        },
+        "prior/prior_lite/config.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "9b1e31708bd90986ee0b4dea8e62e2162aa12d9ad00c7dd6fe71e7758c577c6d"
+        },
+        "prior/prior_lite/diffusion_pytorch_model.safetensors": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "61a01756dcaecda654074624fd5f993dbe22c7f5cb0d08887416e6c594179a6a"
+        },
+        "prior/scheduler/scheduler_config.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "e2c72481b491f9e219ca487580f14a9c83269545dd40ce1de4174b180fdef95c"
+        },
+        "prior/text_encoder/config.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "260bcdc16b5ec4529c4004e8bfa30c33ac4cccc99366189cc7a7910850427a86"
+        },
+        "prior/text_encoder/model.safetensors": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "fa5b2e6f4c2efc2d82e4b8312faec1a5540eabfc6415126c9a05c8436a530ef4"
+        },
+        "prior/tokenizer/merges.txt": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "prior/tokenizer/special_tokens_map.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e"
+        },
+        "prior/tokenizer/tokenizer_config.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881"
+        },
+        "prior/tokenizer/vocab.json": {
+          "repo_id": "stabilityai/stable-cascade-prior",
+          "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+          "sha256": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "decoder_lite": 970,
+          "prior/prior_lite": 782,
+          "prior/text_encoder": 517,
+          "vqgan": 122
+        }
+      },
+      "end_to_end": {
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "seed": 1234
       }
     }
   ],
@@ -4443,6 +4808,264 @@
       "tolerance": 0.0
     }
   },
+  "components_stable_cascade": {
+    "clip_text_mask_gelu_all_ones": {
+      "hidden_states": true,
+      "last_hidden_state": true,
+      "text_embeds": true,
+      "tolerance": "exact"
+    },
+    "clip_text_mask_gelu_padded": {
+      "hidden_states": true,
+      "last_hidden_state": true,
+      "text_embeds": true,
+      "tolerance": "exact"
+    },
+    "clip_text_mask_quick_gelu_all_ones": {
+      "hidden_states": true,
+      "last_hidden_state": true,
+      "text_embeds": true,
+      "tolerance": "exact"
+    },
+    "clip_text_mask_quick_gelu_padded": {
+      "hidden_states": true,
+      "last_hidden_state": true,
+      "text_embeds": true,
+      "tolerance": "exact"
+    },
+    "ddpm_wuerstchen_timesteps_12": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "ddpm_wuerstchen_timesteps_20": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "ddpm_wuerstchen_timesteps_60": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "ddpm_wuerstchen_trajectory_scaler_0.5": {
+      "steps": 12,
+      "tolerance": "exact"
+    },
+    "ddpm_wuerstchen_trajectory_scaler_1.0": {
+      "steps": 12,
+      "tolerance": "exact"
+    },
+    "ddpm_wuerstchen_trajectory_scaler_2.0": {
+      "steps": 12,
+      "tolerance": "exact"
+    },
+    "paella_vq_decode_published_32": {
+      "max_abs_diff": 0.0,
+      "shape": [
+        2,
+        4,
+        32,
+        32
+      ],
+      "tolerance": "exact"
+    },
+    "paella_vq_decode_published_odd": {
+      "max_abs_diff": 0.0,
+      "shape": [
+        1,
+        4,
+        17,
+        23
+      ],
+      "tolerance": "exact"
+    },
+    "paella_vq_decode_tiny": {
+      "max_abs_diff": 0.0,
+      "shape": [
+        2,
+        4,
+        6,
+        7
+      ],
+      "tolerance": "exact"
+    },
+    "paella_vq_encode": {
+      "max_abs_diff": 0.0,
+      "shape": [
+        1,
+        3,
+        64,
+        64
+      ],
+      "tolerance": "exact"
+    },
+    "stable-cascade-lite_decoder_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_decoder_unet_ratio_0.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_decoder_unet_ratio_1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_negative_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_negative_pooled": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_prior_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_prior_unet_ratio_0.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_prior_unet_ratio_1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_prior_unet_ratio_1_60": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_stage_a": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_text_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade-lite_text_pooled": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_decoder_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_decoder_unet_ratio_0.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_decoder_unet_ratio_1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_negative_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_negative_pooled": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_prior_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_prior_unet_ratio_0.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_prior_unet_ratio_1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_prior_unet_ratio_1_60": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_stage_a": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_text_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable-cascade_text_pooled": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_tiny_decoder_guidance": {
+      "decoder_max_abs_difference": 0.0,
+      "pixels_equal": true,
+      "prior_max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_tiny_default": {
+      "decoder_max_abs_difference": 0.0,
+      "pixels_equal": true,
+      "prior_max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_tiny_non_square": {
+      "decoder_max_abs_difference": 0.0,
+      "pixels_equal": true,
+      "prior_max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_tiny_other_seed": {
+      "decoder_max_abs_difference": 0.0,
+      "pixels_equal": true,
+      "prior_max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_unet_decoder_lite": {
+      "max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_unet_decoder_tiny": {
+      "max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_unet_decoder_tiny_default_pixels": {
+      "max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_unet_prior_lite": {
+      "max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_unet_prior_tiny_12x12": {
+      "max_abs_difference": 0.0,
+      "tolerance": 0.0
+    },
+    "stable_cascade_unet_prior_tiny_13x11": {
+      "max_abs_difference": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_pixart": {
     "e2e_pixart-alpha-xl-1024": {
       "guidance": 4.5,
@@ -4736,11 +5359,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, and DPM-Solver++ for PixArt.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "5 passed (kandinsky-2.2)"
+    "reference_summary": "14 passed (stable-cascade, stable-cascade-lite)"
   }
 }
