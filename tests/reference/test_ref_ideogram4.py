@@ -78,7 +78,11 @@ def _in_subprocess(function, *args):
     freed in one process is not returned to the system, so the reference runs in its own process.
     """
     context = multiprocessing.get_context("spawn")
-    with context.Pool(1) as pool:
+    # Same intra-op thread count as this process (set by the reference conftest): the CPU
+    # kernels split their sums by thread, so a different count changes the results.
+    with context.Pool(
+        1, initializer=torch.set_num_threads, initargs=(torch.get_num_threads(),)
+    ) as pool:
         return pool.apply(function, args)
 
 
