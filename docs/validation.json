@@ -2720,6 +2720,74 @@
       }
     },
     {
+      "model_id": "ideogram4-fp8",
+      "repo_id": "ideogram-ai/ideogram-4-fp8",
+      "revision": "ee79a7237b519f1402ceacf952f30c8a31ec5073",
+      "provenance": "author",
+      "catalog_id": "ideogram-4",
+      "license": "Ideogram 4 Non-Commercial License",
+      "reference": {
+        "ideogram4": {
+          "repository": "ideogram-oss/ideogram4",
+          "git_commit": "990fe1c4e950bb9e9dc90e01c0ad98ba434f83c2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "ff382a34b84db352e044a1a38260aec0a99c17e6b12abb8658312847db0f26b7",
+        "scheduler/scheduler_config.json": "d7e7bcf1c640297a8e0126cdd0358365c3150b7d1a0bf9f67a1ccad6114aea3a",
+        "text_encoder/config.json": "9de8dc58cdecc56df3f91b8083dfd719cfd97f970545cf3950db467d8658e4af",
+        "text_encoder/model.safetensors": "b094e8be345fc602b79eae674004cf44078e511f03d200980095244a0d1bcf46",
+        "text_encoder/model.safetensors.index.json": "896fb1785aa28b404b0a88f355728bdfec719ef399a20f6f5f700f5f57f970e4",
+        "tokenizer/chat_template.jinja": "3636d0f0bd6bef02654cdffdc447b79cb2cef8ab02cc75267345946291a489e4",
+        "tokenizer/tokenizer.json": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+        "tokenizer/tokenizer_config.json": "928c3c44a7d2168cede835051a5f630c22b9ef4c6f6bd672d2ba8677af2343b3",
+        "transformer/config.json": "7dd13d66162722cf1d85cd31607453321d5fc06e057755770b27debb4ae1465c",
+        "transformer/diffusion_pytorch_model.safetensors": "19e12b4d5bdfcf35e17e5f4d292f5301a69a30e02336a9f8645e4b82f8319a1b",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "523b7f1082e2da539a932feea7bc3f41cf8614402f38fa7b1913facaa2630a89",
+        "unconditional_transformer/config.json": "ae344d7be739a9062092a2bd0a7b2cba592f93617cd487d087fdaf92079919f1",
+        "unconditional_transformer/diffusion_pytorch_model.safetensors": "83f7f7d1d0a409c1e9288b11c8ec44a03c95348d46851d6c184f054b6ec4626d",
+        "unconditional_transformer/diffusion_pytorch_model.safetensors.index.json": "523b7f1082e2da539a932feea7bc3f41cf8614402f38fa7b1913facaa2630a89",
+        "vae/config.json": "b5b190fa341b7d07198b2f2898b0c75b129026adf43df8ee922f5df66e55d501",
+        "vae/diffusion_pytorch_model.safetensors": "925ce3a08e8759174667f5e89384ba2b54dd81a87b7379dadb68a1a87b70b052"
+      },
+      "tensor_header_check": {
+        "text_encoder": {
+          "fp8": 368,
+          "scales": 368,
+          "tensors": 1117
+        },
+        "transformer": {
+          "fp8": 211,
+          "scales": 211,
+          "tensors": 669
+        },
+        "unconditional_transformer": {
+          "fp8": 211,
+          "scales": 211,
+          "tensors": 669
+        },
+        "vae": {
+          "fp8": 0,
+          "scales": 0,
+          "tensors": 251
+        }
+      },
+      "end_to_end": {
+        "max_abs": 0.0,
+        "max_rel": 0.0,
+        "tolerance": 0.0
+      },
+      "seed_end_to_end": {
+        "max_abs": 0.0,
+        "max_rel": 0.0,
+        "tolerance": 0.0
+      }
+    },
+    {
       "model_id": "sdxl-turbo",
       "repo_id": "stabilityai/sdxl-turbo",
       "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
@@ -4445,6 +4513,37 @@
       "tolerance": 0.0
     }
   },
+  "components_ideogram4": {
+    "ideogram4_sampler_intervals": {
+      "exact": true,
+      "first": 0.00012339458044152707
+    },
+    "ideogram4_text_features": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ideogram4_transformer_conditional": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ideogram4_transformer_unconditional": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ideogram4_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ideogram4_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -4472,6 +4571,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "9 passed (cogview4-6b)"
+    "reference_summary": "7 passed (ideogram4-fp8)"
   }
 }

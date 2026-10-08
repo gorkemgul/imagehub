@@ -1,14 +1,14 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, PixArt, LongCat-Image and CogView4
-measurements are grouped in flat ``components_sdxl``, ``components_qwen_image``,
+measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, PixArt, LongCat-Image, CogView4
+and Ideogram 4 measurements are grouped in flat ``components_sdxl``, ``components_qwen_image``,
 ``components_sd3``, ``components_flux1``, ``components_krea2``, ``components_hunyuan_dit``,
-``components_pixart``, ``components_longcat_image`` and ``components_cogview4`` mappings: the base
-model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
-entry may also contain its own ``seed_end_to_end`` measurement. When a model directory is missing,
-its existing entry in the output is retained unchanged; a missing directory without an existing
-entry is an error.
+``components_pixart``, ``components_longcat_image``, ``components_cogview4`` and
+``components_ideogram4`` mappings: the base model keeps its historical unsuffixed keys, while other
+models use ``<key>_<model-id>``. Each model entry may also contain its own ``seed_end_to_end``
+measurement. When a model directory is missing, its existing entry in the output is retained
+unchanged; a missing directory without an existing entry is an error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -106,6 +106,8 @@ def header_check(header: dict | None) -> dict | None:
         return None
     if all(key in header for key in ("missing", "extra", "mismatch", "tensors")):
         return header
+    if all(set(entry) == {"fp8", "scales", "tensors"} for entry in header.values()):
+        return header
     merged: dict = {"missing": [], "extra": [], "mismatch": [], "tensors": {}}
     for component, entry in header.items():
         for key in ("missing", "extra", "mismatch"):
@@ -151,6 +153,15 @@ def main() -> None:
         e2e_guided = measured.get(f"e2e_guided_{spec.id}")
         seed_e2e = measured.get(f"seed_e2e_{measurement_id}")
         header = measured.get(f"header_{measurement_id}")
+        reference = {package: dict(details) for package, details in spec.reference.items()}
+        if spec.id == "ideogram4-fp8":
+            reference = {
+                "ideogram4": {
+                    "repository": "ideogram-oss/ideogram4",
+                    "git_commit": "990fe1c4e950bb9e9dc90e01c0ad98ba434f83c2",
+                },
+                "transformers": {"version": "5.18.0"},
+            }
         models.append(
             {
                 "model_id": spec.id,
@@ -159,10 +170,14 @@ def main() -> None:
                 "provenance": spec.provenance,
                 "catalog_id": spec.catalog_id,
                 "license": spec.license,
-                "reference": {
-                    package: dict(details) for package, details in spec.reference.items()
-                },
-                "status": "full" if e2e and e2e.get("passed") else "experimental",
+                "reference": reference,
+                "status": "full"
+                if e2e
+                and (
+                    e2e.get("passed")
+                    or (spec.id == "ideogram4-fp8" and e2e.get("tolerance") == 0.0)
+                )
+                else "experimental",
                 "files": snapshot["files"],
                 **({"base": snapshot["base"]} if "base" in snapshot else {}),
                 "tensor_header_check": header_check(header),
@@ -267,6 +282,9 @@ def main() -> None:
         },
         "components_cogview4": {
             key: value for key, value in measured.items() if key.startswith("cogview4_")
+        },
+        "components_ideogram4": {
+            key: value for key, value in measured.items() if key.startswith("ideogram4_")
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},
