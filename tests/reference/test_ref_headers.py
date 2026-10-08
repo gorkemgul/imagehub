@@ -36,7 +36,8 @@ WEIGHT_FILES = (
     "pytorch_model.bin",
     "diffusion_pytorch_model.bin",
 )
-# Overlay entries (a base snapshot with a replaced U-Net) check their headers in their own test files.
+# Overlay entries (a base snapshot with a replaced U-Net) check their headers in their own
+# test files.
 SDXL_MODEL_IDS = tuple(
     spec.id
     for spec in MODEL_CATALOG.values()
