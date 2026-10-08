@@ -3050,6 +3050,140 @@
         ],
         "steps": 30
       }
+    },
+    {
+      "model_id": "kandinsky-2.2",
+      "repo_id": "kandinsky-community/kandinsky-2-2-decoder",
+      "revision": "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+      "provenance": "author",
+      "catalog_id": "kandinsky-2",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-decoder",
+          "revision": "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+          "sha256": "5cde694d9f2a436adcdf0874c7f2b863d03bfcf54dbaf98926d2ef55bfe32918"
+        },
+        "movq/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-decoder",
+          "revision": "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+          "sha256": "b7448f3ea8aecf233629b20c1f606887e22244656edcee1be6a419079717a23e"
+        },
+        "movq/diffusion_pytorch_model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-decoder",
+          "revision": "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+          "sha256": "43a5860fea195a7116f2471396c5cc9535fade9b63c4857d8a192ffd924b7002"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-decoder",
+          "revision": "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+          "sha256": "b0900b16ee3e47c7b1e3c3fda579835d8dbc8bb5ba8434395412fed5c732c597"
+        },
+        "unet/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-decoder",
+          "revision": "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+          "sha256": "4f30206052776397195b5f1c9df9d7f7e34f50b1cb1ad9a027856021a94b62d6"
+        },
+        "unet/diffusion_pytorch_model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-decoder",
+          "revision": "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+          "sha256": "3cc2f07442b9de0f18fb3f22247790872c094c4acc9dbe68552f96fd2e5c1ea1"
+        },
+        "prior/model_index.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "26cba76e560b6da612d65b8e7beac9be04442df8df2e1743b8466454988d1f5e"
+        },
+        "prior/image_encoder/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "1d53c2b4b74c5f85171d313adda3e3b8771ff5c698ee66a29710d0ac822298e4"
+        },
+        "prior/image_encoder/model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "657723e09f46a7c3957df651601029f66b1748afb12b419816330f16ed45d64d"
+        },
+        "prior/image_processor/preprocessor_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "0a70aaa5de2ccb5e222b0e7e3ea347a3da051c3588c763cdd23b4d80bbf96b65"
+        },
+        "prior/prior/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "e36f9ae41677b87a8ca72853f1246704228c49c280adcfa8a8e100ef47d2ee5a"
+        },
+        "prior/prior/diffusion_pytorch_model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "ab139b2df9e40ed0b1eda8dc6270a139a796c5fa3af76cd6b0573f620dca6dde"
+        },
+        "prior/scheduler/scheduler_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "5ba056e705a3317f60d79a3756a3409b0a53f1129b76a6aa5097ce9f513d143e"
+        },
+        "prior/text_encoder/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "3dec84fa855c0b7f531eea433e805a1194086c38c5635baceda8cbed4f727f1b"
+        },
+        "prior/text_encoder/model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "6eaafeea664d7ab87df17274d6114dfdf092c587c7cd56c13cf84aacdebc0332"
+        },
+        "prior/tokenizer/merges.txt": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "prior/tokenizer/special_tokens_map.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "f8c0d6c39aee3f8431078ef6646567b0aba7f2246e9c54b8b99d55c22b707cbf"
+        },
+        "prior/tokenizer/tokenizer_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "e19f34ef773563fb695f96cfcae1e4c7b112ab6ad532f6962061df5242d924f0"
+        },
+        "prior/tokenizer/vocab.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-2-prior",
+          "revision": "9fc51ad5732afc5d031724219d22e6c42179c5a8",
+          "sha256": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "movq": 431,
+          "prior/image_encoder": 777,
+          "prior/prior": 338,
+          "prior/text_encoder": 518,
+          "unet": 724
+        }
+      },
+      "end_to_end": {
+        "passed": true,
+        "pixels_max_abs": 0
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "seed": 42
+      }
     }
   ],
   "components": {
@@ -4273,6 +4407,42 @@
       "tolerance": 0.0
     }
   },
+  "components_kandinsky22": {
+    "kandinsky22_decoder_unet_512": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky22_movq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky22_prior_25_steps": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky22_prior_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky22_text": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky22_tokens": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "kandinsky22_zero_image": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_pixart": {
     "e2e_pixart-alpha-xl-1024": {
       "guidance": 4.5,
@@ -4566,11 +4736,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, and DPM-Solver++ for PixArt.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "7 passed (ideogram4-fp8)"
+    "reference_summary": "5 passed (kandinsky-2.2)"
   }
 }
