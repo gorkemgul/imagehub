@@ -145,8 +145,9 @@ def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
     )
 
 
-def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path):
-    spec = model_info("kandinsky-2.2")
+@pytest.mark.parametrize("model_id", ["kandinsky-2.2", "stable-cascade", "stable-cascade-lite"])
+def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, model_id):
+    spec = model_info(model_id)
     prior = spec.subfolders["prior"]
     repositories = {
         spec.repo_id: {name: f"decoder {name}".encode() for name in spec.files},
@@ -175,7 +176,7 @@ def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path):
         return io.BytesIO(contents[name])
 
     monkeypatch.setattr(download, "_open", request)
-    dest = download_pretrained(spec.id, tmp_path / "kandinsky")
+    dest = download_pretrained(spec.id, tmp_path / "snapshot")
     manifest = read_snapshot(dest)
     assert manifest["verified_revision"] is True
     assert set(manifest["files"]) == set(spec.files) | {f"prior/{name}" for name in prior.files}

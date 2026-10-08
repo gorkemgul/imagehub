@@ -1222,6 +1222,65 @@ _entries.append(
     )
 )
 
+_STABLE_CASCADE_REVISION = "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16"
+_STABLE_CASCADE_PRIOR_REVISION = "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91"
+
+for _model_id, _decoder, _prior in (
+    ("stable-cascade", "decoder", "prior"),
+    ("stable-cascade-lite", "decoder_lite", "prior_lite"),
+):
+    _entries.append(
+        ModelSpec(
+            id=_model_id,
+            task=Task.T2I,
+            family="stable_cascade",
+            source="https://huggingface.co/stabilityai/stable-cascade",
+            repo_id="stabilityai/stable-cascade",
+            revision=_STABLE_CASCADE_REVISION,
+            provenance="author",
+            catalog_id="wuerstchen",
+            format="diffusers",
+            license="stable-cascade-nc-community",
+            gated=False,
+            config={
+                "prior_component": _prior,
+                "decoder_component": _decoder,
+                "defaults": {
+                    "steps": 12,
+                    "guidance": 0.0,
+                    "prior_steps": 60,
+                    "prior_guidance": 4.0,
+                },
+            },
+            files=(
+                "model_index.json",
+                f"{_decoder}/config.json",
+                f"{_decoder}/diffusion_pytorch_model.safetensors",
+                "scheduler/scheduler_config.json",
+                "vqgan/config.json",
+                "vqgan/diffusion_pytorch_model.safetensors",
+            ),
+            subfolders={
+                "prior": SubRepo(
+                    repo_id="stabilityai/stable-cascade-prior",
+                    revision=_STABLE_CASCADE_PRIOR_REVISION,
+                    files=(
+                        "model_index.json",
+                        f"{_prior}/config.json",
+                        f"{_prior}/diffusion_pytorch_model.safetensors",
+                        "scheduler/scheduler_config.json",
+                        "text_encoder/config.json",
+                        "text_encoder/model.safetensors",
+                        "tokenizer/merges.txt",
+                        "tokenizer/special_tokens_map.json",
+                        "tokenizer/tokenizer_config.json",
+                        "tokenizer/vocab.json",
+                    ),
+                )
+            },
+        )
+    )
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

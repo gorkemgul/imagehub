@@ -45,6 +45,8 @@ def test_catalog_contents():
             "sdxl-lightning-8step",
             "sdxl-turbo",
             "ssd-1b",
+            "stable-cascade",
+            "stable-cascade-lite",
             "z-image",
             "z-image-turbo",
         )
@@ -564,6 +566,58 @@ def test_kandinsky22_catalog_entry():
             "prior_steps": 25,
             "prior_guidance": 4.0,
         }
+    }
+
+
+@pytest.mark.parametrize(
+    ("model_id", "decoder", "prior"),
+    [
+        ("stable-cascade", "decoder", "prior"),
+        ("stable-cascade-lite", "decoder_lite", "prior_lite"),
+    ],
+)
+def test_stable_cascade_catalog_entries(model_id, decoder, prior):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "stable_cascade"
+    assert spec.source == "https://huggingface.co/stabilityai/stable-cascade"
+    assert spec.repo_id == "stabilityai/stable-cascade"
+    assert spec.revision == "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16"
+    assert spec.files == (
+        "model_index.json",
+        f"{decoder}/config.json",
+        f"{decoder}/diffusion_pytorch_model.safetensors",
+        "scheduler/scheduler_config.json",
+        "vqgan/config.json",
+        "vqgan/diffusion_pytorch_model.safetensors",
+    )
+    assert spec.subfolders == {
+        "prior": SubRepo(
+            repo_id="stabilityai/stable-cascade-prior",
+            revision="7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+            files=(
+                "model_index.json",
+                f"{prior}/config.json",
+                f"{prior}/diffusion_pytorch_model.safetensors",
+                "scheduler/scheduler_config.json",
+                "text_encoder/config.json",
+                "text_encoder/model.safetensors",
+                "tokenizer/merges.txt",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/vocab.json",
+            ),
+        )
+    }
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "wuerstchen"
+    assert spec.format == "diffusers"
+    assert spec.license == "stable-cascade-nc-community"
+    assert not spec.gated
+    assert spec.config == {
+        "prior_component": prior,
+        "decoder_component": decoder,
+        "defaults": {"steps": 12, "guidance": 0.0, "prior_steps": 60, "prior_guidance": 4.0},
     }
 
 
