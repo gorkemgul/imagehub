@@ -687,3 +687,12 @@ def test_spec_validation():
                     "base_exclude": (base_exclude,),
                 }
             )
+
+
+def test_image_input_field():
+    base = MODEL_CATALOG["sdxl-base-1.0"]
+    assert all(spec.image_input is None for spec in MODEL_CATALOG.values())
+    for value in (None, "optional", "required"):
+        assert ModelSpec(**{**base.__dict__, "id": "x", "image_input": value}).image_input == value
+    with pytest.raises(ValueError, match="image_input"):
+        ModelSpec(**{**base.__dict__, "id": "x", "image_input": "sometimes"})

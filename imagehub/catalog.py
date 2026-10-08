@@ -71,6 +71,7 @@ class ModelSpec:
     base_exclude: tuple[str, ...] = ()
     overlay: Mapping[str, str] = field(default_factory=dict)
     subfolders: Mapping[str, SubRepo] = field(default_factory=dict)
+    image_input: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "config", MappingProxyType(dict(self.config)))
@@ -92,6 +93,8 @@ class ModelSpec:
             raise ValueError("revision must be a 40-character lowercase commit hash")
         if self.provenance not in PROVENANCES:
             raise ValueError(f"provenance must be one of {', '.join(PROVENANCES)}")
+        if self.image_input not in (None, "optional", "required"):
+            raise ValueError("image_input must be None, 'optional' or 'required'")
         if self.base is not None and not any(entry.id == self.base for entry in _entries):
             raise ValueError(f"base model {self.base!r} does not exist")
         if self.overlay and self.base is None:
