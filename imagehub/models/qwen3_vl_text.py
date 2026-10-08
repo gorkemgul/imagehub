@@ -34,6 +34,18 @@ QWEN3_VL_TEXT_DEFAULTS: dict[str, Any] = {
 }
 
 
+def _use_gqa_in_sdpa(attention_mask: Tensor | None, key: Tensor, value: Tensor) -> bool:
+    """Follow transformers: grouped heads go to SDPA directly when the host allows masked GQA.
+
+    The choice depends on the host, not on the tensors' device: with MPS available and torch
+    2.13 or newer, transformers passes masked attention with ``enable_gqa``. Expanding the
+    heads instead changes the CPU kernel's summation order.
+    """
+    if torch.backends.mps.is_available():
+        return tuple(int(part) for part in torch.__version__.split(".")[:2]) >= (2, 13)
+    return attention_mask is None and key.shape[-1] == value.shape[-1] <= 256
+
+
 class Qwen3VLTextRotaryEmbedding(nn.Module):
     inv_freq: Tensor
 
@@ -109,9 +121,15 @@ class Qwen3VLTextAttention(nn.Module):
             query_states, key_states, cos, sin
         )
 
+        # The pipelines call the text encoder with transformers' default ``use_cache=True``;
+        # the key-value cache stores keys and values as contiguous copies, and the SDPA kernel's
+        # summation order depends on that layout.
+        key_states = key_states.contiguous()
+        value_states = value_states.contiguous()
+
         sdpa_kwargs: dict[str, bool] = {}
         if self.num_key_value_groups > 1:
-            if attention_mask is None:
+            if _use_gqa_in_sdpa(attention_mask, key_states, value_states):
                 sdpa_kwargs = {"enable_gqa": True}
             else:
                 key_states = repeat_kv(key_states, self.num_key_value_groups)
@@ -192,11 +210,19 @@ class Qwen3VLTextModel(NativeModel):
             base ** (torch.arange(0, dim, 2, dtype=torch.float32) / dim)
         )
 
-    def forward(self, input_ids: Tensor, attention_mask: Tensor) -> tuple[Tensor, ...]:
+    def forward(
+        self,
+        input_ids: Tensor,
+        attention_mask: Tensor,
+        *,
+        position_ids: Tensor | None = None,
+        output_hidden_states: bool = True,
+    ) -> tuple[Tensor, ...]:
         """Return decoder hidden states, ending with the pre-norm state used by the pipeline."""
         hidden_states = self.embed_tokens(input_ids)
         positions = torch.arange(hidden_states.shape[1], device=hidden_states.device)
-        position_ids = positions.view(1, 1, -1).expand(3, hidden_states.shape[0], -1)
+        if position_ids is None:
+            position_ids = positions.view(1, 1, -1).expand(3, hidden_states.shape[0], -1)
         position_embeddings = self.rotary_emb(hidden_states, position_ids)
 
         causal_mask = None
@@ -204,8 +230,9 @@ class Qwen3VLTextModel(NativeModel):
             causal_mask = positions[:, None] >= positions[None, :]
             causal_mask = causal_mask[None, None] & attention_mask[:, None, None, :].bool()
 
-        all_hidden_states = [hidden_states]
+        all_hidden_states = [hidden_states] if output_hidden_states else []
         for layer in self.layers:
             hidden_states = layer(hidden_states, position_embeddings, causal_mask)
-            all_hidden_states.append(hidden_states)
-        return tuple(all_hidden_states)
+            if output_hidden_states:
+                all_hidden_states.append(hidden_states)
+        return tuple(all_hidden_states) if output_hidden_states else (hidden_states,)

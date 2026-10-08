@@ -877,6 +877,39 @@ for _id, _repo, _revision, _catalog_id, _max_length, _files in (
 
 _entries.append(
     ModelSpec(
+        id="krea2-turbo",
+        task=Task.T2I,
+        family="krea2",
+        source="https://huggingface.co/krea/Krea-2-Turbo",
+        repo_id="krea/Krea-2-Turbo",
+        revision="98e0fe118d17c9e3547fbb2e25acdbae2cadf7c7",
+        provenance="author",
+        catalog_id="krea-2",
+        format="diffusers",
+        license="Krea 2 Community License",
+        gated=True,
+        config={"defaults": {"steps": 8, "guidance": 0.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/chat_template.jinja",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="longcat-image",
         task=Task.T2I,
         family="longcat-image",

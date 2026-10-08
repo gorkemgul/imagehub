@@ -19,6 +19,7 @@ def test_catalog_contents():
             "hyper-sdxl-1step",
             "janus-pro-1b",
             "janus-pro-7b",
+            "krea2-turbo",
             "lcm-dreamshaper-v7",
             "longcat-image",
             "pixart-alpha-xl-1024",

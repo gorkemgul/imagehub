@@ -493,6 +493,47 @@ parity is against `clean_caption=False`, which diffusers uses when those package
 weights.
 
 
+# Krea 2
+
+Catalog: [`krea-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`krea2-turbo` · Task: `t2i`
+
+**Architecture.** A Qwen3-VL text model with 36 layers and width 2560 supplies the hidden states
+of 12 selected layers, stacked for a roughly 13B diffusion transformer with 28 blocks, 48 query
+heads and 12 key-value heads of width 128. The transformer uses 3-axis RoPE plus layerwise and
+refiner text blocks. A Qwen-Image VAE uses 16 latent channels, causal 3D convolutions and
+per-channel latent mean and standard deviation. The flow-match Euler scheduler uses exponential
+dynamic shifting. The native image size is 1024×1024.
+
+**Usage.** The repository is gated. Accept its terms and provide `HF_TOKEN` when downloading:
+
+```bash
+HF_TOKEN=... python -m imagehub.pretrained krea2-turbo checkpoints/krea2-turbo
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="krea2-turbo", model="checkpoints/krea2-turbo", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The model defaults to 8 steps, guidance 0.0 and 1024×1024; `width` and `height` must
+be multiples of 16. The other supported options are `negative_prompt`, `seed`, `latents` and
+`max_sequence_length`. Unrecognized settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices. The published
+bfloat16 weights are upcast for float32 parity.
+
+**Out of scope.** Krea 2 Raw, the single-file `turbo.safetensors` in the official codebase layout,
+LoRA and fp16/bf16 parity are not supported.
+
+**License.** The weights use the Krea 2 Community License; see the license. imagehub does not
+distribute weights.
+
+
 # LongCat-Image
 
 Catalog: [`longcat-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
