@@ -2797,6 +2797,144 @@
       }
     },
     {
+      "model_id": "sana-1600m-1024",
+      "repo_id": "Efficient-Large-Model/Sana_1600M_1024px_diffusers",
+      "revision": "ac0da2ff55fbe434795be0dce883042e4d49e2fc",
+      "provenance": "author",
+      "catalog_id": "sana",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "5692423f50e7908bec51264ad39e5a9b7566970600f6089a0a40759524f5569b",
+        "scheduler/scheduler_config.json": "70e8603120cc387316aa3bc7f08cb2872f6b6eb6eff6f25df1b88b6b76389e81",
+        "text_encoder/config.json": "3b45a277b19814724be26e4985dd24c5c3efb01bebe5139af77f99254101961a",
+        "text_encoder/model.safetensors.index.json": "92764588f700e36874c52f9f05bba143857e5069fc69b14450f907a1cdf879ed",
+        "text_encoder/model-00001-of-00002.safetensors": "e909230aabafad02d097c7dc02f2ae062b4e6b0593477c1f07679d277e09ce71",
+        "text_encoder/model-00002-of-00002.safetensors": "48e14f6b7a917e54cabc4ff2047ac2bfe0dae663e771eed3a8acf4ea27dcac18",
+        "tokenizer/special_tokens_map.json": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+        "tokenizer/tokenizer.json": "5f7eee611703c5ce5d1eee32d9cdcfe465647b8aff0c1dfb3bed7ad7dbb05060",
+        "tokenizer/tokenizer.model": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2",
+        "tokenizer/tokenizer_config.json": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+        "transformer/config.json": "41d305ca78eb33f4690573d73cee4d8a138efc8f51a410bad1d051907e1bc7f2",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "89a9c8fdea099ea5ead1f8d603a2adad59486fd50f04aa7f75b247c21842221e",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "6776aada02b84638b2ae44e5f5656458feb9ee6ad0781e492dfe424f390ace48",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "ad1ba9832e9d73ffe5349178152ec56f5b7cb579294ce70195d1834d2960ab85",
+        "vae/config.json": "4e5669aa03caa77615b73b21c9347c384cb11124a9590683e32a510df0176eb4",
+        "vae/diffusion_pytorch_model.safetensors": "15a4b09e56d95b768a0ec9da50b702e21d920333fc9b3480d66bb5c7fad9d87f"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 288,
+          "transformer": 396,
+          "vae": 375
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          1360,
+          768
+        ]
+      }
+    },
+    {
+      "model_id": "sana-600m-1024",
+      "repo_id": "Efficient-Large-Model/Sana_600M_1024px_diffusers",
+      "revision": "28f3af7689de15f3883d5863059a2fca0aa9b829",
+      "provenance": "author",
+      "catalog_id": "sana",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "5692423f50e7908bec51264ad39e5a9b7566970600f6089a0a40759524f5569b",
+        "scheduler/scheduler_config.json": "70e8603120cc387316aa3bc7f08cb2872f6b6eb6eff6f25df1b88b6b76389e81",
+        "text_encoder/config.json": "3b45a277b19814724be26e4985dd24c5c3efb01bebe5139af77f99254101961a",
+        "text_encoder/model.safetensors.index.json": "92764588f700e36874c52f9f05bba143857e5069fc69b14450f907a1cdf879ed",
+        "text_encoder/model-00001-of-00002.safetensors": "e909230aabafad02d097c7dc02f2ae062b4e6b0593477c1f07679d277e09ce71",
+        "text_encoder/model-00002-of-00002.safetensors": "48e14f6b7a917e54cabc4ff2047ac2bfe0dae663e771eed3a8acf4ea27dcac18",
+        "tokenizer/special_tokens_map.json": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+        "tokenizer/tokenizer.json": "5f7eee611703c5ce5d1eee32d9cdcfe465647b8aff0c1dfb3bed7ad7dbb05060",
+        "tokenizer/tokenizer.model": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2",
+        "tokenizer/tokenizer_config.json": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+        "transformer/config.json": "38916317861688918bee963c296ee0f9e939b6d2fd4f5e9f6908f2b9a9179fa6",
+        "transformer/diffusion_pytorch_model.safetensors": "f9db5116ca285dd8a431dc8ee5123a9b74177640f6559c6fea4047c6e8ff5089",
+        "vae/config.json": "4e5669aa03caa77615b73b21c9347c384cb11124a9590683e32a510df0176eb4",
+        "vae/diffusion_pytorch_model.safetensors": "15a4b09e56d95b768a0ec9da50b702e21d920333fc9b3480d66bb5c7fad9d87f"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 288,
+          "transformer": 548,
+          "vae": 375
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          1360,
+          768
+        ]
+      }
+    },
+    {
       "model_id": "krea2-turbo",
       "repo_id": "krea/Krea-2-Turbo",
       "revision": "98e0fe118d17c9e3547fbb2e25acdbae2cadf7c7",
@@ -5530,6 +5668,232 @@
       "seed": 42
     }
   },
+  "components_sana": {
+    "sana_600m_transformer": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        32,
+        8,
+        12
+      ]
+    },
+    "sana_published_autoencoder_decode": {
+      "decode_max_abs": 0.0
+    },
+    "sana_sana-1600m-1024_text_encoder_masks": {
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "sana_sana-1600m-1024_text_encoder_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-1600m-1024_text_encoder_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-1600m-1024_tokenizer": {
+      "cases": [
+        {
+          "ids_match": true,
+          "masks_match": true,
+          "max_length": 506
+        },
+        {
+          "ids_match": true,
+          "masks_match": true,
+          "max_length": 300
+        }
+      ],
+      "tolerance": "exact"
+    },
+    "sana_sana-1600m-1024_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-1600m-1024_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-600m-1024_text_encoder_masks": {
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "sana_sana-600m-1024_text_encoder_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-600m-1024_text_encoder_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-600m-1024_tokenizer": {
+      "cases": [
+        {
+          "ids_match": true,
+          "masks_match": true,
+          "max_length": 506
+        },
+        {
+          "ids_match": true,
+          "masks_match": true,
+          "max_length": 300
+        }
+      ],
+      "tolerance": "exact"
+    },
+    "sana_sana-600m-1024_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-600m-1024_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_tiny_1024_request": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        1024,
+        1024,
+        3
+      ]
+    },
+    "sana_tiny_autoencoder": {
+      "decode_max_abs": 0.0,
+      "encode_max_abs": 0.0
+    },
+    "sana_tiny_autoencoder_quadratic": {
+      "decode_max_abs": 0.0,
+      "encode_max_abs": 0.0
+    },
+    "sana_tiny_custom_instruction": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        544,
+        480,
+        3
+      ]
+    },
+    "sana_tiny_default": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        512,
+        512,
+        3
+      ]
+    },
+    "sana_tiny_guidance_1": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        512,
+        512,
+        3
+      ]
+    },
+    "sana_tiny_no_binning": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        256,
+        320,
+        3
+      ]
+    },
+    "sana_tiny_no_instruction": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        512,
+        512,
+        3
+      ]
+    },
+    "sana_tiny_non_square": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        400,
+        600,
+        3
+      ]
+    },
+    "sana_tiny_one_step": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        512,
+        512,
+        3
+      ]
+    },
+    "sana_tiny_portrait": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        500,
+        300,
+        3
+      ]
+    },
+    "sana_tiny_sample_size_32": {
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    "sana_tiny_seed_0": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        512,
+        512,
+        3
+      ]
+    },
+    "sana_tiny_seed_123456789": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        512,
+        512,
+        3
+      ]
+    },
+    "sana_tiny_transformer": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        6,
+        10
+      ]
+    }
+  },
   "components_longcat_image": {
     "longcat_image_e2e_latents": {
       "max_abs": 0.0,
@@ -5665,11 +6029,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (sd-v2-1)"
+    "reference_summary": "14 passed (sana-600m-1024, sana-1600m-1024)"
   }
 }

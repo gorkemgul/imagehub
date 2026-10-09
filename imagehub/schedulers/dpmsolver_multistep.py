@@ -1,4 +1,4 @@
-"""DPM-Solver++ multistep scheduler for the PixArt release configurations."""
+"""DPM-Solver++ multistep scheduler for the PixArt (epsilon) and Sana (flow) configurations."""
 
 from __future__ import annotations
 
@@ -38,11 +38,16 @@ DPMSOLVER_MULTISTEP_DEFAULTS: dict[str, Any] = {
     "use_dynamic_shifting": False,
     "time_shift_type": "exponential",
 }
-_REQUIRED = dict(DPMSOLVER_MULTISTEP_DEFAULTS)
+# Settings the two supported modes share; ``prediction_type``, ``use_flow_sigmas`` and
+# ``flow_shift`` are validated separately.
+_MODE_KEYS = frozenset({"prediction_type", "use_flow_sigmas", "flow_shift"})
+_REQUIRED = {
+    key: value for key, value in DPMSOLVER_MULTISTEP_DEFAULTS.items() if key not in _MODE_KEYS
+}
 
 
 class DPMSolverMultistepScheduler:
-    """Second-order DPM-Solver++ for the published PixArt configs."""
+    """Second-order DPM-Solver++: epsilon prediction (PixArt) or flow sigmas (Sana)."""
 
     init_noise_sigma = 1.0
 
@@ -60,6 +65,20 @@ class DPMSolverMultistepScheduler:
         for key, expected in _REQUIRED.items():
             if cfg[key] != expected:
                 raise ValueError(f"Unsupported DPM-Solver setting {key}={cfg[key]!r}")
+        self.use_flow_sigmas = cfg["use_flow_sigmas"]
+        if (cfg["prediction_type"], self.use_flow_sigmas) not in {
+            ("epsilon", False),
+            ("flow_prediction", True),
+        }:
+            raise ValueError(
+                "Unsupported DPM-Solver setting "
+                f"prediction_type={cfg['prediction_type']!r} with "
+                f"use_flow_sigmas={self.use_flow_sigmas!r}"
+            )
+        if not self.use_flow_sigmas and cfg["flow_shift"] != 1.0:
+            raise ValueError(f"Unsupported DPM-Solver setting flow_shift={cfg['flow_shift']!r}")
+        if self.use_flow_sigmas and not float(cfg["flow_shift"]) > 0.0:
+            raise ValueError(f"Unsupported DPM-Solver setting flow_shift={cfg['flow_shift']!r}")
         self.config = cfg
         count = cfg["num_train_timesteps"]
         self.betas = torch.linspace(cfg["beta_start"], cfg["beta_end"], count, dtype=torch.float32)
@@ -83,17 +102,31 @@ class DPMSolverMultistepScheduler:
         count = self.config["num_train_timesteps"]
         if type(num_inference_steps) is not int or not 0 < num_inference_steps <= count:
             raise ValueError(f"num_inference_steps must be an int in [1, {count}]")
-        timesteps = (
-            torch.linspace(0, count - 1, num_inference_steps + 1, dtype=torch.float64)
-            .round()
-            .flip(0)[:-1]
-            .to(torch.int64)
-        )
-        training_sigmas = ((1 - self.alphas_cumprod) / self.alphas_cumprod) ** 0.5
-        sigmas = training_sigmas[timesteps].tolist()
-        self.sigmas = torch.tensor(sigmas + [0.0], dtype=torch.float32)
-        self.timesteps = timesteps
-        self.num_inference_steps = len(timesteps)
+        if self.use_flow_sigmas:
+            # NumPy's linspace (float64): arange * step + start, with the endpoint pinned.
+            stop = 1.0 / count
+            step = (stop - 1.0) / num_inference_steps
+            alphas = [index * step + 1.0 for index in range(num_inference_steps)] + [stop]
+            shift = float(self.config["flow_shift"])
+            base = [1.0 - alpha for alpha in alphas]
+            shifted = [shift * sigma / (1 + (shift - 1) * sigma) for sigma in base]
+            flow_sigmas = shifted[::-1][:-1]
+            self.sigmas = torch.tensor(flow_sigmas + [0.0], dtype=torch.float32)
+            self.timesteps = torch.tensor(
+                [sigma * count for sigma in flow_sigmas], dtype=torch.float64
+            ).to(torch.int64)
+        else:
+            timesteps = (
+                torch.linspace(0, count - 1, num_inference_steps + 1, dtype=torch.float64)
+                .round()
+                .flip(0)[:-1]
+                .to(torch.int64)
+            )
+            training_sigmas = ((1 - self.alphas_cumprod) / self.alphas_cumprod) ** 0.5
+            sigmas = training_sigmas[timesteps].tolist()
+            self.sigmas = torch.tensor(sigmas + [0.0], dtype=torch.float32)
+            self.timesteps = timesteps
+        self.num_inference_steps = len(self.timesteps)
         self.model_outputs = [None] * self.config["solver_order"]
         self.lower_order_nums = 0
         self._step_index = None
@@ -111,8 +144,9 @@ class DPMSolverMultistepScheduler:
             timestep = timestep.to(self.timesteps.device)
         self._step_index = self.index_for_timestep(timestep)
 
-    @staticmethod
-    def _sigma_to_alpha_sigma_t(sigma: Tensor) -> tuple[Tensor, Tensor]:
+    def _sigma_to_alpha_sigma_t(self, sigma: Tensor) -> tuple[Tensor, Tensor]:
+        if self.use_flow_sigmas:
+            return 1 - sigma, sigma
         alpha_t = 1 / ((sigma**2 + 1) ** 0.5)
         sigma_t = sigma * alpha_t
         return alpha_t, sigma_t
@@ -120,6 +154,8 @@ class DPMSolverMultistepScheduler:
     def _convert_model_output(self, model_output: Tensor, sample: Tensor) -> Tensor:
         assert self.step_index is not None
         sigma = self.sigmas[self.step_index]
+        if self.config["prediction_type"] == "flow_prediction":
+            return sample - sigma * model_output
         alpha_t, sigma_t = self._sigma_to_alpha_sigma_t(sigma)
         return (sample - sigma_t * model_output) / alpha_t
 

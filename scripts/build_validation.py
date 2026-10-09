@@ -2,10 +2,11 @@
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
 measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
-PixArt, LongCat-Image, CogView4 and Ideogram 4 measurements are grouped in flat
+PixArt, Sana, LongCat-Image, CogView4 and Ideogram 4 measurements are grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
 ``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
-``components_stable_cascade``, ``components_pixart``, ``components_longcat_image``,
+``components_stable_cascade``, ``components_pixart``, ``components_sana``,
+``components_longcat_image``,
 ``components_cogview4`` and ``components_ideogram4`` mappings: the base model keeps its historical
 unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
 own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
@@ -46,7 +47,7 @@ LIMITS = [
     "schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match "
     "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
     "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and "
-    "DPM-Solver++ for PixArt.",
+    "DPM-Solver++ for PixArt and Sana (flow sigmas).",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -313,6 +314,9 @@ def main() -> None:
             )
         },
         "components_pixart": {key: value for key, value in measured.items() if "pixart" in key},
+        "components_sana": {
+            key: value for key, value in measured.items() if key.startswith("sana_")
+        },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")
         },

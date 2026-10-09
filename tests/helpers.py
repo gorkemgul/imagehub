@@ -1294,3 +1294,206 @@ def write_tiny_janus(directory: str | os.PathLike[str], *, seed: int = 0) -> Pat
     state["model.vqmodel.quant_conv.placeholder"] = torch.zeros(1)
     save_safetensors(state, root / "model.safetensors")
     return root
+
+
+SANA_FIXTURES = Path(__file__).parent / "fixtures" / "sana_configs"
+TINY_GEMMA_MERGES = (
+    ("t", "h"),
+    ("th", "e"),
+    ("▁", "a"),
+    ("▁a", "n"),
+    ("▁", "th"),
+    ("e", "r"),
+    ("i", "n"),
+    ("▁", "c"),
+    ("▁c", "a"),
+    ("▁ca", "t"),
+)
+TINY_GEMMA_CONFIG = {
+    "architectures": ["Gemma2Model"],
+    "model_type": "gemma2",
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 4,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "head_dim": 8,
+    "max_position_embeddings": 4096,
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 10000.0,
+    "attn_logit_softcapping": 50.0,
+    "final_logit_softcapping": 30.0,
+    "query_pre_attn_scalar": 8,
+    "sliding_window": 16,
+    "hidden_activation": "gelu_pytorch_tanh",
+    "pad_token_id": 0,
+    "bos_token_id": 2,
+    "eos_token_id": 1,
+}
+TINY_SANA_TRANSFORMER = {
+    "_class_name": "SanaTransformer2DModel",
+    "num_attention_heads": 2,
+    "attention_head_dim": 8,
+    "num_layers": 2,
+    "num_cross_attention_heads": 2,
+    "cross_attention_head_dim": 8,
+    "cross_attention_dim": 16,
+    "caption_channels": 32,
+    "in_channels": 8,
+    "out_channels": 8,
+    "patch_size": 1,
+    "mlp_ratio": 2.5,
+    "sample_size": 16,
+}
+TINY_SANA_VAE = json.loads(
+    (SANA_FIXTURES / "1600m" / "vae_config.json").read_text(encoding="utf-8")
+) | {
+    "latent_channels": 8,
+    "attention_head_dim": 8,
+    "encoder_block_out_channels": [8, 8, 16, 16, 16, 16],
+    "decoder_block_out_channels": [8, 8, 16, 16, 16, 16],
+    "encoder_layers_per_block": [1, 1, 1, 1, 1, 1],
+    "decoder_layers_per_block": [1, 1, 1, 1, 1, 1],
+}
+
+
+def write_tiny_gemma_tokenizer(directory: str | os.PathLike[str]) -> Path:
+    """A small BPE tokenizer with byte fallback in the layout of the published Gemma files."""
+    path = Path(directory)
+    path.mkdir(parents=True, exist_ok=True)
+    specials = ["<pad>", "<eos>", "<bos>", "<unk>"]
+    symbols = ["▁", *"abcdefghijklmnopqrstuvwxyz", ",", ".", "-", ":"]
+    symbols += [a + b for a, b in TINY_GEMMA_MERGES]
+    vocab = {token: index for index, token in enumerate([*specials, *symbols])}
+    for byte in range(256):
+        vocab[f"<0x{byte:02X}>"] = len(vocab)
+    added = [
+        {
+            "id": vocab[token],
+            "content": token,
+            "single_word": False,
+            "lstrip": False,
+            "rstrip": False,
+            "normalized": False,
+            "special": True,
+        }
+        for token in specials
+    ]
+    bos = {"id": "<bos>", "ids": [2], "tokens": ["<bos>"]}
+    data = {
+        "version": "1.0",
+        "truncation": None,
+        "padding": None,
+        "added_tokens": added,
+        "normalizer": {"type": "Replace", "pattern": {"String": " "}, "content": "▁"},
+        "pre_tokenizer": None,
+        "post_processor": {
+            "type": "TemplateProcessing",
+            "single": [
+                {"SpecialToken": {"id": "<bos>", "type_id": 0}},
+                {"Sequence": {"id": "A", "type_id": 0}},
+            ],
+            "pair": [
+                {"SpecialToken": {"id": "<bos>", "type_id": 0}},
+                {"Sequence": {"id": "A", "type_id": 0}},
+                {"SpecialToken": {"id": "<bos>", "type_id": 1}},
+                {"Sequence": {"id": "B", "type_id": 1}},
+            ],
+            "special_tokens": {"<bos>": bos},
+        },
+        "decoder": {
+            "type": "Sequence",
+            "decoders": [
+                {"type": "Replace", "pattern": {"String": "▁"}, "content": " "},
+                {"type": "ByteFallback"},
+                {"type": "Fuse"},
+            ],
+        },
+        "model": {
+            "type": "BPE",
+            "dropout": None,
+            "unk_token": "<unk>",
+            "continuing_subword_prefix": None,
+            "end_of_word_suffix": None,
+            "fuse_unk": True,
+            "byte_fallback": True,
+            "ignore_merges": False,
+            "vocab": vocab,
+            "merges": [list(pair) for pair in TINY_GEMMA_MERGES],
+        },
+    }
+    (path / "tokenizer.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    config = {
+        "add_bos_token": True,
+        "add_eos_token": False,
+        "bos_token": "<bos>",
+        "eos_token": "<eos>",
+        "pad_token": "<pad>",
+        "unk_token": "<unk>",
+        "clean_up_tokenization_spaces": False,
+        "model_max_length": 1000000,
+        "tokenizer_class": "GemmaTokenizer",
+        "use_default_system_prompt": False,
+    }
+    (path / "tokenizer_config.json").write_text(json.dumps(config), encoding="utf-8")
+    special = {
+        "bos_token": "<bos>",
+        "eos_token": "<eos>",
+        "pad_token": "<pad>",
+        "unk_token": "<unk>",
+    }
+    (path / "special_tokens_map.json").write_text(json.dumps(special), encoding="utf-8")
+    return path
+
+
+def write_tiny_sana(
+    directory: str | os.PathLike[str],
+    *,
+    seed: int = 0,
+    scheduler: dict | None = None,
+    sample_size: int = 16,
+) -> Path:
+    """A random-weight Sana snapshot in the published diffusers layout (diffusers loads it)."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_dc import AutoencoderDC
+    from imagehub.models.gemma2 import Gemma2Model
+    from imagehub.models.sana_transformer import SanaTransformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    vocab_size = len(
+        json.loads(
+            write_tiny_gemma_tokenizer(root / "tokenizer").joinpath("tokenizer.json").read_text()
+        )["model"]["vocab"]
+    )
+    (root / "scheduler").mkdir()
+    scheduler_config = scheduler or json.loads(
+        (SANA_FIXTURES / "1600m" / "scheduler_scheduler_config.json").read_text(encoding="utf-8")
+    )
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(scheduler_config))
+    (root / "model_index.json").write_text(
+        (SANA_FIXTURES / "1600m" / "model_index.json").read_text(encoding="utf-8")
+    )
+    for name, cls, config, weights in (
+        (
+            "text_encoder",
+            Gemma2Model,
+            TINY_GEMMA_CONFIG | {"vocab_size": vocab_size},
+            "model.safetensors",
+        ),
+        (
+            "transformer",
+            SanaTransformer2DModel,
+            TINY_SANA_TRANSFORMER | {"sample_size": sample_size},
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderDC, TINY_SANA_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.1)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
