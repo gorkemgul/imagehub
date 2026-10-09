@@ -23,6 +23,7 @@ def test_catalog_contents():
             "janus-pro-1b",
             "janus-pro-7b",
             "kandinsky-2.2",
+            "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
             "longcat-image",
@@ -637,6 +638,40 @@ def test_sana_catalog_entries(model_id, repo, revision, transformer):
         *transformer,
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
+def test_kolors_catalog_entry():
+    spec = model_info("kolors")
+    assert spec.task is Task.T2I
+    assert spec.family == "kolors"
+    assert spec.source == "https://huggingface.co/Kwai-Kolors/Kolors-diffusers"
+    assert spec.repo_id == "Kwai-Kolors/Kolors-diffusers"
+    assert spec.revision == "7e091c75199e910a26cd1b51ed52c28de5db3711"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "kolors"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 50, "guidance": 5.0, "width": 1024, "height": 1024}
+    }
+    # Only float16 weights are published, so the variant file names are listed.
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.fp16.json",
+        "text_encoder/model.fp16-00001-of-00003.safetensors",
+        "text_encoder/model.fp16-00002-of-00003.safetensors",
+        "text_encoder/model.fp16-00003-of-00003.safetensors",
+        "tokenizer/tokenizer.model",
+        "tokenizer/tokenizer_config.json",
+        "tokenizer/vocab.txt",
+        "unet/config.json",
+        "unet/diffusion_pytorch_model.fp16.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.fp16.safetensors",
     )
 
 

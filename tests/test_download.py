@@ -145,8 +145,8 @@ def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
     )
 
 
-@pytest.mark.parametrize("model_id", ["sana-1600m-1024", "sana-600m-1024"])
-def test_downloads_sana_snapshot_pinned_to_its_revision(monkeypatch, tmp_path, model_id):
+@pytest.mark.parametrize("model_id", ["sana-1600m-1024", "sana-600m-1024", "kolors"])
+def test_downloads_pinned_snapshot_of_single_repository_models(monkeypatch, tmp_path, model_id):
     spec = model_info(model_id)
     contents = {name: f"content of {name}".encode() for name in spec.files}
 

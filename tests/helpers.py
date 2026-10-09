@@ -424,6 +424,118 @@ def write_tiny_sdxl(
     return root
 
 
+TINY_CHATGLM = {
+    "_name_or_path": "tiny",
+    "architectures": ["ChatGLMModel"],
+    "model_type": "chatglm",
+    "num_layers": 3,
+    "padded_vocab_size": 320,
+    "hidden_size": 64,
+    "ffn_hidden_size": 96,
+    "kv_channels": 16,
+    "num_attention_heads": 4,
+    "seq_length": 512,
+    "layernorm_epsilon": 1e-5,
+    "rmsnorm": True,
+    "add_bias_linear": False,
+    "add_qkv_bias": True,
+    "multi_query_attention": True,
+    "multi_query_group_num": 2,
+    "original_rope": True,
+    "post_layer_norm": True,
+    "pad_token_id": 0,
+    "eos_token_id": 2,
+}
+KOLORS_SCHEDULER = {
+    "_class_name": "EulerDiscreteScheduler",
+    "beta_schedule": "scaled_linear",
+    "beta_start": 0.00085,
+    "beta_end": 0.014,
+    "clip_sample": False,
+    "interpolation_type": "linear",
+    "num_train_timesteps": 1100,
+    "prediction_type": "epsilon",
+    "set_alpha_to_one": False,
+    "skip_prk_steps": True,
+    "steps_offset": 1,
+    "timestep_spacing": "leading",
+    "trained_betas": None,
+    "use_karras_sigmas": False,
+}
+
+
+def write_tiny_kolors(
+    directory: str | os.PathLike[str], *, seed: int = 0, sample_size: int = 32
+) -> Path:
+    """A random-weight Kolors snapshot in the published layout (float16 variant file names)."""
+    from test_tokenization_chatglm import write_model
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.chatglm import ChatGLMModel
+    from imagehub.models.unet_2d import UNet2DConditionModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    (root / "tokenizer").mkdir()
+    write_model(root / "tokenizer" / "tokenizer.model")
+    (root / "tokenizer" / "tokenizer_config.json").write_text(
+        (FIXTURES / "kolors_configs" / "tokenizer_tokenizer_config.json").read_text()
+    )
+    (root / "tokenizer" / "vocab.txt").write_text("")
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(KOLORS_SCHEDULER))
+    (root / "model_index.json").write_text(
+        (FIXTURES / "kolors_configs" / "model_index.json").read_text()
+    )
+    unet = {
+        "_class_name": "UNet2DConditionModel",
+        "in_channels": 4,
+        "out_channels": 4,
+        "block_out_channels": [32, 64, 64],
+        "down_block_types": ["DownBlock2D", "CrossAttnDownBlock2D", "CrossAttnDownBlock2D"],
+        "up_block_types": ["CrossAttnUpBlock2D", "CrossAttnUpBlock2D", "UpBlock2D"],
+        "transformer_layers_per_block": [1, 1, 1],
+        "attention_head_dim": [2, 4, 4],
+        "cross_attention_dim": 32,
+        "encoder_hid_dim": 64,
+        "encoder_hid_dim_type": "text_proj",
+        "use_linear_projection": True,
+        "addition_embed_type": "text_time",
+        "addition_time_embed_dim": 8,
+        "projection_class_embeddings_input_dim": 112,
+        "layers_per_block": 1,
+        "norm_num_groups": 8,
+        "sample_size": sample_size,
+    }
+    vae = TINY_VAE_FILE_CONFIG | {"scaling_factor": 0.13025}
+    for name, cls, config in (
+        ("text_encoder", ChatGLMModel, TINY_CHATGLM),
+        ("unet", UNet2DConditionModel, unet),
+        ("vae", AutoencoderKL, vae),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = {key: value.half() for key, value in model.state_dict().items()}
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        if name != "text_encoder":
+            save_safetensors(state, root / name / "diffusion_pytorch_model.fp16.safetensors")
+            continue
+        shards = [{key: state[key] for key in list(state)[index::3]} for index in range(3)]
+        weight_map = {}
+        for index, shard in enumerate(shards, start=1):
+            file = f"model.fp16-0000{index}-of-00003.safetensors"
+            save_safetensors(shard, root / name / file)
+            weight_map |= dict.fromkeys(shard, file)
+        (root / name / "model.safetensors.index.fp16.json").write_text(
+            json.dumps({"metadata": {"total_size": 0}, "weight_map": weight_map})
+        )
+    return root
+
+
 TINY_Z_IMAGE_TEXT = {
     "vocab_size": 34,
     "hidden_size": 32,

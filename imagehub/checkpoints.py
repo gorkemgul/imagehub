@@ -40,12 +40,16 @@ WEIGHT_FILES = (
     "model.pt",
     "pytorch_model.bin",
     "diffusion_pytorch_model.bin",
+    "model.fp16.safetensors",
+    "diffusion_pytorch_model.fp16.safetensors",
 )
 _INDEX_FILES = (
     "model.safetensors.index.json",
     "diffusion_pytorch_model.safetensors.index.json",
     "pytorch_model.bin.index.json",
     "diffusion_pytorch_model.bin.index.json",
+    "model.safetensors.index.fp16.json",
+    "diffusion_pytorch_model.safetensors.index.fp16.json",
 )
 
 
