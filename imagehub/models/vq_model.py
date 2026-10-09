@@ -187,22 +187,31 @@ class DecoderBlock(nn.Module):
         latent_channels: int,
         up: bool,
         attention: bool,
+        *,
+        spatial: bool = True,
+        groups: int = 32,
     ) -> None:
         super().__init__()
+        self.spatial = spatial
         self.resnets = nn.ModuleList(
             SpatialResnetBlock(in_ch if i == 0 else out_ch, out_ch, latent_channels)
+            if spatial
+            else ResnetBlock(
+                in_ch if i == 0 else out_ch, out_ch, temb_channels=None, eps=_EPS, groups=groups
+            )
             for i in range(layers)
         )
+        attention_latents = latent_channels if spatial else None
         self.attentions = (
-            nn.ModuleList(VQAttention(out_ch, 32, latent_channels) for _ in range(layers))
+            nn.ModuleList(VQAttention(out_ch, groups, attention_latents) for _ in range(layers))
             if attention
             else None
         )
         self.upsamplers = nn.ModuleList([Upsample(out_ch)]) if up else None
 
-    def forward(self, x: Tensor, latents: Tensor) -> Tensor:
+    def forward(self, x: Tensor, latents: Tensor | None) -> Tensor:
         for i, resnet in enumerate(self.resnets):
-            x = resnet(x, latents)
+            x = resnet(x, latents) if self.spatial else resnet(x)
             if self.attentions is not None:
                 x = self.attentions[i](x, latents)
         if self.upsamplers is not None:
@@ -213,13 +222,16 @@ class DecoderBlock(nn.Module):
 class Decoder(nn.Module):
     def __init__(self, cfg: Mapping[str, Any]) -> None:
         super().__init__()
+        spatial = cfg["norm_type"] == "spatial"
         channels = cfg["block_out_channels"]
         groups = cfg["norm_num_groups"]
         layers = cfg["layers_per_block"]
         latent = cfg["latent_channels"]
         reverse = list(reversed(channels))
         self.conv_in = nn.Conv2d(latent, reverse[0], 3, padding=1)
-        self.mid_block = VQMidBlock(reverse[0], groups, cfg["mid_block_add_attention"], latent)
+        self.mid_block = VQMidBlock(
+            reverse[0], groups, cfg["mid_block_add_attention"], latent if spatial else None
+        )
         self.up_blocks = nn.ModuleList(
             DecoderBlock(
                 reverse[max(i - 1, 0)],
@@ -228,17 +240,27 @@ class Decoder(nn.Module):
                 latent,
                 up=i < len(reverse) - 1,
                 attention=cfg["up_block_types"][i] == "AttnUpDecoderBlock2D",
+                spatial=spatial,
+                groups=groups,
             )
             for i in range(len(reverse))
         )
-        self.conv_norm_out = SpatialNorm(channels[0], latent)
+        self.conv_norm_out: SpatialNorm | nn.GroupNorm = (
+            SpatialNorm(channels[0], latent)
+            if spatial
+            else nn.GroupNorm(groups, channels[0], eps=_EPS)
+        )
         self.conv_out = nn.Conv2d(channels[0], cfg["out_channels"], 3, padding=1)
 
-    def forward(self, x: Tensor, latents: Tensor) -> Tensor:
-        x = self.mid_block(self.conv_in(x), latents)
+    def forward(self, x: Tensor, latents: Tensor | None = None) -> Tensor:
+        x = self.conv_in(x)
+        x = self.mid_block(x, latents)
         for block in self.up_blocks:
             x = block(x, latents)
-        return self.conv_out(F.silu(self.conv_norm_out(x, latents)))
+        if isinstance(self.conv_norm_out, SpatialNorm):
+            assert latents is not None
+            return self.conv_out(F.silu(self.conv_norm_out(x, latents)))
+        return self.conv_out(F.silu(self.conv_norm_out(x)))
 
 
 class VectorQuantizer(nn.Module):
@@ -246,6 +268,12 @@ class VectorQuantizer(nn.Module):
         super().__init__()
         self.embedding = nn.Embedding(embeddings, dimension)
         self.embedding.weight.data.uniform_(-1.0 / embeddings, 1.0 / embeddings)
+
+    def get_codebook_entry(self, indices: Tensor, shape: tuple[int, ...] | None) -> Tensor:
+        quantized = self.embedding(indices)
+        if shape is not None:
+            quantized = quantized.view(shape).permute(0, 3, 1, 2).contiguous()
+        return quantized
 
     def forward(self, latents: Tensor) -> Tensor:
         moved = latents.permute(0, 2, 3, 1).contiguous()
@@ -265,7 +293,7 @@ class VQModel(NativeModel):
             raise ValueError(f"Unsupported VQ setting {unknown[0]}")
         super().__init__(VQ_DEFAULTS | dict(config))
         cfg = self.config
-        if cfg["norm_type"] != "spatial":
+        if cfg["norm_type"] not in ("spatial", "group"):
             raise ValueError(f"Unsupported VQ setting norm_type={cfg['norm_type']!r}")
         if cfg["act_fn"] != "silu":
             raise ValueError(f"Unsupported VQ setting act_fn={cfg['act_fn']!r}")
@@ -284,6 +312,20 @@ class VQModel(NativeModel):
     def encode(self, image: Tensor) -> Tensor:
         return self.quant_conv(self.encoder(image))
 
-    def decode(self, latents: Tensor, *, force_not_quantize: bool = False) -> Tensor:
-        quantized = latents if force_not_quantize else self.quantize(latents)
-        return self.decoder(self.post_quant_conv(quantized), quantized)
+    def decode(
+        self,
+        latents: Tensor,
+        *,
+        force_not_quantize: bool = False,
+        shape: tuple[int, ...] | None = None,
+    ) -> Tensor:
+        """Decode quantized latents; with ``force_not_quantize`` and ``lookup_from_codebook``
+        the input is codebook indices and ``shape`` is (batch, height, width, channels)."""
+        if not force_not_quantize:
+            quantized = self.quantize(latents)
+        elif self.config["lookup_from_codebook"]:
+            quantized = self.quantize.get_codebook_entry(latents, shape)
+        else:
+            quantized = latents
+        spatial = self.config["norm_type"] == "spatial"
+        return self.decoder(self.post_quant_conv(quantized), quantized if spatial else None)

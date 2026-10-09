@@ -1693,6 +1693,103 @@ def write_tiny_lumina2(directory: str | os.PathLike[str], *, seed: int = 0) -> P
     return root
 
 
+AMUSED_FIXTURES = Path(__file__).parent / "fixtures" / "amused_configs"
+TINY_AMUSED_TRANSFORMER = {
+    "_class_name": "UVit2DModel",
+    "hidden_size": 32,
+    "cond_embed_dim": 24,
+    "micro_cond_encode_dim": 8,
+    "micro_cond_embed_dim": 40,
+    "encoder_hidden_size": 32,
+    "vocab_size": 24,
+    "codebook_size": 20,
+    "in_channels": 16,
+    "block_out_channels": 16,
+    "num_res_blocks": 2,
+    "downsample": False,
+    "upsample": False,
+    "block_num_heads": 2,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 4,
+    "intermediate_size": 48,
+    "sample_size": 2,
+}
+TINY_AMUSED_VQVAE = {
+    "_class_name": "VQModel",
+    "act_fn": "silu",
+    "block_out_channels": [16, 16, 16, 32, 32],
+    "down_block_types": ["DownEncoderBlock2D"] * 5,
+    "in_channels": 3,
+    "latent_channels": 8,
+    "layers_per_block": 1,
+    "lookup_from_codebook": True,
+    "mid_block_add_attention": False,
+    "norm_num_groups": 8,
+    "norm_type": "group",
+    "num_vq_embeddings": 20,
+    "out_channels": 3,
+    "sample_size": 32,
+    "scaling_factor": 0.18215,
+    "up_block_types": ["UpDecoderBlock2D"] * 5,
+    "vq_embed_dim": None,
+    "force_upcast": True,
+}
+
+
+def write_tiny_amused(
+    directory: str | os.PathLike[str], *, seed: int = 0, downsample: bool = False
+) -> Path:
+    """A random-weight aMUSEd snapshot in the published diffusers layout (diffusers loads it).
+
+    With ``downsample`` the transformer halves and re-doubles its token grid, as the 512 model does.
+    """
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.clip_text import CLIPTextModelWithProjection
+    from imagehub.models.uvit_2d import UVit2DModel
+    from imagehub.models.vq_model import VQModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_tokenizer(root / "tokenizer", pad_token="!")
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        json.dumps(
+            json.loads(
+                (AMUSED_FIXTURES / "256" / "scheduler_scheduler_config.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            | {"mask_token_id": 23}
+        )
+    )
+    (root / "model_index.json").write_text(
+        (AMUSED_FIXTURES / "256" / "model_index.json").read_text(encoding="utf-8")
+    )
+    text = TINY_TEXT_FILE_CONFIG | {
+        "architectures": ["CLIPTextModelWithProjection"],
+        "projection_dim": 24,
+    }
+    transformer = TINY_AMUSED_TRANSFORMER | (
+        {"downsample": True, "upsample": True} if downsample else {}
+    )
+    for name, cls, config, weights, std in (
+        ("text_encoder", CLIPTextModelWithProjection, text, "model.safetensors", 0.1),
+        ("transformer", UVit2DModel, transformer, "diffusion_pytorch_model.safetensors", 0.4),
+        ("vqvae", VQModel, TINY_AMUSED_VQVAE, "diffusion_pytorch_model.safetensors", 0.1),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, std)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
 AURAFLOW_FIXTURES = Path(__file__).parent / "fixtures" / "auraflow_configs"
 TINY_AURAFLOW_MERGES = (
     ("▁", "a"),

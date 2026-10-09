@@ -2543,70 +2543,6 @@
       }
     },
     {
-      "model_id": "flux1-krea-dev",
-      "repo_id": "black-forest-labs/FLUX.1-Krea-dev",
-      "revision": "8162a9c7b05a641be098422bf2fcf335615c2f28",
-      "provenance": "author",
-      "catalog_id": "flux-1",
-      "license": "FLUX.1-dev Non-Commercial License",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "24946df21ff25e210486b5f6b14208983a90c9c73f8d48cfa724c0e4e03f7201",
-        "scheduler/scheduler_config.json": "63b6d2fa93579e383a308009bfd5ae12e61f8950017dd749302f8d54bb3520b6",
-        "text_encoder/config.json": "d79d5c8c6ce85112a923d621a5412886ddbbb0636210fc0f72f450582e675542",
-        "text_encoder/model.safetensors": "893d67a23f4693ed42cdab4cbad7fe3e727cf59609c40da28a46b5470f9ed082",
-        "text_encoder_2/config.json": "9001e5a8ae0571a362f806b87b6105dd1a15c33dca237b606d2561164109beeb",
-        "text_encoder_2/model.safetensors.index.json": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a",
-        "text_encoder_2/model-00001-of-00002.safetensors": "ec87bffd1923e8b2774a6d240c922a41f6143081d52cf83b8fe39e9d838c893e",
-        "text_encoder_2/model-00002-of-00002.safetensors": "a5640855b301fcdbceddfa90ae8066cd9414aff020552a201a255ecf2059da00",
-        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
-        "tokenizer/special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
-        "tokenizer/tokenizer_config.json": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881",
-        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
-        "tokenizer_2/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
-        "tokenizer_2/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
-        "tokenizer_2/tokenizer.json": "f5dfec163765e18e270537fe896c49f5fad74db1525641d9b255a3008b999596",
-        "tokenizer_2/tokenizer_config.json": "1a3d2db64215ed77854dd4208aac5f8361c1b5471cabd19c0ef1472d1a895eb0",
-        "transformer/config.json": "a8d4ca92dc64ca8116c370ab91339e18a723ab950c18de513d09c3922df7a2d1",
-        "transformer/diffusion_pytorch_model.safetensors.index.json": "780ee2abafdd8abcb64d97be0154f1481f51e3cce1899fbad98723e4fb6c15e0",
-        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors": "1b2170ac37156d4cf91909eb6834bb8adac84bc1fce8098a29cfb03738df84ad",
-        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors": "8bba639227043a606468225c37d7b6956919d38b458b1431d40300854747c127",
-        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors": "ff5df9187e0816f397b42113e563773ec0f41b1345c7235c0d4712f389031b3b",
-        "vae/config.json": "ad6f0acb584ceb3d136d1e32b684dec65db24bffe9223df2bac0b45539d4e6b5",
-        "vae/diffusion_pytorch_model.safetensors": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
-      },
-      "tensor_header_check": {
-        "missing": [],
-        "extra": [],
-        "mismatch": [],
-        "tensors": {
-          "text_encoder": 196,
-          "text_encoder_2": 219,
-          "transformer": 1160,
-          "vae": 244
-        }
-      },
-      "end_to_end": {
-        "max_pixel_diff": 0,
-        "passed": true,
-        "steps": 4
-      },
-      "seed_end_to_end": {
-        "max_pixel_diff": 0,
-        "passed": true,
-        "seed": 42,
-        "steps": 4
-      }
-    },
-    {
       "model_id": "flux1-kontext-dev",
       "repo_id": "black-forest-labs/FLUX.1-Kontext-dev",
       "revision": "24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
@@ -3134,6 +3070,132 @@
         "size": [
           1360,
           768
+        ]
+      }
+    },
+    {
+      "model_id": "amused-256",
+      "repo_id": "amused/amused-256",
+      "revision": "09b6259bf96dbe6d70a852b70812420fe02df55e",
+      "provenance": "author",
+      "catalog_id": "amused",
+      "license": "OpenRAIL++",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "83e1100c6ee72a023b5adce33d9d3514819fa69c2751d1463eec77f3cbc2cf35",
+        "scheduler/scheduler_config.json": "b72446a3510d2b342fab32e3496f228548843805ed1bfb319df4962e9d80bdff",
+        "text_encoder/config.json": "55c0f3a62baaf5bb56b8839049526a640002557fa22e0e0fec606bd5b56ba567",
+        "text_encoder/model.safetensors": "dae0eabbb1fd83756ed9dd893c17ff2f6825c98555a1e1b96154e2df0739b9e2",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "c2d0fb8b86ad86b1f46134d4a5f93fd1e688c932a78efc8d149087c33a53ad06",
+        "tokenizer/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "transformer/config.json": "8fd0d22d032db3bacfc270f9101fda9d45b8f1d5fa4dc9cddd183f0f5be0ea92",
+        "transformer/diffusion_pytorch_model.safetensors": "9cc8627bf729474c628762c22668a3e0aaf9fef347480bb23937a98828e0936c",
+        "vqvae/config.json": "b063b798b8233405fed3844538db899100b6d018aff0d670b66e192ed1e5e9d5",
+        "vqvae/diffusion_pytorch_model.safetensors": "1241a5c88b635af4f8cfb268e388ccaa70f55a458a473d68943e5c28d7b7f762"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 197,
+          "transformer": 474,
+          "vqvae": 277
+        }
+      },
+      "end_to_end": {
+        "guidance": 10.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          256,
+          256
+        ],
+        "steps": 12,
+        "tokens_equal": true
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          320,
+          192
+        ]
+      }
+    },
+    {
+      "model_id": "amused-512",
+      "repo_id": "amused/amused-512",
+      "revision": "6f3f309ba188a08e347bff9691a0ac791817ca97",
+      "provenance": "author",
+      "catalog_id": "amused",
+      "license": "OpenRAIL++",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "83e1100c6ee72a023b5adce33d9d3514819fa69c2751d1463eec77f3cbc2cf35",
+        "scheduler/scheduler_config.json": "b72446a3510d2b342fab32e3496f228548843805ed1bfb319df4962e9d80bdff",
+        "text_encoder/config.json": "55c0f3a62baaf5bb56b8839049526a640002557fa22e0e0fec606bd5b56ba567",
+        "text_encoder/model.safetensors": "3149fc6737da29cf39176b86ce19537aea6228082c21a8b4f87ae8ee81681a79",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "transformer/config.json": "5ddbaa90ac65f1ccb514d765191735a9677a52438da61e107eedbe6ab15a6cda",
+        "transformer/diffusion_pytorch_model.safetensors": "587527ca6ebc7d9b0a85892d2afeac71a43e8481d7c0770f5a431e90525c6b5b",
+        "vqvae/config.json": "b063b798b8233405fed3844538db899100b6d018aff0d670b66e192ed1e5e9d5",
+        "vqvae/diffusion_pytorch_model.safetensors": "1241a5c88b635af4f8cfb268e388ccaa70f55a458a473d68943e5c28d7b7f762"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 198,
+          "transformer": 478,
+          "vqvae": 277
+        }
+      },
+      "end_to_end": {
+        "guidance": 10.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 12,
+        "tokens_equal": true
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          640,
+          384
         ]
       }
     },
@@ -5083,20 +5145,11 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
-    "flux1_clip_flux1-krea-dev": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
     "flux1_clip_tokenizer": {
       "exact": true,
       "tolerance": "exact"
     },
     "flux1_clip_tokenizer_flux1-dev": {
-      "exact": true,
-      "tolerance": "exact"
-    },
-    "flux1_clip_tokenizer_flux1-krea-dev": {
       "exact": true,
       "tolerance": "exact"
     },
@@ -5106,11 +5159,6 @@
       "tolerance": 0.0
     },
     "flux1_e2e_latents_flux1-dev": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "flux1_e2e_latents_flux1-krea-dev": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -5125,22 +5173,12 @@
       "mu": 1.15,
       "tolerance": "exact"
     },
-    "flux1_scheduler_flux1-krea-dev": {
-      "exact": true,
-      "mu": 1.15,
-      "tolerance": "exact"
-    },
     "flux1_t5": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
     },
     "flux1_t5_flux1-dev": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "flux1_t5_flux1-krea-dev": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -5153,21 +5191,12 @@
       "exact": true,
       "tolerance": "exact"
     },
-    "flux1_t5_tokenizer_flux1-krea-dev": {
-      "exact": true,
-      "tolerance": "exact"
-    },
     "flux1_transformer": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
     },
     "flux1_transformer_flux1-dev": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "flux1_transformer_flux1-krea-dev": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -5182,22 +5211,12 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
-    "flux1_vae_decode_flux1-krea-dev": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
     "flux1_vae_encode": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
     },
     "flux1_vae_encode_flux1-dev": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "flux1_vae_encode_flux1-krea-dev": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -6380,6 +6399,86 @@
       "tolerance": 0.0
     }
   },
+  "components_amused": {
+    "amused-256_hidden_state_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_hidden_state_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_text_embeds_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_text_embeds_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_tokenizer": {
+      "cases": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "tolerance": "exact"
+    },
+    "amused-256_transformer_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_hidden_state_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_hidden_state_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_text_embeds_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_text_embeds_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_tokenizer": {
+      "cases": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "tolerance": "exact"
+    },
+    "amused-512_transformer_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_auraflow": {
     "auraflow_auraflow-v0.3_text_encoder_negative": {
       "max_abs": 0.0,
@@ -6686,11 +6785,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (flux1-krea-dev)"
+    "reference_summary": "14 passed (amused-256, amused-512)"
   }
 }
