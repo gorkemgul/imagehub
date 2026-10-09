@@ -160,3 +160,24 @@ class Image:
 
     def __repr__(self) -> str:
         return f"Image(width={self.width}, height={self.height}, channels={self.channels})"
+
+
+def as_pil(image: object) -> Any:
+    """Return an RGB ``PIL.Image.Image`` from a PIL image or an :class:`Image`.
+
+    Other PIL modes are converted with ``.convert("RGB")``, as diffusers' ``VaeImageProcessor``
+    does for RGB VAEs.
+    """
+    try:
+        from PIL import Image as PILImage
+    except ImportError as error:
+        raise MissingDependencyError(
+            "Image inputs require Pillow; install it with `pip install imagehub[image]`"
+        ) from error
+    if isinstance(image, Image):
+        image = image.to_pil()
+    if not isinstance(image, PILImage.Image):
+        raise TypeError(
+            f"image must be a PIL.Image.Image or imagehub.Image, got {type(image).__name__}"
+        )
+    return image.convert("RGB")
