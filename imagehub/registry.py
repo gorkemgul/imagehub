@@ -101,6 +101,7 @@ for _task, _name, _path in (
     (Task.T2I, "hunyuan-dit", "imagehub.backends.hunyuan_dit:HunyuanDiTBackend"),
     (Task.T2I, "pixart", "imagehub.backends.pixart:PixArtBackend"),
     (Task.T2I, "sana", "imagehub.backends.sana:SanaBackend"),
+    (Task.T2I, "kolors", "imagehub.backends.kolors:KolorsBackend"),
     (Task.T2I, "lumina2", "imagehub.backends.lumina2:Lumina2Backend"),
     (Task.T2I, "amused", "imagehub.backends.amused:AmusedBackend"),
     (Task.T2I, "auraflow", "imagehub.backends.auraflow:AuraFlowBackend"),
