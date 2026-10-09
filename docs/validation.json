@@ -326,6 +326,72 @@
       }
     },
     {
+      "model_id": "sd-v2-1",
+      "repo_id": "sd2-community/stable-diffusion-2-1",
+      "revision": "bb2154823665391b4fb29b0b9cf82a198964ee05",
+      "provenance": "community-mirror",
+      "catalog_id": "stable-diffusion-2",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "14d34c52a8afbe01d22767226074ebb4367b59fe817cd7428e1d099125b7e34b",
+        "scheduler/scheduler_config.json": "4cd9b9597ca64549df35016ca02bd3450ecbac70ccd8b0465b018be4ba54fe4b",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "87a3154f0990fd992fd59f9d42c39520155b3d77cd543efe3f2bf011726f379d",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "text_encoder/config.json": "6b34b0bf6cff02e2afe88145740ef5e0316caf7add8307c8ec0b021a7923cc42",
+        "text_encoder/model.safetensors": "cce6febb0b6d876ee5eb24af35e27e764eb4f9b1d0b7c026c8c3333d4cfc916c",
+        "unet/config.json": "dc987e214928b191cb832df4e19c376e862af1e4c4a5f36aac054a53ee251ccf",
+        "unet/diffusion_pytorch_model.safetensors": "1238522277c48923ff2751e238f2742c562e45643f3d50cc93d163cb30638b0c",
+        "vae/config.json": "d69281aa3f6a0f3c41aaf6778e35464fc6ee8a92e6ac8a8b1eb679f6df6423eb",
+        "vae/diffusion_pytorch_model.safetensors": "a1d993488569e928462932c8c38a0760b874d166399b14414135bd9c42df5815"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 372,
+          "unet": 686,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "size": [
+          768,
+          768
+        ],
+        "steps": 50,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42
+      }
+    },
+    {
       "model_id": "sd-turbo",
       "repo_id": "stabilityai/sd-turbo",
       "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
@@ -4076,6 +4142,59 @@
       "tolerance": 0.0
     }
   },
+  "components_sd21": {
+    "sd21_scheduler": {
+      "measurements": {
+        "25": {
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "50": {
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        }
+      },
+      "steps": [
+        25,
+        50
+      ],
+      "tolerance": 0.0
+    },
+    "sd21_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sd21_tokenizer": {
+      "mismatches": [],
+      "prompts": 5,
+      "tolerance": "exact"
+    },
+    "sd21_unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        981.0,
+        481.0,
+        1.0
+      ],
+      "tolerance": 0.0
+    },
+    "sd21_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sd21_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_lcm": {
     "lcm_scheduler": {
       "max_abs": 0.0,
@@ -5546,11 +5665,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "29 passed (flux1-kontext-dev)"
+    "reference_summary": "8 passed (sd-v2-1)"
   }
 }

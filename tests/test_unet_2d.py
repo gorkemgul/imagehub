@@ -156,7 +156,7 @@ def test_timestep_conditioning_shape_and_requirement():
         {"num_class_embeds": 10},
         {"addition_embed_type": "text"},
         {"only_cross_attention": True},
-        {"upcast_attention": True},
+        {"upcast_attention": "yes"},
         {"center_input_sample": True},
         {"act_fn": "gelu"},
         {"conv_in_kernel": 5},
@@ -176,3 +176,24 @@ def test_explicit_num_attention_heads_override_historical_name():
     attention = model.down_blocks[1].attentions
     assert attention is not None
     assert attention[0].transformer_blocks[0].attn1.heads == 4
+
+
+def test_upcast_attention_does_not_change_the_sdpa_output():
+    base = UNet2DConditionModel(TINY_UNET_CONFIG)
+    upcast = UNet2DConditionModel(TINY_UNET_CONFIG | {"upcast_attention": True})
+    upcast.load_state_dict(base.state_dict())
+    generator = torch.Generator().manual_seed(0)
+    sample = torch.randn(1, 4, 8, 8, generator=generator)
+    context = torch.randn(1, 7, 32, generator=generator)
+    with torch.inference_mode():
+        assert torch.equal(
+            base(sample, torch.tensor(981), context), upcast(sample, torch.tensor(981), context)
+        )
+
+
+def test_sd21_release_config_constructs_with_upcast_attention():
+    config = json.loads((FIXTURES / "sd21_configs/unet_config.json").read_text(encoding="utf-8"))
+    assert config["upcast_attention"] is True
+    with torch.device("meta"):
+        model = UNet2DConditionModel(config)
+    assert model.config["cross_attention_dim"] == 1024

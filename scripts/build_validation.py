@@ -39,8 +39,9 @@ LIMITS = [
     "no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, Euler with trailing "
-    "spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, "
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler "
+    "with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, "
+    "Euler for SDXL, "
     "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
     "schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match "
     "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
@@ -65,6 +66,14 @@ SD_TURBO_COMPONENT_KEYS = (
     "sd_turbo_vae_decode",
     "sd_turbo_vae_encode",
     "sd_turbo_scheduler",
+)
+SD21_COMPONENT_KEYS = (
+    "sd21_tokenizer",
+    "sd21_text_encoder",
+    "sd21_unet",
+    "sd21_vae_decode",
+    "sd21_vae_encode",
+    "sd21_scheduler",
 )
 LCM_COMPONENT_KEYS = (
     "lcm_text_encoder",
@@ -228,6 +237,9 @@ def main() -> None:
         },
         "components_sd_turbo": {
             key: value for key, value in measured.items() if key in SD_TURBO_COMPONENT_KEYS
+        },
+        "components_sd21": {
+            key: value for key, value in measured.items() if key in SD21_COMPONENT_KEYS
         },
         "components_lcm": {
             key: value for key, value in measured.items() if key in LCM_COMPONENT_KEYS

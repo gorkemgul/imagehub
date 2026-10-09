@@ -195,6 +195,36 @@ for _version, _repo, _revision, _provenance, _weights in (
 
 _entries.append(
     ModelSpec(
+        id="sd-v2-1",
+        task=Task.T2I,
+        family="stable-diffusion",
+        source="https://huggingface.co/sd2-community/stable-diffusion-2-1",
+        repo_id="sd2-community/stable-diffusion-2-1",
+        revision="bb2154823665391b4fb29b0b9cf82a198964ee05",
+        provenance="community-mirror",
+        catalog_id="stable-diffusion-2",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        config={"defaults": {"steps": 50, "guidance": 7.5}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sd-turbo",
         task=Task.T2I,
         family="stable-diffusion",

@@ -83,9 +83,19 @@ TURBO_CONFIGS = Path(__file__).parent / "fixtures" / "sdxl_turbo_configs"
 
 
 def _tiny_with_config(tmp_path, config):
+    """Tiny tokenizer folder with only ``tokenizer_config.json``.
+
+    The folder from ``write_tiny_tokenizer`` also holds a ``special_tokens_map.json``; transformers
+    merges that file over the config, so it is removed here to test the config alone.
+    """
     path = write_tiny_tokenizer(tmp_path)
+    (path / "special_tokens_map.json").unlink()
     (path / "tokenizer_config.json").write_text(json.dumps(config), encoding="utf-8")
     return path
+
+
+def _added(content, *, normalized):
+    return {"__type": "AddedToken", "content": content, "normalized": normalized}
 
 
 def test_flags_plain_strings_are_not_normalized(tmp_path):
@@ -110,9 +120,9 @@ def test_added_tokens_decoder_overrides_string_and_dict_specials(tmp_path):
             "515": {"content": BOS_T, "normalized": True, "special": True},
             "516": {"content": EOS_T, "normalized": True, "special": True},
         },
-        "unk_token": {"content": EOS_T, "normalized": False},
+        "unk_token": _added(EOS_T, normalized=False),
         "bos_token": BOS_T,
-        "eos_token": {"content": EOS_T, "normalized": False},
+        "eos_token": _added(EOS_T, normalized=False),
         "pad_token": EOS_T,
     }
     path = _tiny_with_config(tmp_path, config)
@@ -123,16 +133,58 @@ def test_added_tokens_decoder_overrides_string_and_dict_specials(tmp_path):
 
 def test_flags_follow_dicts_and_last_registration_wins(tmp_path):
     sd1_like = {
-        "unk_token": {"content": BOS_T, "normalized": True},
-        "bos_token": {"content": BOS_T, "normalized": True},
-        "eos_token": {"content": EOS_T, "normalized": True},
+        "unk_token": _added(BOS_T, normalized=True),
+        "bos_token": _added(BOS_T, normalized=True),
+        "eos_token": _added(EOS_T, normalized=True),
         "pad_token": EOS_T,
     }
     path = _tiny_with_config(tmp_path / "a", sd1_like)
     assert special_token_flags(path) == {BOS_T: True, EOS_T: False}  # pad (plain) wins for eos
-    shared = {"unk_token": {"content": EOS_T, "normalized": True}, "eos_token": EOS_T}
+    # Registration order is bos, eos, unk, pad: the dict-valued unk registers after the plain eos.
+    shared = {"unk_token": _added(EOS_T, normalized=True), "eos_token": EOS_T}
     path = _tiny_with_config(tmp_path / "b", shared)
+    assert special_token_flags(path)[EOS_T] is True
+    shared = {"unk_token": EOS_T, "eos_token": _added(EOS_T, normalized=True)}
+    path = _tiny_with_config(tmp_path / "c", shared)
     assert special_token_flags(path)[EOS_T] is False
+
+
+def test_special_tokens_map_is_merged_over_a_legacy_config(tmp_path):
+    path = write_tiny_tokenizer(tmp_path)  # config pads with eos, the map pads with "!"
+    (path / "special_tokens_map.json").write_text(
+        json.dumps({"pad_token": "!", "bos_token": {"content": BOS_T, "normalized": True}}),
+        encoding="utf-8",
+    )
+    tok = CLIPTokenizer(path, max_length=8)
+    assert tok.pad_id == tok.encoder["!"]
+    assert special_token_flags(path) == {BOS_T: True, EOS_T: False, "!": False}
+
+
+def test_special_tokens_map_is_ignored_next_to_an_added_tokens_decoder(tmp_path):
+    config = {
+        "added_tokens_decoder": {
+            "515": {"content": BOS_T, "normalized": True, "special": True},
+            "516": {"content": EOS_T, "normalized": True, "special": True},
+        },
+        "bos_token": BOS_T,
+        "eos_token": EOS_T,
+        "unk_token": EOS_T,
+        "pad_token": EOS_T,
+    }
+    path = _tiny_with_config(tmp_path, config)
+    (path / "special_tokens_map.json").write_text(json.dumps({"pad_token": "!"}), encoding="utf-8")
+    assert CLIPTokenizer(path, max_length=8).pad_id == 516
+
+
+def test_dict_without_normalized_field_registers_as_not_normalized(tmp_path):
+    config_dict = {"__type": "AddedToken", "content": BOS_T}
+    path = _tiny_with_config(tmp_path / "a", {"bos_token": config_dict, "eos_token": EOS_T})
+    assert special_token_flags(path)[BOS_T] is False
+    path = write_tiny_tokenizer(tmp_path / "b")
+    (path / "special_tokens_map.json").write_text(
+        json.dumps({"bos_token": {"content": BOS_T}, "eos_token": EOS_T}), encoding="utf-8"
+    )
+    assert special_token_flags(path)[BOS_T] is False
 
 
 def test_flags_fall_back_to_special_tokens_map_then_default(tmp_path):
@@ -148,7 +200,7 @@ def test_flags_fall_back_to_special_tokens_map_then_default(tmp_path):
 
 def test_normalized_bos_matches_after_lowercasing(tmp_path):
     config = {
-        "bos_token": {"content": BOS_T, "normalized": True},
+        "bos_token": _added(BOS_T, normalized=True),
         "eos_token": EOS_T,
         "pad_token": EOS_T,
         "unk_token": EOS_T,
