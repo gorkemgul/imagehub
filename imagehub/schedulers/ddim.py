@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from typing import Any
 
-import numpy as np
 import torch
 from torch import Tensor
 
@@ -31,6 +31,16 @@ _PREDICTION_TYPES = ("epsilon", "sample", "v_prediction")
 _SPACINGS = ("leading", "linspace", "trailing")
 # Keys that older releases write but the sampler never reads.
 _LEGACY_KEYS = {"skip_prk_steps"}
+
+
+def _linspace(stop: int, num: int) -> list[float]:
+    """``numpy.linspace(0, stop, num)`` in float64, including the exact endpoint."""
+    if num == 1:
+        return [0.0]
+    step = stop / (num - 1)
+    values = [i * step for i in range(num)]
+    values[-1] = float(stop)
+    return values
 
 
 class DDIMScheduler:
@@ -80,16 +90,20 @@ class DDIMScheduler:
         self.num_inference_steps = num_inference_steps
         spacing = self.config["timestep_spacing"]
         if spacing == "linspace":
-            steps = np.linspace(0, n - 1, num_inference_steps).round()[::-1].copy()
-            timesteps = steps.astype(np.int64)
+            # Float64 arithmetic mirrors numpy.linspace; round() is half-to-even like numpy.round.
+            values = _linspace(n - 1, num_inference_steps)
+            timesteps = [int(round(v)) for v in reversed(values)]
         elif spacing == "leading":
             ratio = n // num_inference_steps
-            timesteps = (np.arange(0, num_inference_steps) * ratio).round()[::-1].copy()
-            timesteps = timesteps.astype(np.int64) + self.config["steps_offset"]
+            offset = self.config["steps_offset"]
+            timesteps = [i * ratio + offset for i in reversed(range(num_inference_steps))]
         else:
             ratio_f = n / num_inference_steps
-            timesteps = np.round(np.arange(n, 0, -ratio_f)).astype(np.int64) - 1
-        self.timesteps = torch.from_numpy(timesteps)
+            # numpy.arange derives its stride from the first two elements, not from the raw step.
+            delta = (n - ratio_f) - n
+            count = math.ceil(-n / -ratio_f)
+            timesteps = [int(round(n + i * delta)) - 1 for i in range(count)]
+        self.timesteps = torch.tensor(timesteps, dtype=torch.int64)
 
     def scale_model_input(self, sample: Tensor, timestep: Tensor | int | None = None) -> Tensor:
         return sample
