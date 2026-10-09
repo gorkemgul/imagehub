@@ -44,6 +44,7 @@ SDXL_MODEL_IDS = tuple(
     if spec.family == "stable-diffusion-xl" and spec.base is None
 )
 SDXL_FIXTURES = {
+    "playground-v2": "sdxl_tensor_shapes.json",
     "playground-v2.5": "sdxl_tensor_shapes.json",
     "sdxl-base-1.0": "sdxl_tensor_shapes.json",
     "ssd-1b": "ssd1b_tensor_shapes.json",
