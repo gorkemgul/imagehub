@@ -4,7 +4,6 @@ import gc
 import json
 import struct
 
-import numpy as np
 import pytest
 import torch
 from helpers import max_diff, snapshot_dir
@@ -28,6 +27,7 @@ diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 PILImage = pytest.importorskip("PIL.Image")
 ImageDraw = pytest.importorskip("PIL.ImageDraw")
+np = pytest.importorskip("numpy")
 
 CPU = torch.device("cpu")
 MODEL_ID = "flux1-kontext-dev"
