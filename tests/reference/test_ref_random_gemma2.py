@@ -90,3 +90,29 @@ def test_gemma2_random_weights_exact(
         actual = model(input_ids, attention_mask)
     assert torch.equal(actual, expected)
     record(f"gemma2_{side}_{length}_{config['hidden_size']}", max_abs_diff=0.0, tolerance="exact")
+
+
+@pytest.mark.parametrize("config", [TINY, MEDIUM], ids=["tiny", "medium-width"])
+@pytest.mark.parametrize("index", [-2, -1, 0, 1, 3])
+def test_gemma2_hidden_state_index_exact(config: dict[str, Any], index: int, record) -> None:
+    torch.manual_seed(0)
+    reference = _reference(config)
+    with torch.no_grad():
+        for parameter in reference.parameters():
+            parameter.normal_(0.0, 0.5)
+    model = Gemma2Model(config).eval()
+    model.load_checkpoint(reference.state_dict())
+
+    input_ids = torch.randint(1, int(config["vocab_size"]), (2, 11))
+    attention_mask = torch.ones(2, 11, dtype=torch.long)
+    attention_mask[0, -3:] = 0
+    attention_mask[1, -1:] = 0
+    with torch.inference_mode():
+        expected = reference(
+            input_ids, attention_mask=attention_mask, output_hidden_states=True
+        ).hidden_states[index]
+        actual = model(input_ids, attention_mask, hidden_state_index=index)
+    assert torch.equal(actual, expected)
+    record(
+        f"gemma2_hidden_state_{index}_{config['hidden_size']}", max_abs_diff=0.0, tolerance="exact"
+    )

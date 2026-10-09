@@ -1037,6 +1037,42 @@ for _sana_id, _sana_repo, _sana_revision, _sana_weights in _SANA_VARIANTS:
 
 _entries.append(
     ModelSpec(
+        id="lumina-image-2.0",
+        task=Task.T2I,
+        family="lumina2",
+        source="https://huggingface.co/Alpha-VLLM/Lumina-Image-2.0",
+        repo_id="Alpha-VLLM/Lumina-Image-2.0",
+        revision="53504abd8178b30685b6c4c7a4cd181ff78b73e9",
+        provenance="author",
+        catalog_id="lumina-image-2",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 30, "guidance": 4.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00003.safetensors",
+            "text_encoder/model-00002-of-00003.safetensors",
+            "text_encoder/model-00003-of-00003.safetensors",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="krea2-turbo",
         task=Task.T2I,
         family="krea2",

@@ -102,3 +102,29 @@ def test_forward_shape_and_finite_with_padding():
     output = model(ids, mask)
     assert output.shape == (2, 6, 8)
     assert torch.isfinite(output).all()
+
+
+def test_hidden_state_index_selects_entries_of_the_hidden_states_tuple():
+    torch.manual_seed(0)
+    config = {
+        "vocab_size": 16,
+        "hidden_size": 8,
+        "intermediate_size": 16,
+        "num_hidden_layers": 3,
+        "num_attention_heads": 2,
+        "num_key_value_heads": 1,
+        "head_dim": 4,
+        "sliding_window": 3,
+    }
+    model = Gemma2Model(config).eval()
+    ids = torch.randint(0, 16, (2, 6))
+    mask = torch.tensor([[1, 1, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1]])
+    with torch.inference_mode():
+        final = model(ids, mask)
+        assert torch.equal(model(ids, mask, hidden_state_index=-1), final)
+        assert torch.equal(model(ids, mask, hidden_state_index=3), final)
+        penultimate = model(ids, mask, hidden_state_index=-2)
+        assert torch.equal(model(ids, mask, hidden_state_index=2), penultimate)
+        assert not torch.equal(penultimate, final)
+        embeddings = model(ids, mask, hidden_state_index=0)
+        assert torch.equal(model(ids, mask, hidden_state_index=-4), embeddings)

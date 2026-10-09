@@ -205,7 +205,20 @@ class Gemma2Model(NativeModel):
             "sliding_attention": combine(sliding) if has_padding or length >= window else None,
         }
 
-    def forward(self, input_ids: Tensor, attention_mask: Tensor | None = None) -> Tensor:
+    def forward(
+        self,
+        input_ids: Tensor,
+        attention_mask: Tensor | None = None,
+        *,
+        hidden_state_index: int | None = None,
+    ) -> Tensor:
+        """Final-norm hidden states, or one entry of transformers' ``hidden_states`` tuple.
+
+        ``hidden_state_index`` indexes that tuple (embeddings, the output of each layer, and the
+        final-norm output last), so ``-2`` is the input of the last layer, without the final norm.
+        """
+        count = len(self.layers)
+        applied = count if hidden_state_index is None else hidden_state_index % (count + 1)
         embeddings = self.embed_tokens(input_ids)
         scale = torch.tensor(self.config["hidden_size"] ** 0.5, device=embeddings.device)
         hidden_states = embeddings * scale.to(self.embed_tokens.weight.dtype)
@@ -213,6 +226,6 @@ class Gemma2Model(NativeModel):
         position_ids = torch.arange(length, device=hidden_states.device).unsqueeze(0)
         position_embeddings = self.rotary_emb(hidden_states, position_ids)
         masks = self._masks(attention_mask, hidden_states.shape[0], length, hidden_states.device)
-        for layer_type, layer in zip(self.layer_types, self.layers, strict=True):
+        for layer_type, layer in list(zip(self.layer_types, self.layers, strict=True))[:applied]:
             hidden_states = layer(hidden_states, position_embeddings, masks[layer_type])
-        return self.norm(hidden_states)
+        return self.norm(hidden_states) if applied == count else hidden_states
