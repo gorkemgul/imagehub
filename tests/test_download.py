@@ -187,10 +187,12 @@ def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, 
         assert (dest / name).read_bytes() == data
 
 
-@pytest.mark.parametrize("model_id", ["kandinsky-2.2", "stable-cascade", "stable-cascade-lite"])
+@pytest.mark.parametrize(
+    "model_id", ["kandinsky-2.2", "stable-cascade", "stable-cascade-lite", "hidream-i1-fast"]
+)
 def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, model_id):
     spec = model_info(model_id)
-    prior = spec.subfolders["prior"]
+    ((subfolder, prior),) = spec.subfolders.items()
     repositories = {
         spec.repo_id: {name: f"decoder {name}".encode() for name in spec.files},
         prior.repo_id: {name: f"prior {name}".encode() for name in prior.files},
@@ -221,7 +223,9 @@ def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, 
     dest = download_pretrained(spec.id, tmp_path / "snapshot")
     manifest = read_snapshot(dest)
     assert manifest["verified_revision"] is True
-    assert set(manifest["files"]) == set(spec.files) | {f"prior/{name}" for name in prior.files}
+    assert set(manifest["files"]) == set(spec.files) | {
+        f"{subfolder}/{name}" for name in prior.files
+    }
     for name, data in repositories[spec.repo_id].items():
         assert (dest / name).read_bytes() == data
         assert manifest["files"][name] == {
@@ -230,7 +234,7 @@ def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, 
             "sha256": hashlib.sha256(data).hexdigest(),
         }
     for name, data in repositories[prior.repo_id].items():
-        destination = f"prior/{name}"
+        destination = f"{subfolder}/{name}"
         assert (dest / destination).read_bytes() == data
         assert manifest["files"][destination] == {
             "repo_id": prior.repo_id,

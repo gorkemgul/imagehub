@@ -799,7 +799,7 @@ def write_tiny_flux2(directory: str | os.PathLike[str], *, seed: int = 0) -> Pat
 
 
 TINY_QWEN_IMAGE21_TEXT = {
-    "vocab_size": 260,
+    "vocab_size": 262,
     "hidden_size": 16,
     "intermediate_size": 32,
     "num_hidden_layers": 1,
@@ -990,7 +990,7 @@ def write_tiny_qwen_image21(directory: str | os.PathLike[str], *, seed: int = 0)
 
 
 TINY_KREA2_TEXT = {
-    "vocab_size": 260,
+    "vocab_size": 262,
     "hidden_size": 16,
     "intermediate_size": 32,
     "num_hidden_layers": 13,
@@ -1296,6 +1296,255 @@ def write_tiny_sd3(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
         if name.startswith("text_encoder") and name != "text_encoder_3":
             state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
         (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
+TINY_HIDREAM_LLAMA = {
+    "architectures": ["LlamaForCausalLM"],
+    "model_type": "llama",
+    "vocab_size": 262,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 3,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "max_position_embeddings": 131072,
+    "rms_norm_eps": 1e-5,
+    "rope_theta": 500000.0,
+    "rope_scaling": {
+        "factor": 8.0,
+        "low_freq_factor": 1.0,
+        "high_freq_factor": 4.0,
+        "original_max_position_embeddings": 8192,
+        "rope_type": "llama3",
+    },
+    "attention_bias": False,
+    "mlp_bias": False,
+    "hidden_act": "silu",
+    "tie_word_embeddings": False,
+    "bos_token_id": 260,
+    "eos_token_id": 261,
+}
+TINY_HIDREAM_TRANSFORMER = {
+    "_class_name": "HiDreamImageTransformer2DModel",
+    "patch_size": 2,
+    "in_channels": 4,
+    "out_channels": 4,
+    "num_layers": 2,
+    "num_single_layers": 2,
+    "attention_head_dim": 16,
+    "num_attention_heads": 2,
+    "caption_channels": [32, 32],
+    "text_emb_dim": 32,
+    "num_routed_experts": 4,
+    "num_activated_experts": 2,
+    "axes_dims_rope": [8, 4, 4],
+    "max_resolution": [128, 128],
+    "llama_layers": [0, 1, 2, 2],
+}
+TINY_HIDREAM_VAE = TINY_VAE_FILE_CONFIG | {
+    "block_out_channels": [16, 16],
+    "down_block_types": ["DownEncoderBlock2D"] * 2,
+    "up_block_types": ["UpDecoderBlock2D"] * 2,
+    "latent_channels": 4,
+    "scaling_factor": 0.3611,
+    "shift_factor": 0.1159,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "sample_size": 32,
+}
+TINY_LLAMA3_MERGES = (("h", "i"), ("c", "a"), ("ca", "t"), ("\u0120", "c"))
+LLAMA3_SPLIT_PATTERN = (
+    r"(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}{1,3}"
+    r"| ?[^\s\p{L}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+"
+)
+
+
+def write_tiny_llama3_tokenizer(directory: str | os.PathLike[str]) -> Path:
+    """A byte-level BPE tokenizer.json in the Llama 3 layout: 256 bytes, 4 merges, BOS and EOT."""
+    path = Path(directory)
+    path.mkdir(parents=True, exist_ok=True)
+    vocab = {char: index for index, char in enumerate(bytes_to_unicode().values())}
+    for left, right in TINY_LLAMA3_MERGES:
+        vocab[left + right] = len(vocab)
+    assert len(vocab) == 260
+    bos, eot = "<|begin_of_text|>", "<|eot_id|>"
+    added = []
+    for token in (bos, eot):
+        added.append(
+            {
+                "id": len(vocab),
+                "content": token,
+                "single_word": False,
+                "lstrip": False,
+                "rstrip": False,
+                "normalized": False,
+                "special": True,
+            }
+        )
+        vocab[token] = len(vocab)
+    data = {
+        "version": "1.0",
+        "truncation": None,
+        "padding": None,
+        "added_tokens": added,
+        "normalizer": None,
+        "pre_tokenizer": {
+            "type": "Sequence",
+            "pretokenizers": [
+                {
+                    "type": "Split",
+                    "pattern": {"Regex": LLAMA3_SPLIT_PATTERN},
+                    "behavior": "Isolated",
+                    "invert": False,
+                },
+                {
+                    "type": "ByteLevel",
+                    "add_prefix_space": False,
+                    "trim_offsets": True,
+                    "use_regex": False,
+                },
+            ],
+        },
+        "post_processor": {
+            "type": "Sequence",
+            "processors": [
+                {
+                    "type": "ByteLevel",
+                    "add_prefix_space": True,
+                    "trim_offsets": False,
+                    "use_regex": True,
+                },
+                {
+                    "type": "TemplateProcessing",
+                    "single": [
+                        {"SpecialToken": {"id": bos, "type_id": 0}},
+                        {"Sequence": {"id": "A", "type_id": 0}},
+                    ],
+                    "pair": [
+                        {"SpecialToken": {"id": bos, "type_id": 0}},
+                        {"Sequence": {"id": "A", "type_id": 0}},
+                        {"SpecialToken": {"id": bos, "type_id": 1}},
+                        {"Sequence": {"id": "B", "type_id": 1}},
+                    ],
+                    "special_tokens": {bos: {"id": bos, "ids": [vocab[bos]], "tokens": [bos]}},
+                },
+            ],
+        },
+        "decoder": {
+            "type": "ByteLevel",
+            "add_prefix_space": True,
+            "trim_offsets": True,
+            "use_regex": True,
+        },
+        "model": {
+            "type": "BPE",
+            "dropout": None,
+            "unk_token": None,
+            "continuing_subword_prefix": None,
+            "end_of_word_suffix": None,
+            "fuse_unk": False,
+            "byte_fallback": False,
+            "ignore_merges": True,
+            "vocab": vocab,
+            "merges": [list(pair) for pair in TINY_LLAMA3_MERGES],
+        },
+    }
+    (path / "tokenizer.json").write_text(json.dumps(data), encoding="utf-8")
+    (path / "tokenizer_config.json").write_text(
+        json.dumps(
+            {
+                "bos_token": bos,
+                "eos_token": eot,
+                "model_max_length": 131072,
+                "tokenizer_class": "PreTrainedTokenizerFast",
+                "clean_up_tokenization_spaces": True,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (path / "special_tokens_map.json").write_text(
+        json.dumps({"bos_token": bos, "eos_token": eot}), encoding="utf-8"
+    )
+    return path
+
+
+def write_tiny_hidream(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight HiDream-I1 snapshot in the published layout, Llama in ``text_encoder_4``."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.clip_text import CLIPTextModelWithProjection
+    from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
+    from imagehub.models.llama_text import LlamaTextModel
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_tokenizer(root / "tokenizer")
+    write_tiny_tokenizer(root / "tokenizer_2", pad_token="!")
+    tokenizer_3 = root / "tokenizer_3"
+    tokenizer_3.mkdir()
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", tokenizer_3 / "tokenizer.json")
+    tokenizer_3_config = {
+        "tokenizer_class": "T5TokenizerFast",
+        "model_max_length": 512,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (tokenizer_3 / "tokenizer_config.json").write_text(json.dumps(tokenizer_3_config))
+    (tokenizer_3 / "special_tokens_map.json").write_text(
+        json.dumps(
+            {key: tokenizer_3_config[key] for key in ("pad_token", "eos_token", "unk_token")}
+        )
+    )
+    write_tiny_llama3_tokenizer(root / "text_encoder_4")
+
+    (root / "scheduler").mkdir()
+    shutil.copy2(
+        FIXTURES / "hidream_configs" / "scheduler_scheduler_config.json",
+        root / "scheduler" / "scheduler_config.json",
+    )
+    (root / "model_index.json").write_text(
+        (FIXTURES / "hidream_configs" / "model_index.json").read_text(encoding="utf-8")
+    )
+    clip_config = TINY_TEXT_FILE_CONFIG | {
+        "architectures": ["CLIPTextModelWithProjection"],
+        "hidden_size": 16,
+        "intermediate_size": 32,
+        "num_attention_heads": 4,
+        "projection_dim": 16,
+        "max_position_embeddings": 128,
+    }
+    for name, cls, config, weights in (
+        ("text_encoder", CLIPTextModelWithProjection, clip_config, "model.safetensors"),
+        ("text_encoder_2", CLIPTextModelWithProjection, clip_config, "model.safetensors"),
+        ("text_encoder_3", T5EncoderModel, TINY_SD3_T5, "model.safetensors"),
+        ("text_encoder_4", LlamaTextModel, TINY_HIDREAM_LLAMA, "model.safetensors"),
+        (
+            "transformer",
+            HiDreamImageTransformer2DModel,
+            TINY_HIDREAM_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_HIDREAM_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name.startswith("text_encoder") and name not in ("text_encoder_3", "text_encoder_4"):
+            state["text_model.embeddings.position_ids"] = torch.arange(128)[None]
+        if name == "text_encoder_4":
+            state = {f"model.{key}": value for key, value in state.items()}
+            state["lm_head.weight"] = torch.randn(262, 32) * 0.05
+        (root / name).mkdir(exist_ok=True)
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(state, root / name / weights)
     return root
