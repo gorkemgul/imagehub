@@ -176,7 +176,9 @@ def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, 
         assert (dest / name).read_bytes() == data
 
 
-@pytest.mark.parametrize("model_id", ["kandinsky-2.2", "stable-cascade", "stable-cascade-lite"])
+@pytest.mark.parametrize(
+    "model_id", ["kandinsky-2.2", "stable-cascade", "stable-cascade-lite", "wuerstchen-v2"]
+)
 def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, model_id):
     spec = model_info(model_id)
     prior = spec.subfolders["prior"]

@@ -532,6 +532,40 @@ text encoder and stage A. Missing, extra and shape-mismatched tensors were all *
 The stages were compared one at a time so that the reference and native models were never all
 resident together.
 
+## Würstchen v2
+
+`wuerstchen-v2` is loaded strictly from the decoder repository `warp-ai/wuerstchen` at revision
+`c3da414` and the prior repository `warp-ai/wuerstchen-prior` at revision `c41be63`; the prior is
+stored in the snapshot's `prior/` subfolder. The reference is diffusers 0.40.0
+`WuerstchenCombinedPipeline`. The real-checkpoint tests (`tests/reference/test_ref_wuerstchen.py`)
+assert the tolerances below; measured values are added to this page after that run. The
+random-weight and tiny-snapshot comparisons need no downloaded weights and pass with exactly 0
+difference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance |
+| --- | --- |
+| Tensor header check: both text encoders, prior, decoder, VQGAN (names and shapes) | 0 missing, extra or mismatched |
+| Masked CLIP text states of the prior (ViT-bigG) and of the decoder (ViT-H), prompt and negative | 0 |
+| Prior single step (batch 2, three timestep ratios, real text states) | 0 |
+| Decoder single step (two timestep ratios, real text states) | 0 |
+| VQGAN decode | 0 |
+| End to end: prior latents / decoder latents / pixels (512×512, 60 and 12 steps, seed 0) | 0 / 0 / 0 |
+| End to end, seed 1234 (pixels) | 0 |
+
+The tensor layout of the published files was also checked against the recorded headers in
+`tests/fixtures/wuerstchen_configs/`: 648 tensors for the prior, 990 for the decoder and 122 for
+the VQGAN, with no missing, extra or mismatched names or shapes.
+
+Random-weight parity covers the prior and the decoder with tiny configurations and with the
+published configurations at small latent sizes, including the optional `x_cat` input and the split
+output of the decoder. Tiny-snapshot end-to-end parity against `WuerstchenCombinedPipeline` covers
+the defaults, decoder guidance with a negative prompt, decoder guidance with the prior's guidance
+switched off, a non-square size, a second seed, and a prompt longer than the 77 tokens the text
+encoders accept; it compares the prior's image embeddings, the decoder's latents and the final
+bytes.
+
 ## PixArt
 
 Validated on CPU in the same environment as above. `pixart-sigma-xl-1024` and
@@ -971,7 +1005,7 @@ way (`keep_first_shard_mapped`).
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell and Lumina-Image 2.0, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
-  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).
+  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, and DPM-Solver++ for PixArt and Sana (flow sigmas).
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
