@@ -57,6 +57,7 @@ def test_catalog_contents():
             "ssd-1b",
             "stable-cascade",
             "stable-cascade-lite",
+            "wuerstchen-v2",
             "z-image",
             "z-image-turbo",
         )
@@ -917,3 +918,53 @@ def test_amused_catalog_entries(model_id, revision, size):
         "vqvae/config.json",
         "vqvae/diffusion_pytorch_model.safetensors",
     )
+
+
+def test_wuerstchen_catalog_entry():
+    spec = model_info("wuerstchen-v2")
+    assert spec.task is Task.T2I
+    assert spec.family == "wuerstchen"
+    assert spec.source == "https://huggingface.co/warp-ai/wuerstchen"
+    assert spec.repo_id == "warp-ai/wuerstchen"
+    assert spec.revision == "c3da41406ddd4d9c48c49aa93981a82354351b83"
+    assert spec.files == (
+        "model_index.json",
+        "decoder/config.json",
+        "decoder/diffusion_pytorch_model.safetensors",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors",
+        "tokenizer/merges.txt",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer_config.json",
+        "tokenizer/vocab.json",
+        "vqgan/config.json",
+        "vqgan/diffusion_pytorch_model.safetensors",
+    )
+    assert spec.subfolders == {
+        "prior": SubRepo(
+            repo_id="warp-ai/wuerstchen-prior",
+            revision="c41be6339e1b93f95ece99825327cdf9f4abc436",
+            files=(
+                "model_index.json",
+                "prior/config.json",
+                "prior/diffusion_pytorch_model.safetensors",
+                "scheduler/scheduler_config.json",
+                "text_encoder/config.json",
+                "text_encoder/model.safetensors",
+                "tokenizer/merges.txt",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/vocab.json",
+            ),
+        )
+    }
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "wuerstchen"
+    assert spec.format == "diffusers"
+    assert spec.license == "mit"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 12, "guidance": 0.0, "prior_steps": 60, "prior_guidance": 4.0}
+    }
+    assert not any(name.endswith(".bin") for name in spec.files + spec.subfolders["prior"].files)

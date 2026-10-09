@@ -1604,6 +1604,62 @@ for _model_id, _decoder, _prior in (
         )
     )
 
+_entries.append(
+    ModelSpec(
+        id="wuerstchen-v2",
+        task=Task.T2I,
+        family="wuerstchen",
+        source="https://huggingface.co/warp-ai/wuerstchen",
+        repo_id="warp-ai/wuerstchen",
+        revision="c3da41406ddd4d9c48c49aa93981a82354351b83",
+        provenance="author",
+        catalog_id="wuerstchen",
+        format="diffusers",
+        license="mit",
+        gated=False,
+        config={
+            "defaults": {
+                "steps": 12,
+                "guidance": 0.0,
+                "prior_steps": 60,
+                "prior_guidance": 4.0,
+            }
+        },
+        files=(
+            "model_index.json",
+            "decoder/config.json",
+            "decoder/diffusion_pytorch_model.safetensors",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "vqgan/config.json",
+            "vqgan/diffusion_pytorch_model.safetensors",
+        ),
+        subfolders={
+            "prior": SubRepo(
+                repo_id="warp-ai/wuerstchen-prior",
+                revision="c41be6339e1b93f95ece99825327cdf9f4abc436",
+                files=(
+                    "model_index.json",
+                    "prior/config.json",
+                    "prior/diffusion_pytorch_model.safetensors",
+                    "scheduler/scheduler_config.json",
+                    "text_encoder/config.json",
+                    "text_encoder/model.safetensors",
+                    "tokenizer/merges.txt",
+                    "tokenizer/special_tokens_map.json",
+                    "tokenizer/tokenizer_config.json",
+                    "tokenizer/vocab.json",
+                ),
+            )
+        },
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

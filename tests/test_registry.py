@@ -33,6 +33,7 @@ def test_family_and_model_aliases_are_registered():
     assert {"lumina2", "lumina-image-2.0"} <= set(names)
     assert {"amused", "amused-256", "amused-512"} <= set(names)
     assert {"stable_cascade", "stable-cascade", "stable-cascade-lite"} <= set(names)
+    assert {"wuerstchen", "wuerstchen-v2"} <= set(names)
 
 
 def test_registration_rules():
