@@ -1,0 +1,1851 @@
+{
+"cond_embed.linear_1.weight": [
+1024,
+2048
+],
+"cond_embed.linear_2.weight": [
+1024,
+1024
+],
+"down_block.attention_blocks.0.attn1.to_k.weight": [
+768,
+768
+],
+"down_block.attention_blocks.0.attn1.to_out.0.weight": [
+768,
+768
+],
+"down_block.attention_blocks.0.attn1.to_q.weight": [
+768,
+768
+],
+"down_block.attention_blocks.0.attn1.to_v.weight": [
+768,
+768
+],
+"down_block.attention_blocks.0.attn2.to_k.weight": [
+768,
+768
+],
+"down_block.attention_blocks.0.attn2.to_out.0.weight": [
+768,
+768
+],
+"down_block.attention_blocks.0.attn2.to_q.weight": [
+768,
+768
+],
+"down_block.attention_blocks.0.attn2.to_v.weight": [
+768,
+768
+],
+"down_block.attention_blocks.0.kv_mapper.weight": [
+768,
+1024
+],
+"down_block.attention_blocks.0.norm1.weight": [
+768
+],
+"down_block.attention_blocks.0.norm2.weight": [
+768
+],
+"down_block.attention_blocks.1.attn1.to_k.weight": [
+768,
+768
+],
+"down_block.attention_blocks.1.attn1.to_out.0.weight": [
+768,
+768
+],
+"down_block.attention_blocks.1.attn1.to_q.weight": [
+768,
+768
+],
+"down_block.attention_blocks.1.attn1.to_v.weight": [
+768,
+768
+],
+"down_block.attention_blocks.1.attn2.to_k.weight": [
+768,
+768
+],
+"down_block.attention_blocks.1.attn2.to_out.0.weight": [
+768,
+768
+],
+"down_block.attention_blocks.1.attn2.to_q.weight": [
+768,
+768
+],
+"down_block.attention_blocks.1.attn2.to_v.weight": [
+768,
+768
+],
+"down_block.attention_blocks.1.kv_mapper.weight": [
+768,
+1024
+],
+"down_block.attention_blocks.1.norm1.weight": [
+768
+],
+"down_block.attention_blocks.1.norm2.weight": [
+768
+],
+"down_block.attention_blocks.2.attn1.to_k.weight": [
+768,
+768
+],
+"down_block.attention_blocks.2.attn1.to_out.0.weight": [
+768,
+768
+],
+"down_block.attention_blocks.2.attn1.to_q.weight": [
+768,
+768
+],
+"down_block.attention_blocks.2.attn1.to_v.weight": [
+768,
+768
+],
+"down_block.attention_blocks.2.attn2.to_k.weight": [
+768,
+768
+],
+"down_block.attention_blocks.2.attn2.to_out.0.weight": [
+768,
+768
+],
+"down_block.attention_blocks.2.attn2.to_q.weight": [
+768,
+768
+],
+"down_block.attention_blocks.2.attn2.to_v.weight": [
+768,
+768
+],
+"down_block.attention_blocks.2.kv_mapper.weight": [
+768,
+1024
+],
+"down_block.attention_blocks.2.norm1.weight": [
+768
+],
+"down_block.attention_blocks.2.norm2.weight": [
+768
+],
+"down_block.res_blocks.0.channelwise_linear_1.weight": [
+3072,
+768
+],
+"down_block.res_blocks.0.channelwise_linear_2.weight": [
+768,
+3072
+],
+"down_block.res_blocks.0.channelwise_norm.beta": [
+1,
+1,
+1,
+3072
+],
+"down_block.res_blocks.0.channelwise_norm.gamma": [
+1,
+1,
+1,
+3072
+],
+"down_block.res_blocks.0.cond_embeds_mapper.weight": [
+1536,
+1024
+],
+"down_block.res_blocks.0.depthwise.weight": [
+768,
+1,
+3,
+3
+],
+"down_block.res_blocks.0.norm.weight": [
+768
+],
+"down_block.res_blocks.1.channelwise_linear_1.weight": [
+3072,
+768
+],
+"down_block.res_blocks.1.channelwise_linear_2.weight": [
+768,
+3072
+],
+"down_block.res_blocks.1.channelwise_norm.beta": [
+1,
+1,
+1,
+3072
+],
+"down_block.res_blocks.1.channelwise_norm.gamma": [
+1,
+1,
+1,
+3072
+],
+"down_block.res_blocks.1.cond_embeds_mapper.weight": [
+1536,
+1024
+],
+"down_block.res_blocks.1.depthwise.weight": [
+768,
+1,
+3,
+3
+],
+"down_block.res_blocks.1.norm.weight": [
+768
+],
+"down_block.res_blocks.2.channelwise_linear_1.weight": [
+3072,
+768
+],
+"down_block.res_blocks.2.channelwise_linear_2.weight": [
+768,
+3072
+],
+"down_block.res_blocks.2.channelwise_norm.beta": [
+1,
+1,
+1,
+3072
+],
+"down_block.res_blocks.2.channelwise_norm.gamma": [
+1,
+1,
+1,
+3072
+],
+"down_block.res_blocks.2.cond_embeds_mapper.weight": [
+1536,
+1024
+],
+"down_block.res_blocks.2.depthwise.weight": [
+768,
+1,
+3,
+3
+],
+"down_block.res_blocks.2.norm.weight": [
+768
+],
+"embed.conv.weight": [
+768,
+768,
+1,
+1
+],
+"embed.embeddings.weight": [
+8256,
+768
+],
+"embed.layer_norm.weight": [
+768
+],
+"encoder_proj.weight": [
+1024,
+768
+],
+"encoder_proj_layer_norm.weight": [
+1024
+],
+"mlm_layer.conv1.weight": [
+768,
+768,
+1,
+1
+],
+"mlm_layer.conv2.weight": [
+8192,
+768,
+1,
+1
+],
+"mlm_layer.layer_norm.weight": [
+768
+],
+"project_from_hidden.weight": [
+768,
+1024
+],
+"project_from_hidden_norm.weight": [
+1024
+],
+"project_to_hidden.weight": [
+1024,
+768
+],
+"project_to_hidden_norm.weight": [
+768
+],
+"transformer_layers.0.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.0.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.0.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.0.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.0.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.0.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.0.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.0.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.0.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.0.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.0.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.0.norm1.norm.weight": [
+1024
+],
+"transformer_layers.0.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.0.norm2.norm.weight": [
+1024
+],
+"transformer_layers.0.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.0.norm3.norm.weight": [
+1024
+],
+"transformer_layers.1.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.1.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.1.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.1.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.1.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.1.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.1.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.1.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.1.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.1.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.1.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.1.norm1.norm.weight": [
+1024
+],
+"transformer_layers.1.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.1.norm2.norm.weight": [
+1024
+],
+"transformer_layers.1.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.1.norm3.norm.weight": [
+1024
+],
+"transformer_layers.10.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.10.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.10.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.10.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.10.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.10.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.10.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.10.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.10.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.10.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.10.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.10.norm1.norm.weight": [
+1024
+],
+"transformer_layers.10.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.10.norm2.norm.weight": [
+1024
+],
+"transformer_layers.10.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.10.norm3.norm.weight": [
+1024
+],
+"transformer_layers.11.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.11.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.11.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.11.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.11.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.11.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.11.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.11.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.11.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.11.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.11.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.11.norm1.norm.weight": [
+1024
+],
+"transformer_layers.11.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.11.norm2.norm.weight": [
+1024
+],
+"transformer_layers.11.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.11.norm3.norm.weight": [
+1024
+],
+"transformer_layers.12.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.12.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.12.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.12.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.12.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.12.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.12.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.12.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.12.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.12.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.12.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.12.norm1.norm.weight": [
+1024
+],
+"transformer_layers.12.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.12.norm2.norm.weight": [
+1024
+],
+"transformer_layers.12.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.12.norm3.norm.weight": [
+1024
+],
+"transformer_layers.13.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.13.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.13.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.13.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.13.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.13.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.13.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.13.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.13.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.13.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.13.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.13.norm1.norm.weight": [
+1024
+],
+"transformer_layers.13.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.13.norm2.norm.weight": [
+1024
+],
+"transformer_layers.13.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.13.norm3.norm.weight": [
+1024
+],
+"transformer_layers.14.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.14.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.14.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.14.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.14.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.14.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.14.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.14.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.14.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.14.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.14.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.14.norm1.norm.weight": [
+1024
+],
+"transformer_layers.14.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.14.norm2.norm.weight": [
+1024
+],
+"transformer_layers.14.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.14.norm3.norm.weight": [
+1024
+],
+"transformer_layers.15.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.15.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.15.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.15.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.15.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.15.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.15.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.15.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.15.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.15.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.15.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.15.norm1.norm.weight": [
+1024
+],
+"transformer_layers.15.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.15.norm2.norm.weight": [
+1024
+],
+"transformer_layers.15.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.15.norm3.norm.weight": [
+1024
+],
+"transformer_layers.16.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.16.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.16.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.16.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.16.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.16.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.16.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.16.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.16.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.16.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.16.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.16.norm1.norm.weight": [
+1024
+],
+"transformer_layers.16.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.16.norm2.norm.weight": [
+1024
+],
+"transformer_layers.16.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.16.norm3.norm.weight": [
+1024
+],
+"transformer_layers.17.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.17.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.17.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.17.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.17.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.17.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.17.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.17.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.17.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.17.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.17.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.17.norm1.norm.weight": [
+1024
+],
+"transformer_layers.17.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.17.norm2.norm.weight": [
+1024
+],
+"transformer_layers.17.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.17.norm3.norm.weight": [
+1024
+],
+"transformer_layers.18.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.18.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.18.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.18.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.18.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.18.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.18.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.18.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.18.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.18.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.18.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.18.norm1.norm.weight": [
+1024
+],
+"transformer_layers.18.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.18.norm2.norm.weight": [
+1024
+],
+"transformer_layers.18.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.18.norm3.norm.weight": [
+1024
+],
+"transformer_layers.19.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.19.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.19.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.19.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.19.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.19.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.19.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.19.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.19.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.19.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.19.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.19.norm1.norm.weight": [
+1024
+],
+"transformer_layers.19.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.19.norm2.norm.weight": [
+1024
+],
+"transformer_layers.19.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.19.norm3.norm.weight": [
+1024
+],
+"transformer_layers.2.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.2.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.2.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.2.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.2.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.2.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.2.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.2.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.2.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.2.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.2.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.2.norm1.norm.weight": [
+1024
+],
+"transformer_layers.2.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.2.norm2.norm.weight": [
+1024
+],
+"transformer_layers.2.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.2.norm3.norm.weight": [
+1024
+],
+"transformer_layers.20.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.20.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.20.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.20.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.20.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.20.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.20.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.20.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.20.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.20.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.20.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.20.norm1.norm.weight": [
+1024
+],
+"transformer_layers.20.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.20.norm2.norm.weight": [
+1024
+],
+"transformer_layers.20.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.20.norm3.norm.weight": [
+1024
+],
+"transformer_layers.21.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.21.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.21.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.21.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.21.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.21.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.21.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.21.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.21.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.21.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.21.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.21.norm1.norm.weight": [
+1024
+],
+"transformer_layers.21.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.21.norm2.norm.weight": [
+1024
+],
+"transformer_layers.21.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.21.norm3.norm.weight": [
+1024
+],
+"transformer_layers.3.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.3.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.3.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.3.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.3.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.3.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.3.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.3.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.3.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.3.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.3.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.3.norm1.norm.weight": [
+1024
+],
+"transformer_layers.3.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.3.norm2.norm.weight": [
+1024
+],
+"transformer_layers.3.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.3.norm3.norm.weight": [
+1024
+],
+"transformer_layers.4.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.4.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.4.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.4.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.4.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.4.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.4.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.4.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.4.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.4.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.4.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.4.norm1.norm.weight": [
+1024
+],
+"transformer_layers.4.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.4.norm2.norm.weight": [
+1024
+],
+"transformer_layers.4.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.4.norm3.norm.weight": [
+1024
+],
+"transformer_layers.5.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.5.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.5.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.5.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.5.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.5.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.5.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.5.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.5.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.5.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.5.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.5.norm1.norm.weight": [
+1024
+],
+"transformer_layers.5.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.5.norm2.norm.weight": [
+1024
+],
+"transformer_layers.5.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.5.norm3.norm.weight": [
+1024
+],
+"transformer_layers.6.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.6.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.6.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.6.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.6.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.6.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.6.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.6.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.6.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.6.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.6.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.6.norm1.norm.weight": [
+1024
+],
+"transformer_layers.6.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.6.norm2.norm.weight": [
+1024
+],
+"transformer_layers.6.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.6.norm3.norm.weight": [
+1024
+],
+"transformer_layers.7.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.7.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.7.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.7.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.7.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.7.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.7.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.7.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.7.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.7.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.7.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.7.norm1.norm.weight": [
+1024
+],
+"transformer_layers.7.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.7.norm2.norm.weight": [
+1024
+],
+"transformer_layers.7.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.7.norm3.norm.weight": [
+1024
+],
+"transformer_layers.8.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.8.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.8.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.8.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.8.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.8.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.8.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.8.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.8.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.8.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.8.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.8.norm1.norm.weight": [
+1024
+],
+"transformer_layers.8.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.8.norm2.norm.weight": [
+1024
+],
+"transformer_layers.8.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.8.norm3.norm.weight": [
+1024
+],
+"transformer_layers.9.attn1.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.9.attn1.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.9.attn1.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.9.attn1.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.9.attn2.to_k.weight": [
+1024,
+1024
+],
+"transformer_layers.9.attn2.to_out.0.weight": [
+1024,
+1024
+],
+"transformer_layers.9.attn2.to_q.weight": [
+1024,
+1024
+],
+"transformer_layers.9.attn2.to_v.weight": [
+1024,
+1024
+],
+"transformer_layers.9.ff.net.0.proj.weight": [
+5632,
+1024
+],
+"transformer_layers.9.ff.net.2.weight": [
+1024,
+2816
+],
+"transformer_layers.9.norm1.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.9.norm1.norm.weight": [
+1024
+],
+"transformer_layers.9.norm2.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.9.norm2.norm.weight": [
+1024
+],
+"transformer_layers.9.norm3.linear.weight": [
+2048,
+1024
+],
+"transformer_layers.9.norm3.norm.weight": [
+1024
+],
+"up_block.attention_blocks.0.attn1.to_k.weight": [
+768,
+768
+],
+"up_block.attention_blocks.0.attn1.to_out.0.weight": [
+768,
+768
+],
+"up_block.attention_blocks.0.attn1.to_q.weight": [
+768,
+768
+],
+"up_block.attention_blocks.0.attn1.to_v.weight": [
+768,
+768
+],
+"up_block.attention_blocks.0.attn2.to_k.weight": [
+768,
+768
+],
+"up_block.attention_blocks.0.attn2.to_out.0.weight": [
+768,
+768
+],
+"up_block.attention_blocks.0.attn2.to_q.weight": [
+768,
+768
+],
+"up_block.attention_blocks.0.attn2.to_v.weight": [
+768,
+768
+],
+"up_block.attention_blocks.0.kv_mapper.weight": [
+768,
+1024
+],
+"up_block.attention_blocks.0.norm1.weight": [
+768
+],
+"up_block.attention_blocks.0.norm2.weight": [
+768
+],
+"up_block.attention_blocks.1.attn1.to_k.weight": [
+768,
+768
+],
+"up_block.attention_blocks.1.attn1.to_out.0.weight": [
+768,
+768
+],
+"up_block.attention_blocks.1.attn1.to_q.weight": [
+768,
+768
+],
+"up_block.attention_blocks.1.attn1.to_v.weight": [
+768,
+768
+],
+"up_block.attention_blocks.1.attn2.to_k.weight": [
+768,
+768
+],
+"up_block.attention_blocks.1.attn2.to_out.0.weight": [
+768,
+768
+],
+"up_block.attention_blocks.1.attn2.to_q.weight": [
+768,
+768
+],
+"up_block.attention_blocks.1.attn2.to_v.weight": [
+768,
+768
+],
+"up_block.attention_blocks.1.kv_mapper.weight": [
+768,
+1024
+],
+"up_block.attention_blocks.1.norm1.weight": [
+768
+],
+"up_block.attention_blocks.1.norm2.weight": [
+768
+],
+"up_block.attention_blocks.2.attn1.to_k.weight": [
+768,
+768
+],
+"up_block.attention_blocks.2.attn1.to_out.0.weight": [
+768,
+768
+],
+"up_block.attention_blocks.2.attn1.to_q.weight": [
+768,
+768
+],
+"up_block.attention_blocks.2.attn1.to_v.weight": [
+768,
+768
+],
+"up_block.attention_blocks.2.attn2.to_k.weight": [
+768,
+768
+],
+"up_block.attention_blocks.2.attn2.to_out.0.weight": [
+768,
+768
+],
+"up_block.attention_blocks.2.attn2.to_q.weight": [
+768,
+768
+],
+"up_block.attention_blocks.2.attn2.to_v.weight": [
+768,
+768
+],
+"up_block.attention_blocks.2.kv_mapper.weight": [
+768,
+1024
+],
+"up_block.attention_blocks.2.norm1.weight": [
+768
+],
+"up_block.attention_blocks.2.norm2.weight": [
+768
+],
+"up_block.res_blocks.0.channelwise_linear_1.weight": [
+3072,
+768
+],
+"up_block.res_blocks.0.channelwise_linear_2.weight": [
+768,
+3072
+],
+"up_block.res_blocks.0.channelwise_norm.beta": [
+1,
+1,
+1,
+3072
+],
+"up_block.res_blocks.0.channelwise_norm.gamma": [
+1,
+1,
+1,
+3072
+],
+"up_block.res_blocks.0.cond_embeds_mapper.weight": [
+1536,
+1024
+],
+"up_block.res_blocks.0.depthwise.weight": [
+768,
+1,
+3,
+3
+],
+"up_block.res_blocks.0.norm.weight": [
+768
+],
+"up_block.res_blocks.1.channelwise_linear_1.weight": [
+3072,
+768
+],
+"up_block.res_blocks.1.channelwise_linear_2.weight": [
+768,
+3072
+],
+"up_block.res_blocks.1.channelwise_norm.beta": [
+1,
+1,
+1,
+3072
+],
+"up_block.res_blocks.1.channelwise_norm.gamma": [
+1,
+1,
+1,
+3072
+],
+"up_block.res_blocks.1.cond_embeds_mapper.weight": [
+1536,
+1024
+],
+"up_block.res_blocks.1.depthwise.weight": [
+768,
+1,
+3,
+3
+],
+"up_block.res_blocks.1.norm.weight": [
+768
+],
+"up_block.res_blocks.2.channelwise_linear_1.weight": [
+3072,
+768
+],
+"up_block.res_blocks.2.channelwise_linear_2.weight": [
+768,
+3072
+],
+"up_block.res_blocks.2.channelwise_norm.beta": [
+1,
+1,
+1,
+3072
+],
+"up_block.res_blocks.2.channelwise_norm.gamma": [
+1,
+1,
+1,
+3072
+],
+"up_block.res_blocks.2.cond_embeds_mapper.weight": [
+1536,
+1024
+],
+"up_block.res_blocks.2.depthwise.weight": [
+768,
+1,
+3,
+3
+],
+"up_block.res_blocks.2.norm.weight": [
+768
+]
+}
