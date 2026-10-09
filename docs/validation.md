@@ -983,6 +983,36 @@ token ids and the image bytes for both transformer variants, with the defaults, 
 guidance), a negative prompt, micro-conditioning and temperature settings, a larger grid, and several
 seeds.
 
+## AuraFlow
+
+Validated on CPU in the same environment as above. `auraflow-v0.3` is loaded strictly from
+`fal/AuraFlow-v0.3` at revision `2cd8588`. Every comparison below is required to be **exactly 0**
+(tolerance 0; identical bytes for images). The real-checkpoint run took about 3 h 41 min on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: text encoder, transformer, VAE (names and shapes) | 0 missing, extra or mismatched | 0 |
+| Tokenizer ids / attention masks (prompt and `""`, 256 tokens) | identical / identical | exact / exact |
+| `AuraFlowPipeline.encode_prompt` embeddings (prompt and negative) | 0 | 0 |
+| Transformer single step (batch 2, 32×48 latents, two timesteps, real conditioning) | 0 | 0 |
+| VAE decode (32×48 latents, scaled as the pipeline does) | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 50 steps, guidance 3.5, seed 0) | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, 1360×768 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse". The reference was loaded
+exactly as `AuraFlowPipeline.from_pretrained(..., torch_dtype=torch.float32)` loads it, with the
+default negative prompt.
+
+Random-weight parity covered the UMT5 encoder and the transformer with tiny and with the published
+configuration at small spatial sizes, and tiny-snapshot end-to-end parity covered the default
+settings, guidance on and off, non-square sizes, a truncated prompt and several seeds. The tokenizer
+is additionally covered by fixed-prompt and seeded fuzz tests on a synthetic folder.
+
+The float32 transformer needs about 27 GB, so the reference and native transformers were loaded one
+after the other and each was freed before the next.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -1001,7 +1031,7 @@ seeds.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell and Lumina-Image 2.0, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
+  for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, DPM-Solver++ for PixArt and Sana (flow sigmas), and
   the cosine-schedule masked-token scheduler for aMUSEd.
@@ -1020,7 +1050,7 @@ seeds.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `auraflow-v0.3`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
