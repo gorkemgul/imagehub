@@ -2,10 +2,10 @@
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
 measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
-PixArt, Sana, LongCat-Image, CogView4 and Ideogram 4 measurements are grouped in flat
+PixArt, Sana, AuraFlow, LongCat-Image, CogView4 and Ideogram 4 measurements are grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
 ``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
-``components_stable_cascade``, ``components_pixart``, ``components_sana``,
+``components_stable_cascade``, ``components_pixart``, ``components_sana``, ``components_auraflow``,
 ``components_longcat_image``,
 ``components_cogview4`` and ``components_ideogram4`` mappings: the base model keeps its historical
 unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
@@ -43,9 +43,10 @@ LIMITS = [
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler "
     "with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, "
     "Euler for SDXL, "
-    "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
-    "schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match "
-    "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
+    "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for AuraFlow "
+    "and FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and "
+    "LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting "
+    "for CogView4, DDPM for "
     "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and "
     "DPM-Solver++ for PixArt and Sana (flow sigmas).",
     "No image-quality benchmark (FID, CLIP score).",
@@ -316,6 +317,9 @@ def main() -> None:
         "components_pixart": {key: value for key, value in measured.items() if "pixart" in key},
         "components_sana": {
             key: value for key, value in measured.items() if key.startswith("sana_")
+        },
+        "components_auraflow": {
+            key: value for key, value in measured.items() if key.startswith("auraflow_")
         },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")

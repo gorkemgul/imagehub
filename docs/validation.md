@@ -918,6 +918,36 @@ fixed-prompt and seeded fuzz tests. The scheduler is checked against diffusers w
 The reference and native components were loaded one model id at a time; the float32 reference
 needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
 
+## AuraFlow
+
+Validated on CPU in the same environment as above. `auraflow-v0.3` is loaded strictly from
+`fal/AuraFlow-v0.3` at revision `2cd8588`. Every comparison below is required to be **exactly 0**
+(tolerance 0; identical bytes for images).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: text encoder, transformer, VAE (names and shapes) | measured by the real-checkpoint run | 0 |
+| Tokenizer ids / attention masks (prompt and `""`, 256 tokens) | measured by the real-checkpoint run | exact / exact |
+| `AuraFlowPipeline.encode_prompt` embeddings (prompt and negative) | measured by the real-checkpoint run | 0 |
+| Transformer single step (batch 2, 32×48 latents, two timesteps, real conditioning) | measured by the real-checkpoint run | 0 |
+| VAE decode (32×48 latents, scaled as the pipeline does) | measured by the real-checkpoint run | 0 |
+| End to end: final latent / pixels (1024×1024, 50 steps, guidance 3.5, seed 0) | measured by the real-checkpoint run | 0 / 0 |
+| End to end, seed 1234, 1360×768 (pixels) | measured by the real-checkpoint run | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse". The reference was loaded
+exactly as `AuraFlowPipeline.from_pretrained(..., torch_dtype=torch.float32)` loads it, with the
+default negative prompt.
+
+Random-weight parity covered the UMT5 encoder and the transformer with tiny and with the published
+configuration at small spatial sizes, and tiny-snapshot end-to-end parity covered the default
+settings, guidance on and off, non-square sizes, a truncated prompt and several seeds. The tokenizer
+is additionally covered by fixed-prompt and seeded fuzz tests on a synthetic folder.
+
+The float32 transformer needs about 27 GB, so the reference and native transformers were loaded one
+after the other and each was freed before the next.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -936,7 +966,7 @@ needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
+  for AuraFlow and FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).
 - No image quality benchmark (FID, CLIP score) was run.

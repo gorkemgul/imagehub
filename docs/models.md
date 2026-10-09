@@ -1062,3 +1062,48 @@ is against `clean_caption=False`. Only decoding is exposed for DC-AE.
 **License.** Both repositories declare the Apache-2.0 license. The text encoder is a Gemma-2
 checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
 distribute weights.
+
+# AuraFlow
+
+Catalog: [`auraflow`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`auraflow-v0.3` · Task: `t2i`
+
+**Architecture.** A UMT5 encoder (24 layers, width 2048, a relative position bias in every layer)
+encodes the prompt, and its last hidden state, zeroed at padded positions, conditions a 6.8B-parameter
+flow-matching transformer of width 3072 (12 heads of 256). Four MMDiT blocks process the image and
+text streams jointly, then 32 single-stream DiT blocks process the two together. Eight learned
+register tokens are prepended to the text, queries and keys are layer-normalized per head, and the
+image patches (2×2) receive a learned positional embedding that is centre-cropped from a 96×96 grid.
+Images are decoded by the 4-channel, 8× SDXL-style VAE (scaling factor 0.13025). The scheduler is
+flow-match Euler with a static `shift` of 1.73; the transformer receives timesteps in [0, 1].
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained auraflow-v0.3 checkpoints/auraflow-v0.3
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="auraflow-v0.3", model="checkpoints/auraflow-v0.3", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The model defaults to 50 steps, guidance 3.5 and 1024×1024, with an empty negative
+prompt. The supported options are `seed`, `steps`, `guidance`, `width`, `height`,
+`negative_prompt` and `max_sequence_length` (default 256). The size must be a multiple of 16 and at
+most 1536 per side, which is the extent of the learned positional grid. Guidance 1.0 or lower skips
+the unconditional pass. Unrecognized settings raise an error.
+
+**Memory.** In float32 the transformer needs about 27 GB, the UMT5 encoder about 4.9 GB and the VAE
+about 0.3 GB. The text encoder is stored in float16 and upcast on load.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** Other AuraFlow releases, LoRA, ControlNet, fused projections, several images per
+prompt and fp16/bf16 parity are not supported.
+
+**License.** The repository declares the Apache-2.0 license. imagehub does not distribute weights.
