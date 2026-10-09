@@ -381,7 +381,7 @@ not distribute weights.
 # FLUX.1
 
 Catalog: [`flux-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `flux1-schnell`, `flux1-dev`, `flux1-kontext-dev` · Task: `t2i`
+Models: `flux1-schnell`, `flux1-dev`, `flux1-krea-dev`, `flux1-kontext-dev` · Task: `t2i`
 
 **Architecture.** CLIP-L supplies a pooled embedding and T5-XXL supplies sequence embeddings to a
 12B rectified-flow transformer with 19 double-stream blocks, 38 single-stream blocks, 24 attention
@@ -413,10 +413,31 @@ and `width`/`height` must be multiples of 16. The other supported options are `n
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** Fill, Redux, Depth and Canny variants, ControlNet, LoRA and fp16/bf16 parity are
-not supported. `flux1-schnell` and `flux1-dev` take no image input; for Kontext, see below.
+not supported. `flux1-schnell`, `flux1-dev` and `flux1-krea-dev` take no image input; for Kontext, see below.
 
-**License.** The schnell weights use the Apache-2.0 license. The dev and Kontext weights use the
+**License.** The schnell weights use the Apache-2.0 license. The dev, Krea [dev] and Kontext weights use the
 FLUX.1-dev Non-Commercial License; see the license. imagehub does not distribute weights.
+
+## FLUX.1 Krea [dev]
+
+`flux1-krea-dev` (`black-forest-labs/FLUX.1-Krea-dev`) is an aesthetics-focused fine-tune of the
+FLUX.1 [dev] architecture, per its model card. Its published configs are identical to those of
+`flux1-dev`, so it runs on the same backend, text encoders, transformer and VAE with no new code.
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="flux1-krea-dev", model="checkpoints/flux1-krea-dev", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+- **Defaults.** 28 steps (the diffusers `FluxPipeline` default; the model card gives no step
+  count), guidance 4.5 (the model card), `max_sequence_length` 512 and 1024×1024. The other
+  options are the same as for `flux1-dev`.
+- **License and access.** The repository is gated and the weights use the FLUX.1-dev
+  Non-Commercial License. Accept the terms and provide `HF_TOKEN` when downloading.
+- **Memory.** The same as `flux1-dev`: about 47.6 GB for the transformer, 19 GB for T5-XXL, 0.5 GB
+  for CLIP-L and 0.3 GB for the VAE in float32.
 
 ## FLUX.1 Kontext [dev]
 

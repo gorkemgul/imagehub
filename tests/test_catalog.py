@@ -14,6 +14,7 @@ def test_catalog_contents():
             "dmd2-sdxl-4step",
             "flux1-dev",
             "flux1-kontext-dev",
+            "flux1-krea-dev",
             "flux1-schnell",
             "flux2-klein-4b",
             "flux2-klein-9b",

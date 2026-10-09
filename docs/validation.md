@@ -313,9 +313,11 @@ The full validation run took 47 minutes.
 
 ## FLUX.1
 
-Validated on CPU in the same environment as above. `flux1-schnell` and `flux1-dev` were loaded
-strictly from `black-forest-labs/FLUX.1-schnell` at revision `741f7c3` and
-`black-forest-labs/FLUX.1-dev` at revision `3de623f`, respectively. The observed difference in
+Validated on CPU in the same environment as above. `flux1-schnell`, `flux1-dev` and `flux1-krea-dev`
+were loaded strictly from `black-forest-labs/FLUX.1-schnell` at revision `741f7c3`,
+`black-forest-labs/FLUX.1-dev` at revision `3de623f` and `black-forest-labs/FLUX.1-Krea-dev` at
+revision `8162a9c`, respectively. `flux1-krea-dev` shares the `flux1-dev` architecture and configs and is
+checked with the same comparisons below (guidance 4.5, 512 tokens). The observed difference in
 every comparison is **exactly 0**: on CPU in float32, the local implementation produces a
 bit-identical result to the reference.
 

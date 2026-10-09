@@ -26,6 +26,25 @@ def test_catalog_entries_and_defaults():
     assert len(schnell.files) == len(dev.files) == 23
 
 
+def test_krea_dev_catalog_entry_and_defaults():
+    dev = model_info("flux1-dev")
+    krea = model_info("flux1-krea-dev")
+    assert krea.family == "flux"
+    assert krea.catalog_id == "flux-1"
+    assert krea.repo_id == "black-forest-labs/FLUX.1-Krea-dev"
+    assert krea.revision == "8162a9c7b05a641be098422bf2fcf335615c2f28"
+    assert krea.provenance == "author"
+    assert krea.gated
+    assert krea.license == dev.license == "FLUX.1-dev Non-Commercial License"
+    assert krea.image_input is None
+    assert krea.files == dev.files
+    assert krea.config == {"defaults": {"steps": 28, "guidance": 4.5, "max_sequence_length": 512}}
+    options = FluxBackend(Path("missing"), model_id="flux1-krea-dev").validate_options(
+        T2IRequest("a cat"), {}
+    )
+    assert (options["steps"], options["guidance"], options["max_sequence_length"]) == (28, 4.5, 512)
+
+
 def test_backend_uses_catalog_defaults():
     schnell = FluxBackend(Path("missing"), model_id="flux1-schnell")
     dev = FluxBackend(Path("missing"), model_id="flux1-dev")

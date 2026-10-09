@@ -842,6 +842,48 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="flux1-krea-dev",
+        task=Task.T2I,
+        family="flux",
+        source="https://huggingface.co/black-forest-labs/FLUX.1-Krea-dev",
+        repo_id="black-forest-labs/FLUX.1-Krea-dev",
+        revision="8162a9c7b05a641be098422bf2fcf335615c2f28",
+        provenance="author",
+        catalog_id="flux-1",
+        format="diffusers",
+        license="FLUX.1-dev Non-Commercial License",
+        gated=True,
+        config={"defaults": {"steps": 28, "guidance": 4.5, "max_sequence_length": 512}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors.index.json",
+            "text_encoder_2/model-00001-of-00002.safetensors",
+            "text_encoder_2/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/spiece.model",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="flux1-kontext-dev",
         task=Task.T2I,
         family="flux",

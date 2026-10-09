@@ -24,10 +24,10 @@ diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 
 CPU = torch.device("cpu")
-MODEL_IDS = ("flux1-schnell", "flux1-dev")
+MODEL_IDS = ("flux1-schnell", "flux1-dev", "flux1-krea-dev")
 PROMPT = "a photograph of an astronaut riding a horse"
-MAX_LENGTH = {"flux1-schnell": 256, "flux1-dev": 512}
-GUIDANCE = {"flux1-schnell": 0.0, "flux1-dev": 3.5}
+MAX_LENGTH = {"flux1-schnell": 256, "flux1-dev": 512, "flux1-krea-dev": 512}
+GUIDANCE = {"flux1-schnell": 0.0, "flux1-dev": 3.5, "flux1-krea-dev": 4.5}
 
 
 def _record_name(key, model_id):
@@ -169,7 +169,7 @@ def test_transformer(model_id, record, tmp_path):
     img_ids[:, 1:] = torch.cartesian_prod(torch.arange(64), torch.arange(64))
     txt_ids = torch.zeros(MAX_LENGTH[model_id], 3)
     timestep = torch.tensor([0.5])
-    guidance = torch.tensor([GUIDANCE[model_id]]) if model_id == "flux1-dev" else None
+    guidance = torch.tensor([GUIDANCE[model_id]]) if model_id != "flux1-schnell" else None
 
     reference = diffusers.FluxTransformer2DModel.from_pretrained(
         root / "transformer", local_files_only=True, torch_dtype=torch.float32
