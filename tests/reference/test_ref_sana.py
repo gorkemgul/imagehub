@@ -8,7 +8,6 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import cast
 
-import numpy as np
 import pytest
 import torch
 from helpers import max_diff, snapshot_dir
@@ -30,6 +29,7 @@ from imagehub.tokenization_gemma import GemmaTokenizer
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
+np = pytest.importorskip("numpy")
 
 CPU = torch.device("cpu")
 MODEL_IDS = ("sana-600m-1024", "sana-1600m-1024")

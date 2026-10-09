@@ -1,6 +1,5 @@
 """Tiny-snapshot Sana end-to-end parity against diffusers' SanaPipeline."""
 
-import numpy as np
 import pytest
 import torch
 from helpers import write_tiny_sana
@@ -19,6 +18,7 @@ from imagehub.tokenization_gemma import GemmaTokenizer
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 pixart = pytest.importorskip("diffusers.pipelines.pixart_alpha.pipeline_pixart_alpha")
+np = pytest.importorskip("numpy")
 
 VAE_SCALE = 32
 PROMPT = "A photo of a cat, sitting on the mat in the sun."
