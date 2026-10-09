@@ -207,6 +207,7 @@ def load_weights(
     *,
     container_key: str | None = None,
     clone_shards: bool = True,
+    mapped_key: str | None = None,
 ) -> dict[str, Tensor]:
     """Read safetensors, tensor-only PT/BIN, or a (sharded) model directory."""
     source = Path(path)
@@ -238,8 +239,13 @@ def load_weights(
                         )
                     # The reference loaders copy sharded checkpoints into fresh (64-byte
                     # aligned) tensors; CPU BLAS summation order depends on that alignment.
+                    # ``mapped_key`` names a tensor whose shard stays at its file offsets (the
+                    # reference assigns that shard and copies the rest).
+                    clone = clone_shards and (
+                        mapped_key is None or weight_map.get(mapped_key) != shard_name
+                    )
                     values = {
-                        name: tensor.clone() if clone_shards else tensor
+                        name: tensor.clone() if clone else tensor
                         for name, tensor in load_weights(shard, container_key=container_key).items()
                     }
                     if result.keys() & values.keys():
@@ -277,6 +283,9 @@ class NativeModel(nn.Module):
     # loader does. A model whose reference keeps tensors at their memory-mapped file offsets
     # (diffusers without accelerate) sets this to False; CPU summation order depends on it.
     clone_shards = True
+    # With ``clone_shards``, keep the shard that holds the model's first state-dict key at its file
+    # offsets: diffusers (without accelerate) assigns that shard's tensors and copies the others.
+    keep_first_shard_mapped = False
 
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
@@ -321,8 +330,14 @@ class NativeModel(nn.Module):
         config = read_json(path / "config.json")
         with torch.device("meta"):
             model = cls(config)
+        mapped_key = next(iter(model.state_dict()), None) if cls.keep_first_shard_mapped else None
         model.load_checkpoint(
-            load_weights(path, container_key=container_key, clone_shards=cls.clone_shards)
+            load_weights(
+                path,
+                container_key=container_key,
+                clone_shards=cls.clone_shards,
+                mapped_key=mapped_key,
+            )
         )
         model.init_non_persistent_buffers()
         meta = [

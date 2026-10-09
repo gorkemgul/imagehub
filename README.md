@@ -71,6 +71,7 @@ result.images[0].save("edited.png")
 | Stable Cascade | `stable-cascade`, `stable-cascade-lite` | `t2i` | T | CPU fp32 parity |
 | PixArt | `pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` | `t2i` | T | CPU fp32 parity |
 | Sana | `sana-1600m-1024`, `sana-600m-1024` | `t2i` | T | CPU fp32 parity |
+| Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |

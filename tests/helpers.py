@@ -1499,6 +1499,88 @@ def write_tiny_sana(
     return root
 
 
+LUMINA2_FIXTURES = Path(__file__).parent / "fixtures" / "lumina2_configs"
+TINY_LUMINA2_TRANSFORMER = {
+    "_class_name": "Lumina2Transformer2DModel",
+    "in_channels": 4,
+    "hidden_size": 32,
+    "num_layers": 2,
+    "num_refiner_layers": 1,
+    "num_attention_heads": 4,
+    "num_kv_heads": 2,
+    "multiple_of": 16,
+    "axes_dim_rope": [2, 2, 4],
+    "axes_lens": [300, 64, 64],
+    "cap_feat_dim": 32,
+    "sample_size": 16,
+}
+TINY_LUMINA2_VAE = {
+    "_class_name": "AutoencoderKL",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 4,
+    "block_out_channels": [8, 8, 16, 16],
+    "layers_per_block": 1,
+    "norm_num_groups": 4,
+    "scaling_factor": 0.3611,
+    "shift_factor": 0.1159,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "mid_block_add_attention": True,
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "sample_size": 32,
+}
+
+
+def write_tiny_lumina2(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight Lumina-Image 2.0 snapshot in the published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.gemma2 import Gemma2Model
+    from imagehub.models.lumina2_transformer import Lumina2Transformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    vocab_size = len(
+        json.loads(
+            write_tiny_gemma_tokenizer(root / "tokenizer").joinpath("tokenizer.json").read_text()
+        )["model"]["vocab"]
+    )
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        (LUMINA2_FIXTURES / "scheduler_scheduler_config.json").read_text(encoding="utf-8")
+    )
+    (root / "model_index.json").write_text(
+        (LUMINA2_FIXTURES / "model_index.json").read_text(encoding="utf-8")
+    )
+    for name, cls, config, weights, std in (
+        (
+            "text_encoder",
+            Gemma2Model,
+            TINY_GEMMA_CONFIG | {"vocab_size": vocab_size},
+            "model.safetensors",
+            0.1,
+        ),
+        (
+            "transformer",
+            Lumina2Transformer2DModel,
+            TINY_LUMINA2_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+            0.05,
+        ),
+        ("vae", AutoencoderKL, TINY_LUMINA2_VAE, "diffusion_pytorch_model.safetensors", 0.05),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, std)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
 AURAFLOW_FIXTURES = Path(__file__).parent / "fixtures" / "auraflow_configs"
 TINY_AURAFLOW_MERGES = (
     ("▁", "a"),
