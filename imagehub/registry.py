@@ -102,6 +102,7 @@ for _task, _name, _path in (
     (Task.T2I, "pixart", "imagehub.backends.pixart:PixArtBackend"),
     (Task.T2I, "sana", "imagehub.backends.sana:SanaBackend"),
     (Task.T2I, "kolors", "imagehub.backends.kolors:KolorsBackend"),
+    (Task.T2I, "lumina2", "imagehub.backends.lumina2:Lumina2Backend"),
     (Task.T2I, "krea2", "imagehub.backends.krea2:Krea2Backend"),
     (
         Task.T2I,

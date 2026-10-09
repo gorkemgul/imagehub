@@ -303,6 +303,29 @@ def test_sharded_index_loads_and_merges(tmp_path):
     torch.testing.assert_close(weights["gamma"], shard_two["gamma"], rtol=0, atol=0)
 
 
+def test_mapped_key_keeps_only_its_shard_at_file_offsets(tmp_path):
+    first = tmp_path / "model-00001-of-00002.safetensors"
+    second = tmp_path / "model-00002-of-00002.safetensors"
+    save_safetensors({"alpha": torch.ones(3), "beta": torch.ones(5)}, first)
+    save_safetensors({"gamma": torch.ones(3), "delta": torch.ones(5)}, second)
+    weight_map = {
+        "alpha": first.name,
+        "beta": first.name,
+        "gamma": second.name,
+        "delta": second.name,
+    }
+    (tmp_path / "model.safetensors.index.json").write_text(json.dumps({"weight_map": weight_map}))
+    offsets = {name: tensor.data_ptr() % 64 for name, tensor in load_weights(first).items()}
+    offsets |= {name: tensor.data_ptr() % 64 for name, tensor in load_weights(second).items()}
+    assert offsets["beta"] != 0
+    weights = load_weights(tmp_path, mapped_key="alpha")
+    assert weights["beta"].data_ptr() % 64 == offsets["beta"]
+    assert weights["delta"].data_ptr() % 64 == 0
+    cloned = load_weights(tmp_path)
+    assert cloned["beta"].data_ptr() % 64 == 0
+    assert cloned["delta"].data_ptr() % 64 == 0
+
+
 def test_sharded_index_follows_symlinked_blobs(tmp_path):
     blobs = tmp_path / "blobs"
     blobs.mkdir()

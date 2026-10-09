@@ -918,6 +918,70 @@ fixed-prompt and seeded fuzz tests. The scheduler is checked against diffusers w
 The reference and native components were loaded one model id at a time; the float32 reference
 needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
 
+## Lumina-Image 2.0
+
+`lumina-image-2.0` is loaded strictly from `Alpha-VLLM/Lumina-Image-2.0` at revision `53504ab` and
+compared with diffusers 0.40.0 `Lumina2Pipeline` on CPU in float32. Every comparison below measured
+exactly 0. The real-checkpoint run takes about 50 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured difference |
+| --- | --- |
+| Tensor header check: text encoder, transformer, autoencoder (names and shapes) | 0 missing, extra or mismatched |
+| Gemma tokenizer ids / attention masks (system prompt and prompt, a truncated prompt, and `""`) | exact / exact |
+| `Lumina2Pipeline.encode_prompt` embeddings and masks (prompt and negative) | 0 |
+| Transformer single step (batch 2, 64×64 latents, two timesteps, real conditioning) | 0 |
+| Autoencoder decode (64×64 latents, scaled and shifted as the pipeline does) | 0 |
+| End to end: final latent / pixels (1024×1024, 30 steps, guidance 4.0, seed 0) | 0 / 0 |
+| End to end, seed 1234, 1360×768 request (pixels) | 0 |
+
+The reference text encoder is loaded exactly as `Lumina2Pipeline.from_pretrained(...,
+torch_dtype=torch.float32)` loads it, and its second-to-last hidden state is the conditioning. The
+end-to-end reference run decodes its own latents with the pipeline's autoencoder and image processor.
+
+Random-weight parity covers the transformer with tiny and published configurations and the Gemma-2
+text model, including every entry of the hidden-state tuple. Tiny-snapshot end-to-end parity covers
+the default settings, `cfg_trunc_ratio` below 1, `cfg_normalization` off, guidance 1.0, non-square
+sizes, a custom system prompt and negative prompt, and several seeds.
+
+The end to end first differed by about 3e-4 in the latents. The cause was the memory layout of the
+loaded weights: when diffusers loads a sharded checkpoint without accelerate, it keeps the shard that
+holds the model's first tensor at its file offsets and copies the other shards into aligned buffers,
+and the CPU kernels sum in a layout-dependent order. The transformer now loads its shards the same
+way (`keep_first_shard_mapped`).
+
+## Kolors
+
+`kolors` is loaded strictly from `Kwai-Kolors/Kolors-diffusers` at revision `7e091c7` and compared
+with diffusers 0.40.0 `KolorsPipeline` on CPU in float32, on the float32 upcast of the published
+float16 weights (only float16 weights are published). Every comparison below measured exactly 0.
+The real-checkpoint run takes about 1 h 20 min on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured difference |
+| --- | --- |
+| Tensor header check: text encoder (200 tensors), U-Net (1682), autoencoder (248) (names and shapes) | 0 missing, extra or mismatched |
+| ChatGLM tokenizer ids / attention masks (11 prompts, a 2000-prompt fuzz, 3 snapshot cases) | identical / identical |
+| `KolorsPipeline.encode_prompt` embeddings and pooled embeddings (prompt and negative) | 0 |
+| U-Net single step (real conditioning) | 0 |
+| Autoencoder decode | 0 |
+| End to end: final latent / pixels (1024×1024, 50 steps, guidance 5.0, seed 0) | 0 / 0 |
+| End to end, seed 1234, 1360×768 request (pixels) | 0 |
+
+The reference pipeline was loaded with `variant="fp16"` and `torch_dtype=torch.float32`, so both
+sides compute on the same upcast weights.
+
+Random-weight parity covers the ChatGLM encoder in five configurations (the published layout,
+post-residual layer norm, multi-head attention without the final norm, linear biases, and a wider
+model), on left-padded batches. Tiny-snapshot end-to-end parity covers four cases (the default
+settings, guidance 1.0, a non-square size with a negative prompt, and micro-conditioning with
+explicit original size, crop and target size) with two sets of random weights each, plus a check of
+the latents. The Euler scheduler ignores the configuration keys that diffusers' Euler scheduler does
+not read (`thresholding`, `dynamic_thresholding_ratio`, `clip_sample_range`), which this release's
+configuration contains.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -933,10 +997,10 @@ needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
 - There is no parity claim for float16 or bfloat16.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
 - Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
-  with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
+  with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base, SSD-1B and Kolors,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
+  for FLUX.1 schnell and Lumina-Image 2.0, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).
 - No image quality benchmark (FID, CLIP score) was run.
@@ -954,7 +1018,7 @@ needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
