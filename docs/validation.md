@@ -918,6 +918,34 @@ fixed-prompt and seeded fuzz tests. The scheduler is checked against diffusers w
 The reference and native components were loaded one model id at a time; the float32 reference
 needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
 
+## Lumina-Image 2.0
+
+`lumina-image-2.0` is loaded strictly from `Alpha-VLLM/Lumina-Image-2.0` at revision `53504ab`. The
+real-checkpoint tests (`tests/reference/test_ref_lumina2.py`) assert the tolerances below; measured
+values are added to this page after that run. The tiny-snapshot and random-weight comparisons need
+no downloaded weights and pass with exactly 0 difference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance |
+| --- | --- |
+| Tensor header check: text encoder, transformer, autoencoder (names and shapes) | 0 missing, extra or mismatched |
+| Gemma tokenizer ids / attention masks (system prompt and prompt, a truncated prompt, and `""`) | exact / exact |
+| `Lumina2Pipeline.encode_prompt` embeddings and masks (prompt and negative) | 0 |
+| Transformer single step (batch 2, 64×64 latents, two timesteps, real conditioning) | 0 |
+| Autoencoder decode (64×64 latents, scaled and shifted as the pipeline does) | 0 |
+| End to end: final latent / pixels (1024×1024, 30 steps, guidance 4.0, seed 0) | 0 / 0 |
+| End to end, seed 1234, 1360×768 request (pixels) | 0 |
+
+The reference text encoder is loaded exactly as `Lumina2Pipeline.from_pretrained(...,
+torch_dtype=torch.float32)` loads it, and its second-to-last hidden state is the conditioning. The
+end-to-end reference run decodes its own latents with the pipeline's autoencoder and image processor.
+
+Random-weight parity covers the transformer with tiny and published configurations and the Gemma-2
+text model, including every entry of the hidden-state tuple. Tiny-snapshot end-to-end parity covers
+the default settings, `cfg_trunc_ratio` below 1, `cfg_normalization` off, guidance 1.0, non-square
+sizes, a custom system prompt and negative prompt, and several seeds.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -936,7 +964,7 @@ needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base and SSD-1B,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
+  for FLUX.1 schnell and Lumina-Image 2.0, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).
 - No image quality benchmark (FID, CLIP score) was run.

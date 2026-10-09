@@ -28,6 +28,7 @@ def test_family_and_model_aliases_are_registered():
     assert {"ideogram4", "ideogram4-fp8"} <= set(names)
     assert {"kandinsky22", "kandinsky-2.2"} <= set(names)
     assert {"sana", "sana-1600m-1024", "sana-600m-1024"} <= set(names)
+    assert {"lumina2", "lumina-image-2.0"} <= set(names)
     assert {"stable_cascade", "stable-cascade", "stable-cascade-lite"} <= set(names)
 
 
