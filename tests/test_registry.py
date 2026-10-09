@@ -18,6 +18,7 @@ def test_family_and_model_aliases_are_registered():
     assert "janus-pro-1b" in names
     assert {"sd3.5-medium", "sd3.5-large"} <= set(names)
     assert {"qwen-image", "qwen-image-2.1"} <= set(names)
+    assert {"flux1-dev", "flux1-kontext-dev"} <= set(names)
     assert {"flux2", "flux2-klein-4b", "flux2-klein-9b"} <= set(names)
     assert {"hunyuan-dit", "hunyuan-dit-v1.1-distilled"} <= set(names)
     assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024"} <= set(names)

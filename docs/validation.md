@@ -352,6 +352,42 @@ Each test ran the reference first, saved its outputs, freed it, then ran the nat
 component and seed tests took 11 minutes and its fixed-latent end-to-end test took 13 minutes. The
 full dev run took 25 minutes.
 
+## FLUX.1 Kontext
+
+Validated on CPU in the same environment as above, against diffusers 0.40.0 `FluxKontextPipeline`.
+`flux1-kontext-dev` was loaded strictly from `black-forest-labs/FLUX.1-Kontext-dev` at revision
+`24e9ded`. The observed difference in every comparison is **exactly 0**: on CPU in float32, the
+local implementation produces a bit-identical result to the reference, with identical bytes for
+images.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Input preprocessing over several sizes (300×200, 512×768, 1024×1024, 1365×768, 2000×1100) and modes (RGB, L, RGBA), with and without the automatic resolution choice: resized image bytes and normalized tensor | 0 | 0 |
+| VAE encode of the preprocessed input (same sizes and modes) | 0 | 0 |
+| Tiny end to end, with an input image (square and non-square, several seeds, a rescaled request): final latent / pixels | 0 / 0 | 0 / 0 |
+| Tiny end to end, without an input image: final latent / pixels | 0 / 0 | 0 / 0 |
+| Tiny end to end, with true CFG and a negative prompt: final latent / pixels | 0 / 0 | 0 / 0 |
+| Input preprocessing and VAE encode, real checkpoint (1024×768 and 640×960 inputs) | 0 | 0 |
+| Transformer single step with the image tokens, real checkpoint (two timesteps) | 0 | 0 |
+| End to end with an input image at the defaults: final latent / pixels (1024×768 input, 28 steps, guidance 3.5, seed 0) | 0 / 0 | 0 / 0 |
+| End to end without an input image: final latent / pixels (4 steps) | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, non-square input image (640×960) and non-square output (1360×768, 4 steps) (pixels) | 0 | 0 |
+
+The tiny end-to-end tests use random weights (2 steps) and compare the sequence layout (image tokens, their
+position ids and the slicing of the output) against `FluxKontextPipeline`. The real-checkpoint
+runs use fixed synthetic input images; the run with an image uses the 28-step, guidance 3.5
+defaults, while the run without an image and the seed test use 4 steps to shorten the CPU run. Existing FLUX.1 tests are unchanged and still exact.
+
+The header-only tensor check covered `text_encoder`, `text_encoder_2`, `transformer` and `vae`:
+tensor counts 196 / 219 / 1160 / 244, with missing, extra and shape-mismatched tensors all **0**.
+Record: `tensor_header_check`, [validation.json](validation.json).
+
+The reference and native transformers were never held in one process (the transformer comparison
+saves the reference output first, then runs the native model). The real-checkpoint run took about
+2 hours 7 minutes on an Apple M2 Max CPU.
+
 ## FLUX.2 klein
 
 Validated on CPU in the same environment as above. `flux2-klein-4b` and `flux2-klein-9b` were loaded
@@ -883,7 +919,7 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
-  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
+  `flux1-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `sd-v2-1`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with

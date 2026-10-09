@@ -155,15 +155,17 @@ def main() -> None:
         snapshot = read_snapshot(snapshot_dir)
         if snapshot is None or snapshot["revision"] != spec.revision:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
-        measurement_id = {"krea2-turbo": "krea2_turbo", "longcat-image": "longcat_image"}.get(
-            spec.id, spec.id
-        )
+        measurement_id = {
+            "krea2-turbo": "krea2_turbo",
+            "longcat-image": "longcat_image",
+            "flux1-kontext-dev": "flux1_kontext_dev",
+        }.get(spec.id, spec.id)
         e2e = measured.get(f"e2e_{measurement_id}")
         e2e_batch2 = measured.get(f"e2e_batch2_{spec.id}")
         e2e_multistep = measured.get(f"e2e_multistep_{spec.id}")
         e2e_guided = measured.get(f"e2e_guided_{spec.id}")
         seed_e2e = measured.get(f"seed_e2e_{measurement_id}")
-        header = measured.get(f"header_{measurement_id}")
+        header = measured.get(f"header_{measurement_id}") or measured.get(f"header_{spec.id}")
         reference = {package: dict(details) for package, details in spec.reference.items()}
         if spec.id == "ideogram4-fp8":
             reference = {
@@ -279,7 +281,9 @@ def main() -> None:
             )
         },
         "components_flux1": {
-            key: value for key, value in measured.items() if key.startswith("flux1_")
+            key: value
+            for key, value in measured.items()
+            if key.startswith(("flux1_", "flux_kontext_", "e2e_flux1_kontext_dev_no_image"))
         },
         "components_krea2": {
             key: value for key, value in measured.items() if key.startswith("krea2_")

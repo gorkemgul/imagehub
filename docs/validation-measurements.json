@@ -204,6 +204,18 @@
     "passed": true,
     "steps": 4
   },
+  "e2e_flux1_kontext_dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 28
+  },
+  "e2e_flux1_kontext_dev_no_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
+  },
   "e2e_flux2-klein-4b": {
     "max_pixel_diff": 0,
     "passed": true
@@ -1014,6 +1026,122 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "flux_kontext_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_e2e_no_image_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_encode_1024x1024_RGB": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_encode_1365x768_RGB": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_encode_480x640_L": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_encode_512x768_RGB": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_encode_640x480_RGBA": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_encode_landscape": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_encode_portrait": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_1024x1024_RGB_auto": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_1024x1024_RGB_raw": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_1365x768_RGB_auto": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_1365x768_RGB_raw": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_2000x1100_RGB_auto": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_2000x1100_RGB_raw": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_300x200_RGB_auto": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_300x200_RGB_raw": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_480x640_L_auto": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_480x640_L_raw": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_512x768_RGB_auto": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_512x768_RGB_raw": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_640x480_RGBA_auto": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_640x480_RGBA_raw": {
+    "max_abs_diff": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_landscape": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_preprocess_portrait": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_transformer_t0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux_kontext_transformer_t1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "header_cogview4-6b": {
     "text_encoder": {
       "extra": [],
@@ -1047,6 +1175,32 @@
     "tensors": 1680
   },
   "header_flux1-dev": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1160
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_flux1-kontext-dev": {
     "text_encoder": {
       "extra": [],
       "mismatch": [],
@@ -3023,6 +3177,12 @@
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 42,
+    "steps": 4
+  },
+  "seed_e2e_flux1_kontext_dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
     "steps": 4
   },
   "seed_e2e_flux2-klein-4b": {

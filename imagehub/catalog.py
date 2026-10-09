@@ -71,6 +71,7 @@ class ModelSpec:
     base_exclude: tuple[str, ...] = ()
     overlay: Mapping[str, str] = field(default_factory=dict)
     subfolders: Mapping[str, SubRepo] = field(default_factory=dict)
+    image_input: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "config", MappingProxyType(dict(self.config)))
@@ -92,6 +93,8 @@ class ModelSpec:
             raise ValueError("revision must be a 40-character lowercase commit hash")
         if self.provenance not in PROVENANCES:
             raise ValueError(f"provenance must be one of {', '.join(PROVENANCES)}")
+        if self.image_input not in (None, "optional", "required"):
+            raise ValueError("image_input must be None, 'optional' or 'required'")
         if self.base is not None and not any(entry.id == self.base for entry in _entries):
             raise ValueError(f"base model {self.base!r} does not exist")
         if self.overlay and self.base is None:
@@ -809,6 +812,52 @@ _entries.append(
         license="FLUX.1-dev Non-Commercial License",
         gated=True,
         config={"defaults": {"steps": 50, "guidance": 3.5, "max_sequence_length": 512}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors.index.json",
+            "text_encoder_2/model-00001-of-00002.safetensors",
+            "text_encoder_2/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/spiece.model",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="flux1-kontext-dev",
+        task=Task.T2I,
+        family="flux",
+        source="https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev",
+        repo_id="black-forest-labs/FLUX.1-Kontext-dev",
+        revision="24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
+        provenance="author",
+        catalog_id="flux-1-kontext",
+        format="diffusers",
+        license="FLUX.1-dev Non-Commercial License",
+        gated=True,
+        image_input="optional",
+        config={
+            "pipeline": "kontext",
+            "defaults": {"steps": 28, "guidance": 3.5, "max_sequence_length": 512},
+        },
         files=(
             "model_index.json",
             "scheduler/scheduler_config.json",

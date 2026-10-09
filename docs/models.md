@@ -1,3 +1,13 @@
+# Image input
+
+Most models take a text prompt only. The models in this table also accept an input image through the
+`image` option (a `PIL.Image.Image` or an `imagehub.Image`); every model not listed here takes no
+image input, and passing `image` to one raises an error.
+
+| Model | Image input | Use | Options |
+| --- | --- | --- | --- |
+| `flux1-kontext-dev` | optional | instruction editing | `image` |
+
 # Stable Diffusion 1.x
 
 Catalog: [`stable-diffusion-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -371,7 +381,7 @@ not distribute weights.
 # FLUX.1
 
 Catalog: [`flux-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `flux1-schnell`, `flux1-dev` · Task: `t2i`
+Models: `flux1-schnell`, `flux1-dev`, `flux1-kontext-dev` · Task: `t2i`
 
 **Architecture.** CLIP-L supplies a pooled embedding and T5-XXL supplies sequence embeddings to a
 12B rectified-flow transformer with 19 double-stream blocks, 38 single-stream blocks, 24 attention
@@ -402,11 +412,49 @@ and `width`/`height` must be multiples of 16. The other supported options are `n
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** Kontext, Fill, Redux, Depth and Canny variants, ControlNet, LoRA and fp16/bf16
-parity are not supported.
+**Out of scope.** Fill, Redux, Depth and Canny variants, ControlNet, LoRA and fp16/bf16 parity are
+not supported. `flux1-schnell` and `flux1-dev` take no image input; for Kontext, see below.
 
-**License.** The schnell weights use the Apache-2.0 license. The dev weights use the FLUX.1-dev
-Non-Commercial License; see the license. imagehub does not distribute weights.
+**License.** The schnell weights use the Apache-2.0 license. The dev and Kontext weights use the
+FLUX.1-dev Non-Commercial License; see the license. imagehub does not distribute weights.
+
+## FLUX.1 Kontext [dev]
+
+`flux1-kontext-dev` (`black-forest-labs/FLUX.1-Kontext-dev`) is the FLUX.1 transformer trained to
+edit an image from a text instruction. It shares the FLUX.1 backend, text encoders and VAE; the
+only difference is that the tokens of the encoded input image are appended to the sequence, and
+only the generated tokens are decoded.
+
+```python
+from PIL import Image
+from imagehub import pipeline
+with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-kontext-dev", device="mps") as pipe:
+    result = pipe("Add a red hat to the scene", image=Image.open("photo.png"), seed=0)
+    result.images[0].save("edited.png")
+```
+
+- **The image is optional.** Without `image`, the model generates from the prompt alone, like
+  `flux1-dev`.
+- **Input resizing.** The input is converted to RGB (grayscale, RGBA and palette images included),
+  rounded down to a multiple of 16, and then resized to the preferred Kontext resolution whose
+  aspect ratio is closest to its own (672×1568 up to 1568×672, 1024×1024 for a square). It is
+  encoded by the VAE (the mode of the posterior, shifted and scaled) before it joins the sequence.
+- **Output size.** The size of the result comes from `height` and `width` (default 1024×1024), not
+  from the input image. They are rescaled to at most `max_area` pixels (default 1024²) at the
+  same aspect ratio and rounded down to multiples of 16. To keep the input's shape, pass its
+  size as `height` and `width`.
+- **Defaults.** 28 steps, guidance 3.5, `max_sequence_length` 512, `true_cfg_scale` 1.0 (no
+  negative prompt). The model card's examples use guidance 2.5; pass `guidance=2.5` to use it.
+  The other FLUX.1 options (`num_images`, `seed`, `latents`, `negative_prompt`, `true_cfg_scale`)
+  work as for `flux1-dev`; `max_area` is the one added option besides `image`.
+- **License and access.** The repository is gated and the weights use the FLUX.1-dev
+  Non-Commercial License. Accept the terms and provide `HF_TOKEN` when downloading.
+- **Memory.** The same as `flux1-dev`: about 47.6 GB for the transformer, 19 GB for T5-XXL, 0.5 GB
+  for CLIP-L and 0.3 GB for the VAE in float32.
+- **Limits.** One input image only. Inpainting (`FluxKontextInpaintPipeline`), several input
+  images, IP-Adapter and fp16/bf16 parity are not supported.
+- **Seed compatibility.** On CPU, the same seed, image and settings give the same image as
+  diffusers 0.40.0 `FluxKontextPipeline` ([validation](validation.md)).
 
 
 # FLUX.2 klein
