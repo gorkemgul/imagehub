@@ -1,36 +1,24 @@
 """Parity of the LlamaGen GPT and VQ-16 decoder against the official code on CPU float32."""
 
-import importlib
-import sys
-from pathlib import Path
+import gc
+import json
+import struct
+from types import SimpleNamespace
 
 import pytest
 import torch
+from helpers import max_diff, snapshot_dir
+from llamagen_driver import left_pad, reference_captions, reference_sample
 
+from imagehub import pipeline
+from imagehub.backends.llamagen import LlamaGenComponents, encode_prompts, generate, to_uint8
+from imagehub.checkpoints import load_weights, read_json
 from imagehub.models.llamagen import LlamaGenGPT, gpt_xl_config
 from imagehub.models.llamagen_vq import LlamaGenVQ
+from imagehub.models.t5 import T5EncoderModel
+from imagehub.tokenization_t5 import T5Tokenizer
 
 pytestmark = pytest.mark.reference
-
-REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/LlamaGen")
-_REFERENCE_PACKAGES = ("autoregressive", "tokenizer", "utils")
-
-
-@pytest.fixture(scope="module")
-def llamagen_reference():
-    if not REFERENCE_ROOT.is_dir():
-        pytest.skip(f"LlamaGen reference checkout not found at {REFERENCE_ROOT}")
-    sys.path.insert(0, str(REFERENCE_ROOT))
-    try:
-        gpt = importlib.import_module("autoregressive.models.gpt")
-        generate = importlib.import_module("autoregressive.models.generate")
-        vq = importlib.import_module("tokenizer.tokenizer_image.vq_model")
-        yield gpt, generate, vq
-    finally:
-        sys.path.remove(str(REFERENCE_ROOT))
-        for name in list(sys.modules):
-            if name.split(".")[0] in _REFERENCE_PACKAGES:
-                del sys.modules[name]
 
 
 def _randomize_gpt(model, seed):
@@ -175,3 +163,303 @@ def test_published_vq_decode_code_is_exact(llamagen_reference, record):
     kwargs = {"codebook_size": 16384, "codebook_embed_dim": 8}
     _compare_vq(vq, kwargs, {}, 16)
     record("llamagen_vq16_random_weights", decode_code_equal=True, ids="16x16")
+
+
+# Real checkpoints. Each model id needs a local snapshot (see ``python -m imagehub.pretrained``)
+# named by IMAGEHUB_SNAPSHOT_<MODEL_ID>; the tests skip without it.
+
+MODEL_IDS = ["llamagen-t2i-xl-256", "llamagen-t2i-xl-512"]
+SIZES = {"llamagen-t2i-xl-256": 256, "llamagen-t2i-xl-512": 512}
+GPT_FILES = {
+    "llamagen-t2i-xl-256": "t2i_XL_stage1_256.pt",
+    "llamagen-t2i-xl-512": "t2i_XL_stage2_512.pt",
+}
+PROMPT = "A blue Porsche 356 parked in front of a yellow brick wall."
+OTHER_PROMPT = "A photo of an astronaut riding a horse in the forest."
+CPU = torch.device("cpu")
+T5_SKIPPED = ("decoder.", "lm_head.", "encoder.embed_tokens.")
+
+
+def _shapes(path):
+    state = torch.load(path, map_location="cpu", weights_only=True, mmap=True)["model"]
+    return {name: tuple(tensor.shape) for name, tensor in state.items()}
+
+
+def _safetensors_shapes(directory):
+    index = json.loads((directory / "model.safetensors.index.json").read_text())
+    shapes = {}
+    for shard in sorted(set(index["weight_map"].values())):
+        with (directory / shard).open("rb") as source:
+            (length,) = struct.unpack("<Q", source.read(8))
+            header = json.loads(source.read(length))
+        shapes |= {
+            name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"
+        }
+    return shapes
+
+
+def _load_reference_gpt(gpt, path, latent_size):
+    model = gpt.GPT_models["GPT-XL"](block_size=latent_size**2, cls_token_num=120, model_type="t2i")
+    incompatible = model.load_state_dict(
+        torch.load(path, map_location="cpu", weights_only=True)["model"], strict=False
+    )
+    assert not incompatible.unexpected_keys
+    assert set(incompatible.missing_keys) <= {"freqs_cis"}
+    return model.eval()
+
+
+def _load_reference_vq(vq, path):
+    model = vq.VQ_16(codebook_size=16384, codebook_embed_dim=8)
+    incompatible = model.load_state_dict(
+        torch.load(path, map_location="cpu", weights_only=True)["model"], strict=False
+    )
+    assert not incompatible.missing_keys and not incompatible.unexpected_keys
+    return model.eval()
+
+
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_headers(record, model_id):
+    root = snapshot_dir(model_id)
+    result = {}
+    gpt_shapes = _shapes(root / GPT_FILES[model_id])
+    latent = SIZES[model_id] // 16
+    with torch.device("meta"):
+        gpt_model = LlamaGenGPT(gpt_xl_config(latent**2))
+        vq_model = LlamaGenVQ({})
+        text_model = T5EncoderModel(read_json(root / "text_encoder" / "config.json"))
+    t5_shapes = _safetensors_shapes(root / "text_encoder")
+    checks = {
+        "gpt": (gpt_model, gpt_shapes),
+        "vq": (vq_model, _shapes(root / "vq_ds16_t2i.pt")),
+        "text_encoder": (
+            text_model,
+            {name: shape for name, shape in t5_shapes.items() if not name.startswith(T5_SKIPPED)},
+        ),
+    }
+    for component, (model, shapes) in checks.items():
+        prepared = model.prepare_state_dict(
+            {name: torch.empty(shape, device="meta") for name, shape in shapes.items()}
+        )
+        expected = {name: tuple(value.shape) for name, value in model.state_dict().items()}
+        actual = {name: tuple(value.shape) for name, value in prepared.items()}
+        result[component] = {
+            "missing": sorted(expected.keys() - actual.keys()),
+            "extra": sorted(actual.keys() - expected.keys()),
+            "mismatch": sorted(
+                name for name in expected.keys() & actual.keys() if expected[name] != actual[name]
+            ),
+            "tensors": len(shapes),
+        }
+    # Left out: the decoder, the output head and the tied copy of the embedding, if stored.
+    result["text_encoder"]["skipped"] = sum(name.startswith(T5_SKIPPED) for name in t5_shapes)
+    record(f"header_{model_id}", **result)
+    assert all(
+        not entry[key] for entry in result.values() for key in ("missing", "extra", "mismatch")
+    )
+
+
+@pytest.fixture(scope="module")
+def captions():
+    """Reference caption embeddings and the driver's left-padded inputs for two prompts."""
+    # Both models share the text encoder, so the first available snapshot supplies it.
+    for model_id in MODEL_IDS:
+        try:
+            root = snapshot_dir(model_id)
+        except pytest.skip.Exception:
+            continue
+        ids, embeddings, masks = reference_captions(root / "text_encoder", [PROMPT, OTHER_PROMPT])
+        c_indices, c_masks = left_pad(embeddings, masks)
+        return root / "text_encoder", ids, embeddings, masks, c_indices, c_masks
+    pytest.skip("No LlamaGen snapshot is configured")
+
+
+def test_tokenizer_and_t5_embeddings(record, captions):
+    text_dir, ids, _, masks, c_indices, c_masks = captions
+    transformers = pytest.importorskip("transformers")
+    tokenizer = T5Tokenizer(text_dir)
+    reference = transformers.AutoTokenizer.from_pretrained(text_dir)
+    cases = [
+        PROMPT,
+        OTHER_PROMPT,
+        "",
+        "A Cat, sitting on THE mat!  Quoted: 'it' costs 5 euros.",
+        " ".join([PROMPT] * 12),
+    ]
+    matches = []
+    for case in cases:
+        text = case.lower().strip()
+        expected = reference(
+            [text],
+            max_length=120,
+            padding="max_length",
+            truncation=True,
+            return_attention_mask=True,
+            add_special_tokens=True,
+            return_tensors="pt",
+        )
+        actual_ids, actual_mask = tokenizer([text], 120)
+        matches.append(
+            torch.equal(actual_ids, expected["input_ids"])
+            and torch.equal(actual_mask.long(), expected["attention_mask"])
+        )
+    record("llamagen_tokenizer", cases=matches, tolerance="exact")
+    assert all(matches)
+
+    components = SimpleNamespace(
+        tokenizer=tokenizer,
+        text_encoder=T5EncoderModel.from_pretrained(text_dir, device=CPU, dtype=torch.float32),
+    )
+    actual_indices, actual_masks = encode_prompts(components, [PROMPT, OTHER_PROMPT], CPU)
+    measured = max_diff(actual_indices, c_indices)
+    record("llamagen_t5_caption_embeddings", **measured, tolerance=0.0)
+    assert torch.equal(actual_masks, c_masks)
+    assert torch.equal(actual_indices, c_indices)
+    assert torch.equal(
+        ids, tokenizer([PROMPT.lower().strip(), OTHER_PROMPT.lower().strip()], 120)[0]
+    )
+    del components
+    gc.collect()
+
+
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_gpt_prefill_logits(record, llamagen_reference, captions, model_id):
+    gpt, _, _ = llamagen_reference
+    root = snapshot_dir(model_id)
+    latent = SIZES[model_id] // 16
+    *_, c_indices, c_masks = captions
+    reference = _load_reference_gpt(gpt, root / GPT_FILES[model_id], latent)
+    components = LlamaGenComponents.load(root, device=CPU, dtype=torch.float32, model_id=model_id)
+    ours = components.gpt
+    cond = c_indices[:1]
+    masks = c_masks[:1]
+    uncond = torch.zeros_like(cond) + reference.cls_embedding.uncond_embedding
+    assert torch.equal(uncond, torch.zeros_like(cond) + ours.cls_embedding.uncond_embedding)
+    combined = torch.cat([cond, uncond])
+    total = 120 + latent**2
+    with torch.no_grad():
+        reference.setup_caches(2, total, torch.float32)
+        ours.setup_caches(2, total, torch.float32)
+        reference.causal_mask[:, :, :120] = reference.causal_mask[:, :, :120] * torch.cat(
+            [masks, masks]
+        ).unsqueeze(1)
+        eye = torch.eye(reference.causal_mask.size(1), reference.causal_mask.size(2))
+        reference.causal_mask[:] = reference.causal_mask * (1 - eye) + eye
+        ours.apply_caption_mask(torch.cat([masks, masks]))
+        assert torch.equal(reference.causal_mask, ours.causal_mask)
+        positions = torch.arange(0, 120)
+        expected, _ = reference(None, combined, positions)
+        actual = ours(None, combined, positions)
+    measured = max_diff(actual, expected)
+    record(f"{model_id}_gpt_prefill", **measured, tolerance=0.0)
+    assert torch.equal(actual, expected)
+    del reference, components, ours
+    gc.collect()
+
+
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_vq_decode_of_fixed_ids(record, llamagen_reference, model_id):
+    _, _, vq = llamagen_reference
+    root = snapshot_dir(model_id)
+    latent = SIZES[model_id] // 16
+    reference = _load_reference_vq(vq, root / "vq_ds16_t2i.pt")
+    ours = LlamaGenVQ({})
+    state = {name: tensor.clone() for name, tensor in load_weights(root / "vq_ds16_t2i.pt").items()}
+    ours.load_checkpoint(state)
+    ours.eval()
+    ids = torch.randint(0, 16384, (1, latent**2), generator=torch.Generator().manual_seed(5))
+    shape = (1, 8, latent, latent)
+    with torch.no_grad():
+        expected = reference.decode_code(ids, shape)
+        actual = ours.decode_code(ids, shape)
+    measured = max_diff(actual, expected)
+    record(f"{model_id}_vq_decode", **measured, tolerance=0.0)
+    assert torch.equal(actual, expected)
+    del reference, ours
+    gc.collect()
+
+
+def _reference_run(llamagen_reference, root, model_id, prompt, seed, tmp_path, **options):
+    gpt, generate, vq = llamagen_reference
+    latent = SIZES[model_id] // 16
+    _, embeddings, masks = reference_captions(root / "text_encoder", [prompt])
+    c_indices, c_masks = left_pad(embeddings, masks)
+    gc.collect()
+    reference_gpt = _load_reference_gpt(gpt, root / GPT_FILES[model_id], latent)
+    reference_vq = _load_reference_vq(vq, root / "vq_ds16_t2i.pt")
+    result = reference_sample(
+        generate,
+        reference_gpt,
+        reference_vq,
+        c_indices,
+        c_masks,
+        seed=seed,
+        latent_size=latent,
+        embed_dim=8,
+        output=tmp_path / "sample.png",
+        **options,
+    )
+    del reference_gpt, reference_vq
+    gc.collect()
+    return result
+
+
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_end_to_end(record, llamagen_reference, model_id, tmp_path):
+    root = snapshot_dir(model_id)
+    expected_tokens, expected_pixels = _reference_run(
+        llamagen_reference, root, model_id, PROMPT, 0, tmp_path
+    )
+    components = LlamaGenComponents.load(root, device=CPU, dtype=torch.float32, model_id=model_id)
+    latent = SIZES[model_id] // 16
+    embeddings, masks = encode_prompts(components, [PROMPT], CPU)
+    tokens = generate(
+        components.gpt,
+        embeddings,
+        latent**2,
+        masks,
+        cfg_scale=7.5,
+        temperature=1.0,
+        top_k=1000,
+        top_p=1.0,
+        generator=torch.Generator("cpu").manual_seed(0),
+    )
+    pixels = to_uint8(components.vq.decode_code(tokens, (1, 8, latent, latent)))[0]
+    tokens_equal = torch.equal(tokens, expected_tokens)
+    pixel_diff = int((pixels.int() - expected_pixels.int()).abs().max())
+    passed = tokens_equal and pixel_diff == 0
+    record(
+        f"e2e_{model_id}",
+        tokens_equal=tokens_equal,
+        pixels_max_abs=pixel_diff,
+        passed=passed,
+        prompt=PROMPT,
+        cfg_scale=7.5,
+        top_k=1000,
+        size=[SIZES[model_id]] * 2,
+        seed=0,
+    )
+    assert passed
+    del components
+    gc.collect()
+
+
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_seed_end_to_end(record, llamagen_reference, model_id, tmp_path):
+    root = snapshot_dir(model_id)
+    options = {"cfg_scale": 4.0, "temperature": 0.9, "top_k": 500, "top_p": 0.95}
+    expected_tokens, expected_pixels = _reference_run(
+        llamagen_reference, root, model_id, OTHER_PROMPT, 1234, tmp_path, **options
+    )
+    result = pipeline("t2i", backend=model_id, model=root)(OTHER_PROMPT, seed=1234, **options)
+    pixels = result.images[0].tensor
+    passed = torch.equal(pixels, expected_pixels)
+    pixel_diff = int((pixels.int() - expected_pixels.int()).abs().max())
+    record(
+        f"seed_e2e_{model_id}",
+        passed=passed,
+        max_pixel_diff=pixel_diff,
+        seed=1234,
+        size=[SIZES[model_id]] * 2,
+        **options,
+    )
+    assert passed
