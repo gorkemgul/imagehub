@@ -1054,6 +1054,25 @@ is additionally covered by fixed-prompt and seeded fuzz tests on a synthetic fol
 The float32 transformer needs about 27 GB, so the reference and native transformers were loaded one
 after the other and each was freed before the next.
 
+## HiDream-I1 Fast
+
+`hidream-i1-fast` is the HiDream-I1 Fast repository at revision `4856a5d` plus
+`meta-llama/Llama-3.1-8B-Instruct` at revision `0e9e39f`. The real-checkpoint run has not been
+recorded yet: no numbers are given here until `tests/reference/test_ref_hidream.py` has run against
+the downloaded snapshot and `docs/validation.json` has been regenerated; the model is `experimental`
+in the catalog until then. The run compares, against diffusers 0.40.0 and transformers 5.18.0 on CPU
+in float32 and requires exactly 0 everywhere: the tensor headers of all six components, the
+tokenizers (CLIP, T5, Llama), the pooled CLIP, T5 and Llama layer outputs the pipeline uses, one
+transformer step with real conditioning, the VAE decode, the scheduler, and end to end with a
+shortened run (4 steps, seed 0) and a non-square seed test.
+
+What has been checked with random weights: the Llama text encoder against transformers (grouped
+key/value heads, `llama3` rotary scaling, padding), the Llama 3 tokenizer against the reference
+fast tokenizer on a synthetic vocabulary (and, once, on the Llama 3.1 tokenizer file from a public
+mirror with fuzzed text), and the whole backend on a tiny snapshot in the published layout against `HiDreamImagePipeline`
+(default settings, guidance with a negative prompt, non-square sizes, two images, two weight seeds):
+identical latents and identical bytes.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -1074,8 +1093,9 @@ after the other and each was freed before the next.
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
-  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, DPM-Solver++ for PixArt and Sana (flow sigmas), and
-  the cosine-schedule masked-token scheduler for aMUSEd.
+  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, DPM-Solver++ for PixArt and Sana (flow sigmas), the
+  cosine-schedule masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1
+  Fast.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
