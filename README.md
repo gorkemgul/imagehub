@@ -70,7 +70,7 @@ result.images[0].save("edited.png")
 | Kandinsky 2.2 | `kandinsky-2.2` | `t2i` | T | CPU fp32 parity |
 | Stable Cascade | `stable-cascade`, `stable-cascade-lite` | `t2i` | T | CPU fp32 parity |
 | Würstchen v2 | `wuerstchen-v2` | `t2i` | T | CPU fp32 parity |
-| PixArt | `pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` | `t2i` | T | CPU fp32 parity |
+| PixArt | `pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`, `pixart-alpha-xl-1024`, `pixart-alpha-xl-512` | `t2i` | T | CPU fp32 parity |
 | Sana | `sana-1600m-1024`, `sana-600m-1024` | `t2i` | T | CPU fp32 parity |
 | Kolors | `kolors` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |

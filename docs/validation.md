@@ -578,6 +578,19 @@ bytes.
 
 ## PixArt
 
+### Further resolutions
+
+`pixart-alpha-xl-512` (`PixArt-alpha/PixArt-XL-2-512x512`, revision `50f7021`) and the transformer-only
+`pixart-sigma-xl-256`, `pixart-sigma-xl-512` and `pixart-sigma-xl-2k` (revisions `495cb1b`, `76fb7eb` and
+`cd274f4`, with the remaining components from `PixArt-Sigma-XL-2-1024-MS` at `e102b35`) share the
+PixArt code. Their published configurations and tensor headers are checked in as fixtures, and the
+real-checkpoint tests in `tests/reference/test_ref_pixart.py` and
+`tests/reference/test_ref_random_pixart.py` are parametrized over them: header, tokenizer and encoder,
+one transformer step at the native latent size, VAE decode and encode, scheduler timesteps, end to end
+at the native size with fixed latents and the seed test. The 2K model's single-step and decode checks use
+1024-pixel inputs, and its end-to-end runs use 4 steps instead of 20 to keep the 2048×2048 runs short.
+Measured results: pending the real-checkpoint run.
+
 Validated on CPU in the same environment as above. `pixart-sigma-xl-1024` and
 `pixart-alpha-xl-1024` were loaded strictly from `PixArt-alpha/PixArt-Sigma-XL-2-1024-MS` at
 revision `e102b35` and `PixArt-alpha/PixArt-XL-2-1024-MS` at revision `b89adad`, respectively. The
@@ -1124,7 +1137,7 @@ after the other and each was freed before the next.
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
-  for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
+  for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024` (the 512, 256 and 2K checkpoints: pending the real-checkpoint run), 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with

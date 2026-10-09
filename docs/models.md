@@ -720,7 +720,8 @@ distribute weights.
 
 Catalog: [`pixart-sigma`](https://github.com/gorkemgul/awesome-text-to-image-architectures),
 [`pixart-alpha`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
-`pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` · Task: `t2i`
+`pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`,
+`pixart-alpha-xl-1024`, `pixart-alpha-xl-512` · Task: `t2i`
 
 **Architecture.** A T5-v1.1-XXL text encoder supplies up to 300 tokens for Sigma and 120 for Alpha
 to a 0.6B diffusion transformer with 28 blocks, width 1152 and 16 attention heads of width 72. The
@@ -743,8 +744,15 @@ with pipeline("t2i", backend="pixart-sigma-xl-1024", model="checkpoints/pixart-s
     result.images[0].save("cat.png")
 ```
 
-**Settings.** Both models default to 20 steps, guidance 4.5 and 1024×1024. Sigma defaults to a
-maximum sequence length of 300 and Alpha to 120. The other supported options are `seed`, `latents`,
+**Resolutions.** Each resolution is a separate checkpoint with its own transformer: Sigma at 256,
+512, 1024 and 2K (interpolation scales 0.5, 1, 2 and 4) and Alpha at 512 and 1024. The Sigma 256, 512 and
+2K repositories publish only a transformer, so `python -m imagehub.pretrained` fetches the text
+encoder, tokenizer, VAE and scheduler from the Sigma 1024 repository, as the model cards describe. The
+Alpha resolution and aspect-ratio embeddings exist only in the 1024 model. Resolution binning
+uses the table that matches the transformer (256, 512, 1024 or 2048).
+
+**Settings.** All models default to 20 steps and guidance 4.5, and to a square image of their native
+size (256, 512, 1024 or 2048 pixels). Sigma defaults to a maximum sequence length of 300 and Alpha to 120. The other supported options are `seed`, `latents`,
 `negative_prompt`, `use_resolution_binning` and `max_sequence_length`. Unrecognized settings raise
 an error.
 
@@ -752,7 +760,7 @@ an error.
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** The 256×256, 512×512 and 2K releases, PixArt-LCM, PixArt-DMD, ControlNet,
+**Out of scope.** PixArt-LCM, PixArt-DMD, ControlNet,
 fp16/bf16 parity and caption cleaning are not supported. Caption cleaning requires `bs4` and `ftfy`;
 parity is against `clean_caption=False`, which diffusers uses when those packages are unavailable.
 
