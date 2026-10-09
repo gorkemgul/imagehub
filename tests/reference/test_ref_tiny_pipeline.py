@@ -108,3 +108,69 @@ def test_tiny_snapshot_generation_matches_diffusers(tmp_path, case):
     )
     actual = torch.stack([image.tensor for image in result.images])
     assert torch.equal(actual, expected)
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        dict(prompt="a cat", negative_prompt=None, steps=50, num=1, hw=(64, 64), seed=42),
+        dict(prompt="a dog", negative_prompt="blurry", steps=25, num=2, hw=(48, 72), seed=7),
+    ],
+    ids=["v-pred-50", "v-pred-negative-batch"],
+)
+def test_tiny_v_prediction_ddim_upcast_attention_matches_diffusers(tmp_path, case):
+    """SD 2.1 settings: DDIM, v-prediction, set_alpha_to_one=False and upcast_attention."""
+    import json
+
+    root = write_tiny_sd(tmp_path / "tiny")
+    scheduler_path = root / "scheduler" / "scheduler_config.json"
+    scheduler = json.loads(scheduler_path.read_text(encoding="utf-8"))
+    scheduler |= {
+        "_class_name": "DDIMScheduler",
+        "prediction_type": "v_prediction",
+        "set_alpha_to_one": False,
+        "steps_offset": 1,
+        "clip_sample": False,
+    }
+    scheduler_path.write_text(json.dumps(scheduler), encoding="utf-8")
+    index_path = root / "model_index.json"
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    index["scheduler"] = ["diffusers", "DDIMScheduler"]
+    index_path.write_text(json.dumps(index), encoding="utf-8")
+    unet_path = root / "unet" / "config.json"
+    unet = json.loads(unet_path.read_text(encoding="utf-8"))
+    unet["upcast_attention"] = True
+    unet_path.write_text(json.dumps(unet), encoding="utf-8")
+    ref = diffusers.StableDiffusionPipeline.from_pretrained(
+        root,
+        safety_checker=None,
+        feature_extractor=None,
+        requires_safety_checker=False,
+        local_files_only=True,
+    )
+    ref.set_progress_bar_config(disable=True)
+    h, w = case["hw"]
+    expected = ref(
+        case["prompt"],
+        negative_prompt=case["negative_prompt"],
+        num_inference_steps=case["steps"],
+        guidance_scale=7.5,
+        num_images_per_prompt=case["num"],
+        height=h,
+        width=w,
+        generator=torch.Generator("cpu").manual_seed(case["seed"]),
+        output_type="np",
+    ).images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
+    result = pipeline("t2i", backend="stable-diffusion", model=root)(
+        case["prompt"],
+        negative_prompt=case["negative_prompt"],
+        steps=case["steps"],
+        guidance=7.5,
+        num_images=case["num"],
+        height=h,
+        width=w,
+        seed=case["seed"],
+    )
+    actual = torch.stack([image.tensor for image in result.images])
+    assert torch.equal(actual, expected)

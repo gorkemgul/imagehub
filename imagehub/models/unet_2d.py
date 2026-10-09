@@ -538,7 +538,8 @@ class UNet2DConditionModel(NativeModel):
         for key, default in _UNSUPPORTED_DEFAULTS.items():
             if key in ("encoder_hid_dim", "encoder_hid_dim_type", "resnet_time_scale_shift"):
                 continue
-            if key == "upcast_attention" and not cfg[key]:
+            if key == "upcast_attention" and (not cfg[key] or cfg[key] is True):
+                # diffusers only reads it in the explicit-softmax path; the SDPA path ignores it.
                 continue
             if cfg[key] != default:
                 raise ValueError(f"Unsupported U-Net setting {key}={cfg[key]!r}")

@@ -11,12 +11,14 @@ def test_family_and_model_aliases_are_registered():
     assert "stable-diffusion-xl" in names
     assert "stable-diffusion-3" in names
     assert {"sd-v1-1", "sd-v1-5"} <= set(names)
+    assert "sd-v2-1" in names
     assert "lcm-dreamshaper-v7" in names
     assert "sdxl-base-1.0" in names
     assert "janus" in names
     assert "janus-pro-1b" in names
     assert {"sd3.5-medium", "sd3.5-large"} <= set(names)
     assert {"qwen-image", "qwen-image-2.1"} <= set(names)
+    assert {"flux1-dev", "flux1-kontext-dev"} <= set(names)
     assert {"flux2", "flux2-klein-4b", "flux2-klein-9b"} <= set(names)
     assert {"hunyuan-dit", "hunyuan-dit-v1.1-distilled"} <= set(names)
     assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024"} <= set(names)

@@ -29,7 +29,7 @@ from pathlib import Path
 _WHITESPACE = frozenset("\t\n\x0b\x0c\r \x85\xa0                　")
 _CONTRACTIONS = ("'s", "'t", "'re", "'ve", "'m", "'ll", "'d")
 BOS, EOS = "<|startoftext|>", "<|endoftext|>"
-_SPECIAL_KEYS = ("unk_token", "bos_token", "eos_token", "pad_token")
+_SPECIAL_KEYS = ("bos_token", "eos_token", "unk_token", "pad_token")
 
 
 def _split_on(text: str, tokens: list[str]) -> list[str]:
@@ -42,12 +42,14 @@ def _split_on(text: str, tokens: list[str]) -> list[str]:
 def special_token_flags(directory: str | os.PathLike[str]) -> dict[str, bool]:
     """Map configured special-token contents to their ``normalized`` flag.
 
-    Mirrors transformers: ``added_tokens_decoder`` properties take precedence for named tokens
-    with matching content. Otherwise the tokens are registered in the order unk, bos, eos, pad
-    from ``tokenizer_config.json`` (``special_tokens_map.json`` as fallback); when several keys
-    share the same content the last registration wins. A plain-string value registers with
-    ``normalized=False``, a dict value with its ``"normalized"`` field. Without any config both
-    default specials are ``normalized=False``.
+    Mirrors transformers. ``tokenizer_config.json`` is read first; when it has no
+    ``added_tokens_decoder``, ``special_tokens_map.json`` is merged over it key by key (the map
+    wins, and is the only source when the config is absent). Named tokens are then registered in
+    the order bos, eos, unk, pad and, when several share the same content, the last registration
+    wins. A plain-string value registers with ``normalized=False``. A dict value registers with its
+    ``"normalized"`` field (``False`` when absent). ``added_tokens_decoder`` properties take
+    precedence for named tokens with matching content. Without any config both default specials
+    are ``normalized=False``.
     """
     return _special_token_config(directory)[0]
 
@@ -58,11 +60,16 @@ def _special_token_config(
     path = Path(directory)
     config: dict[str, object] = {}
     configured = False
-    for name in ("tokenizer_config.json", "special_tokens_map.json"):
-        if (path / name).is_file():
-            config = json.loads((path / name).read_text(encoding="utf-8"))
-            configured = True
-            break
+    config_file = path / "tokenizer_config.json"
+    if config_file.is_file():
+        config = json.loads(config_file.read_text(encoding="utf-8"))
+        configured = True
+    # Legacy layout: without added_tokens_decoder, special_tokens_map.json overrides the config.
+    map_file = path / "special_tokens_map.json"
+    if "added_tokens_decoder" not in config and map_file.is_file():
+        special_map = json.loads(map_file.read_text(encoding="utf-8"))
+        config = config | special_map
+        configured = True
     flags = {} if configured else {BOS: False, EOS: False}
     added_flags: dict[str, bool] = {}
     added_tokens_decoder = config.get("added_tokens_decoder")

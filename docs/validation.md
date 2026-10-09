@@ -73,6 +73,32 @@ The header-only tensor check covered `text_encoder`, `unet` and `vae`: tensor co
 196 / 687 / 248, with missing, extra and shape-mismatched tensors all **0**. Record:
 `tensor_header_check`, [validation.json](validation.json).
 
+## Stable Diffusion 2.1
+
+`sd-v2-1` was loaded strictly from `sd2-community/stable-diffusion-2-1` (revision `bb21548`, a copy of the withdrawn
+`stabilityai/stable-diffusion-2-1` release) and compared with diffusers 0.40.0 `StableDiffusionPipeline` on CPU in
+float32. Every comparison is exact. The real-checkpoint run takes about 14 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tokenizer token ids (5 prompts) | identical | exact |
+| OpenCLIP-H text encoder | 0 | 0 |
+| U-Net single step (t = 981, 481, 1) | 0 | 0 |
+| VAE decode / encode (768×768) | 0 | 0 |
+| DDIM timesteps with leading spacing (25 and 50 steps) | 0 | 0 |
+| End to end: final latent / pixels (768×768, 50 steps, guidance 7.5) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The tokenizer exposed a loading rule that now applies to every CLIP tokenizer: when `tokenizer_config.json` has no
+`added_tokens_decoder`, transformers merges `special_tokens_map.json` over it (this repository pads with `!`, which
+only the map names), and it registers the named special tokens in the order bos, eos, unk, pad.
+
+Without weights, a tiny random v-prediction model with the DDIM scheduler and `upcast_attention`
+matches `StableDiffusionPipeline` exactly, and the DDIM scheduler matches diffusers exactly for
+epsilon, sample and v-prediction trajectories at 25 and 50 steps.
+
 ## SD-Turbo
 
 Validated on CPU in the same environment as above. `sd-turbo` was loaded strictly from
@@ -325,6 +351,42 @@ The reference and native transformers, about 48 GB each in float32, were never l
 Each test ran the reference first, saved its outputs, freed it, then ran the native model. Schnell's
 component and seed tests took 11 minutes and its fixed-latent end-to-end test took 13 minutes. The
 full dev run took 25 minutes.
+
+## FLUX.1 Kontext
+
+Validated on CPU in the same environment as above, against diffusers 0.40.0 `FluxKontextPipeline`.
+`flux1-kontext-dev` was loaded strictly from `black-forest-labs/FLUX.1-Kontext-dev` at revision
+`24e9ded`. The observed difference in every comparison is **exactly 0**: on CPU in float32, the
+local implementation produces a bit-identical result to the reference, with identical bytes for
+images.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Input preprocessing over several sizes (300×200, 512×768, 1024×1024, 1365×768, 2000×1100) and modes (RGB, L, RGBA), with and without the automatic resolution choice: resized image bytes and normalized tensor | 0 | 0 |
+| VAE encode of the preprocessed input (same sizes and modes) | 0 | 0 |
+| Tiny end to end, with an input image (square and non-square, several seeds, a rescaled request): final latent / pixels | 0 / 0 | 0 / 0 |
+| Tiny end to end, without an input image: final latent / pixels | 0 / 0 | 0 / 0 |
+| Tiny end to end, with true CFG and a negative prompt: final latent / pixels | 0 / 0 | 0 / 0 |
+| Input preprocessing and VAE encode, real checkpoint (1024×768 and 640×960 inputs) | 0 | 0 |
+| Transformer single step with the image tokens, real checkpoint (two timesteps) | 0 | 0 |
+| End to end with an input image at the defaults: final latent / pixels (1024×768 input, 28 steps, guidance 3.5, seed 0) | 0 / 0 | 0 / 0 |
+| End to end without an input image: final latent / pixels (4 steps) | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, non-square input image (640×960) and non-square output (1360×768, 4 steps) (pixels) | 0 | 0 |
+
+The tiny end-to-end tests use random weights (2 steps) and compare the sequence layout (image tokens, their
+position ids and the slicing of the output) against `FluxKontextPipeline`. The real-checkpoint
+runs use fixed synthetic input images; the run with an image uses the 28-step, guidance 3.5
+defaults, while the run without an image and the seed test use 4 steps to shorten the CPU run. Existing FLUX.1 tests are unchanged and still exact.
+
+The header-only tensor check covered `text_encoder`, `text_encoder_2`, `transformer` and `vae`:
+tensor counts 196 / 219 / 1160 / 244, with missing, extra and shape-mismatched tensors all **0**.
+Record: `tensor_header_check`, [validation.json](validation.json).
+
+The reference and native transformers were never held in one process (the transformer comparison
+saves the reference output first, then runs the native model). The real-checkpoint run took about
+2 hours 7 minutes on an Apple M2 Max CPU.
 
 ## FLUX.2 klein
 
@@ -890,9 +952,9 @@ needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
-  `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
+  `flux1-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

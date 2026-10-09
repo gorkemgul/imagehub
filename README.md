@@ -42,27 +42,42 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 
 `pipeline()` never accesses the network.
 
+Most models take a text prompt only. `flux1-kontext-dev` also takes an optional input image
+(`image`) and edits it by instruction; without one it generates from the text alone.
+
+```python
+from PIL import Image
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-kontext-dev"
+) as edit:
+    result = edit("Add a red hat to the scene", image=Image.open("photo.png"), seed=0)
+result.images[0].save("edited.png")
+```
+
 ## Models
 
-| Family | Checkpoints | Task | Validation |
-| --- | --- | --- | --- |
-| Stable Diffusion | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`, `sd-turbo`, `lcm-dreamshaper-v7` | `t2i` | CPU fp32 parity |
-| Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step`, `sdxl-turbo`, `ssd-1b`, `playground-v2.5` | `t2i` | CPU fp32 parity |
-| Stable Diffusion 3 and 3.5 | `sd3-medium`, `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | CPU fp32 parity |
-| FLUX.1 | `flux1-schnell`, `flux1-dev` | `t2i` | CPU fp32 parity |
-| FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | CPU fp32 parity |
-| HunyuanDiT | `hunyuan-dit-v1.1-distilled` | `t2i` | CPU fp32 parity |
-| Kandinsky 2.2 | `kandinsky-2.2` | `t2i` | CPU fp32 parity |
-| Stable Cascade | `stable-cascade`, `stable-cascade-lite` | `t2i` | CPU fp32 parity |
-| PixArt | `pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` | `t2i` | CPU fp32 parity |
-| Sana | `sana-1600m-1024`, `sana-600m-1024` | `t2i` | CPU fp32 parity |
-| Krea 2 | `krea2-turbo` | `t2i` | CPU fp32 parity |
-| LongCat-Image | `longcat-image` | `t2i` | CPU fp32 parity |
-| CogView4 | `cogview4-6b` | `t2i` | CPU fp32 parity |
-| Ideogram 4 | `ideogram4-fp8` | `t2i` | CPU fp32 parity with the official implementation |
-| Qwen-Image | `qwen-image-2.1` | `t2i` | CPU fp32 parity |
-| Z-Image | `z-image`, `z-image-turbo` | `t2i` | CPU fp32 parity |
-| Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | CPU fp32 parity |
+| Family | Checkpoints | Task | Input | Validation |
+| --- | --- | --- | --- | --- |
+| Stable Diffusion | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`, `sd-v2-1`, `sd-turbo`, `lcm-dreamshaper-v7` | `t2i` | T | CPU fp32 parity |
+| Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step`, `sdxl-turbo`, `ssd-1b`, `playground-v2.5` | `t2i` | T | CPU fp32 parity |
+| Stable Diffusion 3 and 3.5 | `sd3-medium`, `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | T | CPU fp32 parity |
+| FLUX.1 | `flux1-schnell`, `flux1-dev` | `t2i` | T | CPU fp32 parity |
+| FLUX.1 Kontext | `flux1-kontext-dev` | `t2i` | T, I | CPU fp32 parity |
+| FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | T | CPU fp32 parity |
+| HunyuanDiT | `hunyuan-dit-v1.1-distilled` | `t2i` | T | CPU fp32 parity |
+| Kandinsky 2.2 | `kandinsky-2.2` | `t2i` | T | CPU fp32 parity |
+| Stable Cascade | `stable-cascade`, `stable-cascade-lite` | `t2i` | T | CPU fp32 parity |
+| PixArt | `pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` | `t2i` | T | CPU fp32 parity |
+| Sana | `sana-1600m-1024`, `sana-600m-1024` | `t2i` | T | CPU fp32 parity |
+| Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
+| LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
+| CogView4 | `cogview4-6b` | `t2i` | T | CPU fp32 parity |
+| Ideogram 4 | `ideogram4-fp8` | `t2i` | T | CPU fp32 parity with the official implementation |
+| Qwen-Image | `qwen-image-2.1` | `t2i` | T | CPU fp32 parity |
+| Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |
+| Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | T | CPU fp32 parity |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
 [Third-party notices](THIRD_PARTY_NOTICES.md)

@@ -15,11 +15,16 @@ import torch
 from torch import Tensor
 
 from imagehub.backends.base import TextToImageBackend
+from imagehub.backends.flux_kontext import (
+    encode_kontext_image,
+    kontext_input_size,
+    preprocess_kontext_image,
+)
 from imagehub.backends.stable_diffusion import resolve_device
 from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
-from imagehub.image import Image
+from imagehub.image import Image, as_pil
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel
 from imagehub.models.flux_transformer import FluxTransformer2DModel
@@ -50,7 +55,19 @@ OPTION_DEFAULTS: dict[str, Any] = {
     "true_cfg_scale": 1.0,
     "max_sequence_length": 512,
 }
+KONTEXT_OPTIONS = ("image", "max_area")
+KONTEXT_MAX_AREA = 1024**2
 _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
+
+
+def kontext_output_size(
+    height: int, width: int, max_area: int = KONTEXT_MAX_AREA
+) -> tuple[int, int]:
+    """Rescale the requested size to ``max_area`` at the same aspect ratio, in multiples of 16."""
+    aspect_ratio = width / height
+    new_width = round((max_area * aspect_ratio) ** 0.5)
+    new_height = round((max_area / aspect_ratio) ** 0.5)
+    return new_height // 16 * 16, new_width // 16 * 16
 
 
 def calculate_shift(
@@ -240,7 +257,13 @@ def denoise(
     height: int,
     latents: Tensor,
     max_sequence_length: int,
+    image_latents: Tensor | None = None,
 ) -> Tensor:
+    """Denoise packed latents.
+
+    ``image_latents`` are the encoded, shifted and scaled Kontext condition latents of shape
+    ``(1 or batch, channels, height, width)``; their tokens follow the noise tokens in the sequence.
+    """
     dtype = cast(torch.dtype, components.transformer.x_embedder.weight.dtype)
     batch_size, channels, latent_height, latent_width = latents.shape
     prompt_embeds, pooled, text_ids = encode_prompt(
@@ -269,6 +292,21 @@ def denoise(
         latents.device,
         latents.dtype,
     )
+    packed_image = image_ids = None
+    if image_latents is not None:
+        if batch_size > image_latents.shape[0]:
+            if batch_size % image_latents.shape[0]:
+                raise ValueError("image latents cannot be repeated to the batch size")
+            image_latents = torch.cat([image_latents] * (batch_size // image_latents.shape[0]))
+        image_height, image_width = image_latents.shape[2:]
+        packed_image = _pack_latents(
+            image_latents, batch_size, image_latents.shape[1], image_height, image_width
+        )
+        image_ids = _prepare_latent_image_ids(
+            batch_size, image_height // 2, image_width // 2, latents.device, latents.dtype
+        )
+        image_ids[..., 0] = 1
+        latent_image_ids = torch.cat([latent_image_ids, image_ids], dim=0)
     scheduler = FlowMatchEulerDiscreteScheduler(components.scheduler_config)
     scheduler.set_timesteps(
         steps,
@@ -281,17 +319,19 @@ def denoise(
         guidance_embedding = torch.full(
             (batch_size,), guidance, device=latents.device, dtype=torch.float32
         )
+    noise_tokens = latents.shape[1]
     for timestep in scheduler.timesteps:
         model_timestep = timestep.expand(batch_size).to(latents.dtype) / 1000
+        model_input = latents if packed_image is None else torch.cat([latents, packed_image], dim=1)
         noise_pred = components.transformer(
-            latents.to(dtype),
+            model_input.to(dtype),
             prompt_embeds,
             pooled,
             model_timestep,
             latent_image_ids,
             text_ids,
             guidance_embedding,
-        )
+        )[:, :noise_tokens]
         if do_true_cfg:
             assert (
                 negative_embeds is not None
@@ -299,14 +339,14 @@ def denoise(
                 and negative_text_ids is not None
             )
             negative_pred = components.transformer(
-                latents.to(dtype),
+                model_input.to(dtype),
                 negative_embeds,
                 negative_pooled,
                 model_timestep,
                 latent_image_ids,
                 negative_text_ids,
                 guidance_embedding,
-            )
+            )[:, :noise_tokens]
             noise_pred = negative_pred + true_cfg_scale * (noise_pred - negative_pred)
         latents = scheduler.step(noise_pred, timestep, latents)
     return latents
@@ -351,6 +391,11 @@ class FluxBackend(TextToImageBackend):
             else {}
         )
         self.option_defaults = OPTION_DEFAULTS | defaults
+        self.kontext = (
+            model_id is not None
+            and model_id in MODEL_CATALOG
+            and MODEL_CATALOG[model_id].config.get("pipeline") == "kontext"
+        )
 
     def _latent_shape(self, options: dict[str, Any]) -> tuple[int, int, int, int]:
         packed_channels = 64
@@ -371,19 +416,31 @@ class FluxBackend(TextToImageBackend):
 
     def validate_options(self, inputs: T2IRequest, options: dict[str, Any]) -> dict[str, Any]:
         merged = dict(inputs.parameters) | options
-        unknown = sorted(set(merged) - set(OPTION_DEFAULTS))
+        known = set(OPTION_DEFAULTS) | (set(KONTEXT_OPTIONS) if self.kontext else set())
+        unknown = sorted(set(merged) - known)
         if unknown:
             raise TypeError(f"Unknown FLUX.1 options: {', '.join(unknown)}")
-        o = self.option_defaults | merged
+        o = (
+            self.option_defaults
+            | ({"image": None, "max_area": KONTEXT_MAX_AREA} if self.kontext else {})
+            | merged
+        )
         if o["negative_prompt"] is not None and not isinstance(o["negative_prompt"], str):
             raise TypeError("negative_prompt must be a string or None")
         for name in ("steps", "num_images", "width", "height", "max_sequence_length"):
             _positive_int(o, name)
+        if self.kontext:
+            _positive_int(o, "max_area")
+            if o["image"] is not None:
+                o["image"] = as_pil(o["image"])
+            o["height"], o["width"] = kontext_output_size(o["height"], o["width"], o["max_area"])
+            if min(o["height"], o["width"]) < 16:
+                raise ValueError("width and height are too small for max_area")
         if o["steps"] > 1000:
             raise ValueError("steps must be at most 1000")
         if o["max_sequence_length"] > 512:
             raise ValueError("max_sequence_length must be at most 512")
-        for name in ("width", "height"):
+        for name in () if self.kontext else ("width", "height"):
             if o[name] % 16:
                 raise ValueError(f"{name} must be a multiple of 16")
         for name in ("guidance", "true_cfg_scale"):
@@ -440,6 +497,16 @@ class FluxBackend(TextToImageBackend):
                 generator=torch.Generator("cpu").manual_seed(seed),
                 dtype=torch.float32,
             )
+        image_latents = None
+        input_size = None
+        if o.get("image") is not None:
+            with torch.inference_mode():
+                input_size = kontext_input_size(o["image"])
+                pixels = preprocess_kontext_image(o["image"], *input_size)
+                vae = self.components.vae
+                image_latents = encode_kontext_image(
+                    vae, pixels.to(self.device, vae.decoder.conv_in.weight.dtype)
+                )
         final = denoise(
             self.components,
             prompt=inputs.prompt,
@@ -451,6 +518,7 @@ class FluxBackend(TextToImageBackend):
             height=o["height"],
             latents=latents.to(torch.float32).to(self.device),
             max_sequence_length=o["max_sequence_length"],
+            image_latents=image_latents,
         )
         pixels = decode_latents(self.components.vae, final, o["height"], o["width"])
         snapshot = self.snapshot or {}
@@ -468,4 +536,8 @@ class FluxBackend(TextToImageBackend):
             "device": str(self.device),
             "dtype": str(self.dtype).removeprefix("torch."),
         }
+        if self.kontext:
+            metadata["image_input"] = input_size is not None
+            if input_size is not None:
+                metadata["input_height"], metadata["input_width"] = input_size
         return ImageResult(tuple(Image(pixel) for pixel in pixels), metadata)
