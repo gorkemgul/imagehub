@@ -4217,6 +4217,156 @@
         "passed": true,
         "seed": 1234
       }
+    },
+    {
+      "model_id": "wuerstchen-v2",
+      "repo_id": "warp-ai/wuerstchen",
+      "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+      "provenance": "author",
+      "catalog_id": "wuerstchen",
+      "license": "mit",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "58948603b1b06799c9c696b9408625402f5582294e076deb97fca50128db45b0"
+        },
+        "decoder/config.json": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "130cf5a3fc1a35a4fab673c0c5c8639f74d5ae75a13f70d4978cf128a4326c5b"
+        },
+        "decoder/diffusion_pytorch_model.safetensors": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "1510c2cc1a891df02d61d79866c40c506e9099519829e0282c2a79d7e9c7e66f"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "2fe6ab0496e02d4aaabc1bc2893cac34d5ebbd833841abf88386684f3c1c315c"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "3f4a41e45cd931142d7caa5426787715e7eb76785655e778ccfd5aa1e779efa1"
+        },
+        "text_encoder/model.safetensors": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "bd94a7ea6922e8028227567fe14e04d2989eec31c482e0813e9006afea6637f1"
+        },
+        "tokenizer/merges.txt": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563"
+        },
+        "tokenizer/vocab.json": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+        },
+        "vqgan/config.json": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "86b2b4847a21cb8fa94e5f3fe7d35b543cdf24b9469b370902615a07bf8165db"
+        },
+        "vqgan/diffusion_pytorch_model.safetensors": {
+          "repo_id": "warp-ai/wuerstchen",
+          "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
+          "sha256": "052db8852c0d8b117e6d2a59ae3e0c7d7aaae3d00f247e392ef8e9837e11d6c4"
+        },
+        "prior/model_index.json": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "c0a1ee1ba44e3fcdbae022fb2f0aae47c2b37c2e990441a2058fe039676b5b81"
+        },
+        "prior/prior/config.json": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "2cd74a7e84f493733963e0f1757d0a205276a49293aa3dcfe2f37a6b61603e66"
+        },
+        "prior/prior/diffusion_pytorch_model.safetensors": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "693b57cfb5be934fba9ab03757ddb43a7656b432d36665394aec587ad6add331"
+        },
+        "prior/scheduler/scheduler_config.json": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "2fe6ab0496e02d4aaabc1bc2893cac34d5ebbd833841abf88386684f3c1c315c"
+        },
+        "prior/text_encoder/config.json": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "447a5bc36f232c22170c80e280864753b6fc07b9ee3173a08fc1a1f9102d64dc"
+        },
+        "prior/text_encoder/model.safetensors": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "e866901e68f902fefc85099d2c0223d6a7755a23160176eba375f426592d6a35"
+        },
+        "prior/tokenizer/merges.txt": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "f526393189112391ce6f9795d4695f704121ce452c3aad1f5335cc41337eba85"
+        },
+        "prior/tokenizer/special_tokens_map.json": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac"
+        },
+        "prior/tokenizer/tokenizer_config.json": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563"
+        },
+        "prior/tokenizer/vocab.json": {
+          "repo_id": "warp-ai/wuerstchen-prior",
+          "revision": "c41be6339e1b93f95ece99825327cdf9f4abc436",
+          "sha256": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "decoder": 990,
+          "prior/prior": 648,
+          "prior/text_encoder": 517,
+          "text_encoder": 388,
+          "vqgan": 122
+        }
+      },
+      "end_to_end": {
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "seed": 1234
+      }
     }
   ],
   "components": {
@@ -6757,6 +6907,68 @@
       "tolerance": "exact"
     }
   },
+  "components_wuerstchen": {
+    "wuerstchen-v2_decoder_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_decoder_negative_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_decoder_step_ratio_0.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_decoder_step_ratio_1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_decoder_text_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_prior_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_prior_negative_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_prior_step_ratio_0.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_prior_step_ratio_1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_prior_step_ratio_1_60": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_prior_text_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "wuerstchen-v2_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_longcat_image": {
     "longcat_image_e2e_latents": {
       "max_abs": 0.0,
@@ -6892,11 +7104,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (flux1-krea-dev)"
+    "reference_summary": "7 passed (wuerstchen-v2)"
   }
 }
