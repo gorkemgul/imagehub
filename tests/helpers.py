@@ -345,8 +345,13 @@ def write_tiny_sdxl(
     scheduler_config: dict | None = None,
     vae_config: dict | None = None,
     sample_size: int = 32,
+    refiner: bool = False,
 ) -> Path:
-    """A random-weight SDXL snapshot in the published diffusers layout."""
+    """A random-weight SDXL snapshot in the published diffusers layout.
+
+    With ``refiner`` the snapshot has the refiner layout: only the second text encoder, five
+    time ids per sample and the image-to-image pipeline class.
+    """
     from imagehub.checkpoints import save_safetensors
     from imagehub.models.autoencoder_kl import AutoencoderKL
     from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
@@ -355,7 +360,8 @@ def write_tiny_sdxl(
     root = Path(directory)
     root.mkdir(parents=True, exist_ok=True)
     torch.manual_seed(seed)
-    write_tiny_tokenizer(root / "tokenizer")
+    if not refiner:
+        write_tiny_tokenizer(root / "tokenizer")
     write_tiny_tokenizer(root / "tokenizer_2", pad_token="!")
 
     text_1 = TINY_TEXT_FILE_CONFIG | {"hidden_act": "quick_gelu"}
@@ -373,11 +379,11 @@ def write_tiny_sdxl(
         "up_block_types": ["CrossAttnUpBlock2D", "CrossAttnUpBlock2D", "UpBlock2D"],
         "transformer_layers_per_block": [1, 1, 1],
         "attention_head_dim": [2, 4, 4],
-        "cross_attention_dim": 64,
+        "cross_attention_dim": 32 if refiner else 64,
         "use_linear_projection": True,
         "addition_embed_type": "text_time",
         "addition_time_embed_dim": 8,
-        "projection_class_embeddings_input_dim": 80,
+        "projection_class_embeddings_input_dim": 72 if refiner else 80,
         "layers_per_block": 1,
         "norm_num_groups": 8,
         "sample_size": sample_size,
@@ -404,6 +410,14 @@ def write_tiny_sdxl(
     (root / "scheduler" / "scheduler_config.json").write_text(
         json.dumps(scheduler_config or SDXL_SCHEDULER)
     )
+    if refiner:
+        model_index |= {
+            "_class_name": "StableDiffusionXLImg2ImgPipeline",
+            "force_zeros_for_empty_prompt": False,
+            "requires_aesthetics_score": True,
+            "text_encoder": [None, None],
+            "tokenizer": [None, None],
+        }
     (root / "model_index.json").write_text(json.dumps(model_index))
 
     for name, cls, config, weights in (
@@ -412,6 +426,8 @@ def write_tiny_sdxl(
         ("unet", UNet2DConditionModel, unet, "diffusion_pytorch_model.safetensors"),
         ("vae", AutoencoderKL, vae, "diffusion_pytorch_model.safetensors"),
     ):
+        if refiner and name == "text_encoder":
+            continue
         model = cls(config)
         for parameter in model.parameters():
             parameter.data.normal_(0, 0.05)
