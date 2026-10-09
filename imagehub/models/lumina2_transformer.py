@@ -269,6 +269,9 @@ class RotaryPosEmbed:
 class Lumina2Transformer2DModel(NativeModel):
     """Lumina-Image 2.0 transformer with published tensor names."""
 
+    # The reference assigns the first shard at its file offsets and copies the others.
+    keep_first_shard_mapped = True
+
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(config)
         unknown = sorted(
