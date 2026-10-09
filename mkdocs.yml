@@ -1,0 +1,131 @@
+site_name: imagehub
+site_description: Open-weight text-to-image models in pure PyTorch, with exact parity against diffusers, behind one API.
+repo_url: https://github.com/gorkemgul/imagehub
+repo_name: gorkemgul/imagehub
+edit_uri: edit/main/docs/
+copyright: Code under Apache-2.0. Model weights keep their own licenses.
+docs_dir: docs
+site_dir: site
+strict: true
+
+exclude_docs: |
+  design/
+  models.md
+  validation-measurements.json
+
+theme:
+  name: material
+  logo: assets/mark.svg
+  favicon: assets/mark.svg
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.tracking
+    - navigation.footer
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.action.edit
+    - search.suggest
+    - search.highlight
+    - toc.follow
+
+extra_css:
+  - stylesheets/extra.css
+extra_javascript:
+  - javascripts/extra.js
+
+hooks:
+  - scripts/docs_hooks.py
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: tr
+          name: Türkçe
+          build: true
+          nav_translations:
+            Home: Ana sayfa
+            Quickstart: Hızlı başlangıç
+            Guides: Rehberler
+            Models: Modeller
+            Parity: Eşdeğerlik
+            Reference: Başvuru
+            Contributing: Katkı
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/gorkemgul/imagehub
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Guides:
+      - guides/index.md
+      - Installation: guides/installation.md
+      - Downloading weights: guides/weights.md
+      - Devices and precision: guides/devices.md
+      - Image input: guides/image-input.md
+      - Reproducibility: guides/reproducibility.md
+  - Models: []
+  - Parity:
+      - parity/index.md
+      - Gallery: parity/gallery.md
+      - Results: parity/results.md
+      - Full validation record: validation.md
+  - Reference:
+      - API: api.md
+      - Model catalog: catalog.md
+  - Contributing: contributing.md

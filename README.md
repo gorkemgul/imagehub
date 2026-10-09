@@ -94,6 +94,14 @@ uv venv -p 3.13 .venv && uv pip install --python .venv -e ".[dev,image]"
 .venv/bin/python -m pytest
 ```
 
+Preview the documentation site (English and Turkish, built from the catalog and the validation
+record):
+
+```bash
+uv pip install --python .venv -e ".[docs]"
+.venv/bin/mkdocs serve
+```
+
 Reference comparisons are optional and never download anything:
 
 ```bash

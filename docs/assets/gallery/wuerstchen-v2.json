@@ -1,0 +1,1 @@
+{"model_id": "wuerstchen-v2", "family": "W\u00fcrstchen", "name": "W\u00fcrstchen v2", "repo": "warp-ai/wuerstchen + prior", "settings": "prior 60 steps \u00b7 prior guidance 4.0 \u00b7 decoder 12 steps \u00b7 decoder guidance 0.0 \u00b7 512\u00d7512", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-10-09", "pr": 81}

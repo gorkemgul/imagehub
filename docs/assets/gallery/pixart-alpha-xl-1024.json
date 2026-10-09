@@ -1,0 +1,1 @@
+{"model_id": "pixart-alpha-xl-1024", "family": "PixArt", "name": "PixArt-α XL 1024", "repo": "PixArt-alpha/PixArt-XL-2-1024-MS", "settings": "20 steps · guidance 4.5 · DPM-Solver++ · 120 text tokens · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-10-07", "pr": 56}

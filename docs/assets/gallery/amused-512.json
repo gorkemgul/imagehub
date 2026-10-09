@@ -1,0 +1,1 @@
+{"model_id": "amused-512", "family": "aMUSEd", "name": "aMUSEd 512", "repo": "amused/amused-512", "settings": "pipeline defaults \u00b7 512\u00d7512", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-10-09", "pr": 78}
