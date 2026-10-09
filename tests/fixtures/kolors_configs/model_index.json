@@ -1,0 +1,25 @@
+{
+  "_class_name": "KolorsPipeline",
+  "_diffusers_version": "0.30.0.dev0",
+  "force_zeros_for_empty_prompt": false,
+  "scheduler": [
+    "diffusers",
+    "EulerDiscreteScheduler"
+  ],
+  "text_encoder": [
+    "kolors",
+    "ChatGLMModel"
+  ],
+  "tokenizer": [
+    "kolors",
+    "ChatGLMTokenizer"
+  ],
+  "unet": [
+    "diffusers",
+    "UNet2DConditionModel"
+  ],
+  "vae": [
+    "diffusers",
+    "AutoencoderKL"
+  ]
+}
