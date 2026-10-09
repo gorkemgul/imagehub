@@ -1,4 +1,173 @@
 {
+  "auraflow_auraflow-v0.3_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "auraflow_auraflow-v0.3_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "auraflow_auraflow-v0.3_tokenizer": {
+    "cases": [
+      {
+        "ids_match": true,
+        "masks_match": true
+      },
+      {
+        "ids_match": true,
+        "masks_match": true
+      }
+    ],
+    "tolerance": "exact"
+  },
+  "auraflow_auraflow-v0.3_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "auraflow_auraflow-v0.3_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "auraflow_published_transformer": {
+    "max_abs": 0.0,
+    "shape": [
+      2,
+      4,
+      32,
+      48
+    ]
+  },
+  "auraflow_tiny_default": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      64,
+      64,
+      3
+    ]
+  },
+  "auraflow_tiny_guidance_1": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      64,
+      64,
+      3
+    ]
+  },
+  "auraflow_tiny_negative_prompt": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      64,
+      64,
+      3
+    ]
+  },
+  "auraflow_tiny_non_square": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      48,
+      96,
+      3
+    ]
+  },
+  "auraflow_tiny_one_step": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      64,
+      64,
+      3
+    ]
+  },
+  "auraflow_tiny_portrait": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      80,
+      48,
+      3
+    ]
+  },
+  "auraflow_tiny_seed_0": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      64,
+      64,
+      3
+    ]
+  },
+  "auraflow_tiny_seed_123456789": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      64,
+      64,
+      3
+    ]
+  },
+  "auraflow_tiny_transformer_4x14": {
+    "max_abs": 0.0,
+    "shape": [
+      2,
+      4,
+      4,
+      14
+    ]
+  },
+  "auraflow_tiny_transformer_6x10": {
+    "max_abs": 0.0,
+    "shape": [
+      2,
+      4,
+      6,
+      10
+    ]
+  },
+  "auraflow_tiny_transformer_8x8": {
+    "max_abs": 0.0,
+    "shape": [
+      2,
+      4,
+      8,
+      8
+    ]
+  },
+  "auraflow_tiny_truncated": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      64,
+      64,
+      3
+    ]
+  },
+  "auraflow_tokenizer": {
+    "mismatches": 0,
+    "prompts": 615,
+    "tolerance": "exact"
+  },
+  "auraflow_tokenizer_synthetic": {
+    "mismatches": 0,
+    "prompts": 615,
+    "tolerance": "exact"
+  },
   "clip_text_mask_gelu_all_ones": {
     "hidden_states": true,
     "last_hidden_state": true,
@@ -125,6 +294,22 @@
     ],
     "timestep": 999,
     "tolerance": 0.0
+  },
+  "e2e_auraflow-v0.3": {
+    "guidance": 3.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 50
   },
   "e2e_batch2_janus-pro-1b": {
     "num_images": 2,
@@ -1311,6 +1496,26 @@
     "mismatches": 0,
     "prompts": 600,
     "tolerance": "exact"
+  },
+  "header_auraflow-v0.3": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 242
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 331
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
   },
   "header_cogview4-6b": {
     "text_encoder": {
@@ -3752,6 +3957,15 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "seed_e2e_auraflow-v0.3": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ]
+  },
   "seed_e2e_cogview4-6b": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -4283,6 +4497,11 @@
   "tokenizer": {
     "mismatches": 0,
     "prompts": 14,
+    "tolerance": "exact"
+  },
+  "umt5_random": {
+    "length": 48,
+    "max_abs_diff": 0.0,
     "tolerance": "exact"
   },
   "unet": {

@@ -2935,74 +2935,6 @@
       }
     },
     {
-      "model_id": "kolors",
-      "repo_id": "Kwai-Kolors/Kolors-diffusers",
-      "revision": "7e091c75199e910a26cd1b51ed52c28de5db3711",
-      "provenance": "author",
-      "catalog_id": "kolors",
-      "license": "Apache-2.0",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "0d57776c3a952e3a3b35898095bc4ebbaaf2794d7f6a3c1f32e48125e7349b7d",
-        "scheduler/scheduler_config.json": "78406f53776f64dbc77a243c931390d312672c74743ed2d57b438fdba4a28847",
-        "text_encoder/config.json": "4ba94b3ea4e39c477e4812fc3c023c21a1ab7c3913805a7ac2a79493e6e99a4a",
-        "text_encoder/model.safetensors.index.fp16.json": "99a746f389d0b1d7f56b96ea888962971e701c33ce9a96377bb02e7aea21309d",
-        "text_encoder/model.fp16-00001-of-00003.safetensors": "0054d03310248928fdabdeef3fdc753170218dc49a1e9eb5f98323e27683f654",
-        "text_encoder/model.fp16-00002-of-00003.safetensors": "035167ad39a1b50cdba1758ce202e638448fd12997ea3aca576d494511a18fe0",
-        "text_encoder/model.fp16-00003-of-00003.safetensors": "54f55eccf6b8a49799c3da81ef42452fc6f7677c4fc949f92aa8928ca0c30424",
-        "tokenizer/tokenizer.model": "e7dc4c393423b76e4373e5157ddc34803a0189ba96b21ddbb40269d31468a6f2",
-        "tokenizer/tokenizer_config.json": "2847370c8514db7f455db94f52439a701334dd68710820364e60da0482c85c36",
-        "tokenizer/vocab.txt": "e7dc4c393423b76e4373e5157ddc34803a0189ba96b21ddbb40269d31468a6f2",
-        "unet/config.json": "d93cbcbbba0bb2709185685aff3e4a53c76a4405eb4380ce863f2af1625d0b22",
-        "unet/diffusion_pytorch_model.fp16.safetensors": "425ff1dcbe3a70ac13d3afdd69bd4e3176b0c3260722527c80b210f11d2d966c",
-        "vae/config.json": "f49927c6d63bdd1216a1931fef78556c61c7b42e2f7d16069d1b4a597a90dbd6",
-        "vae/diffusion_pytorch_model.fp16.safetensors": "bcb60880a46b63dea58e9bc591abe15f8350bde47b405f9c38f4be70c6161e68"
-      },
-      "tensor_header_check": {
-        "missing": [],
-        "extra": [],
-        "mismatch": [],
-        "tensors": {
-          "text_encoder": 200,
-          "unet": 1682,
-          "vae": 248
-        }
-      },
-      "end_to_end": {
-        "guidance": 5.0,
-        "latents": {
-          "max_abs": 0.0,
-          "max_rel": 0.0
-        },
-        "passed": true,
-        "pixels_max_abs": 0,
-        "prompt": "A photo of an astronaut riding a horse on mars, 4k",
-        "seed": 0,
-        "size": [
-          1024,
-          1024
-        ],
-        "steps": 50
-      },
-      "seed_end_to_end": {
-        "max_pixel_diff": 0,
-        "passed": true,
-        "seed": 1234,
-        "size": [
-          1360,
-          768
-        ]
-      }
-    },
-    {
       "model_id": "lumina-image-2.0",
       "repo_id": "Alpha-VLLM/Lumina-Image-2.0",
       "revision": "53504abd8178b30685b6c4c7a4cd181ff78b73e9",
@@ -3062,6 +2994,76 @@
           1024
         ],
         "steps": 30
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          1360,
+          768
+        ]
+      }
+    },
+    {
+      "model_id": "auraflow-v0.3",
+      "repo_id": "fal/AuraFlow-v0.3",
+      "revision": "2cd8588f04c886002be4571697d84654a50e3af3",
+      "provenance": "author",
+      "catalog_id": "auraflow",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "7ffee10ae3277f136a341bac357405d615961f7c949f7c2e231075f8c7d18541",
+        "scheduler/scheduler_config.json": "484263e607c38c2940d914d53fbf80c6391e180009846689bb2da970d5605f14",
+        "text_encoder/config.json": "4fd2fce0b91e37ddfd44b4afec50a4bb8a433e348d15c30e4c412e9556490edc",
+        "text_encoder/model.safetensors": "0a07449cf1141c0ec86e653c00465f6f0d79c6e58a2c60c8bcf4203d0e4ec4f6",
+        "tokenizer/added_tokens.json": "ea5a91a3234f66ea642c8e672d67f0f493759a9bee6910ae304ea9b9492118b5",
+        "tokenizer/special_tokens_map.json": "d8927854091fd9c46871b2e2a077f7509f1231484e5e66edcb3026f9074f3280",
+        "tokenizer/tokenizer.json": "f6648b38637e86d7c227794f71fb036207b4fdacc760c9c03da71a3fcbe14c49",
+        "tokenizer/tokenizer.model": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347",
+        "tokenizer/tokenizer_config.json": "fa2f9e9fd7368f824e2bf44a60761055534b5c8039f2735ad61305bef57d2853",
+        "transformer/config.json": "f80724bd8e8ba2ee0d723c1eb68589bc6d497b2a247af11c23043eb791f7a562",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "d29e4b9c2b7c80a069c5fca765f15fefcec6ccc8d101e15defdfb4af18c07729",
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors": "05e5493018333d947bb5940083dbc2f071093027ff414bc5b1b1229e4836e5cb",
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors": "4c169ba4fb9f72ecb48d4779da22514b8d8c816a89686138b97c691c30f31624",
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors": "1924d7dce586745ac64d1b7974ac3eeb42ffa1f9912ebbc276e46a09e01cadc1",
+        "vae/config.json": "bf2daa82c70fb8437853a3e9cd901c775a3f7a9af9b49227663ad86e93be3bc7",
+        "vae/diffusion_pytorch_model.safetensors": "1598f3d24932bcfe6634e8b618ea1e30ab1d57f5aad13a6d2de446d2199f2341"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 242,
+          "transformer": 331,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 3.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 50
       },
       "seed_end_to_end": {
         "max_pixel_diff": 0,
@@ -6203,6 +6205,177 @@
       "tolerance": 0.0
     }
   },
+  "components_auraflow": {
+    "auraflow_auraflow-v0.3_text_encoder_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "auraflow_auraflow-v0.3_text_encoder_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "auraflow_auraflow-v0.3_tokenizer": {
+      "cases": [
+        {
+          "ids_match": true,
+          "masks_match": true
+        },
+        {
+          "ids_match": true,
+          "masks_match": true
+        }
+      ],
+      "tolerance": "exact"
+    },
+    "auraflow_auraflow-v0.3_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "auraflow_auraflow-v0.3_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "auraflow_published_transformer": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        32,
+        48
+      ]
+    },
+    "auraflow_tiny_default": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_guidance_1": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_negative_prompt": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_non_square": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        48,
+        96,
+        3
+      ]
+    },
+    "auraflow_tiny_one_step": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_portrait": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        80,
+        48,
+        3
+      ]
+    },
+    "auraflow_tiny_seed_0": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_seed_123456789": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_transformer_4x14": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        4,
+        14
+      ]
+    },
+    "auraflow_tiny_transformer_6x10": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        6,
+        10
+      ]
+    },
+    "auraflow_tiny_transformer_8x8": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ]
+    },
+    "auraflow_tiny_truncated": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tokenizer": {
+      "mismatches": 0,
+      "prompts": 615,
+      "tolerance": "exact"
+    },
+    "auraflow_tokenizer_synthetic": {
+      "mismatches": 0,
+      "prompts": 615,
+      "tolerance": "exact"
+    }
+  },
   "components_longcat_image": {
     "longcat_image_e2e_latents": {
       "max_abs": 0.0,
@@ -6338,11 +6511,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and Lumina-Image 2.0, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "7 passed (kolors)"
+    "reference_summary": "7 passed (auraflow-v0.3)"
   }
 }
