@@ -920,14 +920,13 @@ needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
 
 ## Lumina-Image 2.0
 
-`lumina-image-2.0` is loaded strictly from `Alpha-VLLM/Lumina-Image-2.0` at revision `53504ab`. The
-real-checkpoint tests (`tests/reference/test_ref_lumina2.py`) assert the tolerances below; measured
-values are added to this page after that run. The tiny-snapshot and random-weight comparisons need
-no downloaded weights and pass with exactly 0 difference.
+`lumina-image-2.0` is loaded strictly from `Alpha-VLLM/Lumina-Image-2.0` at revision `53504ab` and
+compared with diffusers 0.40.0 `Lumina2Pipeline` on CPU in float32. Every comparison below measured
+exactly 0. The real-checkpoint run takes about 50 minutes on an M2 Max (CPU).
 
 ### Comparisons (CPU, float32)
 
-| Comparison | Tolerance |
+| Comparison | Measured difference |
 | --- | --- |
 | Tensor header check: text encoder, transformer, autoencoder (names and shapes) | 0 missing, extra or mismatched |
 | Gemma tokenizer ids / attention masks (system prompt and prompt, a truncated prompt, and `""`) | exact / exact |
@@ -945,6 +944,12 @@ Random-weight parity covers the transformer with tiny and published configuratio
 text model, including every entry of the hidden-state tuple. Tiny-snapshot end-to-end parity covers
 the default settings, `cfg_trunc_ratio` below 1, `cfg_normalization` off, guidance 1.0, non-square
 sizes, a custom system prompt and negative prompt, and several seeds.
+
+The end to end first differed by about 3e-4 in the latents. The cause was the memory layout of the
+loaded weights: when diffusers loads a sharded checkpoint without accelerate, it keeps the shard that
+holds the model's first tensor at its file offsets and copies the other shards into aligned buffers,
+and the CPU kernels sum in a layout-dependent order. The transformer now loads its shards the same
+way (`keep_first_shard_mapped`).
 
 ## Device smoke tests (no parity claim)
 
@@ -982,7 +987,7 @@ sizes, a custom system prompt and negative prompt, and several seeds.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
