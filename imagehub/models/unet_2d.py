@@ -653,12 +653,17 @@ class UNet2DConditionModel(NativeModel):
             if cfg["encoder_hid_dim"] is None:
                 raise ValueError("image conditioning requires encoder_hid_dim")
             self.add_embedding = ImageTimeEmbedding(cfg["encoder_hid_dim"], temb)
+        self.encoder_hid_proj: ImageProjection | nn.Linear
         if cfg["encoder_hid_dim_type"] == "image_proj":
             if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
                 raise ValueError("image projection requires scalar embedding dimensions")
             self.encoder_hid_proj = ImageProjection(
                 cfg["encoder_hid_dim"], cfg["cross_attention_dim"]
             )
+        elif cfg["encoder_hid_dim_type"] == "text_proj":
+            if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
+                raise ValueError("text projection requires scalar embedding dimensions")
+            self.encoder_hid_proj = nn.Linear(cfg["encoder_hid_dim"], cfg["cross_attention_dim"])
         elif cfg["encoder_hid_dim_type"] is not None:
             raise ValueError(
                 f"Unsupported U-Net setting encoder_hid_dim_type={cfg['encoder_hid_dim_type']!r}"
@@ -706,6 +711,8 @@ class UNet2DConditionModel(NativeModel):
             if image_embeds is None:
                 raise ValueError("image projection requires image_embeds")
             context = self.encoder_hid_proj(image_embeds)
+        elif self.config["encoder_hid_dim_type"] == "text_proj" and context is not None:
+            context = self.encoder_hid_proj(context)
         if context is None:
             raise ValueError("U-Net context is required")
         x = self.conv_in(sample)

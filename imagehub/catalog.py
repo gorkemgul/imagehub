@@ -1035,6 +1035,40 @@ for _sana_id, _sana_repo, _sana_revision, _sana_weights in _SANA_VARIANTS:
         )
     )
 
+# Kolors publishes float16 weights only; the loaders read the variant file names.
+_entries.append(
+    ModelSpec(
+        id="kolors",
+        task=Task.T2I,
+        family="kolors",
+        source="https://huggingface.co/Kwai-Kolors/Kolors-diffusers",
+        repo_id="Kwai-Kolors/Kolors-diffusers",
+        revision="7e091c75199e910a26cd1b51ed52c28de5db3711",
+        provenance="author",
+        catalog_id="kolors",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.fp16.json",
+            "text_encoder/model.fp16-00001-of-00003.safetensors",
+            "text_encoder/model.fp16-00002-of-00003.safetensors",
+            "text_encoder/model.fp16-00003-of-00003.safetensors",
+            "tokenizer/tokenizer.model",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.txt",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.fp16.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.fp16.safetensors",
+        ),
+    )
+)
+
 _entries.append(
     ModelSpec(
         id="lumina-image-2.0",

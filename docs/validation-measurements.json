@@ -4605,5 +4605,146 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "chatglm_random_all-bias": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "chatglm_random_kolors": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "chatglm_random_layernorm-post-residual": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "chatglm_random_mha-no-final-norm": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "chatglm_random_wide": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "e2e_kolors": {
+    "guidance": 5.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A photo of an astronaut riding a horse on mars, 4k",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 50
+  },
+  "header_kolors": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 200
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1682
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "kolors_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_text_encoder_negative_pooled": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_text_encoder_pooled": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_tiny_defaults_0": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_defaults_1": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_micro-conditioning_0": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_micro-conditioning_1": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_negative-non-square_0": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_negative-non-square_1": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_no-cfg_0": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_no-cfg_1": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tokenizer": {
+    "mismatches": 0,
+    "prompts": 11,
+    "tolerance": "exact"
+  },
+  "kolors_tokenizer_fuzz": {
+    "mismatches": 0,
+    "prompts": 2000,
+    "tolerance": "exact"
+  },
+  "kolors_tokenizer_snapshot": {
+    "cases": 3,
+    "tolerance": "exact"
+  },
+  "kolors_unet_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "seed_e2e_kolors": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ]
   }
 }
