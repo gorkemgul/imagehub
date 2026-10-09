@@ -313,9 +313,11 @@ The full validation run took 47 minutes.
 
 ## FLUX.1
 
-Validated on CPU in the same environment as above. `flux1-schnell` and `flux1-dev` were loaded
-strictly from `black-forest-labs/FLUX.1-schnell` at revision `741f7c3` and
-`black-forest-labs/FLUX.1-dev` at revision `3de623f`, respectively. The observed difference in
+Validated on CPU in the same environment as above. `flux1-schnell`, `flux1-dev` and `flux1-krea-dev`
+were loaded strictly from `black-forest-labs/FLUX.1-schnell` at revision `741f7c3`,
+`black-forest-labs/FLUX.1-dev` at revision `3de623f` and `black-forest-labs/FLUX.1-Krea-dev` at
+revision `8162a9c`, respectively. `flux1-krea-dev` shares the `flux1-dev` architecture and configs and is
+checked with the same comparisons below (guidance 4.5, 512 tokens). The observed difference in
 every comparison is **exactly 0**: on CPU in float32, the local implementation produces a
 bit-identical result to the reference.
 
@@ -337,20 +339,28 @@ bit-identical result to the reference.
 | `flux1-dev` flow-match Euler scheduler (dynamic shifting) | exact | exact |
 | `flux1-dev` end to end: final latent / pixels (1024×1024, 4 steps, guidance 3.5) | 0 / 0 | 0 / 0 |
 | `flux1-dev` end to end, seed 42 (pixels) | 0 | 0 |
+| `flux1-krea-dev` CLIP tokenizer / pooled CLIP-L | identical / 0 | exact / 0 |
+| `flux1-krea-dev` T5 tokenizer / T5-XXL encoder (512 tokens) | identical / 0 | exact / 0 |
+| `flux1-krea-dev` transformer single step (1024×1024, guidance-distilled) | 0 | 0 |
+| `flux1-krea-dev` VAE decode / encode | 0 / 0 | 0 / 0 |
+| `flux1-krea-dev` flow-match Euler scheduler (dynamic shifting) | exact | exact |
+| `flux1-krea-dev` end to end: final latent / pixels (1024×1024, 4 steps, guidance 4.5) | 0 / 0 | 0 / 0 |
+| `flux1-krea-dev` end to end, seed 42 (pixels) | 0 | 0 |
 
 The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
 `seed=42`. Schnell was tested at its 4-step, guidance 0.0 defaults. Dev used 4 steps and guidance
-3.5 instead of its 50-step default only to shorten the CPU run.
+3.5 instead of its 50-step default only to shorten the CPU run, and Krea [dev] likewise used 4 steps
+and guidance 4.5.
 
 The header-only tensor check covered `text_encoder`, `text_encoder_2`, `transformer` and `vae`:
-`flux1-schnell` had 196 / 219 / 1156 / 244 tensors and `flux1-dev` had
+`flux1-schnell` had 196 / 219 / 1156 / 244 tensors, and `flux1-dev` and `flux1-krea-dev` each had
 196 / 219 / 1160 / 244 tensors, with missing, extra and shape-mismatched tensors all **0**. Record:
 `tensor_header_check`, [validation.json](validation.json).
 
 The reference and native transformers, about 48 GB each in float32, were never loaded together.
 Each test ran the reference first, saved its outputs, freed it, then ran the native model. Schnell's
 component and seed tests took 11 minutes and its fixed-latent end-to-end test took 13 minutes. The
-full dev run took 25 minutes.
+full dev run took 25 minutes. The Krea [dev] real-checkpoint run took about 30 minutes on an M2 Max (CPU).
 
 ## FLUX.1 Kontext
 
@@ -1078,8 +1088,8 @@ after the other and each was freed before the next.
   for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
-  for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
-  `flux1-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
+  for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
+  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
