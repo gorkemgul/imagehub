@@ -106,6 +106,7 @@ for _task, _name, _path in (
     (Task.T2I, "amused", "imagehub.backends.amused:AmusedBackend"),
     (Task.T2I, "auraflow", "imagehub.backends.auraflow:AuraFlowBackend"),
     (Task.T2I, "krea2", "imagehub.backends.krea2:Krea2Backend"),
+    (Task.T2I, "hidream", "imagehub.backends.hidream:HiDreamBackend"),
     (
         Task.T2I,
         "longcat-image",
