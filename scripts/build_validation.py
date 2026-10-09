@@ -2,12 +2,15 @@
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
 measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
-PixArt, Sana, Lumina-Image 2.0, AuraFlow, Wuerstchen v2, LongCat-Image, CogView4 and Ideogram 4
-measurements are grouped in flat
+PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, Wuerstchen v2, LongCat-Image, CogView4 and
+Ideogram 4
+measurements are
+grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
 ``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
-``components_lumina2``, ``components_auraflow``, ``components_wuerstchen``,
+``components_lumina2``, ``components_amused``, ``components_auraflow``,
+``components_wuerstchen``,
 ``components_longcat_image``,
 ``components_cogview4`` and ``components_ideogram4`` mappings: the base model keeps its historical
 unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
@@ -50,8 +53,9 @@ LIMITS = [
     "and LongCat-Image, flow-match "
     "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
     "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and "
-    "Wuerstchen v2, and "
-    "DPM-Solver++ for PixArt and Sana (flow sigmas).",
+    "Wuerstchen v2, "
+    "DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for "
+    "aMUSEd.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -323,6 +327,9 @@ def main() -> None:
         },
         "components_lumina2": {
             key: value for key, value in measured.items() if key.startswith("lumina2_")
+        },
+        "components_amused": {
+            key: value for key, value in measured.items() if key.startswith(("amused_", "amused-"))
         },
         "components_auraflow": {
             key: value for key, value in measured.items() if key.startswith("auraflow_")

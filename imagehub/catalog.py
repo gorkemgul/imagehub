@@ -842,6 +842,48 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="flux1-krea-dev",
+        task=Task.T2I,
+        family="flux",
+        source="https://huggingface.co/black-forest-labs/FLUX.1-Krea-dev",
+        repo_id="black-forest-labs/FLUX.1-Krea-dev",
+        revision="8162a9c7b05a641be098422bf2fcf335615c2f28",
+        provenance="author",
+        catalog_id="flux-1",
+        format="diffusers",
+        license="FLUX.1-dev Non-Commercial License",
+        gated=True,
+        config={"defaults": {"steps": 28, "guidance": 4.5, "max_sequence_length": 512}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors.index.json",
+            "text_encoder_2/model-00001-of-00002.safetensors",
+            "text_encoder_2/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/spiece.model",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="flux1-kontext-dev",
         task=Task.T2I,
         family="flux",
@@ -1104,6 +1146,48 @@ _entries.append(
         ),
     )
 )
+
+for _amused_id, _amused_revision, _amused_size in (
+    ("amused-256", "09b6259bf96dbe6d70a852b70812420fe02df55e", 256),
+    ("amused-512", "6f3f309ba188a08e347bff9691a0ac791817ca97", 512),
+):
+    _entries.append(
+        ModelSpec(
+            id=_amused_id,
+            task=Task.T2I,
+            family="amused",
+            source=f"https://huggingface.co/amused/{_amused_id}",
+            repo_id=f"amused/{_amused_id}",
+            revision=_amused_revision,
+            provenance="author",
+            catalog_id="amused",
+            format="diffusers",
+            license="OpenRAIL++",
+            gated=False,
+            config={
+                "defaults": {
+                    "steps": 12,
+                    "guidance": 10.0,
+                    "width": _amused_size,
+                    "height": _amused_size,
+                }
+            },
+            files=(
+                "model_index.json",
+                "scheduler/scheduler_config.json",
+                "text_encoder/config.json",
+                "text_encoder/model.safetensors",
+                "tokenizer/merges.txt",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/vocab.json",
+                "transformer/config.json",
+                "transformer/diffusion_pytorch_model.safetensors",
+                "vqvae/config.json",
+                "vqvae/diffusion_pytorch_model.safetensors",
+            ),
+        )
+    )
 
 _entries.append(
     ModelSpec(

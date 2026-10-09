@@ -18,7 +18,7 @@ def test_family_and_model_aliases_are_registered():
     assert "janus-pro-1b" in names
     assert {"sd3.5-medium", "sd3.5-large"} <= set(names)
     assert {"qwen-image", "qwen-image-2.1"} <= set(names)
-    assert {"flux1-dev", "flux1-kontext-dev"} <= set(names)
+    assert {"flux1-dev", "flux1-kontext-dev", "flux1-krea-dev"} <= set(names)
     assert {"flux2", "flux2-klein-4b", "flux2-klein-9b"} <= set(names)
     assert {"hunyuan-dit", "hunyuan-dit-v1.1-distilled"} <= set(names)
     assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024"} <= set(names)
@@ -31,6 +31,7 @@ def test_family_and_model_aliases_are_registered():
     assert {"auraflow", "auraflow-v0.3"} <= set(names)
     assert {"sana", "sana-1600m-1024", "sana-600m-1024"} <= set(names)
     assert {"lumina2", "lumina-image-2.0"} <= set(names)
+    assert {"amused", "amused-256", "amused-512"} <= set(names)
     assert {"stable_cascade", "stable-cascade", "stable-cascade-lite"} <= set(names)
     assert {"wuerstchen", "wuerstchen-v2"} <= set(names)
 

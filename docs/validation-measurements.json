@@ -1,4 +1,82 @@
 {
+  "amused-256_hidden_state_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_hidden_state_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_text_embeds_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_text_embeds_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "amused-256_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_hidden_state_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_hidden_state_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_text_embeds_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_text_embeds_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "amused-512_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "auraflow_auraflow-v0.3_text_encoder_negative": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -315,6 +393,32 @@
     "timestep": 999,
     "tolerance": 0.0
   },
+  "e2e_amused-256": {
+    "guidance": 10.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      256,
+      256
+    ],
+    "steps": 12,
+    "tokens_equal": true
+  },
+  "e2e_amused-512": {
+    "guidance": 10.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 12,
+    "tokens_equal": true
+  },
   "e2e_auraflow-v0.3": {
     "guidance": 3.5,
     "latents": {
@@ -400,6 +504,11 @@
     }
   },
   "e2e_flux1-dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 4
+  },
+  "e2e_flux1-krea-dev": {
     "max_pixel_diff": 0,
     "passed": true,
     "steps": 4
@@ -1152,11 +1261,20 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "flux1_clip_flux1-krea-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "flux1_clip_tokenizer": {
     "exact": true,
     "tolerance": "exact"
   },
   "flux1_clip_tokenizer_flux1-dev": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "flux1_clip_tokenizer_flux1-krea-dev": {
     "exact": true,
     "tolerance": "exact"
   },
@@ -1166,6 +1284,11 @@
     "tolerance": 0.0
   },
   "flux1_e2e_latents_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_e2e_latents_flux1-krea-dev": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -1180,12 +1303,22 @@
     "mu": 1.15,
     "tolerance": "exact"
   },
+  "flux1_scheduler_flux1-krea-dev": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
   "flux1_t5": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
   },
   "flux1_t5_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_t5_flux1-krea-dev": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -1198,12 +1331,21 @@
     "exact": true,
     "tolerance": "exact"
   },
+  "flux1_t5_tokenizer_flux1-krea-dev": {
+    "exact": true,
+    "tolerance": "exact"
+  },
   "flux1_transformer": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
   },
   "flux1_transformer_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_transformer_flux1-krea-dev": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -1218,12 +1360,22 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "flux1_vae_decode_flux1-krea-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "flux1_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
   },
   "flux1_vae_encode_flux1-dev": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_vae_encode_flux1-krea-dev": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -1538,6 +1690,46 @@
     "prompts": 600,
     "tolerance": "exact"
   },
+  "header_amused-256": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 474
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
+    }
+  },
+  "header_amused-512": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 198
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 478
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
+    }
+  },
   "header_auraflow-v0.3": {
     "text_encoder": {
       "extra": [],
@@ -1617,6 +1809,32 @@
     }
   },
   "header_flux1-kontext-dev": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1160
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_flux1-krea-dev": {
     "text_encoder": {
       "extra": [],
       "mismatch": [],
@@ -4126,6 +4344,24 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "seed_e2e_amused-256": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      320,
+      192
+    ]
+  },
+  "seed_e2e_amused-512": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      640,
+      384
+    ]
+  },
   "seed_e2e_auraflow-v0.3": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -4173,6 +4409,12 @@
     ]
   },
   "seed_e2e_flux1-dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 4
+  },
+  "seed_e2e_flux1-krea-dev": {
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 42,

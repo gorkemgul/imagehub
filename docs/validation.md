@@ -313,9 +313,11 @@ The full validation run took 47 minutes.
 
 ## FLUX.1
 
-Validated on CPU in the same environment as above. `flux1-schnell` and `flux1-dev` were loaded
-strictly from `black-forest-labs/FLUX.1-schnell` at revision `741f7c3` and
-`black-forest-labs/FLUX.1-dev` at revision `3de623f`, respectively. The observed difference in
+Validated on CPU in the same environment as above. `flux1-schnell`, `flux1-dev` and `flux1-krea-dev`
+were loaded strictly from `black-forest-labs/FLUX.1-schnell` at revision `741f7c3`,
+`black-forest-labs/FLUX.1-dev` at revision `3de623f` and `black-forest-labs/FLUX.1-Krea-dev` at
+revision `8162a9c`, respectively. `flux1-krea-dev` shares the `flux1-dev` architecture and configs and is
+checked with the same comparisons below (guidance 4.5, 512 tokens). The observed difference in
 every comparison is **exactly 0**: on CPU in float32, the local implementation produces a
 bit-identical result to the reference.
 
@@ -337,20 +339,28 @@ bit-identical result to the reference.
 | `flux1-dev` flow-match Euler scheduler (dynamic shifting) | exact | exact |
 | `flux1-dev` end to end: final latent / pixels (1024×1024, 4 steps, guidance 3.5) | 0 / 0 | 0 / 0 |
 | `flux1-dev` end to end, seed 42 (pixels) | 0 | 0 |
+| `flux1-krea-dev` CLIP tokenizer / pooled CLIP-L | identical / 0 | exact / 0 |
+| `flux1-krea-dev` T5 tokenizer / T5-XXL encoder (512 tokens) | identical / 0 | exact / 0 |
+| `flux1-krea-dev` transformer single step (1024×1024, guidance-distilled) | 0 | 0 |
+| `flux1-krea-dev` VAE decode / encode | 0 / 0 | 0 / 0 |
+| `flux1-krea-dev` flow-match Euler scheduler (dynamic shifting) | exact | exact |
+| `flux1-krea-dev` end to end: final latent / pixels (1024×1024, 4 steps, guidance 4.5) | 0 / 0 | 0 / 0 |
+| `flux1-krea-dev` end to end, seed 42 (pixels) | 0 | 0 |
 
 The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
 `seed=42`. Schnell was tested at its 4-step, guidance 0.0 defaults. Dev used 4 steps and guidance
-3.5 instead of its 50-step default only to shorten the CPU run.
+3.5 instead of its 50-step default only to shorten the CPU run, and Krea [dev] likewise used 4 steps
+and guidance 4.5.
 
 The header-only tensor check covered `text_encoder`, `text_encoder_2`, `transformer` and `vae`:
-`flux1-schnell` had 196 / 219 / 1156 / 244 tensors and `flux1-dev` had
+`flux1-schnell` had 196 / 219 / 1156 / 244 tensors, and `flux1-dev` and `flux1-krea-dev` each had
 196 / 219 / 1160 / 244 tensors, with missing, extra and shape-mismatched tensors all **0**. Record:
 `tensor_header_check`, [validation.json](validation.json).
 
 The reference and native transformers, about 48 GB each in float32, were never loaded together.
 Each test ran the reference first, saved its outputs, freed it, then ran the native model. Schnell's
 component and seed tests took 11 minutes and its fixed-latent end-to-end test took 13 minutes. The
-full dev run took 25 minutes.
+full dev run took 25 minutes. The Krea [dev] real-checkpoint run took about 30 minutes on an M2 Max (CPU).
 
 ## FLUX.1 Kontext
 
@@ -985,6 +995,38 @@ holds the model's first tensor at its file offsets and copies the other shards i
 and the CPU kernels sum in a layout-dependent order. The transformer now loads its shards the same
 way (`keep_first_shard_mapped`).
 
+## aMUSEd
+
+`amused-256` and `amused-512` are loaded strictly from `amused/amused-256` at revision `09b6259` and
+`amused/amused-512` at revision `6f3f309`, and are compared with diffusers 0.40.0 `AmusedPipeline` on
+CPU in float32. The real-checkpoint tests (`tests/reference/test_ref_amused.py`) assert the exact
+equalities below for both models. All 14 real-checkpoint tests (7 per model) passed, and every
+comparison matched exactly. The real-checkpoint run for both models took about 5 minutes on an
+Apple M2 Max (CPU). The tiny-snapshot and random-weight comparisons need no downloaded weights and
+pass with exactly 0 difference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured (`amused-256`, `amused-512`) |
+| --- | --- |
+| Tensor header check: text encoder, transformer, VQGAN (names and shapes) | `amused-256`: 197, 474 and 277 tensors; `amused-512`: 198, 478 and 277 tensors; 0 missing, extra or mismatched in both |
+| CLIP tokenizer ids (prompt, `""`, punctuation and case, a truncated prompt) | all 4 cases exact for both |
+| Text encoder: projected pooled embedding and second-to-last hidden state (prompt and `""`) | max abs 0, max rel 0 for both |
+| One transformer step on a partly masked token grid with micro-conditioning | max abs 0, max rel 0 for both |
+| VQGAN decode of fixed token ids (codebook lookup, group normalization) | max abs 0, max rel 0 for both |
+| End to end at the model defaults (12 steps, guidance 10, seed 0): final token ids and uint8 image | token ids equal, max pixel difference 0 (256×256 and 512×512) |
+| Seeded pipeline run at a different, non-square size (seed 1234): uint8 image | max pixel difference 0 (`amused-256` at 320×192, `amused-512` at 640×384) |
+
+Random-weight comparisons, which pass with exactly 0 difference: the U-ViT with a tiny
+configuration (with and without bias, with and without the downsampling and upsampling of the 512
+model) and with the published 256 configuration at full size; the scheduler trajectory with seeded
+generators (cosine and linear schedules, number and pair temperatures, the generator-free random
+state); and the VQGAN with group normalization, with and without the attention block and the
+codebook lookup, and with the published configuration. Tiny-snapshot end-to-end runs compare the
+token ids and the image bytes for both transformer variants, with the defaults, guidance 1.0 (no
+guidance), a negative prompt, micro-conditioning and temperature settings, a larger grid, and several
+seeds.
+
 ## Kolors
 
 `kolors` is loaded strictly from `Kwai-Kolors/Kolors-diffusers` at revision `7e091c7` and compared
@@ -1066,7 +1108,8 @@ after the other and each was freed before the next.
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
-  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, and DPM-Solver++ for PixArt and Sana (flow sigmas).
+  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
+  the cosine-schedule masked-token scheduler for aMUSEd.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
@@ -1079,10 +1122,11 @@ after the other and each was freed before the next.
   for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
-  for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
-  `flux1-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
+  for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
+  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

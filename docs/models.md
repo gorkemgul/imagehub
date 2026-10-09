@@ -381,7 +381,7 @@ not distribute weights.
 # FLUX.1
 
 Catalog: [`flux-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `flux1-schnell`, `flux1-dev`, `flux1-kontext-dev` · Task: `t2i`
+Models: `flux1-schnell`, `flux1-dev`, `flux1-krea-dev`, `flux1-kontext-dev` · Task: `t2i`
 
 **Architecture.** CLIP-L supplies a pooled embedding and T5-XXL supplies sequence embeddings to a
 12B rectified-flow transformer with 19 double-stream blocks, 38 single-stream blocks, 24 attention
@@ -413,10 +413,31 @@ and `width`/`height` must be multiples of 16. The other supported options are `n
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** Fill, Redux, Depth and Canny variants, ControlNet, LoRA and fp16/bf16 parity are
-not supported. `flux1-schnell` and `flux1-dev` take no image input; for Kontext, see below.
+not supported. `flux1-schnell`, `flux1-dev` and `flux1-krea-dev` take no image input; for Kontext, see below.
 
-**License.** The schnell weights use the Apache-2.0 license. The dev and Kontext weights use the
+**License.** The schnell weights use the Apache-2.0 license. The dev, Krea [dev] and Kontext weights use the
 FLUX.1-dev Non-Commercial License; see the license. imagehub does not distribute weights.
+
+## FLUX.1 Krea [dev]
+
+`flux1-krea-dev` (`black-forest-labs/FLUX.1-Krea-dev`) is an aesthetics-focused fine-tune of the
+FLUX.1 [dev] architecture, per its model card. Its published configs are identical to those of
+`flux1-dev`, so it runs on the same backend, text encoders, transformer and VAE with no new code.
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="flux1-krea-dev", model="checkpoints/flux1-krea-dev", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+- **Defaults.** 28 steps (the diffusers `FluxPipeline` default; the model card gives no step
+  count), guidance 4.5 (the model card), `max_sequence_length` 512 and 1024×1024. The other
+  options are the same as for `flux1-dev`.
+- **License and access.** The repository is gated and the weights use the FLUX.1-dev
+  Non-Commercial License. Accept the terms and provide `HF_TOKEN` when downloading.
+- **Memory.** The same as `flux1-dev`: about 47.6 GB for the transformer, 19 GB for T5-XXL, 0.5 GB
+  for CLIP-L and 0.3 GB for the VAE in float32.
 
 ## FLUX.1 Kontext [dev]
 
@@ -1232,6 +1253,62 @@ caller-supplied latents or embeddings are not supported.
 **License.** The repository declares the Apache-2.0 license. The text encoder is a Gemma-2
 checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
 distribute weights.
+
+# aMUSEd
+
+Catalog: [`amused`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `amused-256`, `amused-512` · Task: `t2i`
+
+**Architecture.** aMUSEd is a masked image-token model, not a diffusion model. A VQGAN with a
+codebook of 8192 entries turns an image into a grid of token ids at 16× downsampling (16×16 tokens
+for the 256 model, 32×32 for the 512 model, which downsamples and upsamples the grid inside the
+network). A U-ViT predicts the ids of masked tokens. It has a ConvNeXt stem, a stack of 22
+transformer layers of width 1024 with cross-attention to the text, and a ConvNeXt head, and it is
+conditioned on the CLIP ViT-L/14 text encoder: the projected pooled embedding and the second-to-last
+hidden state. Micro-conditioning (original size, crop coordinates and aesthetic score) is added to the
+pooled embedding. Generation starts from a grid of mask tokens. At every step the transformer predicts
+all tokens, one id is sampled for each masked position, and the least confident tokens are masked
+again, following a cosine schedule. The final tokens are looked up in the VQGAN codebook and decoded
+to pixels.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained amused-512 checkpoints/amused-512
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="amused-512", model="checkpoints/amused-512", device="mps") as pipe:
+    result = pipe("a photo of an astronaut riding a horse on mars", seed=42)
+    result.images[0].save("astronaut.png")
+```
+
+**Settings.** The models default to 12 steps, guidance 10.0, an empty negative prompt and the size
+of their token grid (256×256 or 512×512). The supported options are `seed`, `steps`, `guidance`,
+`width`, `height`, `negative_prompt`, `aesthetic_score` (default 6), `crop_coord` (default `(0, 0)`)
+and `temperature` (default `(2, 0)`). `width` and `height` must be multiples of 16 for `amused-256`
+and of 32 for `amused-512`. `temperature` is either a number, which falls linearly from that number
+to 0.01 over the steps, or a `(start, end)` pair, which is interpolated linearly. It scales the random
+noise that is added to the token confidences before re-masking. Guidance is applied to the token
+logits as `uncond + guidance * (cond - uncond)`; guidance 1.0 or lower skips the unconditional pass.
+The seed drives a CPU generator that is used for the token sampling and the confidence noise, so
+the same seed gives the same tokens on every device up to numerical differences. Unrecognized
+settings raise an error.
+
+**Memory.** In float32 the transformer needs about 2.4 GB, the CLIP text encoder about 0.5 GB and the
+VQGAN about 0.6 GB.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same token ids and the same image
+as diffusers' `AmusedPipeline` with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is no claim of exact
+equality on these devices.
+
+**Out of scope.** LoRA, fp16/bf16 parity, batches of several prompts or images per call, image
+inpainting and variation, and caller-supplied tokens or embeddings are not supported.
+
+**License.** Both repositories declare the OpenRAIL++ license; check its use restrictions before
+redistributing generated images or weights. imagehub does not distribute weights.
 
 # AuraFlow
 
