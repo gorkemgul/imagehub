@@ -1071,6 +1071,48 @@ _entries.append(
     )
 )
 
+for _amused_id, _amused_revision, _amused_size in (
+    ("amused-256", "09b6259bf96dbe6d70a852b70812420fe02df55e", 256),
+    ("amused-512", "6f3f309ba188a08e347bff9691a0ac791817ca97", 512),
+):
+    _entries.append(
+        ModelSpec(
+            id=_amused_id,
+            task=Task.T2I,
+            family="amused",
+            source=f"https://huggingface.co/amused/{_amused_id}",
+            repo_id=f"amused/{_amused_id}",
+            revision=_amused_revision,
+            provenance="author",
+            catalog_id="amused",
+            format="diffusers",
+            license="OpenRAIL++",
+            gated=False,
+            config={
+                "defaults": {
+                    "steps": 12,
+                    "guidance": 10.0,
+                    "width": _amused_size,
+                    "height": _amused_size,
+                }
+            },
+            files=(
+                "model_index.json",
+                "scheduler/scheduler_config.json",
+                "text_encoder/config.json",
+                "text_encoder/model.safetensors",
+                "tokenizer/merges.txt",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/vocab.json",
+                "transformer/config.json",
+                "transformer/diffusion_pytorch_model.safetensors",
+                "vqvae/config.json",
+                "vqvae/diffusion_pytorch_model.safetensors",
+            ),
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="krea2-turbo",

@@ -9,6 +9,8 @@ from imagehub.types import Task
 def test_catalog_contents():
     assert available_models() == {
         "t2i": (
+            "amused-256",
+            "amused-512",
             "cogview4-6b",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
@@ -804,4 +806,42 @@ def test_lumina_image_2_catalog_entry():
         "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
+@pytest.mark.parametrize(
+    ("model_id", "revision", "size"),
+    [
+        ("amused-256", "09b6259bf96dbe6d70a852b70812420fe02df55e", 256),
+        ("amused-512", "6f3f309ba188a08e347bff9691a0ac791817ca97", 512),
+    ],
+)
+def test_amused_catalog_entries(model_id, revision, size):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "amused"
+    assert spec.source == f"https://huggingface.co/amused/{model_id}"
+    assert spec.repo_id == f"amused/{model_id}"
+    assert spec.revision == revision
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "amused"
+    assert spec.format == "diffusers"
+    assert spec.license == "OpenRAIL++"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 12, "guidance": 10.0, "width": size, "height": size}
+    }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors",
+        "tokenizer/merges.txt",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer_config.json",
+        "tokenizer/vocab.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors",
+        "vqvae/config.json",
+        "vqvae/diffusion_pytorch_model.safetensors",
     )

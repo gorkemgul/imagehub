@@ -951,6 +951,37 @@ holds the model's first tensor at its file offsets and copies the other shards i
 and the CPU kernels sum in a layout-dependent order. The transformer now loads its shards the same
 way (`keep_first_shard_mapped`).
 
+## aMUSEd
+
+`amused-256` and `amused-512` are loaded strictly from `amused/amused-256` at revision `09b6259` and
+`amused/amused-512` at revision `6f3f309`, and are compared with diffusers 0.40.0 `AmusedPipeline` on
+CPU in float32. The real-checkpoint tests (`tests/reference/test_ref_amused.py`) assert the exact
+equalities below for both models; measured values are added to this page after that run. The
+tiny-snapshot and random-weight comparisons need no downloaded weights and pass with exactly 0
+difference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance |
+| --- | --- |
+| Tensor header check: text encoder, transformer, VQGAN (names and shapes) | 0 missing, extra or mismatched |
+| CLIP tokenizer ids (prompt, `""`, punctuation and case, a truncated prompt) | exact |
+| Text encoder: projected pooled embedding and second-to-last hidden state (prompt and `""`) | 0 |
+| One transformer step on a partly masked token grid with micro-conditioning | 0 |
+| VQGAN decode of fixed token ids (codebook lookup, group normalization) | 0 |
+| End to end at the model defaults (12 steps, guidance 10, seed 0): final token ids and uint8 image | identical |
+| Seeded pipeline run at a different, non-square size (seed 1234): uint8 image | identical |
+
+Random-weight comparisons, which pass with exactly 0 difference: the U-ViT with a tiny
+configuration (with and without bias, with and without the downsampling and upsampling of the 512
+model) and with the published 256 configuration at full size; the scheduler trajectory with seeded
+generators (cosine and linear schedules, number and pair temperatures, the generator-free random
+state); and the VQGAN with group normalization, with and without the attention block and the
+codebook lookup, and with the published configuration. Tiny-snapshot end-to-end runs compare the
+token ids and the image bytes for both transformer variants, with the defaults, guidance 1.0 (no
+guidance), a negative prompt, micro-conditioning and temperature settings, a larger grid, and several
+seeds.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -971,7 +1002,8 @@ way (`keep_first_shard_mapped`).
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell and Lumina-Image 2.0, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
-  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).
+  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, DPM-Solver++ for PixArt and Sana (flow sigmas), and
+  the cosine-schedule masked-token scheduler for aMUSEd.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
