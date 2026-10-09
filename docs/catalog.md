@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**19 architecture families, 47 published checkpoints.** A model is a separately published set of weights;
+**20 architecture families, 48 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -46,6 +46,7 @@ tested with the original weights. In this release every model is `full`.
 | `pixart-alpha-xl-1024` | `pixart` | [PixArt-alpha/PixArt-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-XL-2-1024-MS) | `b89adad` | author | full | CreativeML-OpenRAIL++-M | `pixart-alpha` |
 | `sana-1600m-1024` | `sana` | [Efficient-Large-Model/Sana_1600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_1600M_1024px_diffusers) | `ac0da2f` | author | full | Apache-2.0 | `sana` |
 | `sana-600m-1024` | `sana` | [Efficient-Large-Model/Sana_600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_600M_1024px_diffusers) | `28f3af7` | author | full | Apache-2.0 | `sana` |
+| `kolors` | `kolors` | [Kwai-Kolors/Kolors-diffusers](https://huggingface.co/Kwai-Kolors/Kolors-diffusers) | `7e091c7` | author | full | Apache-2.0 | `kolors` |
 | `lumina-image-2.0` | `lumina2` | [Alpha-VLLM/Lumina-Image-2.0](https://huggingface.co/Alpha-VLLM/Lumina-Image-2.0) | `53504ab` | author | full | Apache-2.0 | `lumina-image-2` |
 | `auraflow-v0.3` | `auraflow` | [fal/AuraFlow-v0.3](https://huggingface.co/fal/AuraFlow-v0.3) | `2cd8588` | author | full | Apache-2.0 | `auraflow` |
 | `krea2-turbo` | `krea2` | [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) | `98e0fe1` | author | full | Krea 2 Community License | `krea-2` |
@@ -104,6 +105,10 @@ see the license.
 The `ideogram4-fp8` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN` when
 downloading with `python -m imagehub.pretrained`. The weights use the Ideogram 4 Non-Commercial
 License; see the license.
+
+Kolors publishes float16 weights only (`*.fp16.safetensors`), so its file list uses those names. Parity is
+measured on their float32 upcast, which is also what diffusers computes with
+`from_pretrained(..., variant="fp16", torch_dtype=torch.float32)`.
 
 The `stable-cascade` and `stable-cascade-lite` weights use the Stable Cascade Non-Commercial
 Community License (`stable-cascade-nc-community`), which prohibits commercial use; see the license
