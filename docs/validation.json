@@ -3006,6 +3006,132 @@
       }
     },
     {
+      "model_id": "amused-256",
+      "repo_id": "amused/amused-256",
+      "revision": "09b6259bf96dbe6d70a852b70812420fe02df55e",
+      "provenance": "author",
+      "catalog_id": "amused",
+      "license": "OpenRAIL++",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "83e1100c6ee72a023b5adce33d9d3514819fa69c2751d1463eec77f3cbc2cf35",
+        "scheduler/scheduler_config.json": "b72446a3510d2b342fab32e3496f228548843805ed1bfb319df4962e9d80bdff",
+        "text_encoder/config.json": "55c0f3a62baaf5bb56b8839049526a640002557fa22e0e0fec606bd5b56ba567",
+        "text_encoder/model.safetensors": "dae0eabbb1fd83756ed9dd893c17ff2f6825c98555a1e1b96154e2df0739b9e2",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "c2d0fb8b86ad86b1f46134d4a5f93fd1e688c932a78efc8d149087c33a53ad06",
+        "tokenizer/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "transformer/config.json": "8fd0d22d032db3bacfc270f9101fda9d45b8f1d5fa4dc9cddd183f0f5be0ea92",
+        "transformer/diffusion_pytorch_model.safetensors": "9cc8627bf729474c628762c22668a3e0aaf9fef347480bb23937a98828e0936c",
+        "vqvae/config.json": "b063b798b8233405fed3844538db899100b6d018aff0d670b66e192ed1e5e9d5",
+        "vqvae/diffusion_pytorch_model.safetensors": "1241a5c88b635af4f8cfb268e388ccaa70f55a458a473d68943e5c28d7b7f762"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 197,
+          "transformer": 474,
+          "vqvae": 277
+        }
+      },
+      "end_to_end": {
+        "guidance": 10.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          256,
+          256
+        ],
+        "steps": 12,
+        "tokens_equal": true
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          320,
+          192
+        ]
+      }
+    },
+    {
+      "model_id": "amused-512",
+      "repo_id": "amused/amused-512",
+      "revision": "6f3f309ba188a08e347bff9691a0ac791817ca97",
+      "provenance": "author",
+      "catalog_id": "amused",
+      "license": "OpenRAIL++",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "83e1100c6ee72a023b5adce33d9d3514819fa69c2751d1463eec77f3cbc2cf35",
+        "scheduler/scheduler_config.json": "b72446a3510d2b342fab32e3496f228548843805ed1bfb319df4962e9d80bdff",
+        "text_encoder/config.json": "55c0f3a62baaf5bb56b8839049526a640002557fa22e0e0fec606bd5b56ba567",
+        "text_encoder/model.safetensors": "3149fc6737da29cf39176b86ce19537aea6228082c21a8b4f87ae8ee81681a79",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "transformer/config.json": "5ddbaa90ac65f1ccb514d765191735a9677a52438da61e107eedbe6ab15a6cda",
+        "transformer/diffusion_pytorch_model.safetensors": "587527ca6ebc7d9b0a85892d2afeac71a43e8481d7c0770f5a431e90525c6b5b",
+        "vqvae/config.json": "b063b798b8233405fed3844538db899100b6d018aff0d670b66e192ed1e5e9d5",
+        "vqvae/diffusion_pytorch_model.safetensors": "1241a5c88b635af4f8cfb268e388ccaa70f55a458a473d68943e5c28d7b7f762"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 198,
+          "transformer": 478,
+          "vqvae": 277
+        }
+      },
+      "end_to_end": {
+        "guidance": 10.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 12,
+        "tokens_equal": true
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          640,
+          384
+        ]
+      }
+    },
+    {
       "model_id": "auraflow-v0.3",
       "repo_id": "fal/AuraFlow-v0.3",
       "revision": "2cd8588f04c886002be4571697d84654a50e3af3",
@@ -6205,6 +6331,86 @@
       "tolerance": 0.0
     }
   },
+  "components_amused": {
+    "amused-256_hidden_state_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_hidden_state_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_text_embeds_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_text_embeds_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_tokenizer": {
+      "cases": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "tolerance": "exact"
+    },
+    "amused-256_transformer_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-256_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_hidden_state_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_hidden_state_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_text_embeds_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_text_embeds_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_tokenizer": {
+      "cases": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "tolerance": "exact"
+    },
+    "amused-512_transformer_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "amused-512_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_auraflow": {
     "auraflow_auraflow-v0.3_text_encoder_negative": {
       "max_abs": 0.0,
@@ -6511,11 +6717,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "7 passed (auraflow-v0.3)"
+    "reference_summary": "14 passed (amused-256, amused-512)"
   }
 }
