@@ -3006,6 +3006,76 @@
       }
     },
     {
+      "model_id": "auraflow-v0.3",
+      "repo_id": "fal/AuraFlow-v0.3",
+      "revision": "2cd8588f04c886002be4571697d84654a50e3af3",
+      "provenance": "author",
+      "catalog_id": "auraflow",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "7ffee10ae3277f136a341bac357405d615961f7c949f7c2e231075f8c7d18541",
+        "scheduler/scheduler_config.json": "484263e607c38c2940d914d53fbf80c6391e180009846689bb2da970d5605f14",
+        "text_encoder/config.json": "4fd2fce0b91e37ddfd44b4afec50a4bb8a433e348d15c30e4c412e9556490edc",
+        "text_encoder/model.safetensors": "0a07449cf1141c0ec86e653c00465f6f0d79c6e58a2c60c8bcf4203d0e4ec4f6",
+        "tokenizer/added_tokens.json": "ea5a91a3234f66ea642c8e672d67f0f493759a9bee6910ae304ea9b9492118b5",
+        "tokenizer/special_tokens_map.json": "d8927854091fd9c46871b2e2a077f7509f1231484e5e66edcb3026f9074f3280",
+        "tokenizer/tokenizer.json": "f6648b38637e86d7c227794f71fb036207b4fdacc760c9c03da71a3fcbe14c49",
+        "tokenizer/tokenizer.model": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347",
+        "tokenizer/tokenizer_config.json": "fa2f9e9fd7368f824e2bf44a60761055534b5c8039f2735ad61305bef57d2853",
+        "transformer/config.json": "f80724bd8e8ba2ee0d723c1eb68589bc6d497b2a247af11c23043eb791f7a562",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "d29e4b9c2b7c80a069c5fca765f15fefcec6ccc8d101e15defdfb4af18c07729",
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors": "05e5493018333d947bb5940083dbc2f071093027ff414bc5b1b1229e4836e5cb",
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors": "4c169ba4fb9f72ecb48d4779da22514b8d8c816a89686138b97c691c30f31624",
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors": "1924d7dce586745ac64d1b7974ac3eeb42ffa1f9912ebbc276e46a09e01cadc1",
+        "vae/config.json": "bf2daa82c70fb8437853a3e9cd901c775a3f7a9af9b49227663ad86e93be3bc7",
+        "vae/diffusion_pytorch_model.safetensors": "1598f3d24932bcfe6634e8b618ea1e30ab1d57f5aad13a6d2de446d2199f2341"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 242,
+          "transformer": 331,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 3.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 50
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          1360,
+          768
+        ]
+      }
+    },
+    {
       "model_id": "krea2-turbo",
       "repo_id": "krea/Krea-2-Turbo",
       "revision": "98e0fe118d17c9e3547fbb2e25acdbae2cadf7c7",
@@ -6135,6 +6205,177 @@
       "tolerance": 0.0
     }
   },
+  "components_auraflow": {
+    "auraflow_auraflow-v0.3_text_encoder_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "auraflow_auraflow-v0.3_text_encoder_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "auraflow_auraflow-v0.3_tokenizer": {
+      "cases": [
+        {
+          "ids_match": true,
+          "masks_match": true
+        },
+        {
+          "ids_match": true,
+          "masks_match": true
+        }
+      ],
+      "tolerance": "exact"
+    },
+    "auraflow_auraflow-v0.3_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "auraflow_auraflow-v0.3_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "auraflow_published_transformer": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        32,
+        48
+      ]
+    },
+    "auraflow_tiny_default": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_guidance_1": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_negative_prompt": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_non_square": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        48,
+        96,
+        3
+      ]
+    },
+    "auraflow_tiny_one_step": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_portrait": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        80,
+        48,
+        3
+      ]
+    },
+    "auraflow_tiny_seed_0": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_seed_123456789": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tiny_transformer_4x14": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        4,
+        14
+      ]
+    },
+    "auraflow_tiny_transformer_6x10": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        6,
+        10
+      ]
+    },
+    "auraflow_tiny_transformer_8x8": {
+      "max_abs": 0.0,
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ]
+    },
+    "auraflow_tiny_truncated": {
+      "latent_max_abs": 0.0,
+      "pixels_equal": true,
+      "shape": [
+        1,
+        64,
+        64,
+        3
+      ]
+    },
+    "auraflow_tokenizer": {
+      "mismatches": 0,
+      "prompts": 615,
+      "tolerance": "exact"
+    },
+    "auraflow_tokenizer_synthetic": {
+      "mismatches": 0,
+      "prompts": 615,
+      "tolerance": "exact"
+    }
+  },
   "components_longcat_image": {
     "longcat_image_e2e_latents": {
       "max_abs": 0.0,
@@ -6270,11 +6511,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell and Lumina-Image 2.0, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, and DPM-Solver++ for PixArt and Sana (flow sigmas).",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (lumina-image-2.0)"
+    "reference_summary": "7 passed (auraflow-v0.3)"
   }
 }
