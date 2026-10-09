@@ -928,6 +928,27 @@ _entries.append(
     )
 )
 
+_HUNYUAN_DIT_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors",
+    "text_encoder_2/config.json",
+    "text_encoder_2/model.safetensors.index.json",
+    "text_encoder_2/model-00001-of-00002.safetensors",
+    "text_encoder_2/model-00002-of-00002.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/vocab.txt",
+    "tokenizer_2/special_tokens_map.json",
+    "tokenizer_2/spiece.model",
+    "tokenizer_2/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+
 _entries.append(
     ModelSpec(
         id="hunyuan-dit-v1.1-distilled",
@@ -942,26 +963,43 @@ _entries.append(
         license="Tencent Hunyuan Community License",
         gated=False,
         config={"defaults": {"steps": 25, "guidance": 5.0}},
-        files=(
-            "model_index.json",
-            "scheduler/scheduler_config.json",
-            "text_encoder/config.json",
-            "text_encoder/model.safetensors",
-            "text_encoder_2/config.json",
-            "text_encoder_2/model.safetensors.index.json",
-            "text_encoder_2/model-00001-of-00002.safetensors",
-            "text_encoder_2/model-00002-of-00002.safetensors",
-            "tokenizer/special_tokens_map.json",
-            "tokenizer/tokenizer_config.json",
-            "tokenizer/vocab.txt",
-            "tokenizer_2/special_tokens_map.json",
-            "tokenizer_2/spiece.model",
-            "tokenizer_2/tokenizer_config.json",
-            "transformer/config.json",
-            "transformer/diffusion_pytorch_model.safetensors",
-            "vae/config.json",
-            "vae/diffusion_pytorch_model.safetensors",
-        ),
+        files=_HUNYUAN_DIT_FILES,
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hunyuan-dit-v1.2",
+        task=Task.T2I,
+        family="hunyuan-dit",
+        source="https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+        repo_id="Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+        revision="5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+        provenance="author",
+        catalog_id="hunyuan-dit",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0}},
+        files=_HUNYUAN_DIT_FILES,
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hunyuan-dit-v1.2-distilled",
+        task=Task.T2I,
+        family="hunyuan-dit",
+        source="https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+        repo_id="Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+        revision="ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
+        provenance="author",
+        catalog_id="hunyuan-dit",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 25, "guidance": 5.0}},
+        files=_HUNYUAN_DIT_FILES,
     )
 )
 

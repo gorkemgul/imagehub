@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,8 @@ from imagehub.backends.hunyuan_dit import (
     map_to_standard_shapes,
 )
 from imagehub.catalog import model_info
+from imagehub.checkpoints import read_json
+from imagehub.models.hunyuan_dit_transformer import HunyuanDiT2DModel
 from imagehub.types import T2IRequest
 
 
@@ -26,6 +29,32 @@ def test_catalog_defaults_and_backend_defaults():
     assert options["use_resolution_binning"] is True
     family_options = HunyuanDiTBackend(Path("missing")).validate_options(T2IRequest("a cat"), {})
     assert (family_options["steps"], family_options["guidance"]) == (25, 5.0)
+
+
+@pytest.mark.parametrize(
+    ("model_id", "steps"),
+    [("hunyuan-dit-v1.2", 50), ("hunyuan-dit-v1.2-distilled", 25)],
+)
+def test_v12_catalog_defaults(model_id, steps):
+    backend = HunyuanDiTBackend(Path("missing"), model_id=model_id)
+    options = backend.validate_options(T2IRequest("a cat"), {})
+    assert (options["steps"], options["guidance"]) == (steps, 5.0)
+    assert (options["width"], options["height"]) == (1024, 1024)
+
+
+@pytest.mark.parametrize("variant", ["", "_distilled"])
+def test_v12_published_headers_load_on_meta(variant):
+    fixtures = Path(__file__).parent / "fixtures" / "hunyuan_dit_v12_configs"
+    config = read_json(fixtures / "transformer_config.json")
+    assert config["use_style_cond_and_image_meta_size"] is False
+    shapes = json.loads((fixtures / f"transformer{variant}_tensors.json").read_text())
+    with torch.device("meta"):
+        model = HunyuanDiT2DModel(config)
+    assert "time_extra_emb.style_embedder.weight" not in shapes
+    model.load_checkpoint(
+        {name: torch.empty(shape, device="meta") for name, shape in shapes.items()}
+    )
+    assert len(shapes) == len(model.state_dict()) == 1544
 
 
 @pytest.mark.parametrize(
