@@ -1660,6 +1660,36 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="ernie-image",
+        task=Task.T2I,
+        family="ernie-image",
+        source="https://huggingface.co/baidu/ERNIE-Image",
+        repo_id="baidu/ERNIE-Image",
+        revision="5346b31d68c9c23758ba56ef8be5e9dc174c7f99",
+        provenance="author",
+        catalog_id="ernie-image",
+        format="diffusers",
+        license="Apache-2.0",
+        config={"defaults": {"steps": 50, "guidance": 4.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")
