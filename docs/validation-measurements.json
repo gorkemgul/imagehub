@@ -1,4 +1,82 @@
 {
+  "amused-256_hidden_state_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_hidden_state_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_text_embeds_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_text_embeds_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "amused-256_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_hidden_state_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_hidden_state_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_text_embeds_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_text_embeds_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "amused-512_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "auraflow_auraflow-v0.3_text_encoder_negative": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -168,6 +246,26 @@
     "prompts": 615,
     "tolerance": "exact"
   },
+  "chatglm_random_all-bias": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "chatglm_random_kolors": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "chatglm_random_layernorm-post-residual": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "chatglm_random_mha-no-final-norm": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "chatglm_random_wide": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
   "clip_text_mask_gelu_all_ones": {
     "hidden_states": true,
     "last_hidden_state": true,
@@ -294,6 +392,32 @@
     ],
     "timestep": 999,
     "tolerance": 0.0
+  },
+  "e2e_amused-256": {
+    "guidance": 10.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      256,
+      256
+    ],
+    "steps": 12,
+    "tokens_equal": true
+  },
+  "e2e_amused-512": {
+    "guidance": 10.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 12,
+    "tokens_equal": true
   },
   "e2e_auraflow-v0.3": {
     "guidance": 3.5,
@@ -545,6 +669,22 @@
   "e2e_kandinsky-2.2": {
     "passed": true,
     "pixels_max_abs": 0
+  },
+  "e2e_kolors": {
+    "guidance": 5.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A photo of an astronaut riding a horse on mars, 4k",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 50
   },
   "e2e_krea2_turbo": {
     "max_pixel_diff": 0,
@@ -1497,6 +1637,46 @@
     "prompts": 600,
     "tolerance": "exact"
   },
+  "header_amused-256": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 474
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
+    }
+  },
+  "header_amused-512": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 198
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 478
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
+    }
+  },
   "header_auraflow-v0.3": {
     "text_encoder": {
       "extra": [],
@@ -1775,6 +1955,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 724
+    }
+  },
+  "header_kolors": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 200
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1682
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
     }
   },
   "header_krea2_turbo": {
@@ -2605,6 +2805,82 @@
     "tolerance": "exact"
   },
   "kandinsky22_zero_image": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_text_encoder_negative_pooled": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_text_encoder_pooled": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_tiny_defaults_0": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_defaults_1": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_micro-conditioning_0": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_micro-conditioning_1": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_negative-non-square_0": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_negative-non-square_1": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_no-cfg_0": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tiny_no-cfg_1": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "kolors_tokenizer": {
+    "mismatches": 0,
+    "prompts": 11,
+    "tolerance": "exact"
+  },
+  "kolors_tokenizer_fuzz": {
+    "mismatches": 0,
+    "prompts": 2000,
+    "tolerance": "exact"
+  },
+  "kolors_tokenizer_snapshot": {
+    "cases": 3,
+    "tolerance": "exact"
+  },
+  "kolors_unet_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kolors_vae_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -3957,6 +4233,24 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "seed_e2e_amused-256": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      320,
+      192
+    ]
+  },
+  "seed_e2e_amused-512": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      640,
+      384
+    ]
+  },
   "seed_e2e_auraflow-v0.3": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -4068,6 +4362,15 @@
   "seed_e2e_kandinsky-2.2": {
     "passed": true,
     "seed": 42
+  },
+  "seed_e2e_kolors": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ]
   },
   "seed_e2e_krea2_turbo": {
     "max_pixel_diff": 0,
@@ -4605,146 +4908,5 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
-  },
-  "chatglm_random_all-bias": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "chatglm_random_kolors": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "chatglm_random_layernorm-post-residual": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "chatglm_random_mha-no-final-norm": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "chatglm_random_wide": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "e2e_kolors": {
-    "guidance": 5.0,
-    "latents": {
-      "max_abs": 0.0,
-      "max_rel": 0.0
-    },
-    "passed": true,
-    "pixels_max_abs": 0,
-    "prompt": "A photo of an astronaut riding a horse on mars, 4k",
-    "seed": 0,
-    "size": [
-      1024,
-      1024
-    ],
-    "steps": 50
-  },
-  "header_kolors": {
-    "text_encoder": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 200
-    },
-    "unet": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 1682
-    },
-    "vae": {
-      "extra": [],
-      "mismatch": [],
-      "missing": [],
-      "tensors": 248
-    }
-  },
-  "kolors_text_encoder_negative": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "kolors_text_encoder_negative_pooled": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "kolors_text_encoder_pooled": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "kolors_text_encoder_prompt": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "kolors_tiny_defaults_0": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "kolors_tiny_defaults_1": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "kolors_tiny_micro-conditioning_0": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "kolors_tiny_micro-conditioning_1": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "kolors_tiny_negative-non-square_0": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "kolors_tiny_negative-non-square_1": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "kolors_tiny_no-cfg_0": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "kolors_tiny_no-cfg_1": {
-    "max_abs_diff": 0.0,
-    "tolerance": "exact"
-  },
-  "kolors_tokenizer": {
-    "mismatches": 0,
-    "prompts": 11,
-    "tolerance": "exact"
-  },
-  "kolors_tokenizer_fuzz": {
-    "mismatches": 0,
-    "prompts": 2000,
-    "tolerance": "exact"
-  },
-  "kolors_tokenizer_snapshot": {
-    "cases": 3,
-    "tolerance": "exact"
-  },
-  "kolors_unet_step": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "kolors_vae_decode": {
-    "max_abs": 0.0,
-    "max_rel": 0.0,
-    "tolerance": 0.0
-  },
-  "seed_e2e_kolors": {
-    "max_pixel_diff": 0,
-    "passed": true,
-    "seed": 1234,
-    "size": [
-      1360,
-      768
-    ]
   }
 }

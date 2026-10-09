@@ -1,0 +1,24 @@
+{
+  "_class_name": "AmusedPipeline",
+  "_diffusers_version": "0.25.0.dev0",
+  "scheduler": [
+    "diffusers",
+    "AmusedScheduler"
+  ],
+  "text_encoder": [
+    "transformers",
+    "CLIPTextModelWithProjection"
+  ],
+  "tokenizer": [
+    "transformers",
+    "CLIPTokenizer"
+  ],
+  "transformer": [
+    "diffusers",
+    "UVit2DModel"
+  ],
+  "vqvae": [
+    "diffusers",
+    "VQModel"
+  ]
+}
