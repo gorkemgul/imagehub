@@ -828,7 +828,7 @@ large run took 27 minutes. The large-turbo run took 17 minutes.
 Validated on CPU in the same environment as above. `sana-1600m-1024` and `sana-600m-1024` are
 loaded strictly from `Efficient-Large-Model/Sana_1600M_1024px_diffusers` at revision `ac0da2f` and
 `Efficient-Large-Model/Sana_600M_1024px_diffusers` at revision `28f3af7`. Every comparison below is
-required to be **exactly 0** (tolerance 0; identical bytes for images).
+**exactly 0** (tolerance 0; identical bytes for images). The real-checkpoint run for both weight sets takes about 2 h 15 min on an M2 Max (CPU).
 
 ### Comparisons (CPU, float32, both weight sets)
 
@@ -836,11 +836,11 @@ required to be **exactly 0** (tolerance 0; identical bytes for images).
 | --- | --- | --- |
 | Tensor header check: text encoder, transformer, DC-AE (names and shapes) | 0 missing, extra or mismatched | 0 |
 | Gemma tokenizer ids / attention masks (prompt with the complex human instruction, and `""`) | identical / identical | exact / exact |
-| `SanaPipeline.encode_prompt` embeddings and masks (prompt and negative) | measured by the real-checkpoint run | 0 |
-| Transformer single step (batch 2, 32×32 latents, two timesteps, real conditioning) | measured by the real-checkpoint run | 0 |
-| DC-AE decode (32×32 latents, scaled as the pipeline does) | measured by the real-checkpoint run | 0 |
-| End to end: final latent / pixels (1024×1024, 20 steps, guidance 4.5, seed 0) | measured by the real-checkpoint run | 0 / 0 |
-| End to end, seed 1234, 1360×768 request (binning, resize and crop back; pixels) | measured by the real-checkpoint run | 0 |
+| `SanaPipeline.encode_prompt` embeddings and masks (prompt and negative) | 0 | 0 |
+| Transformer single step (batch 2, 32×32 latents, two timesteps, real conditioning) | 0 | 0 |
+| DC-AE decode (32×32 latents, scaled as the pipeline does) | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 20 steps, guidance 4.5, seed 0) | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, 1360×768 request (binning, resize and crop back; pixels) | 0 | 0 |
 
 The end-to-end prompt was "a photograph of an astronaut riding a horse". The reference text encoder
 was loaded exactly as `SanaPipeline.from_pretrained(..., torch_dtype=torch.float32)` loads it. The
@@ -892,7 +892,7 @@ needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, and 7 passed for
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

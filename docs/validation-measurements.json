@@ -472,6 +472,38 @@
     "steps": 8,
     "true_cfg": 1.0
   },
+  "e2e_sana-1600m-1024": {
+    "guidance": 4.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 20
+  },
+  "e2e_sana-600m-1024": {
+    "guidance": 4.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 20
+  },
   "e2e_sd-turbo": {
     "guidance": 0.0,
     "latents": {
@@ -994,6 +1026,88 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "gemma2_left_11_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_left_11_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_left_16_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_left_16_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_left_3_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_left_3_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_none_11_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_none_11_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_none_16_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_none_16_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_none_3_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_none_3_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_right_11_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_right_11_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_right_16_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_right_16_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_right_3_256": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma2_right_3_32": {
+    "max_abs_diff": 0.0,
+    "tolerance": "exact"
+  },
+  "gemma_tokenizer": {
+    "mismatches": 0,
+    "prompts": 15,
+    "tolerance": "exact"
+  },
+  "gemma_tokenizer_fuzz": {
+    "mismatches": 0,
+    "prompts": 600,
+    "tolerance": "exact"
+  },
   "header_cogview4-6b": {
     "text_encoder": {
       "extra": [],
@@ -1384,6 +1498,46 @@
       "mismatch": [],
       "missing": [],
       "tensors": 238
+    }
+  },
+  "header_sana-1600m-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 396
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 375
+    }
+  },
+  "header_sana-600m-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 548
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 375
     }
   },
   "header_sd-turbo": {
@@ -2205,6 +2359,230 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "sana_600m_transformer": {
+    "max_abs": 0.0,
+    "shape": [
+      2,
+      32,
+      8,
+      12
+    ]
+  },
+  "sana_published_autoencoder_decode": {
+    "decode_max_abs": 0.0
+  },
+  "sana_sana-1600m-1024_text_encoder_masks": {
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "sana_sana-1600m-1024_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-1600m-1024_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-1600m-1024_tokenizer": {
+    "cases": [
+      {
+        "ids_match": true,
+        "masks_match": true,
+        "max_length": 506
+      },
+      {
+        "ids_match": true,
+        "masks_match": true,
+        "max_length": 300
+      }
+    ],
+    "tolerance": "exact"
+  },
+  "sana_sana-1600m-1024_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-1600m-1024_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-600m-1024_text_encoder_masks": {
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "sana_sana-600m-1024_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-600m-1024_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-600m-1024_tokenizer": {
+    "cases": [
+      {
+        "ids_match": true,
+        "masks_match": true,
+        "max_length": 506
+      },
+      {
+        "ids_match": true,
+        "masks_match": true,
+        "max_length": 300
+      }
+    ],
+    "tolerance": "exact"
+  },
+  "sana_sana-600m-1024_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-600m-1024_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_tiny_1024_request": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      1024,
+      1024,
+      3
+    ]
+  },
+  "sana_tiny_autoencoder": {
+    "decode_max_abs": 0.0,
+    "encode_max_abs": 0.0
+  },
+  "sana_tiny_autoencoder_quadratic": {
+    "decode_max_abs": 0.0,
+    "encode_max_abs": 0.0
+  },
+  "sana_tiny_custom_instruction": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      544,
+      480,
+      3
+    ]
+  },
+  "sana_tiny_default": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      512,
+      512,
+      3
+    ]
+  },
+  "sana_tiny_guidance_1": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      512,
+      512,
+      3
+    ]
+  },
+  "sana_tiny_no_binning": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      256,
+      320,
+      3
+    ]
+  },
+  "sana_tiny_no_instruction": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      512,
+      512,
+      3
+    ]
+  },
+  "sana_tiny_non_square": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      400,
+      600,
+      3
+    ]
+  },
+  "sana_tiny_one_step": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      512,
+      512,
+      3
+    ]
+  },
+  "sana_tiny_portrait": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      500,
+      300,
+      3
+    ]
+  },
+  "sana_tiny_sample_size_32": {
+    "shape": [
+      1024,
+      1024,
+      3
+    ]
+  },
+  "sana_tiny_seed_0": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      512,
+      512,
+      3
+    ]
+  },
+  "sana_tiny_seed_123456789": {
+    "latent_max_abs": 0.0,
+    "pixels_equal": true,
+    "shape": [
+      1,
+      512,
+      512,
+      3
+    ]
+  },
+  "sana_tiny_transformer": {
+    "max_abs": 0.0,
+    "shape": [
+      2,
+      4,
+      6,
+      10
+    ]
   },
   "sd3_scheduler": {
     "sigmas": {
@@ -3031,6 +3409,24 @@
     ],
     "steps": 8,
     "true_cfg": 1.0
+  },
+  "seed_e2e_sana-1600m-1024": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ]
+  },
+  "seed_e2e_sana-600m-1024": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ]
   },
   "seed_e2e_sd-turbo": {
     "passed": true,
