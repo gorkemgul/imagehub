@@ -1,4 +1,82 @@
 {
+  "amused-256_hidden_state_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_hidden_state_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_text_embeds_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_text_embeds_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "amused-256_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-256_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_hidden_state_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_hidden_state_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_text_embeds_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_text_embeds_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "amused-512_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "amused-512_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "clip_text_mask_gelu_all_ones": {
     "hidden_states": true,
     "last_hidden_state": true,
@@ -125,6 +203,32 @@
     ],
     "timestep": 999,
     "tolerance": 0.0
+  },
+  "e2e_amused-256": {
+    "guidance": 10.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      256,
+      256
+    ],
+    "steps": 12,
+    "tokens_equal": true
+  },
+  "e2e_amused-512": {
+    "guidance": 10.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 12,
+    "tokens_equal": true
   },
   "e2e_batch2_janus-pro-1b": {
     "num_images": 2,
@@ -1311,6 +1415,46 @@
     "mismatches": 0,
     "prompts": 600,
     "tolerance": "exact"
+  },
+  "header_amused-256": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 474
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
+    }
+  },
+  "header_amused-512": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 198
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 478
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
+    }
   },
   "header_cogview4-6b": {
     "text_encoder": {
@@ -3751,6 +3895,24 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "seed_e2e_amused-256": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      320,
+      192
+    ]
+  },
+  "seed_e2e_amused-512": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      640,
+      384
+    ]
   },
   "seed_e2e_cogview4-6b": {
     "max_pixel_diff": 0,

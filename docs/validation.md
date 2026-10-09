@@ -956,21 +956,22 @@ way (`keep_first_shard_mapped`).
 `amused-256` and `amused-512` are loaded strictly from `amused/amused-256` at revision `09b6259` and
 `amused/amused-512` at revision `6f3f309`, and are compared with diffusers 0.40.0 `AmusedPipeline` on
 CPU in float32. The real-checkpoint tests (`tests/reference/test_ref_amused.py`) assert the exact
-equalities below for both models; measured values are added to this page after that run. The
-tiny-snapshot and random-weight comparisons need no downloaded weights and pass with exactly 0
-difference.
+equalities below for both models. All 14 real-checkpoint tests (7 per model) passed, and every
+comparison matched exactly. The real-checkpoint run for both models took about 5 minutes on an
+Apple M2 Max (CPU). The tiny-snapshot and random-weight comparisons need no downloaded weights and
+pass with exactly 0 difference.
 
 ### Comparisons (CPU, float32)
 
-| Comparison | Tolerance |
+| Comparison | Measured (`amused-256`, `amused-512`) |
 | --- | --- |
-| Tensor header check: text encoder, transformer, VQGAN (names and shapes) | 0 missing, extra or mismatched |
-| CLIP tokenizer ids (prompt, `""`, punctuation and case, a truncated prompt) | exact |
-| Text encoder: projected pooled embedding and second-to-last hidden state (prompt and `""`) | 0 |
-| One transformer step on a partly masked token grid with micro-conditioning | 0 |
-| VQGAN decode of fixed token ids (codebook lookup, group normalization) | 0 |
-| End to end at the model defaults (12 steps, guidance 10, seed 0): final token ids and uint8 image | identical |
-| Seeded pipeline run at a different, non-square size (seed 1234): uint8 image | identical |
+| Tensor header check: text encoder, transformer, VQGAN (names and shapes) | `amused-256`: 197, 474 and 277 tensors; `amused-512`: 198, 478 and 277 tensors; 0 missing, extra or mismatched in both |
+| CLIP tokenizer ids (prompt, `""`, punctuation and case, a truncated prompt) | all 4 cases exact for both |
+| Text encoder: projected pooled embedding and second-to-last hidden state (prompt and `""`) | max abs 0, max rel 0 for both |
+| One transformer step on a partly masked token grid with micro-conditioning | max abs 0, max rel 0 for both |
+| VQGAN decode of fixed token ids (codebook lookup, group normalization) | max abs 0, max rel 0 for both |
+| End to end at the model defaults (12 steps, guidance 10, seed 0): final token ids and uint8 image | token ids equal, max pixel difference 0 (256×256 and 512×512) |
+| Seeded pipeline run at a different, non-square size (seed 1234): uint8 image | max pixel difference 0 (`amused-256` at 320×192, `amused-512` at 640×384) |
 
 Random-weight comparisons, which pass with exactly 0 difference: the U-ViT with a tiny
 configuration (with and without bias, with and without the downsampling and upsampling of the 512
@@ -1019,7 +1020,8 @@ seeds.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell` and
   `flux1-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, and 7 passed for
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
