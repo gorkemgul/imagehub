@@ -424,6 +424,118 @@ def write_tiny_sdxl(
     return root
 
 
+TINY_CHATGLM = {
+    "_name_or_path": "tiny",
+    "architectures": ["ChatGLMModel"],
+    "model_type": "chatglm",
+    "num_layers": 3,
+    "padded_vocab_size": 320,
+    "hidden_size": 64,
+    "ffn_hidden_size": 96,
+    "kv_channels": 16,
+    "num_attention_heads": 4,
+    "seq_length": 512,
+    "layernorm_epsilon": 1e-5,
+    "rmsnorm": True,
+    "add_bias_linear": False,
+    "add_qkv_bias": True,
+    "multi_query_attention": True,
+    "multi_query_group_num": 2,
+    "original_rope": True,
+    "post_layer_norm": True,
+    "pad_token_id": 0,
+    "eos_token_id": 2,
+}
+KOLORS_SCHEDULER = {
+    "_class_name": "EulerDiscreteScheduler",
+    "beta_schedule": "scaled_linear",
+    "beta_start": 0.00085,
+    "beta_end": 0.014,
+    "clip_sample": False,
+    "interpolation_type": "linear",
+    "num_train_timesteps": 1100,
+    "prediction_type": "epsilon",
+    "set_alpha_to_one": False,
+    "skip_prk_steps": True,
+    "steps_offset": 1,
+    "timestep_spacing": "leading",
+    "trained_betas": None,
+    "use_karras_sigmas": False,
+}
+
+
+def write_tiny_kolors(
+    directory: str | os.PathLike[str], *, seed: int = 0, sample_size: int = 32
+) -> Path:
+    """A random-weight Kolors snapshot in the published layout (float16 variant file names)."""
+    from test_tokenization_chatglm import write_model
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.chatglm import ChatGLMModel
+    from imagehub.models.unet_2d import UNet2DConditionModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    (root / "tokenizer").mkdir()
+    write_model(root / "tokenizer" / "tokenizer.model")
+    (root / "tokenizer" / "tokenizer_config.json").write_text(
+        (FIXTURES / "kolors_configs" / "tokenizer_tokenizer_config.json").read_text()
+    )
+    (root / "tokenizer" / "vocab.txt").write_text("")
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(KOLORS_SCHEDULER))
+    (root / "model_index.json").write_text(
+        (FIXTURES / "kolors_configs" / "model_index.json").read_text()
+    )
+    unet = {
+        "_class_name": "UNet2DConditionModel",
+        "in_channels": 4,
+        "out_channels": 4,
+        "block_out_channels": [32, 64, 64],
+        "down_block_types": ["DownBlock2D", "CrossAttnDownBlock2D", "CrossAttnDownBlock2D"],
+        "up_block_types": ["CrossAttnUpBlock2D", "CrossAttnUpBlock2D", "UpBlock2D"],
+        "transformer_layers_per_block": [1, 1, 1],
+        "attention_head_dim": [2, 4, 4],
+        "cross_attention_dim": 32,
+        "encoder_hid_dim": 64,
+        "encoder_hid_dim_type": "text_proj",
+        "use_linear_projection": True,
+        "addition_embed_type": "text_time",
+        "addition_time_embed_dim": 8,
+        "projection_class_embeddings_input_dim": 112,
+        "layers_per_block": 1,
+        "norm_num_groups": 8,
+        "sample_size": sample_size,
+    }
+    vae = TINY_VAE_FILE_CONFIG | {"scaling_factor": 0.13025}
+    for name, cls, config in (
+        ("text_encoder", ChatGLMModel, TINY_CHATGLM),
+        ("unet", UNet2DConditionModel, unet),
+        ("vae", AutoencoderKL, vae),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = {key: value.half() for key, value in model.state_dict().items()}
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        if name != "text_encoder":
+            save_safetensors(state, root / name / "diffusion_pytorch_model.fp16.safetensors")
+            continue
+        shards = [{key: state[key] for key in list(state)[index::3]} for index in range(3)]
+        weight_map = {}
+        for index, shard in enumerate(shards, start=1):
+            file = f"model.fp16-0000{index}-of-00003.safetensors"
+            save_safetensors(shard, root / name / file)
+            weight_map |= dict.fromkeys(shard, file)
+        (root / name / "model.safetensors.index.fp16.json").write_text(
+            json.dumps({"metadata": {"total_size": 0}, "weight_map": weight_map})
+        )
+    return root
+
+
 TINY_Z_IMAGE_TEXT = {
     "vocab_size": 34,
     "hidden_size": 32,
@@ -1575,6 +1687,203 @@ def write_tiny_lumina2(directory: str | os.PathLike[str], *, seed: int = 0) -> P
         model = cls(config)
         for parameter in model.parameters():
             parameter.data.normal_(0, std)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
+AURAFLOW_FIXTURES = Path(__file__).parent / "fixtures" / "auraflow_configs"
+TINY_AURAFLOW_MERGES = (
+    ("▁", "a"),
+    ("a", "t"),
+    ("▁", "c"),
+    ("▁c", "at"),
+    ("▁", "t"),
+    ("▁t", "h"),
+    ("▁th", "e"),
+    ("i", "n"),
+    ("e", "r"),
+)
+TINY_AURAFLOW_TRANSFORMER = {
+    "_class_name": "AuraFlowTransformer2DModel",
+    "sample_size": 16,
+    "patch_size": 2,
+    "in_channels": 4,
+    "num_mmdit_layers": 1,
+    "num_single_dit_layers": 2,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "joint_attention_dim": 32,
+    "caption_projection_dim": 16,
+    "out_channels": 4,
+    "pos_embed_max_size": 64,
+}
+TINY_AURAFLOW_TEXT = {
+    "architectures": ["UMT5EncoderModel"],
+    "model_type": "umt5",
+    "d_model": 32,
+    "d_kv": 8,
+    "d_ff": 64,
+    "num_layers": 2,
+    "num_heads": 4,
+    "relative_attention_num_buckets": 8,
+    "relative_attention_max_distance": 16,
+    "dropout_rate": 0.0,
+    "layer_norm_epsilon": 1e-6,
+    "feed_forward_proj": "gated-gelu",
+    "dense_act_fn": "gelu_new",
+    "is_gated_act": True,
+    "is_encoder_decoder": False,
+    "use_cache": False,
+    "pad_token_id": 1,
+    "eos_token_id": 2,
+    "decoder_start_token_id": 0,
+    "tie_word_embeddings": False,
+}
+
+
+def write_tiny_auraflow_tokenizer(directory: str | os.PathLike[str]) -> Path:
+    """A small Llama-style BPE (byte fallback, ``</s>`` appended) in the published layout."""
+    path = Path(directory)
+    path.mkdir(parents=True, exist_ok=True)
+    pieces = ["<unk>", "<s>", "</s>"]
+    symbols = ["▁", *"abcdefghijklmnopqrstuvwxyz", ",", ".", "-", ":"]
+    symbols += [a + b for a, b in TINY_AURAFLOW_MERGES]
+    vocab = {token: index for index, token in enumerate([*pieces, *symbols])}
+    for byte in range(256):
+        vocab[f"<0x{byte:02X}>"] = len(vocab)
+    added = [
+        {
+            "id": vocab[token],
+            "content": token,
+            "single_word": False,
+            "lstrip": False,
+            "rstrip": False,
+            "normalized": False,
+            "special": True,
+        }
+        for token in pieces
+    ]
+    eos = {"id": "</s>", "ids": [2], "tokens": ["</s>"]}
+    data = {
+        "version": "1.0",
+        "truncation": None,
+        "padding": None,
+        "added_tokens": added,
+        "normalizer": None,
+        "pre_tokenizer": {
+            "type": "Metaspace",
+            "replacement": "▁",
+            "prepend_scheme": "first",
+            "split": False,
+        },
+        "post_processor": {
+            "type": "TemplateProcessing",
+            "single": [
+                {"Sequence": {"id": "A", "type_id": 0}},
+                {"SpecialToken": {"id": "</s>", "type_id": 0}},
+            ],
+            "pair": [
+                {"Sequence": {"id": "A", "type_id": 0}},
+                {"SpecialToken": {"id": "</s>", "type_id": 0}},
+                {"Sequence": {"id": "B", "type_id": 1}},
+                {"SpecialToken": {"id": "</s>", "type_id": 1}},
+            ],
+            "special_tokens": {"</s>": eos},
+        },
+        "decoder": {
+            "type": "Metaspace",
+            "replacement": "▁",
+            "prepend_scheme": "first",
+            "split": False,
+        },
+        "model": {
+            "type": "BPE",
+            "dropout": None,
+            "unk_token": "<unk>",
+            "continuing_subword_prefix": None,
+            "end_of_word_suffix": None,
+            "fuse_unk": True,
+            "byte_fallback": True,
+            "ignore_merges": False,
+            "vocab": vocab,
+            "merges": [list(pair) for pair in TINY_AURAFLOW_MERGES],
+        },
+    }
+    (path / "tokenizer.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    config = {
+        "add_bos_token": False,
+        "add_eos_token": True,
+        "add_prefix_space": True,
+        "bos_token": "<s>",
+        "eos_token": "</s>",
+        "pad_token": "<s>",
+        "unk_token": "<unk>",
+        "clean_up_tokenization_spaces": False,
+        "legacy": False,
+        "model_max_length": 512,
+        "padding_side": "right",
+        "sp_model_kwargs": {},
+        "tokenizer_class": "LlamaTokenizer",
+        "use_default_system_prompt": False,
+    }
+    (path / "tokenizer_config.json").write_text(json.dumps(config), encoding="utf-8")
+    special = {"bos_token": "<s>", "eos_token": "</s>", "pad_token": "<s>", "unk_token": "<unk>"}
+    (path / "special_tokens_map.json").write_text(json.dumps(special), encoding="utf-8")
+    return path
+
+
+def write_tiny_auraflow(
+    directory: str | os.PathLike[str], *, seed: int = 0, scheduler: dict | None = None
+) -> Path:
+    """A random-weight AuraFlow snapshot in the published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.auraflow_transformer import AuraFlowTransformer2DModel
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.umt5 import UMT5EncoderModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    vocab_size = len(
+        json.loads(
+            write_tiny_auraflow_tokenizer(root / "tokenizer")
+            .joinpath("tokenizer.json")
+            .read_text(encoding="utf-8")
+        )["model"]["vocab"]
+    )
+    (root / "scheduler").mkdir()
+    scheduler_config = scheduler or json.loads(
+        (AURAFLOW_FIXTURES / "scheduler_scheduler_config.json").read_text(encoding="utf-8")
+    )
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(scheduler_config))
+    (root / "model_index.json").write_text(
+        (AURAFLOW_FIXTURES / "model_index.json").read_text(encoding="utf-8")
+    )
+    vae_config = TINY_VAE_FILE_CONFIG | {
+        "scaling_factor": 0.13025,
+        "force_upcast": True,
+        "sample_size": 64,
+    }
+    for name, cls, config, weights in (
+        (
+            "text_encoder",
+            UMT5EncoderModel,
+            TINY_AURAFLOW_TEXT | {"vocab_size": vocab_size},
+            "model.safetensors",
+        ),
+        (
+            "transformer",
+            AuraFlowTransformer2DModel,
+            TINY_AURAFLOW_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, vae_config, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.1)
         (root / name).mkdir()
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(dict(model.state_dict()), root / name / weights)

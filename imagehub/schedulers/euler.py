@@ -43,9 +43,12 @@ _REQUIRED = {
 }
 _IGNORED_COMPATIBILITY_KEYS = {
     "clip_sample",
+    "clip_sample_range",
+    "dynamic_thresholding_ratio",
     "sample_max_value",
     "set_alpha_to_one",
     "skip_prk_steps",
+    "thresholding",
 }
 
 

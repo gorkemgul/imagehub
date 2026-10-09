@@ -9,6 +9,7 @@ from imagehub.types import Task
 def test_catalog_contents():
     assert available_models() == {
         "t2i": (
+            "auraflow-v0.3",
             "cogview4-6b",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
@@ -23,6 +24,7 @@ def test_catalog_contents():
             "janus-pro-1b",
             "janus-pro-7b",
             "kandinsky-2.2",
+            "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
             "longcat-image",
@@ -588,6 +590,41 @@ def test_kandinsky22_catalog_entry():
     }
 
 
+def test_auraflow_catalog_entry():
+    spec = model_info("auraflow-v0.3")
+    assert spec.task is Task.T2I
+    assert spec.family == "auraflow"
+    assert spec.source == "https://huggingface.co/fal/AuraFlow-v0.3"
+    assert spec.repo_id == "fal/AuraFlow-v0.3"
+    assert spec.revision == "2cd8588f04c886002be4571697d84654a50e3af3"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "auraflow"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 50, "guidance": 3.5, "width": 1024, "height": 1024}
+    }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors",
+        "tokenizer/added_tokens.json",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer.model",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors.index.json",
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
 @pytest.mark.parametrize(
     ("model_id", "repo", "revision", "transformer"),
     [
@@ -639,6 +676,40 @@ def test_sana_catalog_entries(model_id, repo, revision, transformer):
         *transformer,
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
+def test_kolors_catalog_entry():
+    spec = model_info("kolors")
+    assert spec.task is Task.T2I
+    assert spec.family == "kolors"
+    assert spec.source == "https://huggingface.co/Kwai-Kolors/Kolors-diffusers"
+    assert spec.repo_id == "Kwai-Kolors/Kolors-diffusers"
+    assert spec.revision == "7e091c75199e910a26cd1b51ed52c28de5db3711"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "kolors"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 50, "guidance": 5.0, "width": 1024, "height": 1024}
+    }
+    # Only float16 weights are published, so the variant file names are listed.
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.fp16.json",
+        "text_encoder/model.fp16-00001-of-00003.safetensors",
+        "text_encoder/model.fp16-00002-of-00003.safetensors",
+        "text_encoder/model.fp16-00003-of-00003.safetensors",
+        "tokenizer/tokenizer.model",
+        "tokenizer/tokenizer_config.json",
+        "tokenizer/vocab.txt",
+        "unet/config.json",
+        "unet/diffusion_pytorch_model.fp16.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.fp16.safetensors",
     )
 
 

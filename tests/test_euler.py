@@ -119,3 +119,15 @@ def test_requires_set_timesteps_before_sampling():
 def test_rejects_unsupported_options(option):
     with pytest.raises(ValueError, match="Unsupported Euler setting"):
         EulerDiscreteScheduler(SDXL_SCHEDULER | option)
+
+
+def test_published_kolors_config_is_accepted():
+    # Keys that diffusers' Euler scheduler does not read (thresholding, clip range) are ignored.
+    config = json.loads(
+        (
+            Path(__file__).parent / "fixtures/kolors_configs/scheduler_scheduler_config.json"
+        ).read_text()
+    )
+    scheduler = EulerDiscreteScheduler(config)
+    scheduler.set_timesteps(50)
+    assert len(scheduler.timesteps) == 50
