@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**22 architecture families, 52 published checkpoints.** A model is a separately published set of weights;
+**23 architecture families, 53 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -64,6 +64,7 @@ tested with the original weights. In this release every model is `full`.
 | `janus-pro-7b` | `janus` | [deepseek-community/Janus-Pro-7B](https://huggingface.co/deepseek-community/Janus-Pro-7B) | `8f23139` | community conversion | full | DeepSeek Model License | `janus-pro` |
 | `stable-cascade` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
 | `stable-cascade-lite` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
+| `wuerstchen-v2` | `wuerstchen` | [warp-ai/wuerstchen](https://huggingface.co/warp-ai/wuerstchen) | `c3da414` | author | full | mit | `wuerstchen` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
 repository used is a community mirror. The v1.1–v1.3 fp32 weights are published only as `.bin`
@@ -74,7 +75,8 @@ own files. They can also use `subfolders` to place files from a second repositor
 snapshot subfolder. DMD2 excludes the base U-Net safetensors because its replacement U-Net is a
 PyTorch pickle under a different name. Kandinsky 2.2 places the prior repository at revision
 `9fc51ad` in the snapshot's `prior/` subfolder while the decoder remains at the snapshot root.
-Stable Cascade does the same with `stabilityai/stable-cascade-prior` at revision `7ca32c2`.
+Stable Cascade does the same with `stabilityai/stable-cascade-prior` at revision `7ca32c2`, and
+Würstchen v2 with `warp-ai/wuerstchen-prior` at revision `c41be63`.
 `python -m imagehub.pretrained` downloads both sources, each pinned and verified, and the snapshot
 manifest records provenance for every file.
 

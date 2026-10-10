@@ -1,0 +1,25 @@
+{
+  "_class_name": "WuerstchenDecoderPipeline",
+  "_diffusers_version": "0.21.0.dev0",
+  "decoder": [
+    "wuerstchen",
+    "WuerstchenDiffNeXt"
+  ],
+  "latent_dim_scale": 10.67,
+  "scheduler": [
+    "diffusers",
+    "DDPMWuerstchenScheduler"
+  ],
+  "text_encoder": [
+    "transformers",
+    "CLIPTextModel"
+  ],
+  "tokenizer": [
+    "transformers",
+    "CLIPTokenizerFast"
+  ],
+  "vqgan": [
+    "wuerstchen",
+    "PaellaVQModel"
+  ]
+}

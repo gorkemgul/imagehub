@@ -542,6 +542,40 @@ text encoder and stage A. Missing, extra and shape-mismatched tensors were all *
 The stages were compared one at a time so that the reference and native models were never all
 resident together.
 
+## Würstchen v2
+
+`wuerstchen-v2` is loaded strictly from the decoder repository `warp-ai/wuerstchen` at revision
+`c3da414` and the prior repository `warp-ai/wuerstchen-prior` at revision `c41be63`; the prior is
+stored in the snapshot's `prior/` subfolder. The reference is diffusers 0.40.0
+`WuerstchenCombinedPipeline`. The real-checkpoint tests (`tests/reference/test_ref_wuerstchen.py`)
+assert the tolerances below. All 7 real-checkpoint tests passed with exactly 0 difference in every
+comparison (see the table), and the run took about 1 h 2 min on an M2 Max (CPU). The random-weight
+and tiny-snapshot comparisons need no downloaded weights and also pass with exactly 0 difference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance | Measured |
+| --- | --- | --- |
+| Tensor header check: both text encoders, prior, decoder, VQGAN (names and shapes) | 0 missing, extra or mismatched | 0 missing, extra or mismatched (388 and 517 tensors in the text encoders, 648 prior, 990 decoder, 122 VQGAN) |
+| Masked CLIP text states of the prior (ViT-bigG) and of the decoder (ViT-H), prompt and negative | 0 | exactly 0 (max abs and max rel) |
+| Prior single step (batch 2, three timestep ratios, real text states) | 0 | exactly 0 at every ratio |
+| Decoder single step (two timestep ratios, real text states) | 0 | exactly 0 at both ratios |
+| VQGAN decode | 0 | exactly 0 |
+| End to end: prior latents / decoder latents / pixels (512×512, 60 and 12 steps, seed 0) | 0 / 0 / 0 | 0 / 0 / 0 |
+| End to end, seed 1234 (pixels) | 0 | 0 |
+
+The tensor layout of the published files was also checked against the recorded headers in
+`tests/fixtures/wuerstchen_configs/`: 648 tensors for the prior, 990 for the decoder and 122 for
+the VQGAN, with no missing, extra or mismatched names or shapes.
+
+Random-weight parity covers the prior and the decoder with tiny configurations and with the
+published configurations at small latent sizes, including the optional `x_cat` input and the split
+output of the decoder. Tiny-snapshot end-to-end parity against `WuerstchenCombinedPipeline` covers
+the defaults, decoder guidance with a negative prompt, decoder guidance with the prior's guidance
+switched off, a non-square size, a second seed, and a prompt longer than the 77 tokens the text
+encoders accept; it compares the prior's image embeddings, the decoder's latents and the final
+bytes.
+
 ## PixArt
 
 Validated on CPU in the same environment as above. `pixart-sigma-xl-1024` and
@@ -1111,7 +1145,7 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
-  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, DPM-Solver++ for PixArt and Sana (flow sigmas), and
+  UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
   the cosine-schedule masked-token scheduler for aMUSEd. LlamaGen samples image tokens
   autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
@@ -1129,7 +1163,7 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.

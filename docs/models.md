@@ -655,6 +655,67 @@ to the decoder, and so does imagehub.
 distribute weights.
 
 
+# Würstchen v2
+
+Catalog: [`wuerstchen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `wuerstchen-v2` · Task: `t2i`
+
+**Architecture.** Würstchen v2 is the model that Stable Cascade grew out of, and it works the same
+way in three stages. The prior (stage C) denoises a 16-channel image embedding about 42.67 times
+smaller than the output, conditioned on the CLIP ViT-bigG text states. The decoder (stage B, a
+DiffNeXt U-Net) denoises a 4-channel latent about 10.67 times smaller than the output, conditioned on
+the prior's embedding and on the text states of a second text encoder, CLIP ViT-H. A Paella VQGAN
+(stage A) decodes that latent to pixels. Both stages use the DDPM Wuerstchen scheduler.
+
+The differences from [Stable Cascade](#stable-cascade) are in the networks and the conditioning. The
+prior is a stack of 32 residual, timestep and attention blocks at a single resolution (width 1536)
+rather than the two-level U-Net. The decoder has four resolution levels and takes the whole
+sequence of text states, not a pooled text embedding. The decoder has its own text encoder, so
+`wuerstchen-v2` loads two CLIP text models, and each stage encodes the prompt with its own: the
+last hidden state after the final layer norm, with the padding masked out. The prior's output is
+rescaled as `latents * 42 - 1` before it conditions the decoder. The prior uses the batched-matmul
+attention of the diffusers default processor and the decoder uses fused scaled-dot-product
+attention, which is what the reference does and what exact parity requires. The sampling loop,
+the shared random generator and the decoding follow Stable Cascade.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained wuerstchen-v2 checkpoints/wuerstchen-v2
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", model="wuerstchen-v2", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The prior defaults to 60 steps and guidance 4.0; the decoder defaults to 12 steps,
+guidance 0.0 and 512×512 output. The supported options are `steps`, `guidance`, `prior_steps`,
+`prior_guidance`, `width`, `height`, `seed` and `negative_prompt`. The reference sizes the latents as
+`ceil(size / 42.67)` for the prior and `int(that * 10.67)` for the decoder, and the decoder needs a
+latent size that is a multiple of 16, so sizes are checked before loading and multiples of 128
+always work; the output can differ slightly from the requested size for other values, and the
+result metadata records the size produced. Decoder guidance above 1 does not depend on the prior
+guidance, because the decoder encodes its own negative prompt. Unrecognized settings raise an error.
+
+**Memory.** In float32 the weights take about 4.0 GB for the prior (1.0B parameters), 4.2 GB for the
+decoder (1.06B), 2.8 GB for the ViT-bigG text encoder, 1.4 GB for the ViT-H text encoder and 0.07 GB
+for stage A, about 12.5 GB in all.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers
+`WuerstchenCombinedPipeline` with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). Both stages draw from the one generator. MPS and CUDA runs are smoke
+tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** Only text-to-image is supported, for one prompt at a time. Image variation,
+custom timestep lists, precomputed prompt embeddings and fp16/bf16 parity are not implemented.
+
+**License.** The decoder and prior weights are published under the MIT license. imagehub does not
+distribute weights.
+
+
 # PixArt
 
 Catalog: [`pixart-sigma`](https://github.com/gorkemgul/awesome-text-to-image-architectures),

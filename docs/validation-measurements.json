@@ -715,6 +715,32 @@
       "pixels": 0
     }
   },
+  "e2e_llamagen-t2i-xl-256": {
+    "cfg_scale": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A blue Porsche 356 parked in front of a yellow brick wall.",
+    "seed": 0,
+    "size": [
+      256,
+      256
+    ],
+    "tokens_equal": true,
+    "top_k": 1000
+  },
+  "e2e_llamagen-t2i-xl-512": {
+    "cfg_scale": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A blue Porsche 356 parked in front of a yellow brick wall.",
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "tokens_equal": true,
+    "top_k": 1000
+  },
   "e2e_longcat_image": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -1199,6 +1225,11 @@
     "seed": 0
   },
   "e2e_stable-cascade-lite": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0
+  },
+  "e2e_wuerstchen-v2": {
     "passed": true,
     "pixels_max_abs": 0,
     "seed": 0
@@ -2091,6 +2122,48 @@
       "tensors": 248
     }
   },
+  "header_llamagen-t2i-xl-256": {
+    "gpt": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 258
+    },
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "skipped": 339,
+      "tensors": 219
+    },
+    "vq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 344
+    }
+  },
+  "header_llamagen-t2i-xl-512": {
+    "gpt": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 258
+    },
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "skipped": 339,
+      "tensors": 219
+    },
+    "vq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 344
+    }
+  },
   "header_longcat_image": {
     "text_encoder": {
       "extra": [],
@@ -2685,6 +2758,38 @@
       "tensors": 122
     }
   },
+  "header_wuerstchen-v2": {
+    "decoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 990
+    },
+    "prior/prior": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 648
+    },
+    "prior/text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 388
+    },
+    "vqgan": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 122
+    }
+  },
   "header_z-image": {
     "text_encoder": {
       "extra": [],
@@ -3018,6 +3123,100 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "llamagen-t2i-xl-256_gpt_prefill": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen-t2i-xl-256_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen-t2i-xl-512_gpt_prefill": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen-t2i-xl-512_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen_gpt_xl_random_weights": {
+    "decode_steps": 3,
+    "prefill_equal": true
+  },
+  "llamagen_t5_caption_embeddings": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen_tiny_cfg_1": {
+    "cfg_scale": 1.0,
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_cfg_interval": {
+    "cfg_interval": 4,
+    "cfg_scale": 5.0,
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_default": {
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_seed_0": {
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_seed_123456789": {
+    "pixels_equal": true,
+    "seed": 123456789,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_top_k": {
+    "cfg_scale": 3.0,
+    "pixels_equal": true,
+    "seed": 0,
+    "temperature": 0.7,
+    "tokens_equal": true,
+    "top_k": 5
+  },
+  "llamagen_tiny_top_k_top_p": {
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "llamagen_tiny_top_p": {
+    "pixels_equal": true,
+    "seed": 0,
+    "temperature": 1.3,
+    "tokens_equal": true,
+    "top_k": 0,
+    "top_p": 0.6
+  },
+  "llamagen_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "llamagen_vq16_random_weights": {
+    "decode_code_equal": true,
+    "ids": "16x16"
   },
   "longcat_image_e2e_latents": {
     "max_abs": 0.0,
@@ -4463,6 +4662,32 @@
     "pixels_max_abs": 0,
     "seed": 42
   },
+  "seed_e2e_llamagen-t2i-xl-256": {
+    "cfg_scale": 4.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      256,
+      256
+    ],
+    "temperature": 0.9,
+    "top_k": 500,
+    "top_p": 0.95
+  },
+  "seed_e2e_llamagen-t2i-xl-512": {
+    "cfg_scale": 4.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      512,
+      512
+    ],
+    "temperature": 0.9,
+    "top_k": 500,
+    "top_p": 0.95
+  },
   "seed_e2e_longcat_image": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -4666,6 +4891,10 @@
     "seed": 1234
   },
   "seed_e2e_stable-cascade-lite": {
+    "passed": true,
+    "seed": 1234
+  },
+  "seed_e2e_wuerstchen-v2": {
     "passed": true,
     "seed": 1234
   },
@@ -4903,6 +5132,66 @@
     "tolerance": 0.0
   },
   "vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_decoder_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_decoder_negative_states": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_decoder_step_ratio_0.5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_decoder_step_ratio_1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_decoder_text_states": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_prior_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_prior_negative_states": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_prior_step_ratio_0.5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_prior_step_ratio_1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_prior_step_ratio_1_60": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_prior_text_states": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "wuerstchen-v2_vq_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
