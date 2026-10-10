@@ -317,6 +317,36 @@ _entries.append(
         ),
     )
 )
+_entries.append(
+    ModelSpec(
+        id="sdxl-refiner-1.0",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0",
+        repo_id="stabilityai/stable-diffusion-xl-refiner-1.0",
+        revision="5d4cfe854c9a9a87939ff3653551c2b3c99a4356",
+        provenance="author",
+        catalog_id="sdxl",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        image_input="required",
+        config={"pipeline": "refiner"},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
 
 for _steps in (2, 4, 8):
     _overlay_file = f"sdxl_lightning_{_steps}step_unet.safetensors"

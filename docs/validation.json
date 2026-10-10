@@ -624,6 +624,83 @@
       }
     },
     {
+      "model_id": "sdxl-refiner-1.0",
+      "repo_id": "stabilityai/stable-diffusion-xl-refiner-1.0",
+      "revision": "5d4cfe854c9a9a87939ff3653551c2b3c99a4356",
+      "provenance": "author",
+      "catalog_id": "sdxl",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "fd8505d561ba844819c270a183d383fcdb2737858f5a4d0a9ffa29b4ffe99170",
+        "scheduler/scheduler_config.json": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2",
+        "text_encoder_2/config.json": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34",
+        "text_encoder_2/model.safetensors": "3a6032f63d37ae02bbc74ccd6a27440578cd71701f96532229d0154f55a8d3ff",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer_2/tokenizer_config.json": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "unet/config.json": "223a875f1fdc4156ef56c2db6ffd37c7871998da8416e1d4dd1f59649acb58ac",
+        "unet/diffusion_pytorch_model.safetensors": "54f9cd2f2daf3aeec0b2708fa3dbc0e84e4f8ddd1ddead42e5bc60c6572c989f",
+        "vae/config.json": "0b331c8ac22ded5f9997a144a575c1d113d6169aff262c353f39015bd24a6264",
+        "vae/diffusion_pytorch_model.safetensors": "1598f3d24932bcfe6634e8b618ea1e30ab1d57f5aad13a6d2de446d2199f2341"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder_2": 517,
+          "unet": 1220,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "input": "synthetic gradient with three filled shapes",
+        "input_size": [
+          1024,
+          1024
+        ],
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "runtime_note": "50 steps at strength 0.3 run 15 denoising steps.",
+        "steps": 50,
+        "strength": 0.3,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "50 steps at strength 0.3 run 15 denoising steps.",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 50,
+        "strength": 0.3
+      }
+    },
+    {
       "model_id": "sdxl-lightning-2step",
       "repo_id": "ByteDance/SDXL-Lightning",
       "revision": "c9a24f48e1c025556787b0c58dd67a091ece2e44",
@@ -4675,6 +4752,44 @@
       "timestep": 999,
       "tolerance": 0.0
     },
+    "sdxl_refiner_preprocess_1000x700_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "shape": [
+        1,
+        3,
+        696,
+        1000
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_refiner_preprocess_1024x1024_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "shape": [
+        1,
+        3,
+        1024,
+        1024
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_refiner_preprocess_640x963_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "shape": [
+        1,
+        3,
+        960,
+        640
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_refiner_vae_sample_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_scheduler": {
       "measurements": {
         "30": {
@@ -4731,6 +4846,41 @@
         50,
         30
       ],
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_sdxl-refiner-1.0": {
+      "measurements": {
+        "30_0.5": {
+          "add_noise": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "start": 15,
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "50_0.3": {
+          "add_noise": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "start": 35,
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        }
+      },
       "tolerance": 0.0
     },
     "sdxl_scheduler_sdxl-turbo": {
@@ -4822,6 +4972,19 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_2_sdxl-refiner-1.0": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_2_sdxl-turbo": {
       "hidden_states": {
         "max_abs": 0.0,
@@ -4875,6 +5038,12 @@
       "tokenizers": 2,
       "tolerance": "exact"
     },
+    "sdxl_tokenizers_sdxl-refiner-1.0": {
+      "mismatches": [],
+      "prompts": 8,
+      "tokenizers": 1,
+      "tolerance": "exact"
+    },
     "sdxl_tokenizers_sdxl-turbo": {
       "mismatches": [],
       "prompts": 18,
@@ -4898,6 +5067,16 @@
       "tolerance": 0.0
     },
     "sdxl_unet_playground-v2.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        999,
+        500,
+        1
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_unet_sdxl-refiner-1.0": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "timesteps": [
@@ -4937,6 +5116,11 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sdxl_vae_decode_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_vae_decode_sdxl-turbo": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -4953,6 +5137,11 @@
       "tolerance": 0.0
     },
     "sdxl_vae_encode_playground-v2.5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_sdxl-refiner-1.0": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -7415,6 +7604,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "63 passed (llamagen-t2i-xl-256, llamagen-t2i-xl-512)"
+    "reference_summary": "11 passed (sdxl-refiner-1.0)"
   }
 }

@@ -67,6 +67,10 @@ SDXL_COMPONENT_KEYS = (
     "sdxl_vae_decode",
     "sdxl_vae_encode",
     "sdxl_scheduler",
+    "sdxl_refiner_vae_sample",
+    "sdxl_refiner_preprocess_1024x1024",
+    "sdxl_refiner_preprocess_1000x700",
+    "sdxl_refiner_preprocess_640x963",
 )
 SD_TURBO_COMPONENT_KEYS = (
     "sd_turbo_tokenizer",

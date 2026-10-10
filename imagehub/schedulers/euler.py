@@ -94,10 +94,19 @@ class EulerDiscreteScheduler:
         self.sigmas = torch.empty(0, dtype=torch.float32)
         self.num_inference_steps = 0
         self._step_index: int | None = None
+        self._begin_index: int | None = None
 
     @property
     def step_index(self) -> int | None:
         return self._step_index
+
+    @property
+    def begin_index(self) -> int | None:
+        return self._begin_index
+
+    def set_begin_index(self, begin_index: int = 0) -> None:
+        """Start the next trajectory at ``begin_index`` of the schedule (image-to-image)."""
+        self._begin_index = begin_index
 
     @property
     def init_noise_sigma(self) -> Tensor:
@@ -131,8 +140,31 @@ class EulerDiscreteScheduler:
         selected = self._training_sigmas[indices]
         self.sigmas = torch.cat([selected, torch.zeros(1, dtype=torch.float32)])
         self._step_index = None
+        self._begin_index = None
+
+    def add_noise(self, original_samples: Tensor, noise: Tensor, timesteps: Tensor) -> Tensor:
+        """Noise ``original_samples`` to the sigma at the begin index (or at ``timesteps``)."""
+        sigmas = self.sigmas.to(device=original_samples.device, dtype=original_samples.dtype)
+        count = timesteps.shape[0]
+        if self._begin_index is None:
+            schedule = self.timesteps.to(original_samples.device)
+            step_indices = []
+            for timestep in timesteps.to(original_samples.device):
+                indices = (schedule == timestep).nonzero()
+                step_indices.append(int(indices[1 if len(indices) > 1 else 0].item()))
+        elif self._step_index is not None:
+            step_indices = [self._step_index] * count
+        else:
+            step_indices = [self._begin_index] * count
+        sigma = sigmas[step_indices].flatten()
+        while sigma.ndim < original_samples.ndim:
+            sigma = sigma.unsqueeze(-1)
+        return original_samples + noise * sigma
 
     def _init_step_index(self, timestep: Tensor | float) -> None:
+        if self._begin_index is not None:
+            self._step_index = self._begin_index
+            return
         indices = (self.timesteps == torch.as_tensor(timestep)).nonzero()
         if not len(indices):
             raise ValueError(f"timestep {timestep} is not in the current schedule")
