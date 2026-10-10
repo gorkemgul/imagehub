@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+import torch
 from torch import Tensor, nn
 from torch.nn import functional as F
 
@@ -197,12 +198,28 @@ class AutoencoderKL(NativeModel):
             renamed[name] = value
         return renamed
 
-    def encode(self, image: Tensor) -> Tensor:
-        """Return the posterior mean (unscaled latents) for images in [-1, 1]."""
+    def encode_moments(self, image: Tensor) -> tuple[Tensor, Tensor]:
+        """Return the posterior mean and log-variance (clamped as the reference does)."""
         moments = self.encoder(image)
         if self.config["use_quant_conv"]:
             moments = self.quant_conv(moments)
-        return moments.chunk(2, dim=1)[0]
+        mean, logvar = moments.chunk(2, dim=1)
+        return mean, torch.clamp(logvar, -30.0, 20.0)
+
+    def encode(self, image: Tensor) -> Tensor:
+        """Return the posterior mean (unscaled latents) for images in [-1, 1]."""
+        return self.encode_moments(image)[0]
+
+    def encode_sample(self, image: Tensor, generator: torch.Generator | None = None) -> Tensor:
+        """Draw from the posterior; consumes ``generator`` like the reference ``sample``."""
+        mean, logvar = self.encode_moments(image)
+        std = torch.exp(0.5 * logvar)
+        # Like the reference, a CPU generator draws on the CPU and the noise is moved afterwards.
+        draw_device = generator.device if generator is not None else mean.device
+        noise = torch.randn(
+            mean.shape, generator=generator, dtype=mean.dtype, device=draw_device
+        ).to(mean.device)
+        return mean + std * noise
 
     def decode(self, latents: Tensor) -> Tensor:
         """Decode unscaled latents to images in roughly [-1, 1]."""

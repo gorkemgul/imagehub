@@ -317,6 +317,36 @@ _entries.append(
         ),
     )
 )
+_entries.append(
+    ModelSpec(
+        id="sdxl-refiner-1.0",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0",
+        repo_id="stabilityai/stable-diffusion-xl-refiner-1.0",
+        revision="5d4cfe854c9a9a87939ff3653551c2b3c99a4356",
+        provenance="author",
+        catalog_id="sdxl",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        image_input="required",
+        config={"pipeline": "refiner"},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
 
 for _steps in (2, 4, 8):
     _overlay_file = f"sdxl_lightning_{_steps}step_unet.safetensors"
@@ -1636,6 +1666,58 @@ for _model_id, _decoder, _prior in (
                         "tokenizer/special_tokens_map.json",
                         "tokenizer/tokenizer_config.json",
                         "tokenizer/vocab.json",
+                    ),
+                )
+            },
+        )
+    )
+
+_LLAMAGEN_REVISION = "276f5c5a3d915b922899a03f1912605531574747"
+_FLAN_T5_XL_REVISION = "7d6315df2c2fb742f0f5b556879d730926ca9001"
+
+for _llamagen_id, _llamagen_file, _llamagen_size in (
+    ("llamagen-t2i-xl-256", "t2i_XL_stage1_256.pt", 256),
+    ("llamagen-t2i-xl-512", "t2i_XL_stage2_512.pt", 512),
+):
+    _entries.append(
+        ModelSpec(
+            id=_llamagen_id,
+            task=Task.T2I,
+            family="llamagen",
+            source="https://huggingface.co/peizesun/llamagen_t2i",
+            repo_id="peizesun/llamagen_t2i",
+            revision=_LLAMAGEN_REVISION,
+            provenance="author",
+            catalog_id="llamagen",
+            format="pytorch",
+            license="MIT",
+            gated=False,
+            config={
+                "gpt_checkpoint": _llamagen_file,
+                "defaults": {
+                    "cfg_scale": 7.5,
+                    "temperature": 1.0,
+                    "top_k": 1000,
+                    "top_p": 1.0,
+                    "cfg_interval": -1,
+                    "width": _llamagen_size,
+                    "height": _llamagen_size,
+                },
+            },
+            files=("vq_ds16_t2i.pt", _llamagen_file),
+            subfolders={
+                "text_encoder": SubRepo(
+                    repo_id="google/flan-t5-xl",
+                    revision=_FLAN_T5_XL_REVISION,
+                    files=(
+                        "config.json",
+                        "model.safetensors.index.json",
+                        "model-00001-of-00002.safetensors",
+                        "model-00002-of-00002.safetensors",
+                        "spiece.model",
+                        "tokenizer.json",
+                        "tokenizer_config.json",
+                        "special_tokens_map.json",
                     ),
                 )
             },

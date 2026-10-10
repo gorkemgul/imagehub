@@ -631,6 +631,40 @@
     ],
     "steps": 25
   },
+  "e2e_hunyuan-dit-v1.2": {
+    "guidance": 5.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 7,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scheduler_seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 10
+  },
+  "e2e_hunyuan-dit-v1.2-distilled": {
+    "guidance": 5.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 7,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scheduler_seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 10
+  },
   "e2e_hyper-sdxl-1step": {
     "guidance": 0.0,
     "latents": {
@@ -714,6 +748,32 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_llamagen-t2i-xl-256": {
+    "cfg_scale": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A blue Porsche 356 parked in front of a yellow brick wall.",
+    "seed": 0,
+    "size": [
+      256,
+      256
+    ],
+    "tokens_equal": true,
+    "top_k": 1000
+  },
+  "e2e_llamagen-t2i-xl-512": {
+    "cfg_scale": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A blue Porsche 356 parked in front of a yellow brick wall.",
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "tokens_equal": true,
+    "top_k": 1000
   },
   "e2e_longcat_image": {
     "max_pixel_diff": 0,
@@ -1146,6 +1206,29 @@
       1024
     ],
     "steps": 8,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
+  "e2e_sdxl-refiner-1.0": {
+    "guidance": 5.0,
+    "input": "synthetic gradient with three filled shapes",
+    "input_size": [
+      1024,
+      1024
+    ],
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "runtime_note": "50 steps at strength 0.3 run 15 denoising steps.",
+    "steps": 50,
+    "strength": 0.3,
     "tolerance": {
       "latents": 0.0,
       "pixels": 0
@@ -1926,6 +2009,58 @@
       "tensors": 251
     }
   },
+  "header_hunyuan-dit-v1.2": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 391
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1544
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_hunyuan-dit-v1.2-distilled": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 391
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1544
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
   "header_hunyuan_dit": {
     "text_encoder": {
       "extra": [],
@@ -2094,6 +2229,48 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_llamagen-t2i-xl-256": {
+    "gpt": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 258
+    },
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "skipped": 339,
+      "tensors": 219
+    },
+    "vq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 344
+    }
+  },
+  "header_llamagen-t2i-xl-512": {
+    "gpt": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 258
+    },
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "skipped": 339,
+      "tensors": 219
+    },
+    "vq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 344
     }
   },
   "header_longcat_image": {
@@ -2586,6 +2763,26 @@
     "missing": [],
     "tensors": 1680
   },
+  "header_sdxl-refiner-1.0": {
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1220
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
   "header_sdxl-turbo": {
     "text_encoder": {
       "extra": [],
@@ -2806,7 +3003,35 @@
     "steps": 25,
     "tolerance": "exact"
   },
+  "hunyuan_dit_scheduler_hunyuan-dit-v1.2": {
+    "exact": true,
+    "steps": 25,
+    "tolerance": "exact"
+  },
+  "hunyuan_dit_scheduler_hunyuan-dit-v1.2-distilled": {
+    "exact": true,
+    "steps": 25,
+    "tolerance": "exact"
+  },
   "hunyuan_dit_transformer": {
+    "batch": 2,
+    "height": 1024,
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timestep": 500,
+    "tolerance": 0.0,
+    "width": 1024
+  },
+  "hunyuan_dit_transformer_hunyuan-dit-v1.2": {
+    "batch": 2,
+    "height": 1024,
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timestep": 500,
+    "tolerance": 0.0,
+    "width": 1024
+  },
+  "hunyuan_dit_transformer_hunyuan-dit-v1.2-distilled": {
     "batch": 2,
     "height": 1024,
     "max_abs": 0.0,
@@ -3055,6 +3280,100 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "llamagen-t2i-xl-256_gpt_prefill": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen-t2i-xl-256_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen-t2i-xl-512_gpt_prefill": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen-t2i-xl-512_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen_gpt_xl_random_weights": {
+    "decode_steps": 3,
+    "prefill_equal": true
+  },
+  "llamagen_t5_caption_embeddings": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "llamagen_tiny_cfg_1": {
+    "cfg_scale": 1.0,
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_cfg_interval": {
+    "cfg_interval": 4,
+    "cfg_scale": 5.0,
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_default": {
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_seed_0": {
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_seed_123456789": {
+    "pixels_equal": true,
+    "seed": 123456789,
+    "tokens_equal": true
+  },
+  "llamagen_tiny_top_k": {
+    "cfg_scale": 3.0,
+    "pixels_equal": true,
+    "seed": 0,
+    "temperature": 0.7,
+    "tokens_equal": true,
+    "top_k": 5
+  },
+  "llamagen_tiny_top_k_top_p": {
+    "pixels_equal": true,
+    "seed": 0,
+    "tokens_equal": true,
+    "top_k": 20,
+    "top_p": 0.8
+  },
+  "llamagen_tiny_top_p": {
+    "pixels_equal": true,
+    "seed": 0,
+    "temperature": 1.3,
+    "tokens_equal": true,
+    "top_k": 0,
+    "top_p": 0.6
+  },
+  "llamagen_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "llamagen_vq16_random_weights": {
+    "decode_code_equal": true,
+    "ids": "16x16"
   },
   "longcat_image_e2e_latents": {
     "max_abs": 0.0,
@@ -4052,6 +4371,44 @@
     "timestep": 999,
     "tolerance": 0.0
   },
+  "sdxl_refiner_preprocess_1000x700_sdxl-refiner-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "shape": [
+      1,
+      3,
+      696,
+      1000
+    ],
+    "tolerance": 0.0
+  },
+  "sdxl_refiner_preprocess_1024x1024_sdxl-refiner-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "shape": [
+      1,
+      3,
+      1024,
+      1024
+    ],
+    "tolerance": 0.0
+  },
+  "sdxl_refiner_preprocess_640x963_sdxl-refiner-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "shape": [
+      1,
+      3,
+      960,
+      640
+    ],
+    "tolerance": 0.0
+  },
+  "sdxl_refiner_vae_sample_sdxl-refiner-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_scheduler": {
     "measurements": {
       "30": {
@@ -4108,6 +4465,41 @@
       50,
       30
     ],
+    "tolerance": 0.0
+  },
+  "sdxl_scheduler_sdxl-refiner-1.0": {
+    "measurements": {
+      "30_0.5": {
+        "add_noise": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "sigmas": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "start": 15,
+        "timesteps": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        }
+      },
+      "50_0.3": {
+        "add_noise": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "sigmas": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "start": 35,
+        "timesteps": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        }
+      }
+    },
     "tolerance": 0.0
   },
   "sdxl_scheduler_sdxl-turbo": {
@@ -4199,6 +4591,19 @@
     },
     "tolerance": 0.0
   },
+  "sdxl_text_encoder_2_sdxl-refiner-1.0": {
+    "hidden_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "text_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0
+  },
   "sdxl_text_encoder_2_sdxl-turbo": {
     "hidden_states": {
       "max_abs": 0.0,
@@ -4252,6 +4657,12 @@
     "tokenizers": 2,
     "tolerance": "exact"
   },
+  "sdxl_tokenizers_sdxl-refiner-1.0": {
+    "mismatches": [],
+    "prompts": 8,
+    "tokenizers": 1,
+    "tolerance": "exact"
+  },
   "sdxl_tokenizers_sdxl-turbo": {
     "mismatches": [],
     "prompts": 18,
@@ -4275,6 +4686,16 @@
     "tolerance": 0.0
   },
   "sdxl_unet_playground-v2.5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      999,
+      500,
+      1
+    ],
+    "tolerance": 0.0
+  },
+  "sdxl_unet_sdxl-refiner-1.0": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "timesteps": [
@@ -4314,6 +4735,11 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sdxl_vae_decode_sdxl-refiner-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_vae_decode_sdxl-turbo": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -4330,6 +4756,11 @@
     "tolerance": 0.0
   },
   "sdxl_vae_encode_playground-v2.5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_encode_sdxl-refiner-1.0": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -4447,6 +4878,18 @@
     "passed": true,
     "seed": 42
   },
+  "seed_e2e_hunyuan-dit-v1.2": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 10
+  },
+  "seed_e2e_hunyuan-dit-v1.2-distilled": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 10
+  },
   "seed_e2e_hyper-sdxl-1step": {
     "guidance": 0.0,
     "passed": true,
@@ -4499,6 +4942,32 @@
     "passed": true,
     "pixels_max_abs": 0,
     "seed": 42
+  },
+  "seed_e2e_llamagen-t2i-xl-256": {
+    "cfg_scale": 4.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      256,
+      256
+    ],
+    "temperature": 0.9,
+    "top_k": 500,
+    "top_p": 0.95
+  },
+  "seed_e2e_llamagen-t2i-xl-512": {
+    "cfg_scale": 4.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      512,
+      512
+    ],
+    "temperature": 0.9,
+    "top_k": 500,
+    "top_p": 0.95
   },
   "seed_e2e_longcat_image": {
     "max_pixel_diff": 0,
@@ -4673,6 +5142,19 @@
       1024
     ],
     "steps": 8
+  },
+  "seed_e2e_sdxl-refiner-1.0": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "50 steps at strength 0.3 run 15 denoising steps.",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 50,
+    "strength": 0.3
   },
   "seed_e2e_sdxl-turbo": {
     "guidance": 0.0,
