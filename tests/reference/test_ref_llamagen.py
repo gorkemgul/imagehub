@@ -423,7 +423,9 @@ def test_end_to_end(record, llamagen_reference, model_id, tmp_path):
         top_p=1.0,
         generator=torch.Generator("cpu").manual_seed(0),
     )
-    pixels = to_uint8(components.vq.decode_code(tokens, (1, 8, latent, latent)))[0]
+    with torch.inference_mode():
+        decoded = components.vq.decode_code(tokens, (1, 8, latent, latent))
+    pixels = to_uint8(decoded)[0]
     tokens_equal = torch.equal(tokens, expected_tokens)
     pixel_diff = int((pixels.int() - expected_pixels.int()).abs().max())
     passed = tokens_equal and pixel_diff == 0
