@@ -599,6 +599,62 @@ supported.
 weights.
 
 
+# Kandinsky 3
+
+Catalog: [`kandinsky-3`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `kandinsky-3` · Task: `t2i`
+
+**Architecture.** There is no image prior. The encoder of a Flan-UL2 T5 model (32 layers, width
+4096, 16 heads of size 256, gated SiLU feed-forward, 8.7B parameters) encodes the prompt into 128
+tokens. A 3.06B-parameter U-Net built from bottleneck residual blocks (four levels of 384, 768,
+1536 and 3072 channels, three blocks per level) denoises 4-channel latents; every normalization is
+a group norm whose scale and shift come from the timestep embedding. The three deeper levels add
+self-attention and cross-attention to the projected text tokens, and the timestep embedding is
+also shifted by an attention pooling over the text tokens. A MoVQ decoder (8× upsampling, spatial
+normalization, no quantization step) turns the latents into the image. The scheduler is DDPM with
+the squared-cosine beta schedule and clipping.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained kandinsky-3 checkpoints/kandinsky-3
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="kandinsky-3", model="checkpoints/kandinsky-3", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The defaults are 25 steps, guidance 3.0 and 1024×1024. The supported options are
+`seed`, `latents`, `steps`, `guidance`, `width`, `height`, `num_images` and `negative_prompt`.
+Width and height must be multiples of 8 and, as in diffusers, the image is generated at the next
+multiple of 64 pixels, so the output can be larger than the request; the metadata holds the actual
+size. `steps` is at most 1000. Guidance is applied as `(g + 1) * text - g * uncond`, and guidance
+1.0 or lower skips the unconditional pass. Without a negative prompt the unconditional context is
+all zeros and fully masked; an explicit empty string is encoded like any other text. Prompts are
+truncated to 128 tokens. The sampler draws fresh noise at every step from the seeded generator, so
+`latents` together with `seed` fixes the whole trajectory. Unrecognized settings raise an error.
+
+**Weights.** Only float16 weights are published, so the snapshot holds `*.fp16.safetensors` files
+and a float16 shard index for the text encoder. They are read directly and upcast to float32 on
+load; parity is measured on that upcast, against diffusers loaded with `variant="fp16"` and
+`torch_dtype=torch.float32`.
+
+**Memory.** In float32 the text encoder needs about 35 GB, the U-Net about 12 GB and the MoVQ
+decoder about 1.1 GB; the float16 files total about half of that.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** Kandinsky 3.1, Flash, inpainting and the image-prompted variants, LoRA, other
+schedulers, precomputed prompt embeddings, batches of several prompts and fp16/bf16 parity are not
+supported.
+
+**License.** The repository declares the Apache-2.0 license. imagehub does not distribute weights.
+
 # Stable Cascade
 
 Catalog: [`wuerstchen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

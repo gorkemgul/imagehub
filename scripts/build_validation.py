@@ -1,13 +1,14 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
+measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Kandinsky 3, Stable Cascade,
 PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, Wuerstchen v2, LongCat-Image, CogView4 and
 Ideogram 4
 measurements are
 grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
 ``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
+``components_kandinsky3``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
 ``components_lumina2``, ``components_amused``, ``components_auraflow``,
 ``components_wuerstchen``,
@@ -168,6 +169,7 @@ def main() -> None:
             "krea2-turbo": "krea2_turbo",
             "longcat-image": "longcat_image",
             "flux1-kontext-dev": "flux1_kontext_dev",
+            "kandinsky-3": "kandinsky3",
         }.get(spec.id, spec.id)
         e2e = measured.get(f"e2e_{measurement_id}")
         e2e_batch2 = measured.get(f"e2e_batch2_{spec.id}")
@@ -305,6 +307,9 @@ def main() -> None:
         },
         "components_kandinsky22": {
             key: value for key, value in measured.items() if "kandinsky22" in key
+        },
+        "components_kandinsky3": {
+            key: value for key, value in measured.items() if key.startswith("kandinsky3_")
         },
         "components_stable_cascade": {
             key: value

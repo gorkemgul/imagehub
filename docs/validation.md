@@ -1058,6 +1058,40 @@ the latents. The Euler scheduler ignores the configuration keys that diffusers' 
 not read (`thresholding`, `dynamic_thresholding_ratio`, `clip_sample_range`), which this release's
 configuration contains.
 
+## Kandinsky 3
+
+`kandinsky-3` is loaded strictly from `kandinsky-community/kandinsky-3` at revision `bf79e6c` and
+compared with diffusers 0.40.0 `Kandinsky3Pipeline` on CPU in float32, on the float32 upcast of the
+published float16 weights (only float16 weights are published). Every comparison is required to be
+exactly 0 (identical bytes for images). The real-checkpoint run is pending; the table lists what it
+checks.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Required difference |
+| --- | --- |
+| Tensor header check: text encoder (291 tensors), U-Net (1071), MoVQ (431) (names and shapes) | 0 missing, extra or mismatched |
+| T5 tokenizer ids / attention masks (6 prompts, 128 tokens) | identical / identical |
+| `Kandinsky3Pipeline.encode_prompt` embeddings and masks (no negative prompt, a negative prompt, no guidance) | pending the real-checkpoint run |
+| U-Net single step (batch 2, 64×64 latents, masked context, three timesteps) | pending the real-checkpoint run |
+| MoVQ decode (64×64 latents, no quantization) | pending the real-checkpoint run |
+| End to end: final latent / pixels (1024×1024, 4 steps, guidance 3.0, seed 0) | pending the real-checkpoint run |
+| End to end, seed 1234, 768×512 with a negative prompt, 3 steps (pixels) | pending the real-checkpoint run |
+
+The text encoder needs about 35 GB in float32, so the reference conditioning is computed, saved to
+disk and freed before the native text encoder is loaded, and the reference denoiser is run without
+a text encoder on the saved conditioning. The end-to-end runs use 4 and 3 steps instead of 25 to
+keep the run short; the sampler is stochastic at every step, so each step exercises the generator.
+The reference pipeline is loaded with `variant="fp16"` and `torch_dtype=torch.float32`.
+
+Random-weight parity covers the T5 encoder with the gated SiLU feed-forward (a small model and the
+Flan-UL2 widths with two layers, with and without a padding mask), the MoVQ decoder at the
+published configuration, the U-Net (small and published widths, masked, unmasked and fully masked
+rows) and the squared-cosine DDPM schedule. Tiny-snapshot end-to-end parity covers seven cases (the
+default settings, guidance 1.0, a non-square size rounded up to 64 pixels with a negative prompt, an
+empty negative prompt, two images, a prompt longer than the context and a single step) with two
+sets of random weights each, plus checks of the latents and of the cut context.
+
 ## AuraFlow
 
 Validated on CPU in the same environment as above. `auraflow-v0.3` is loaded strictly from

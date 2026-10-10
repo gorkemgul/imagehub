@@ -151,6 +151,7 @@ def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
         "sana-1600m-1024",
         "sana-600m-1024",
         "kolors",
+        "kandinsky-3",
         "lumina-image-2.0",
         "amused-256",
         "amused-512",
