@@ -31,9 +31,7 @@ def validate_prompt(prompt: str, has_image: bool) -> None:
     """Check the placeholder convention before anything is loaded."""
     if has_image:
         if IMAGE_PLACEHOLDER not in prompt:
-            raise ValueError(
-                f"the prompt must reference the input image with the placeholder {IMAGE_PLACEHOLDER}"
-            )
+            raise ValueError(f"the prompt must contain the placeholder {IMAGE_PLACEHOLDER}")
         numbers = sorted({int(tag[len("<|image_") : -2]) for tag in IMAGE_TAG.findall(prompt)})
         if numbers != [1]:
             raise ValueError(
@@ -51,16 +49,18 @@ def crop_image(pil_image: Any, max_image_size: int) -> Any:
     from PIL import Image as PILImage
 
     while min(*pil_image.size) >= 2 * max_image_size:
-        pil_image = pil_image.resize(tuple(x // 2 for x in pil_image.size), resample=PILImage.BOX)
+        pil_image = pil_image.resize(
+            tuple(x // 2 for x in pil_image.size), resample=PILImage.Resampling.BOX
+        )
     if max(*pil_image.size) > max_image_size:
         scale = max_image_size / max(*pil_image.size)
         pil_image = pil_image.resize(
-            tuple(round(x * scale) for x in pil_image.size), resample=PILImage.BICUBIC
+            tuple(round(x * scale) for x in pil_image.size), resample=PILImage.Resampling.BICUBIC
         )
     if min(*pil_image.size) < 16:
         scale = 16 / min(*pil_image.size)
         pil_image = pil_image.resize(
-            tuple(round(x * scale) for x in pil_image.size), resample=PILImage.BICUBIC
+            tuple(round(x * scale) for x in pil_image.size), resample=PILImage.Resampling.BICUBIC
         )
     width, height = pil_image.size
     crop_y1 = (height % 16) // 2

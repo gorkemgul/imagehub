@@ -1,4 +1,4 @@
-"""Native OmniGen transformer: a Phi-3 style decoder over text, input-image and noisy-image tokens."""
+"""Native OmniGen transformer: a Phi-3 style decoder over text and image tokens."""
 
 from __future__ import annotations
 
@@ -95,6 +95,8 @@ class FeedForward(nn.Module):
 
 class PatchEmbed(nn.Module):
     """Two patch projections (noisy image, input image) sharing a cropped 2D position table."""
+
+    pos_embed: Tensor
 
     def __init__(self, patch_size: int, in_channels: int, embed_dim: int, max_size: int) -> None:
         super().__init__()
@@ -239,7 +241,7 @@ class Block(nn.Module):
 
 
 class AdaLayerNorm(nn.Module):
-    """LayerNorm without affine parameters, modulated by ``(shift, scale)`` from the time embedding."""
+    """Parameter-free LayerNorm modulated by ``(shift, scale)`` of the time embedding."""
 
     def __init__(self, dim: int) -> None:
         super().__init__()
@@ -263,9 +265,10 @@ class OmniGenTransformer2DModel(NativeModel):
         cfg = OMNIGEN_DEFAULTS | {k: v for k, v in config.items() if not k.startswith("_")}
         if cfg["num_key_value_heads"] != cfg["num_attention_heads"]:
             raise ValueError("Unsupported OmniGen transformer setting num_key_value_heads")
-        if cfg["hidden_size"] % cfg["num_attention_heads"] or (
-            cfg["hidden_size"] // cfg["num_attention_heads"]
-        ) % 2:
+        if (
+            cfg["hidden_size"] % cfg["num_attention_heads"]
+            or (cfg["hidden_size"] // cfg["num_attention_heads"]) % 2
+        ):
             raise ValueError("Unsupported OmniGen transformer setting num_attention_heads")
         if not isinstance(cfg["rope_scaling"], Mapping) or not {
             "short_factor",
@@ -273,7 +276,9 @@ class OmniGenTransformer2DModel(NativeModel):
         } <= set(cfg["rope_scaling"]):
             raise ValueError("Unsupported OmniGen transformer setting rope_scaling")
         head_dim = cfg["hidden_size"] // cfg["num_attention_heads"]
-        if any(len(cfg["rope_scaling"][k]) != head_dim // 2 for k in ("short_factor", "long_factor")):
+        if any(
+            len(cfg["rope_scaling"][k]) != head_dim // 2 for k in ("short_factor", "long_factor")
+        ):
             raise ValueError("Unsupported OmniGen transformer setting rope_scaling")
         for key, expected in (
             ("flip_sin_to_cos", True),
@@ -369,5 +374,7 @@ class OmniGenTransformer2DModel(NativeModel):
         hidden_states = hidden_states[:, -num_tokens_for_output_image:]
         hidden_states = self.norm_out(hidden_states, temb)
         hidden_states = self.proj_out(hidden_states)
-        hidden_states = hidden_states.reshape(batch_size, post_patch_height, post_patch_width, p, p, -1)
+        hidden_states = hidden_states.reshape(
+            batch_size, post_patch_height, post_patch_width, p, p, -1
+        )
         return hidden_states.permute(0, 5, 1, 3, 2, 4).flatten(4, 5).flatten(2, 3)

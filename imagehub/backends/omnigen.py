@@ -25,7 +25,7 @@ from imagehub.backends.stable_diffusion import resolve_device
 from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
-from imagehub.image import Image
+from imagehub.image import Image, as_pil
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.omnigen_transformer import OmniGenTransformer2DModel
 from imagehub.schedulers.flow_match_euler import FlowMatchEulerDiscreteScheduler
@@ -232,6 +232,8 @@ class OmniGenBackend(TextToImageBackend):
                 raise ValueError(f"{name} must be a multiple of {multiple}")
             if o[name] > limit:
                 raise ValueError(f"{name} must be at most {limit}")
+        if o["image"] is not None:
+            o["image"] = as_pil(o["image"])
         validate_prompt(inputs.prompt, o["image"] is not None)
         o["pixels"] = None
         if o["image"] is not None:
@@ -325,7 +327,5 @@ class OmniGenBackend(TextToImageBackend):
             "dtype": str(self.dtype).removeprefix("torch."),
         }
         if has_image:
-            metadata["input_height"], metadata["input_width"] = (
-                int(x) for x in pixels.shape[-2:]
-            )
+            metadata["input_height"], metadata["input_width"] = (int(x) for x in pixels.shape[-2:])
         return ImageResult(tuple(Image(pixel) for pixel in decoded), metadata)

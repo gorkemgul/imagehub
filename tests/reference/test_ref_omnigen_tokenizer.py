@@ -94,7 +94,11 @@ def test_omnigen_tokenizer_random_unicode_matches_reference():
     rng = random.Random(1)
     for _ in range(300):
         text = "".join(
-            chr(rng.choice([rng.randint(32, 126), rng.randint(0xA0, 0x2FFF), rng.randint(0x1F300, 0x1F64F)]))
+            chr(
+                rng.choice(
+                    [rng.randint(32, 126), rng.randint(0xA0, 0x2FFF), rng.randint(0x1F300, 0x1F64F)]
+                )
+            )
             for _ in range(rng.randint(0, 20))
         )
         assert ours.tokenize(text) == reference(text).input_ids, repr(text)

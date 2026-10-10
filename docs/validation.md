@@ -1088,6 +1088,42 @@ is additionally covered by fixed-prompt and seeded fuzz tests on a synthetic fol
 The float32 transformer needs about 27 GB, so the reference and native transformers were loaded one
 after the other and each was freed before the next.
 
+## OmniGen
+
+`omnigen-v1` is loaded strictly from `Shitao/OmniGen-v1-diffusers` at revision `016e2f6` and is compared
+with diffusers 0.40.0 `OmniGenPipeline` on CPU in float32. The published transformer is stored in
+bfloat16 and converted to float32 on load by both implementations; the autoencoder is float32. The
+real-checkpoint tests are in `tests/reference/test_ref_omnigen.py`; their measurements are pending the
+real-checkpoint run, so none are listed here yet. The end-to-end runs use shortened step counts
+because a 1024×1024, 50-step run takes hours on CPU.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured difference |
+| --- | --- |
+| Tensor header check: transformer, autoencoder (names and shapes) | pending the real-checkpoint run |
+| Tokenizer ids (instruction prompt, edit prompt, long prompt, `""`) and byte equality of the tokenizer files with the fixtures | pending the real-checkpoint run |
+| Transformer single step (3 timesteps, with and without an input image, real conditioning) | pending the real-checkpoint run |
+| Autoencoder posterior sample and decode | pending the real-checkpoint run |
+| End to end text-to-image: final latent / pixels (1024×1024, shortened steps, guidance 2.5, seed 0) | pending the real-checkpoint run |
+| End to end with an input image: final latent / pixels (512×512, shortened steps, seed 0) | pending the real-checkpoint run |
+| End to end, seed 1234, 1360×768 request (pixels, shortened steps) | pending the real-checkpoint run |
+
+Tests that need no downloaded weights: random-weight parity of the transformer with a tiny and with the
+published configuration (two layers), with and without input-image tokens and with sequences long
+enough to switch the rotary embedding to its long factors; tokenizer parity with transformers on the
+published tokenizer files (fixed prompts, a seeded fuzz test and random Unicode); parity of the image
+preprocessing, token layout, attention masks and position ids with the diffusers processor; parity of
+the inverted flow-match schedule and Euler steps; and tiny-snapshot end-to-end parity covering the
+defaults, guidance 1.0 and above, non-square sizes, several seeds, one step, an input image,
+`use_input_image_size_as_output`, a small `max_input_image_size` and RGBA and grayscale inputs.
+
+Where the reference pipeline cannot run on its own, parity is defined as follows. The reference fails on
+non-RGB input images, so the comparison uses the RGB conversion, as for FLUX.1 Kontext. The reference
+draws the input-image posterior from the global torch generator, so the reference runs call
+`torch.manual_seed(seed)` before the pipeline. The reference rotary embedding builds its table from the
+first sequence of the batch only; the native module reproduces that.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -1106,7 +1142,7 @@ after the other and each was freed before the next.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base, SSD-1B and Kolors,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
+  for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, flow-match Euler with inverted sigmas for OmniGen, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
   the cosine-schedule masked-token scheduler for aMUSEd.

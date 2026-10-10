@@ -155,6 +155,7 @@ def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
         "amused-256",
         "amused-512",
         "auraflow-v0.3",
+        "omnigen-v1",
     ],
 )
 def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, tmp_path, model_id):

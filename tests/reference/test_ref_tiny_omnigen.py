@@ -154,7 +154,9 @@ def test_image_input_defaults(tiny, record):
 def test_image_input_guidance_scales(tiny, record):
     image = _picture((64, 64))
     _check(tiny, record, "omnigen_tiny_image_scales", image=image, guidance=3.0, image_guidance=1.0)
-    _check(tiny, record, "omnigen_tiny_image_scales_one", image=image, guidance=1.0, image_guidance=1.0)
+    _check(
+        tiny, record, "omnigen_tiny_image_scales_one", image=image, guidance=1.0, image_guidance=1.0
+    )
 
 
 def test_image_input_size_as_output(tiny, record):
@@ -169,7 +171,11 @@ def test_image_input_size_as_output(tiny, record):
 
 def test_image_input_limit_and_modes(tiny, record):
     _check(
-        tiny, record, "omnigen_tiny_image_limit", image=_picture((300, 200)), max_input_image_size=64
+        tiny,
+        record,
+        "omnigen_tiny_image_limit",
+        image=_picture((300, 200)),
+        max_input_image_size=64,
     )
     _check(tiny, record, "omnigen_tiny_image_rgba", image=_picture((50, 40), "RGBA"), seed=2)
     _check(tiny, record, "omnigen_tiny_image_gray", image=_picture((50, 80), "L"), seed=4)

@@ -50,9 +50,7 @@ def test_preprocess_matches_reference(record, size, limit):
 
 def test_preprocess_converts_other_modes_to_rgb():
     image = _image((70, 50), 1, "RGBA")
-    assert torch.equal(
-        preprocess_input_image(image), preprocess_input_image(image.convert("RGB"))
-    )
+    assert torch.equal(preprocess_input_image(image), preprocess_input_image(image.convert("RGB")))
 
 
 def _same(actual, expected):

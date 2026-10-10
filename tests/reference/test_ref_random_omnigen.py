@@ -92,5 +92,11 @@ def test_omnigen_published_config_two_layers_exact(record, with_image):
     config = {k: v for k, v in config.items() if not k.startswith("_")} | {"num_layers": 2}
     prompt = f"turn {IMAGE_PLACEHOLDER} into a sketch" if with_image else "a cat"
     _compare(
-        config, prompt, with_image, (8, 8), (32, 32), record, f"omnigen_full_two_layers_{with_image}"
+        config,
+        prompt,
+        with_image,
+        (8, 8),
+        (32, 32),
+        record,
+        f"omnigen_full_two_layers_{with_image}",
     )
