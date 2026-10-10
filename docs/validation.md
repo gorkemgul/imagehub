@@ -714,25 +714,31 @@ then ran the native model. The full real-checkpoint run on the Apple M2 Max took
 ## ERNIE-Image
 
 `ernie-image` is loaded strictly from `baidu/ERNIE-Image` at revision `5346b31`. The weights are
-published in bfloat16 and are upcast to float32. Results are pending the real-checkpoint run.
+published in bfloat16 and are upcast to float32. The observed difference in every comparison is
+**exactly 0**: on CPU in float32, the local implementation produces a bit-identical result to the
+reference. The real-checkpoint run took 37 minutes on an M2 Max (CPU).
 
 ### Comparisons (CPU, float32)
 
 | Comparison | Largest observed difference | Tolerance |
 | --- | --- | --- |
-| Tensor header names and shapes (transformer, VAE, Ministral 3 language model) | pending the real-checkpoint run | exact |
-| Tokenizer against transformers (fixed prompts, 500 random strings, truncation) | pending the real-checkpoint run | exact |
-| Ministral 3 text encoder (second-to-last hidden state) | pending the real-checkpoint run | 0 |
-| Transformer single step (two latents, ragged text lengths) | pending the real-checkpoint run | 0 |
-| VAE decode with latent de-normalisation | pending the real-checkpoint run | exact pixels |
-| Flow-match Euler scheduler (static shift, 1, 4 and 50 steps) | pending the real-checkpoint run | exact |
-| End to end: final latent / pixels (1024×1024, 4 steps, guidance 4.0) | pending the real-checkpoint run | 0 / 0 |
-| End to end, seed 0 (pixels) | pending the real-checkpoint run | 0 |
+| Tensor header names and shapes (transformer, VAE, Ministral 3 language model) | 0 missing / extra / mismatched | exact |
+| Tokenizer against transformers (fixed prompts, 500 random strings, truncation) | identical | exact |
+| Ministral 3 text encoder (second-to-last hidden state) | 0 | 0 |
+| Transformer single step (two latents, ragged text lengths) | 0 | 0 |
+| VAE decode with latent de-normalisation | 0 | exact pixels |
+| Flow-match Euler scheduler (static shift, 1, 4 and 50 steps) | exact | exact |
+| End to end: final latent / pixels (1024×1024, 4 steps, guidance 4.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 0 (pixels) | 0 | 0 |
 
 Without weights, the same code is compared against diffusers and transformers with random weights:
 the transformer and the Ministral 3 language model (tiny and published-style configs, including
 YaRN positions beyond the original window), and the whole pipeline on a tiny snapshot (guidance on
 and off, non-square sizes, two seeds, several images per prompt). All of these are exact.
+
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts were
+236 / 409 / 251, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
 
 The reference runs with `use_pe=False` and without the `pe` components (the prompt enhancer is out
 of scope). The end-to-end runs use 4 steps instead of the default 50 because the 8B transformer is
@@ -1246,8 +1252,8 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
-  `amused-512`, and 7 passed for
-  `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
+  `amused-512`, 7 passed for
+  `lcm-dreamshaper-v7`, and 8 passed for `ernie-image`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
