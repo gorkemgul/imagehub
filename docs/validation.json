@@ -2809,6 +2809,148 @@
       }
     },
     {
+      "model_id": "hunyuan-dit-v1.2",
+      "repo_id": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+      "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+      "provenance": "author",
+      "catalog_id": "hunyuan-dit",
+      "license": "Tencent Hunyuan Community License",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "2efa723f3c6d0d3417cdaae521007ab606d20c5f8436183eaf37f10169f9e0a5",
+        "scheduler/scheduler_config.json": "8fec1b96351b2199255f683080e59cee41372334e369465d4c1fca6a242f71cc",
+        "text_encoder/config.json": "968833abc78add3eeb3d2a06db3d6c7a8f1ec8b5ae1100305a6e0d5cee8aa8b2",
+        "text_encoder/model.safetensors": "c6c6348af2cb4d5852fe51102ce39605903dbe7925c005cf8995506cc21ea914",
+        "text_encoder_2/config.json": "e5e73dc1b19e8a61543714a7f61e7873e1b69a774b2a9fe238b1421cc88a5e11",
+        "text_encoder_2/model.safetensors.index.json": "7d1c96db95f747494d7c9000a04e24a65ad2ae8f80d40def94d26c8aa278052a",
+        "text_encoder_2/model-00001-of-00002.safetensors": "2c0c539ab8e8fba3877cc94bc483e427f74c525f817a809b028ebc8d96d75a94",
+        "text_encoder_2/model-00002-of-00002.safetensors": "3b49976cb1fe40da28a600d783f4686024c97eb01f224c54305cce55ddcd8a5e",
+        "tokenizer/special_tokens_map.json": "5d5b662e421ea9fac075174bb0688ee0d9431699900b90662acd44b2a350503a",
+        "tokenizer/tokenizer_config.json": "83a1be3898d73c1f884980d96e0fb94b2728b8165be1804b8d2da077279fb1ff",
+        "tokenizer/vocab.txt": "e4d5b58fd3e4756d6973acd3019f5de1f68114d4e6c1c11b5f61f4cec82a12aa",
+        "tokenizer_2/special_tokens_map.json": "80f4c6c5cf3867d7669ff8aa8f6aebb8a7499322e62d7faae06262d6014edd61",
+        "tokenizer_2/spiece.model": "ef78f86560d809067d12bac6c09f19a462cb3af3f54d2b8acbba26e1433125d6",
+        "tokenizer_2/tokenizer_config.json": "1a58e10cd96de03535d55f2706031b7c7c8a6c5d0ee452cc58408d5890ad51f1",
+        "transformer/config.json": "ddfc9fee88d59bf4f69f6e1e6d8324f0ef24494b46edc5bd9401037d876dcbe2",
+        "transformer/diffusion_pytorch_model.safetensors": "8af691cadb78047d55721259355d708e87ddbba1b7845df9377d9a5ae917b45d",
+        "vae/config.json": "d59730ff7b5f2f4f5abd2f9572727d60ac1f8d3288e77554b10b998c606f9b12",
+        "vae/diffusion_pytorch_model.safetensors": "98a14dc6fe8d71c83576f135a87c61a16561c9c080abba418d2cc976ee034f88"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 391,
+          "text_encoder_2": 219,
+          "transformer": 1544,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 10
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 10
+      }
+    },
+    {
+      "model_id": "hunyuan-dit-v1.2-distilled",
+      "repo_id": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+      "revision": "ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
+      "provenance": "author",
+      "catalog_id": "hunyuan-dit",
+      "license": "Tencent Hunyuan Community License",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "2efa723f3c6d0d3417cdaae521007ab606d20c5f8436183eaf37f10169f9e0a5",
+        "scheduler/scheduler_config.json": "8fec1b96351b2199255f683080e59cee41372334e369465d4c1fca6a242f71cc",
+        "text_encoder/config.json": "968833abc78add3eeb3d2a06db3d6c7a8f1ec8b5ae1100305a6e0d5cee8aa8b2",
+        "text_encoder/model.safetensors": "c6c6348af2cb4d5852fe51102ce39605903dbe7925c005cf8995506cc21ea914",
+        "text_encoder_2/config.json": "e5e73dc1b19e8a61543714a7f61e7873e1b69a774b2a9fe238b1421cc88a5e11",
+        "text_encoder_2/model.safetensors.index.json": "7d1c96db95f747494d7c9000a04e24a65ad2ae8f80d40def94d26c8aa278052a",
+        "text_encoder_2/model-00001-of-00002.safetensors": "2c0c539ab8e8fba3877cc94bc483e427f74c525f817a809b028ebc8d96d75a94",
+        "text_encoder_2/model-00002-of-00002.safetensors": "3b49976cb1fe40da28a600d783f4686024c97eb01f224c54305cce55ddcd8a5e",
+        "tokenizer/special_tokens_map.json": "5d5b662e421ea9fac075174bb0688ee0d9431699900b90662acd44b2a350503a",
+        "tokenizer/tokenizer_config.json": "83a1be3898d73c1f884980d96e0fb94b2728b8165be1804b8d2da077279fb1ff",
+        "tokenizer/vocab.txt": "e4d5b58fd3e4756d6973acd3019f5de1f68114d4e6c1c11b5f61f4cec82a12aa",
+        "tokenizer_2/special_tokens_map.json": "80f4c6c5cf3867d7669ff8aa8f6aebb8a7499322e62d7faae06262d6014edd61",
+        "tokenizer_2/spiece.model": "ef78f86560d809067d12bac6c09f19a462cb3af3f54d2b8acbba26e1433125d6",
+        "tokenizer_2/tokenizer_config.json": "1a58e10cd96de03535d55f2706031b7c7c8a6c5d0ee452cc58408d5890ad51f1",
+        "transformer/config.json": "ddfc9fee88d59bf4f69f6e1e6d8324f0ef24494b46edc5bd9401037d876dcbe2",
+        "transformer/diffusion_pytorch_model.safetensors": "af0239f15b91e424160581963873466b0eb673993b952a16e5a54ae18d521a1c",
+        "vae/config.json": "d59730ff7b5f2f4f5abd2f9572727d60ac1f8d3288e77554b10b998c606f9b12",
+        "vae/diffusion_pytorch_model.safetensors": "98a14dc6fe8d71c83576f135a87c61a16561c9c080abba418d2cc976ee034f88"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 391,
+          "text_encoder_2": 219,
+          "transformer": 1544,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 10
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 10
+      }
+    },
+    {
       "model_id": "pixart-sigma-xl-1024",
       "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
       "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
@@ -2930,6 +3072,433 @@
           1024
         ],
         "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
+      "model_id": "pixart-alpha-xl-512",
+      "repo_id": "PixArt-alpha/PixArt-XL-2-512x512",
+      "revision": "50f702106901db6d0f8b67eb88e814c56ded2692",
+      "provenance": "author",
+      "catalog_id": "pixart-alpha",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "f6b39e79583fd99411c375f14f147a729a54c14de13446bd5055a2bd97758fc9",
+        "scheduler/scheduler_config.json": "ec1638ad7fce60b92870623ae6d9472ca4f005cdb2694b74cf86ae78e1d1e0d5",
+        "text_encoder/config.json": "d8be7dff041b002da571ae25d5db1d8befa52229f36dd1485fd4823405867c95",
+        "text_encoder/model.safetensors.index.json": "a545bb25dc0f423d84be7b577311bba8bb7c6931f1eefcea65fc8b0a61a60a76",
+        "text_encoder/model-00001-of-00004.safetensors": "7a68b2c8c080696a10109612a649bc69330991ecfea65930ccfdfbdb011f2686",
+        "text_encoder/model-00002-of-00004.safetensors": "b8ed6556d7507e38af5b428c605fb2a6f2bdb7e80bd481308b865f7a40c551ca",
+        "text_encoder/model-00003-of-00004.safetensors": "c831635f83041f83faf0024b39c6ecb21b45d70dd38a63ea5bac6c7c6e5e558c",
+        "text_encoder/model-00004-of-00004.safetensors": "02a5f2d69205be92ad48fe5d712d38c2ff55627969116aeffc58bd75a28da468",
+        "tokenizer/added_tokens.json": "ea5a91a3234f66ea642c8e672d67f0f493759a9bee6910ae304ea9b9492118b5",
+        "tokenizer/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
+        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer/tokenizer_config.json": "8bb1eeedbfe7bec47a052a5ae3dc5e29a6a02080e2bf42d4d8c9ea9f8e442c51",
+        "transformer/config.json": "237b803d57ace9c5a9f0df06c8f108c57e9f92b6c781b984728fc954d9fd9495",
+        "transformer/diffusion_pytorch_model.safetensors": "13105448f416eb9d80206c0941cc48c1df4bd962ece461960a70866f62286ace",
+        "vae/config.json": "01b6999783749a4bc27c448dc23a235783c1fbb25721c4db609d4e1aa5d4442c",
+        "vae/diffusion_pytorch_model.safetensors": "703abdcd7c389316b5128faa9b750a530ea1680b453170b27afebac5e4db30c4"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 604,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
+      "model_id": "pixart-sigma-xl-256",
+      "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-256x256",
+      "revision": "495cb1bafac48d71ca96761409c5fd7e48354df2",
+      "provenance": "author",
+      "catalog_id": "pixart-sigma",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "48717b6754c57ffc40baafd747dafaa3ddfbc4b4c6b7932ab7f472c88665cd06"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "ec1638ad7fce60b92870623ae6d9472ca4f005cdb2694b74cf86ae78e1d1e0d5"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "a0d07392b904954847f901e6ccf25538efc4142fb4c7b59065a06bbdb7eabff8"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "fb4665a1a122b7e5270f0e4494c653839c11a5a978e03b0df6dfa714258716e6"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "eb529f693f4b17773a24e787fcba29486d5e1700dadcc20bb91e4c8b00212d08"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "58f33f4acba7a5502b6b3e4cb7863f8fd503d5012016428099bb460c98e2fe77"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f"
+        },
+        "tokenizer/spiece.model": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "8463612fde6595bf924e405f08192e1c58887e71332db2b9b287052dd3e180e1"
+        },
+        "vae/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7"
+        },
+        "vae/diffusion_pytorch_model.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "1b909373b28f2137098b0fd9dbc6f97f8410854f31f84ddc9fa04b077b0ace2c"
+        },
+        "transformer/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-256x256",
+          "revision": "495cb1bafac48d71ca96761409c5fd7e48354df2",
+          "sha256": "a5427e7ed748f523e8bd879c93e18cbf908867fcf22ec646d268156a3ea4d367"
+        },
+        "transformer/diffusion_pytorch_model.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-256x256",
+          "revision": "495cb1bafac48d71ca96761409c5fd7e48354df2",
+          "sha256": "b3c03f59d0b61ae965af5c19428f620ccfc57b9909bcc17c8f43f573c3c3c34a"
+        }
+      },
+      "base": {
+        "model_id": "pixart-sigma-xl-1024",
+        "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 603,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          256,
+          256
+        ],
+        "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
+      "model_id": "pixart-sigma-xl-512",
+      "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-512-MS",
+      "revision": "76fb7eb5a9314bc1e4e479d2f13447517fca9be4",
+      "provenance": "author",
+      "catalog_id": "pixart-sigma",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "48717b6754c57ffc40baafd747dafaa3ddfbc4b4c6b7932ab7f472c88665cd06"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "ec1638ad7fce60b92870623ae6d9472ca4f005cdb2694b74cf86ae78e1d1e0d5"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "a0d07392b904954847f901e6ccf25538efc4142fb4c7b59065a06bbdb7eabff8"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "fb4665a1a122b7e5270f0e4494c653839c11a5a978e03b0df6dfa714258716e6"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "eb529f693f4b17773a24e787fcba29486d5e1700dadcc20bb91e4c8b00212d08"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "58f33f4acba7a5502b6b3e4cb7863f8fd503d5012016428099bb460c98e2fe77"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f"
+        },
+        "tokenizer/spiece.model": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "8463612fde6595bf924e405f08192e1c58887e71332db2b9b287052dd3e180e1"
+        },
+        "vae/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7"
+        },
+        "vae/diffusion_pytorch_model.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "1b909373b28f2137098b0fd9dbc6f97f8410854f31f84ddc9fa04b077b0ace2c"
+        },
+        "transformer/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-512-MS",
+          "revision": "76fb7eb5a9314bc1e4e479d2f13447517fca9be4",
+          "sha256": "64dcb995e31aa4d84572da705d41088a0be9e94de91e4bf3ca43e05c67a9f942"
+        },
+        "transformer/diffusion_pytorch_model.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-512-MS",
+          "revision": "76fb7eb5a9314bc1e4e479d2f13447517fca9be4",
+          "sha256": "20f3328e926039b2fbfa0094469bc6af2a034da39bab51ebbe2019ac455186ca"
+        }
+      },
+      "base": {
+        "model_id": "pixart-sigma-xl-1024",
+        "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 603,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
+      "model_id": "pixart-sigma-xl-2k",
+      "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-2K-MS",
+      "revision": "cd274f4c8b01de0dcc87b65887dd357d473bf516",
+      "provenance": "author",
+      "catalog_id": "pixart-sigma",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "48717b6754c57ffc40baafd747dafaa3ddfbc4b4c6b7932ab7f472c88665cd06"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "ec1638ad7fce60b92870623ae6d9472ca4f005cdb2694b74cf86ae78e1d1e0d5"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "a0d07392b904954847f901e6ccf25538efc4142fb4c7b59065a06bbdb7eabff8"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "fb4665a1a122b7e5270f0e4494c653839c11a5a978e03b0df6dfa714258716e6"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "eb529f693f4b17773a24e787fcba29486d5e1700dadcc20bb91e4c8b00212d08"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "58f33f4acba7a5502b6b3e4cb7863f8fd503d5012016428099bb460c98e2fe77"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f"
+        },
+        "tokenizer/spiece.model": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "8463612fde6595bf924e405f08192e1c58887e71332db2b9b287052dd3e180e1"
+        },
+        "vae/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7"
+        },
+        "vae/diffusion_pytorch_model.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+          "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+          "sha256": "1b909373b28f2137098b0fd9dbc6f97f8410854f31f84ddc9fa04b077b0ace2c"
+        },
+        "transformer/config.json": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-2K-MS",
+          "revision": "cd274f4c8b01de0dcc87b65887dd357d473bf516",
+          "sha256": "e3ba7f10f9859686ebbadc6c201f82540575d9900560da206b6c4de294eab728"
+        },
+        "transformer/diffusion_pytorch_model.safetensors": {
+          "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-2K-MS",
+          "revision": "cd274f4c8b01de0dcc87b65887dd357d473bf516",
+          "sha256": "c34b520ef473329b945c2a21083cdf1337c5a468d23b3215b65576789bfd0305"
+        }
+      },
+      "base": {
+        "model_id": "pixart-sigma-xl-1024",
+        "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 603,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 7,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "scheduler_seed": 42,
+        "size": [
+          2048,
+          2048
+        ],
+        "steps": 4
       },
       "seed_end_to_end": {
         "max_pixel_diff": 0,
@@ -3588,64 +4157,6 @@
         "max_pixel_diff": 0,
         "passed": true,
         "seed": 42,
-        "steps": 8
-      }
-    },
-    {
-      "model_id": "cogview3-plus-3b",
-      "repo_id": "zai-org/CogView3-Plus-3B",
-      "revision": "5d70e40732ac0efac98524c51a7fa9c82707f1e5",
-      "provenance": "author",
-      "catalog_id": "cogview3-plus",
-      "license": "Apache-2.0",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "23e9b363ddd2313f2ed70886ec4a627f01c3f5699c2a21f68ee845ed3a57f60c",
-        "scheduler/scheduler_config.json": "8d230c843868651a5118b10cf35df0fe8c25e52a72cef949a64abd2e124e4c0b",
-        "text_encoder/config.json": "825f56e15325ed3188f2e3b536849b160b4cc0d6722a1d32b0175a248afb5e05",
-        "text_encoder/model.safetensors.index.json": "a545bb25dc0f423d84be7b577311bba8bb7c6931f1eefcea65fc8b0a61a60a76",
-        "text_encoder/model-00001-of-00004.safetensors": "8e0e98242fed1de128a73ee6fee174aa30186c66f7d70811c8ebf67d72067f38",
-        "text_encoder/model-00002-of-00004.safetensors": "7309a33cd1780b20e3d84b2e14585d7a64ccea45079aecc86c507e381e00ed14",
-        "text_encoder/model-00003-of-00004.safetensors": "d278bf7cb4de9957cb67d8a92dc9273f88186f0c90e0f2a3de13882217d9a95c",
-        "text_encoder/model-00004-of-00004.safetensors": "69afce9a62402b82095baa1dfef572be92dfd9a4062693d49a5948e4d27585a5",
-        "tokenizer/added_tokens.json": "ea5a91a3234f66ea642c8e672d67f0f493759a9bee6910ae304ea9b9492118b5",
-        "tokenizer/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
-        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
-        "tokenizer/tokenizer_config.json": "668b8251d6e694c1fb51cc2336b1c9a2047e540f2aeedee8bc509411aef117f1",
-        "transformer/config.json": "9b3c6a2ff0c9745ab701460f7ba5f6619b5217371d87f7d816d981df0608fe5d",
-        "transformer/diffusion_pytorch_model.safetensors.index.json": "dd8fa92a11a5f2ee1ce217b124cca7f883a7ff7f55818f3a5009d2c0844ced42",
-        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "f6227325d23f2e06c40b7f222322c1db36af8d0122d6f6cd99f395d63945ce7e",
-        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "5e34e2a9eaf09ab752673a33d451cc0f5e5304cf32be7f98a6553a494fccecab",
-        "vae/config.json": "a5914b8a82d1771976db1712ff951813a9c0ce750f0172193049c10172eb6833",
-        "vae/diffusion_pytorch_model.safetensors": "40aabe789e1591a3a3d8a2f598eda99f60a42275c410e7292a714b5270b97747"
-      },
-      "tensor_header_check": {
-        "missing": [],
-        "extra": [],
-        "mismatch": [],
-        "tensors": {
-          "text_encoder": 219,
-          "transformer": 436,
-          "vae": 288
-        }
-      },
-      "end_to_end": {
-        "max_pixel_diff": 0,
-        "passed": true,
-        "steps": 8
-      },
-      "seed_end_to_end": {
-        "max_pixel_diff": 0,
-        "passed": true,
-        "seed": 0,
         "steps": 8
       }
     },
@@ -6399,7 +6910,35 @@
       "steps": 25,
       "tolerance": "exact"
     },
+    "hunyuan_dit_scheduler_hunyuan-dit-v1.2": {
+      "exact": true,
+      "steps": 25,
+      "tolerance": "exact"
+    },
+    "hunyuan_dit_scheduler_hunyuan-dit-v1.2-distilled": {
+      "exact": true,
+      "steps": 25,
+      "tolerance": "exact"
+    },
     "hunyuan_dit_transformer": {
+      "batch": 2,
+      "height": 1024,
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
+      "tolerance": 0.0,
+      "width": 1024
+    },
+    "hunyuan_dit_transformer_hunyuan-dit-v1.2": {
+      "batch": 2,
+      "height": 1024,
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
+      "tolerance": 0.0,
+      "width": 1024
+    },
+    "hunyuan_dit_transformer_hunyuan-dit-v1.2-distilled": {
       "batch": 2,
       "height": 1024,
       "max_abs": 0.0,
@@ -6731,6 +7270,23 @@
       ],
       "steps": 20
     },
+    "e2e_pixart-alpha-xl-512": {
+      "guidance": 4.5,
+      "latents": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "noise_seed": 7,
+      "passed": true,
+      "pixels_max_abs": 0,
+      "prompt": "a photograph of an astronaut riding a horse",
+      "scheduler_seed": 42,
+      "size": [
+        512,
+        512
+      ],
+      "steps": 20
+    },
     "e2e_pixart-sigma-xl-1024": {
       "guidance": 4.5,
       "latents": {
@@ -6745,6 +7301,57 @@
       "size": [
         1024,
         1024
+      ],
+      "steps": 20
+    },
+    "e2e_pixart-sigma-xl-256": {
+      "guidance": 4.5,
+      "latents": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "noise_seed": 7,
+      "passed": true,
+      "pixels_max_abs": 0,
+      "prompt": "a photograph of an astronaut riding a horse",
+      "scheduler_seed": 42,
+      "size": [
+        256,
+        256
+      ],
+      "steps": 20
+    },
+    "e2e_pixart-sigma-xl-2k": {
+      "guidance": 4.5,
+      "latents": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "noise_seed": 7,
+      "passed": true,
+      "pixels_max_abs": 0,
+      "prompt": "a photograph of an astronaut riding a horse",
+      "scheduler_seed": 42,
+      "size": [
+        2048,
+        2048
+      ],
+      "steps": 4
+    },
+    "e2e_pixart-sigma-xl-512": {
+      "guidance": 4.5,
+      "latents": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "noise_seed": 7,
+      "passed": true,
+      "pixels_max_abs": 0,
+      "prompt": "a photograph of an astronaut riding a horse",
+      "scheduler_seed": 42,
+      "size": [
+        512,
+        512
       ],
       "steps": 20
     },
@@ -6774,6 +7381,26 @@
       "missing": [],
       "tensors": 612
     },
+    "header_pixart-alpha-xl-512": {
+      "text_encoder": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 219
+      },
+      "transformer": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 604
+      },
+      "vae": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 248
+      }
+    },
     "header_pixart-sigma-xl-1024": {
       "text_encoder": {
         "extra": [],
@@ -6799,6 +7426,66 @@
       "mismatch": [],
       "missing": [],
       "tensors": 603
+    },
+    "header_pixart-sigma-xl-256": {
+      "text_encoder": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 219
+      },
+      "transformer": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 603
+      },
+      "vae": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 248
+      }
+    },
+    "header_pixart-sigma-xl-2k": {
+      "text_encoder": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 219
+      },
+      "transformer": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 603
+      },
+      "vae": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 248
+      }
+    },
+    "header_pixart-sigma-xl-512": {
+      "text_encoder": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 219
+      },
+      "transformer": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 603
+      },
+      "vae": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 248
+      }
     },
     "pixart-alpha-xl-1024_scheduler": {
       "exact": true,
@@ -6826,6 +7513,36 @@
       "tolerance": 0.0
     },
     "pixart-alpha-xl-1024_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-alpha-xl-512_scheduler": {
+      "exact": true,
+      "steps": 20,
+      "tolerance": "exact"
+    },
+    "pixart-alpha-xl-512_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-alpha-xl-512_tokenizer": {
+      "ids_match": true,
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "pixart-alpha-xl-512_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-alpha-xl-512_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-alpha-xl-512_vae_encode": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -6860,12 +7577,122 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "pixart-sigma-xl-256_scheduler": {
+      "exact": true,
+      "steps": 20,
+      "tolerance": "exact"
+    },
+    "pixart-sigma-xl-256_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-256_tokenizer": {
+      "ids_match": true,
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "pixart-sigma-xl-256_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-256_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-256_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-2k_scheduler": {
+      "exact": true,
+      "steps": 20,
+      "tolerance": "exact"
+    },
+    "pixart-sigma-xl-2k_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-2k_tokenizer": {
+      "ids_match": true,
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "pixart-sigma-xl-2k_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-2k_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-2k_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-512_scheduler": {
+      "exact": true,
+      "steps": 20,
+      "tolerance": "exact"
+    },
+    "pixart-sigma-xl-512_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-512_tokenizer": {
+      "ids_match": true,
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "pixart-sigma-xl-512_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-512_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "pixart-sigma-xl-512_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "seed_e2e_pixart-alpha-xl-1024": {
       "max_pixel_diff": 0,
       "passed": true,
       "seed": 42
     },
+    "seed_e2e_pixart-alpha-xl-512": {
+      "max_pixel_diff": 0,
+      "passed": true,
+      "seed": 42
+    },
     "seed_e2e_pixart-sigma-xl-1024": {
+      "max_pixel_diff": 0,
+      "passed": true,
+      "seed": 42
+    },
+    "seed_e2e_pixart-sigma-xl-256": {
+      "max_pixel_diff": 0,
+      "passed": true,
+      "seed": 42
+    },
+    "seed_e2e_pixart-sigma-xl-2k": {
+      "max_pixel_diff": 0,
+      "passed": true,
+      "seed": 42
+    },
+    "seed_e2e_pixart-sigma-xl-512": {
       "max_pixel_diff": 0,
       "passed": true,
       "seed": 42
@@ -7712,50 +8539,6 @@
       "tolerance": 0.0
     }
   },
-  "components_cogview3_plus": {
-    "cogview3_plus_e2e_latents": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cogview3_plus_scheduler_50": {
-      "exact": true,
-      "tolerance": "exact"
-    },
-    "cogview3_plus_scheduler_8": {
-      "exact": true,
-      "tolerance": "exact"
-    },
-    "cogview3_plus_text_encoder": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cogview3_plus_tokens": {
-      "exact": true,
-      "tolerance": "exact"
-    },
-    "cogview3_plus_transformer_0": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cogview3_plus_transformer_1": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cogview3_plus_vae_decode": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cogview3_plus_vae_encode": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    }
-  },
   "components_cogview4": {
     "cogview4_e2e_latents": {
       "max_abs": 0.0,
@@ -7855,11 +8638,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (cogview3-plus-3b)"
+    "reference_summary": "28 passed (pixart-alpha-xl-512, pixart-sigma-xl-256, pixart-sigma-xl-512, pixart-sigma-xl-2k)"
   }
 }

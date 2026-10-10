@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**24 architecture families, 56 published checkpoints.** A model is a separately published set of weights;
+**24 architecture families, 62 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -43,9 +43,15 @@ tested with the original weights. In this release every model is `full`.
 | `flux2-klein-4b` | `flux2` | [black-forest-labs/FLUX.2-klein-4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B) | `e7b7dc2` | author | full | Apache-2.0 | `flux-2` |
 | `flux2-klein-9b` | `flux2` | [black-forest-labs/FLUX.2-klein-9B](https://huggingface.co/black-forest-labs/FLUX.2-klein-9B) | `92196c8` | author | full | FLUX Non-Commercial License | `flux-2` |
 | `hunyuan-dit-v1.1-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled) | `527cf2e` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
+| `hunyuan-dit-v1.2` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers) | `5e96094` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
+| `hunyuan-dit-v1.2-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled) | `ba991d1` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
 | `kandinsky-2.2` | `kandinsky22` | [kandinsky-community/kandinsky-2-2-decoder](https://huggingface.co/kandinsky-community/kandinsky-2-2-decoder) | `9ae140d` | author | full | Apache-2.0 | `kandinsky-2` |
 | `pixart-sigma-xl-1024` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-1024-MS) | `e102b35` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
 | `pixart-alpha-xl-1024` | `pixart` | [PixArt-alpha/PixArt-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-XL-2-1024-MS) | `b89adad` | author | full | CreativeML-OpenRAIL++-M | `pixart-alpha` |
+| `pixart-alpha-xl-512` | `pixart` | [PixArt-alpha/PixArt-XL-2-512x512](https://huggingface.co/PixArt-alpha/PixArt-XL-2-512x512) | `50f7021` | author | full | CreativeML-OpenRAIL++-M | `pixart-alpha` |
+| `pixart-sigma-xl-512` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-512-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-512-MS) | `76fb7eb` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
+| `pixart-sigma-xl-256` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-256x256](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-256x256) | `495cb1b` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
+| `pixart-sigma-xl-2k` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-2K-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-2K-MS) | `cd274f4` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
 | `sana-1600m-1024` | `sana` | [Efficient-Large-Model/Sana_1600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_1600M_1024px_diffusers) | `ac0da2f` | author | full | Apache-2.0 | `sana` |
 | `sana-600m-1024` | `sana` | [Efficient-Large-Model/Sana_600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_600M_1024px_diffusers) | `28f3af7` | author | full | Apache-2.0 | `sana` |
 | `kolors` | `kolors` | [Kwai-Kolors/Kolors-diffusers](https://huggingface.co/Kwai-Kolors/Kolors-diffusers) | `7e091c7` | author | full | Apache-2.0 | `kolors` |
@@ -78,6 +84,8 @@ own files. They can also use `subfolders` to place files from a second repositor
 snapshot subfolder. DMD2 excludes the base U-Net safetensors because its replacement U-Net is a
 PyTorch pickle under a different name. Kandinsky 2.2 places the prior repository at revision
 `9fc51ad` in the snapshot's `prior/` subfolder while the decoder remains at the snapshot root.
+The PixArt-Sigma 256, 512 and 2K repositories publish only a transformer, so those models use
+`pixart-sigma-xl-1024` as their base and overlay its transformer files with their own.
 Stable Cascade does the same with `stabilityai/stable-cascade-prior` at revision `7ca32c2`, and
 Würstchen v2 with `warp-ai/wuerstchen-prior` at revision `c41be63`.
 `python -m imagehub.pretrained` downloads both sources, each pinned and verified, and the snapshot

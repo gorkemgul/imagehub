@@ -23,6 +23,8 @@ def test_catalog_contents():
             "flux2-klein-4b",
             "flux2-klein-9b",
             "hunyuan-dit-v1.1-distilled",
+            "hunyuan-dit-v1.2",
+            "hunyuan-dit-v1.2-distilled",
             "hyper-sdxl-1step",
             "ideogram4-fp8",
             "janus-pro-1b",
@@ -36,7 +38,11 @@ def test_catalog_contents():
             "longcat-image",
             "lumina-image-2.0",
             "pixart-alpha-xl-1024",
+            "pixart-alpha-xl-512",
             "pixart-sigma-xl-1024",
+            "pixart-sigma-xl-256",
+            "pixart-sigma-xl-2k",
+            "pixart-sigma-xl-512",
             "playground-v2",
             "playground-v2.5",
             "qwen-image-2.1",
@@ -445,6 +451,37 @@ def test_hunyuan_dit_catalog_entry():
     )
 
 
+@pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "steps"),
+    [
+        (
+            "hunyuan-dit-v1.2",
+            "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+            "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+            50,
+        ),
+        (
+            "hunyuan-dit-v1.2-distilled",
+            "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+            "ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
+            25,
+        ),
+    ],
+)
+def test_hunyuan_dit_v12_catalog_entries(model_id, repo, revision, steps):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "hunyuan-dit"
+    assert (spec.repo_id, spec.revision) == (repo, revision)
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "hunyuan-dit"
+    assert spec.format == "diffusers"
+    assert spec.license == "Tencent Hunyuan Community License"
+    assert not spec.gated
+    assert spec.config == {"defaults": {"steps": steps, "guidance": 5.0}}
+    assert spec.files == model_info("hunyuan-dit-v1.1-distilled").files
+
+
 def test_pixart_catalog_entries():
     common = (
         "model_index.json",
@@ -461,6 +498,12 @@ def test_pixart_catalog_entries():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+    alpha_512 = (
+        common[:4]
+        + tuple(f"text_encoder/model-0000{index}-of-00004.safetensors" for index in range(1, 5))
+        + ("tokenizer/added_tokens.json",)
+        + common[6:]
+    )
     expected = {
         "pixart-sigma-xl-1024": (
             "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
@@ -476,6 +519,13 @@ def test_pixart_catalog_entries():
             120,
             common[:6] + ("tokenizer/added_tokens.json",) + common[6:],
         ),
+        "pixart-alpha-xl-512": (
+            "PixArt-alpha/PixArt-XL-2-512x512",
+            "50f702106901db6d0f8b67eb88e814c56ded2692",
+            "pixart-alpha",
+            120,
+            alpha_512,
+        ),
     }
     for model_id, (repo, revision, catalog_id, max_length, files) in expected.items():
         spec = model_info(model_id)
@@ -488,10 +538,56 @@ def test_pixart_catalog_entries():
         assert spec.format == "diffusers"
         assert spec.license == "CreativeML-OpenRAIL++-M"
         assert not spec.gated
+        size = {"pixart-alpha-xl-512": {"width": 512, "height": 512}}.get(model_id, {})
         assert spec.config == {
-            "defaults": {"steps": 20, "guidance": 4.5, "max_sequence_length": max_length}
+            "defaults": {"steps": 20, "guidance": 4.5, "max_sequence_length": max_length} | size
         }
         assert spec.files == files
+        assert spec.base is None
+
+
+def test_pixart_sigma_transformer_only_catalog_entries():
+    transformer = ("transformer/config.json", "transformer/diffusion_pytorch_model.safetensors")
+    expected = {
+        "pixart-sigma-xl-256": (
+            "PixArt-alpha/PixArt-Sigma-XL-2-256x256",
+            "495cb1bafac48d71ca96761409c5fd7e48354df2",
+            256,
+        ),
+        "pixart-sigma-xl-512": (
+            "PixArt-alpha/PixArt-Sigma-XL-2-512-MS",
+            "76fb7eb5a9314bc1e4e479d2f13447517fca9be4",
+            512,
+        ),
+        "pixart-sigma-xl-2k": (
+            "PixArt-alpha/PixArt-Sigma-XL-2-2K-MS",
+            "cd274f4c8b01de0dcc87b65887dd357d473bf516",
+            2048,
+        ),
+    }
+    base = model_info("pixart-sigma-xl-1024")
+    for model_id, (repo, revision, size) in expected.items():
+        spec = model_info(model_id)
+        assert spec.task is Task.T2I
+        assert spec.family == "pixart"
+        assert (spec.repo_id, spec.revision) == (repo, revision)
+        assert spec.provenance == "author"
+        assert spec.catalog_id == "pixart-sigma"
+        assert spec.license == "CreativeML-OpenRAIL++-M"
+        assert not spec.gated
+        assert spec.base == base.id
+        assert spec.files == transformer
+        assert spec.overlay == {name: name for name in transformer}
+        assert not spec.base_exclude
+        assert spec.config == {
+            "defaults": {
+                "steps": 20,
+                "guidance": 4.5,
+                "max_sequence_length": 300,
+                "width": size,
+                "height": size,
+            }
+        }
 
 
 def test_cogview3_plus_catalog_entry():

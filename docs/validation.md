@@ -521,6 +521,38 @@ The reference tokenizers require `sentencepiece` and `protobuf`, which are inclu
 components were loaded together: in float32 the transformer used about 6.1 GB, mT5-XL about 6.7 GB
 and BERT about 1.4 GB. The end-to-end reference test file took 52 minutes.
 
+### HunyuanDiT v1.2
+
+`hunyuan-dit-v1.2` (`Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers`, revision `5e96094`) and
+`hunyuan-dit-v1.2-distilled` (`Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled`, revision
+`ba991d1`) share the layout, text encoders, tokenizers and VAE of v1.1. They differ in two published
+settings that the same code handles: the transformer config sets
+`use_style_cond_and_image_meta_size` to false (no style embedder, 1544 transformer tensors, a
+narrower extra embedder input) and the scheduler uses `beta_end` 0.018. The observed difference in
+every comparison is **exactly 0**: on CPU in float32, the local implementation produces a
+bit-identical result to the reference, with identical bytes for images.
+
+| Comparison | Release | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Header-only tensor check (`text_encoder`, `text_encoder_2`, `transformer`, `vae`): 391 / 219 / 1544 / 248 tensors | hunyuan-dit-v1.2 | missing / extra / mismatched 0 / 0 / 0 | exact |
+| Header-only tensor check (`text_encoder`, `text_encoder_2`, `transformer`, `vae`): 391 / 219 / 1544 / 248 tensors | hunyuan-dit-v1.2-distilled | missing / extra / mismatched 0 / 0 / 0 | exact |
+| DDPM timesteps (25 steps) | both v1.2 releases | exact | exact |
+| Transformer single step (1024×1024, batch 2, timestep 500) | both v1.2 releases | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 10 steps, guidance 5.0) | both v1.2 releases | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (10 steps, pixels) | both v1.2 releases | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with fixed initial noise
+`seed=7` and scheduler generator `seed=42`, as in v1.1; the seed end-to-end check used `seed=42`.
+The checks per release are the header comparison for all four components, the DDPM timesteps, one
+transformer step at 1024×1024 (batch 2, timestep 500), the end-to-end comparison with fixed initial
+noise and the seed end-to-end comparison. The end-to-end runs use 10 steps instead of the defaults
+to keep the CPU float32 runs short. Tiny random-weight pipelines of both releases, including a
+non-square size and guidance switched off, are compared with diffusers in the regular reference
+tests, together with a DDPM trajectory using the published v1.2 scheduler configuration. Records:
+`tensor_header_check` and the comparison measurements, [validation.json](validation.json).
+
+The real-checkpoint run of the two v1.2 releases (10 real tests) took 45 minutes on an M2 Max (CPU).
+
 ## Kandinsky 2.2
 
 Validated on CPU in the same environment as above. `kandinsky-2.2` was loaded strictly from the
@@ -630,11 +662,30 @@ bytes.
 
 ## PixArt
 
+### Further resolutions
+
+`pixart-alpha-xl-512` (`PixArt-alpha/PixArt-XL-2-512x512`, revision `50f7021`) and the transformer-only
+`pixart-sigma-xl-256`, `pixart-sigma-xl-512` and `pixart-sigma-xl-2k` (revisions `495cb1b`, `76fb7eb` and
+`cd274f4`, with the remaining components from `PixArt-Sigma-XL-2-1024-MS` at `e102b35`) share the
+PixArt code. Their published configurations and tensor headers are checked in as fixtures, and the
+real-checkpoint tests in `tests/reference/test_ref_pixart.py` and
+`tests/reference/test_ref_random_pixart.py` are parametrized over them: header, tokenizer and encoder,
+one transformer step at the native latent size, VAE decode and encode, scheduler timesteps, end to end
+at the native size with fixed latents and the seed test. The 2K model's single-step and decode checks use
+1024-pixel inputs, and its end-to-end runs use 4 steps instead of 20 to keep the 2048×2048 runs short.
+Measured on CPU in the same environment as above, every recorded comparison for the four models is
+exact: identical tokenizer ids and attention masks, difference 0 for the T5-v1.1-XXL encoder, the
+transformer step, VAE decode and encode, the end-to-end latent and pixels and the seed test, exact
+DPM-Solver++ timesteps, and 0 missing, extra and shape-mismatched tensors in the header check
+(`text_encoder` / `transformer` / `vae`: 219 / 603 / 248 for the three Sigma models and 219 / 604 /
+248 for `pixart-alpha-xl-512`). The real-checkpoint run took 59 minutes on an M2 Max (CPU).
+
 Validated on CPU in the same environment as above. `pixart-sigma-xl-1024` and
 `pixart-alpha-xl-1024` were loaded strictly from `PixArt-alpha/PixArt-Sigma-XL-2-1024-MS` at
-revision `e102b35` and `PixArt-alpha/PixArt-XL-2-1024-MS` at revision `b89adad`, respectively. The
-observed difference in every comparison is **exactly 0**: on CPU in float32, the local
-implementation produces a bit-identical result to the reference.
+revision `e102b35` and `PixArt-alpha/PixArt-XL-2-1024-MS` at revision `b89adad`, respectively; the
+four further-resolution checkpoints were loaded as described above. The observed difference in every
+comparison is **exactly 0**: on CPU in float32, the local implementation produces a bit-identical
+result to the reference.
 
 ### Comparisons (CPU, float32)
 
@@ -654,18 +705,47 @@ implementation produces a bit-identical result to the reference.
 | DPM-Solver++ timesteps (20 steps) / trajectories | `pixart-alpha-xl-1024` | exact / 0 | exact / 0 |
 | End to end: final latent / pixels (1024×1024, 20 steps, guidance 4.5) | `pixart-alpha-xl-1024` | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (pixels) | `pixart-alpha-xl-1024` | 0 | 0 |
+| T5 tokenizer ids / attention masks | `pixart-alpha-xl-512` | identical / identical | exact / exact |
+| T5-v1.1-XXL encoder | `pixart-alpha-xl-512` | 0 | 0 |
+| Transformer single step (native latent size) | `pixart-alpha-xl-512` | 0 | 0 |
+| VAE decode / encode | `pixart-alpha-xl-512` | 0 / 0 | 0 / 0 |
+| DPM-Solver++ timesteps (20 steps) | `pixart-alpha-xl-512` | exact | exact |
+| End to end: final latent / pixels (512×512, 20 steps, guidance 4.5) | `pixart-alpha-xl-512` | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | `pixart-alpha-xl-512` | 0 | 0 |
+| T5 tokenizer ids / attention masks | `pixart-sigma-xl-256` | identical / identical | exact / exact |
+| T5-v1.1-XXL encoder | `pixart-sigma-xl-256` | 0 | 0 |
+| Transformer single step (native latent size) | `pixart-sigma-xl-256` | 0 | 0 |
+| VAE decode / encode | `pixart-sigma-xl-256` | 0 / 0 | 0 / 0 |
+| DPM-Solver++ timesteps (20 steps) | `pixart-sigma-xl-256` | exact | exact |
+| End to end: final latent / pixels (256×256, 20 steps, guidance 4.5) | `pixart-sigma-xl-256` | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | `pixart-sigma-xl-256` | 0 | 0 |
+| T5 tokenizer ids / attention masks | `pixart-sigma-xl-512` | identical / identical | exact / exact |
+| T5-v1.1-XXL encoder | `pixart-sigma-xl-512` | 0 | 0 |
+| Transformer single step (native latent size) | `pixart-sigma-xl-512` | 0 | 0 |
+| VAE decode / encode | `pixart-sigma-xl-512` | 0 / 0 | 0 / 0 |
+| DPM-Solver++ timesteps (20 steps) | `pixart-sigma-xl-512` | exact | exact |
+| End to end: final latent / pixels (512×512, 20 steps, guidance 4.5) | `pixart-sigma-xl-512` | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | `pixart-sigma-xl-512` | 0 | 0 |
+| T5 tokenizer ids / attention masks | `pixart-sigma-xl-2k` | identical / identical | exact / exact |
+| T5-v1.1-XXL encoder | `pixart-sigma-xl-2k` | 0 | 0 |
+| Transformer single step (native latent size) | `pixart-sigma-xl-2k` | 0 | 0 |
+| VAE decode / encode | `pixart-sigma-xl-2k` | 0 / 0 | 0 / 0 |
+| DPM-Solver++ timesteps (20 steps) | `pixart-sigma-xl-2k` | exact | exact |
+| End to end: final latent / pixels (2048×2048, 4 steps, guidance 4.5) | `pixart-sigma-xl-2k` | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | `pixart-sigma-xl-2k` | 0 | 0 |
 
 The end-to-end prompt was "a photograph of an astronaut riding a horse" with fixed initial noise
-`seed=7` and scheduler generator `seed=42`. It used the 20-step, guidance 4.5 defaults. The seed
-end-to-end check used `seed=42`.
+`seed=7` and scheduler generator `seed=42`. It used the 20-step, guidance 4.5 defaults, except
+`pixart-sigma-xl-2k`, which ran 4 steps. The seed end-to-end check used `seed=42`.
 
 Random-weight parity also covered Sigma- and Alpha-style tiny and medium transformer
 configurations, and tiny-snapshot end-to-end parity covered both the PixArt Sigma and PixArt Alpha
 pipelines. Every comparison was exact.
 
 The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts were
-219 / 603 / 248 for Sigma and 219 / 612 / 248 for Alpha, with missing, extra and shape-mismatched
-tensors all **0**. Record: `tensor_header_check`, [validation.json](validation.json).
+219 / 603 / 248 for `pixart-sigma-xl-1024` and 219 / 612 / 248 for `pixart-alpha-xl-1024`, with
+missing, extra and shape-mismatched tensors all **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
 
 Caption cleaning requires `bs4` and `ftfy` and is not implemented. Parity was measured with
 `clean_caption=False`, which is what diffusers uses when those packages are unavailable. The
@@ -1262,8 +1342,10 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
-  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
-  for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
+  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
+  for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 28 passed for `pixart-alpha-xl-512`,
+  `pixart-sigma-xl-256`, `pixart-sigma-xl-512` and `pixart-sigma-xl-2k` together, 7 passed for
+  `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
