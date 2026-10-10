@@ -468,3 +468,45 @@ def test_loads_float8_safetensors_tensors(tmp_path):
     for name, tensor in weights.items():
         assert loaded[name].dtype == tensor.dtype
         assert torch.equal(loaded[name].view(torch.uint8), tensor.view(torch.uint8))
+
+
+def test_load_weights_skips_prefixes_without_opening_their_shards(tmp_path):
+    save_safetensors(
+        {"keep.a": torch.ones(2), "drop.a": torch.zeros(2)}, tmp_path / "model-1.safetensors"
+    )
+    # The second shard is never opened, so it can be absent from the disk.
+    index = {"weight_map": {"keep.a": "model-1.safetensors", "drop.b": "model-2.safetensors"}}
+    (tmp_path / "model.safetensors.index.json").write_text(json.dumps(index))
+
+    weights = load_weights(tmp_path, skip_prefixes=("drop.",))
+
+    assert set(weights) == {"keep.a"}
+
+
+def test_load_weights_skips_prefixes_in_single_files(tmp_path):
+    save_safetensors(
+        {"keep.a": torch.ones(1), "drop.a": torch.zeros(1)}, tmp_path / "w.safetensors"
+    )
+    torch.save({"keep.a": torch.ones(1), "drop.a": torch.zeros(1)}, tmp_path / "w.bin")
+
+    for name in ("w.safetensors", "w.bin"):
+        assert set(load_weights(tmp_path / name, skip_prefixes=("drop.",))) == {"keep.a"}
+
+
+def test_from_pretrained_skips_the_models_unused_prefixes(tmp_path):
+    class Skipping(TinyModel):
+        skipped_prefixes = ("decoder.",)
+
+    (tmp_path / "config.json").write_text(json.dumps({"width": 4}))
+    save_safetensors(
+        {
+            "linear.weight": torch.randn(2, 4),
+            "linear.bias": torch.randn(2),
+            "decoder.weight": torch.randn(5),
+        },
+        tmp_path / "model.safetensors",
+    )
+
+    Skipping.from_pretrained(tmp_path)
+    with pytest.raises(CheckpointError, match="decoder.weight"):
+        TinyModel.from_pretrained(tmp_path)
