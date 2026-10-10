@@ -7,6 +7,7 @@ image input, and passing `image` to one raises an error.
 | Model | Image input | Use | Options |
 | --- | --- | --- | --- |
 | `flux1-kontext-dev` | optional | instruction editing | `image` |
+| `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
 
 # Stable Diffusion 1.x
 
@@ -166,6 +167,7 @@ imagehub does not distribute weights.
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
 Models: `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`,
 `sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step` · Task: `t2i`
+(the refiner `sdxl-refiner-1.0` has its own section below)
 
 **Architecture.** Two frozen text encoders: CLIP ViT-L/14 (penultimate layer output) and OpenCLIP
 bigG (penultimate layer output and pooled output). The concatenated outputs condition a
@@ -246,14 +248,66 @@ Unrecognized settings raise an error.
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). As with SD 1.x,
 MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The SDXL base and SDXL-Lightning weights are licensed under CreativeML Open RAIL++-M;
 the license's use restrictions bind whoever downloads and uses the weights. The Hyper-SD model
 card has no license metadata, and the repository's license file covers only the FLUX-related files,
 so the Hyper-SDXL weights are recorded as `Unspecified`. The DMD2 weights are licensed under
 CC-BY-NC-4.0, which prohibits commercial use. imagehub does not distribute weights.
+
+
+# SDXL refiner
+
+Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `sdxl-refiner-1.0` · Task: `t2i` (image input required)
+
+**Architecture.** The refiner is an SDXL U-Net specialised in the low-noise end of the schedule. It
+differs from the base model in four ways: it has a single text encoder (OpenCLIP bigG: penultimate
+hidden state, 1280 channels, and its pooled output), a U-Net with four resolution levels (384, 768,
+1536, 1536 channels; 4 transformer layers per block), a `text_time` conditioning vector of five time
+ids per sample (original size, crop position and an aesthetic score) instead of six, and the VAE
+and scheduler of the base model. `vae/` is used; the repository's second `vae_1_0/` is not.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained sdxl-refiner-1.0 checkpoints/sdxl-refiner-1.0
+```
+
+```python
+from PIL import Image
+from imagehub import pipeline
+with pipeline("t2i", backend="sdxl-refiner-1.0", model="checkpoints/sdxl-refiner-1.0", device="mps") as pipe:
+    result = pipe("a cat, oil painting", image=Image.open("cat.png"), strength=0.3, seed=0)
+    result.images[0].save("refined.png")
+```
+
+- **The image is required.** It is converted to RGB, rounded down to a multiple of 8 and resized
+  with Lanczos as diffusers' `VaeImageProcessor` does, encoded by the VAE by sampling the
+  posterior (this draws from the seeded generator before the noise does) and scaled by 0.13025.
+  The result has the size of the preprocessed input; `width`, `height` and `latents` are not
+  accepted.
+- **Strength.** `strength` (default 0.3) keeps the last `int(steps * strength)` of the `steps`
+  timesteps: the encoded image is noised to the sigma at the first kept step and denoised from
+  there. A `strength` so small that no step remains is rejected.
+- **Defaults.** 50 steps, guidance 5.0, `strength` 0.3, `aesthetic_score` 6.0 and
+  `negative_aesthetic_score` 2.5. Since `force_zeros_for_empty_prompt` is false, an empty negative
+  prompt is encoded, not zeroed. Other settings: `negative_prompt`, `num_images`, `seed`,
+  `original_size`, `crops_coords_top_left`, `target_size` and their `negative_*` counterparts.
+  Unrecognized settings raise an error.
+- **Not supported.** Running the refiner after the base model in latent space (`denoising_end` on
+  the base and `denoising_start` on the refiner, ensemble of expert denoisers) is out of scope: the
+  refiner takes an image. Also not supported: the other schedulers of the img2img pipeline, several
+  input images, IP-Adapter, a safety checker, the invisible watermark and fp16 parity.
+- **Seed compatibility.** On CPU, the same seed, image and settings give the same image as diffusers
+  0.40.0 `StableDiffusionXLImg2ImgPipeline` with `generator=torch.Generator("cpu").manual_seed(seed)`
+  ([validation](validation.md)). MPS and CUDA runs are smoke tests only.
+- **License.** CreativeML Open RAIL++-M; the license's use restrictions bind whoever downloads and
+  uses the weights. The repository is not gated. imagehub does not distribute weights.
+- **Memory.** In float32: U-Net about 9.4 GB, text encoder 2 about 2.8 GB, VAE 0.3 GB.
 
 
 # SDXL Turbo
@@ -289,8 +343,9 @@ guidance and take their default size from the U-Net config. Unrecognized setting
 ancestral noise at every scheduler step. MPS and CUDA runs are smoke tests only; there is no claim
 of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights use the `sai-nc-community` license and are limited to non-commercial use.
 The license's use restrictions bind whoever downloads and uses the weights. imagehub does not
@@ -329,8 +384,9 @@ of 8), `negative_prompt` (None), `num_images` (1), `seed`, `latents`, `original_
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
 
@@ -1044,8 +1100,9 @@ with pipeline("t2i", backend="playground-v2.5", model="checkpoints/playground-v2
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights use the `playground-v2dot5-community` license, which restricts commercial
 use under its terms; see the license. imagehub does not distribute weights.

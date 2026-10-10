@@ -268,6 +268,28 @@ For `playground-v2.5`, the same header-only tensor check covered the four compon
 missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
 
+## SDXL refiner
+
+Pending the real-checkpoint run. `sdxl-refiner-1.0` (`stabilityai/stable-diffusion-xl-refiner-1.0`,
+revision `5d4cfe8`) is compared against diffusers 0.40.0 `StableDiffusionXLImg2ImgPipeline` on CPU in
+float32. The target is an exact match (difference 0, identical uint8 images). No measured numbers are
+recorded here yet.
+
+What the tests cover:
+
+- Random weights, no checkpoint: the refiner U-Net (five time ids) with a tiny configuration and with
+  the published configuration at small spatial sizes; the Euler image-to-image trajectory (begin index,
+  `add_noise`, scaling and steps) for several step counts and strengths; a tiny end to end against the
+  reference pipeline (defaults, odd and non-square sizes, negative prompt, guidance off, full strength,
+  two images per prompt, RGBA input, micro-conditioning and aesthetic scores); input preprocessing
+  against `VaeImageProcessor`; the VAE posterior sample and the generator state it leaves.
+- Real checkpoint (`tests/reference/test_ref_sdxl_refiner.py`): tensor headers, tokenizer, text
+  encoder 2, U-Net single step, VAE decode, encode and sample, preprocessing, scheduler with begin
+  index, end to end at the defaults (50 steps, strength 0.3, guidance 5.0, seed 0) with a synthetic
+  1024x1024 input image, and the seed test through the public API.
+
+Existing SDXL tests are unchanged and still exact.
+
 ## Z-Image
 
 Validated on CPU on October 5, 2026, in the same environment as above. `z-image-turbo` and `z-image`

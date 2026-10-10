@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**22 architecture families, 51 published checkpoints.** A model is a separately published set of weights;
+**22 architecture families, 52 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -21,6 +21,7 @@ tested with the original weights. In this release every model is `full`.
 | `sd-turbo` | `stable-diffusion` | [stabilityai/sd-turbo](https://huggingface.co/stabilityai/sd-turbo) | `b261bac` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` (SD Turbo) |
 | `lcm-dreamshaper-v7` | `stable-diffusion` | [SimianLuo/LCM_Dreamshaper_v7](https://huggingface.co/SimianLuo/LCM_Dreamshaper_v7) | `a85df6a` | author | full | MIT | `lcm` |
 | `sdxl-base-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) | `4621659` | author | full | CreativeML Open RAIL++-M | `sdxl` |
+| `sdxl-refiner-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-refiner-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0) | `5d4cfe8` | author | full | CreativeML Open RAIL++-M | `sdxl` |
 | `sdxl-lightning-2step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
 | `sdxl-lightning-4step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
 | `sdxl-lightning-8step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
