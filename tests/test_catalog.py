@@ -30,6 +30,8 @@ def test_catalog_contents():
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
+            "llamagen-t2i-xl-256",
+            "llamagen-t2i-xl-512",
             "longcat-image",
             "lumina-image-2.0",
             "pixart-alpha-xl-1024",
@@ -919,6 +921,56 @@ def test_amused_catalog_entries(model_id, revision, size):
         "vqvae/config.json",
         "vqvae/diffusion_pytorch_model.safetensors",
     )
+
+
+@pytest.mark.parametrize(
+    ("model_id", "gpt_file", "size"),
+    [
+        ("llamagen-t2i-xl-256", "t2i_XL_stage1_256.pt", 256),
+        ("llamagen-t2i-xl-512", "t2i_XL_stage2_512.pt", 512),
+    ],
+)
+def test_llamagen_catalog_entries(model_id, gpt_file, size):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "llamagen"
+    assert spec.source == "https://huggingface.co/peizesun/llamagen_t2i"
+    assert spec.repo_id == "peizesun/llamagen_t2i"
+    assert spec.revision == "276f5c5a3d915b922899a03f1912605531574747"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "llamagen"
+    assert spec.format == "pytorch"
+    assert spec.license == "MIT"
+    assert not spec.gated
+    assert spec.config == {
+        "gpt_checkpoint": gpt_file,
+        "defaults": {
+            "cfg_scale": 7.5,
+            "temperature": 1.0,
+            "top_k": 1000,
+            "top_p": 1.0,
+            "cfg_interval": -1,
+            "width": size,
+            "height": size,
+        },
+    }
+    assert spec.files == ("vq_ds16_t2i.pt", gpt_file)
+    assert spec.subfolders == {
+        "text_encoder": SubRepo(
+            repo_id="google/flan-t5-xl",
+            revision="7d6315df2c2fb742f0f5b556879d730926ca9001",
+            files=(
+                "config.json",
+                "model.safetensors.index.json",
+                "model-00001-of-00002.safetensors",
+                "model-00002-of-00002.safetensors",
+                "spiece.model",
+                "tokenizer.json",
+                "tokenizer_config.json",
+                "special_tokens_map.json",
+            ),
+        )
+    }
 
 
 def test_wuerstchen_catalog_entry():

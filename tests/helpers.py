@@ -2001,3 +2001,93 @@ def write_tiny_auraflow(
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(dict(model.state_dict()), root / name / weights)
     return root
+
+
+TINY_LLAMAGEN_GPT = {
+    "dim": 64,
+    "n_layer": 2,
+    "n_head": 4,
+    "multiple_of": 16,
+    "caption_dim": 32,
+    "vocab_size": 64,
+    "cls_token_num": 120,
+}
+TINY_LLAMAGEN_VQ = {"codebook_size": 64, "codebook_embed_dim": 4, "z_channels": 32}
+TINY_LLAMAGEN_T5 = {
+    "architectures": ["T5ForConditionalGeneration"],
+    "model_type": "t5",
+    "vocab_size": 164,
+    "d_model": 32,
+    "d_kv": 8,
+    "d_ff": 64,
+    "num_layers": 2,
+    "num_heads": 4,
+    "relative_attention_num_buckets": 8,
+    "relative_attention_max_distance": 16,
+    "dropout_rate": 0.0,
+    "layer_norm_epsilon": 1e-6,
+    "feed_forward_proj": "gated-gelu",
+    "is_encoder_decoder": True,
+    "tie_word_embeddings": False,
+}
+
+
+def write_tiny_llamagen(
+    directory: str | os.PathLike[str], *, seed: int = 0, image_size: int = 64
+) -> Path:
+    """A random-weight LlamaGen snapshot in the published layout (GPT and VQ pickles, T5 folder).
+
+    A ``config.json`` at the root holds the tiny architecture; the published snapshots have none.
+    ``image_size`` is a multiple of 16 and is part of the GPT file name, as for the real files.
+    """
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.llamagen import LlamaGenGPT, gpt_xl_config
+    from imagehub.models.llamagen_vq import LlamaGenVQ
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    (root / "text_encoder").mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    gpt_config = gpt_xl_config((image_size // 16) ** 2) | TINY_LLAMAGEN_GPT
+    (root / "config.json").write_text(
+        json.dumps({"gpt": TINY_LLAMAGEN_GPT, "vq": TINY_LLAMAGEN_VQ})
+    )
+    for model in (LlamaGenGPT(gpt_config), LlamaGenVQ(TINY_LLAMAGEN_VQ)):
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.1)
+        if isinstance(model, LlamaGenGPT):
+            model.cls_embedding.uncond_embedding.normal_(0, 0.5)
+            # Peaked token distributions, so that sampling options visibly change the draws.
+            model.output.weight.data.normal_(0, 0.6)
+            name = f"t2i_XL_stage1_{image_size}.pt"
+        else:
+            name = "vq_ds16_t2i.pt"
+        torch.save({"model": dict(model.state_dict())}, root / name)
+
+    text_dir = root / "text_encoder"
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", text_dir / "tokenizer.json")
+    tokenizer_config = {
+        "tokenizer_class": "T5TokenizerFast",
+        "model_max_length": 512,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (text_dir / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (text_dir / "special_tokens_map.json").write_text(
+        json.dumps({key: tokenizer_config[key] for key in ("pad_token", "eos_token", "unk_token")})
+    )
+    text = T5EncoderModel(TINY_LLAMAGEN_T5)
+    for parameter in text.parameters():
+        parameter.data.normal_(0, 0.3)
+    state = dict(text.state_dict())
+    # A sequence-to-sequence checkpoint also holds the decoder and the output head.
+    state["encoder.embed_tokens.weight"] = state["shared.weight"].clone()
+    state["lm_head.weight"] = torch.randn(164, 32)
+    state["decoder.embed_tokens.weight"] = state["shared.weight"].clone()
+    (text_dir / "config.json").write_text(json.dumps(TINY_LLAMAGEN_T5))
+    save_safetensors(state, text_dir / "model.safetensors")
+    return root
