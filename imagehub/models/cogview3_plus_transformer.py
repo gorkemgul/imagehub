@@ -347,9 +347,17 @@ class CogView3PlusTransformer2DModel(NativeModel):
         height = height // self.patch_size
         width = width // self.patch_size
         hidden_states = hidden_states.reshape(
-            hidden_states.shape[0], height, width, self.out_channels, self.patch_size, self.patch_size
+            hidden_states.shape[0],
+            height,
+            width,
+            self.out_channels,
+            self.patch_size,
+            self.patch_size,
         )
         hidden_states = hidden_states.permute(0, 3, 1, 4, 2, 5)
         return hidden_states.reshape(
-            hidden_states.shape[0], self.out_channels, height * self.patch_size, width * self.patch_size
+            hidden_states.shape[0],
+            self.out_channels,
+            height * self.patch_size,
+            width * self.patch_size,
         )

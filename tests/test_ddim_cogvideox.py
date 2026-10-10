@@ -7,7 +7,9 @@ import torch
 from imagehub.schedulers.ddim_cogvideox import CogVideoXDDIMScheduler
 
 FIXTURES = Path(__file__).parent / "fixtures"
-CONFIG = json.loads((FIXTURES / "cogview3_plus_configs/scheduler_scheduler_config.json").read_text())
+CONFIG = json.loads(
+    (FIXTURES / "cogview3_plus_configs/scheduler_scheduler_config.json").read_text()
+)
 
 
 def test_release_config_tables():
