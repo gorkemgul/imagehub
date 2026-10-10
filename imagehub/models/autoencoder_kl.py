@@ -197,12 +197,17 @@ class AutoencoderKL(NativeModel):
             renamed[name] = value
         return renamed
 
-    def encode(self, image: Tensor) -> Tensor:
-        """Return the posterior mean (unscaled latents) for images in [-1, 1]."""
+    def encode_moments(self, image: Tensor) -> tuple[Tensor, Tensor]:
+        """Return the posterior mean and the unclamped log-variance for images in [-1, 1]."""
         moments = self.encoder(image)
         if self.config["use_quant_conv"]:
             moments = self.quant_conv(moments)
-        return moments.chunk(2, dim=1)[0]
+        mean, logvar = moments.chunk(2, dim=1)
+        return mean, logvar
+
+    def encode(self, image: Tensor) -> Tensor:
+        """Return the posterior mean (unscaled latents) for images in [-1, 1]."""
+        return self.encode_moments(image)[0]
 
     def decode(self, latents: Tensor) -> Tensor:
         """Decode unscaled latents to images in roughly [-1, 1]."""
