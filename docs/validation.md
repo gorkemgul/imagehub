@@ -1099,6 +1099,44 @@ is additionally covered by fixed-prompt and seeded fuzz tests on a synthetic fol
 The float32 transformer needs about 27 GB, so the reference and native transformers were loaded one
 after the other and each was freed before the next.
 
+## LlamaGen
+
+`llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` are loaded strictly from `peizesun/llamagen_t2i` at
+revision `276f5c5` (GPT, VQ-16) and `google/flan-t5-xl` at revision `7d6315d` (text encoder). They are
+compared on CPU in float32 with the official LlamaGen code (commit `ce98ec4`: `GPT_XL`, `generate`,
+`VQ_16`) and transformers 5.18.0 for the Flan-T5 encoder and tokenizer, driven as
+`autoregressive/sample/sample_t2i.py` drives them without its CUDA-only settings. The random
+generator is seeded right before sampling. The real-checkpoint tests
+(`tests/reference/test_ref_llamagen.py`) assert the exact equalities below for both models. All 63
+tests passed for the two models in a single run of about 19 minutes on an M2 Max (CPU), with
+exactly 0 difference in every comparison. The tiny-snapshot and random-weight comparisons need no
+downloaded weights and pass with exactly 0 difference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance |
+| --- | --- |
+| Tensor header check: GPT (258 tensors), VQ-16 (344) and Flan-T5 encoder (219 used, 339 skipped) (names and shapes), both models | 0 missing, extra or mismatched |
+| Tokenizer ids and attention masks (prompts, `""`, punctuation and case, a truncated prompt; 120 tokens) | exact |
+| Caption embeddings after the driver's left padding and masking | 0 |
+| GPT prefill logits (conditional and unconditional batch, left-padded caption mask) | 0 |
+| VQ-16 decode of fixed token ids | 0 |
+| End to end at the defaults (`cfg_scale` 7.5, `top_k` 1000, seed 0; 256×256 and 512×512): token ids and uint8 image | identical (max pixel difference 0) |
+| Seeded pipeline run with other sampling settings (`cfg_scale` 4.0, `top_k` 500, `top_p` 0.95, temperature 0.9, seed 1234): uint8 image | identical (max pixel difference 0) |
+
+Random-weight comparisons, which pass with exactly 0 difference: the GPT with a tiny configuration
+and with the published GPT-XL configuration (prefill and cached decoding) and the rotation table of
+both sizes; the VQ decoder with a tiny and with the published configuration; and the sampling
+functions (temperature, top-k and top-p filtering and the draws) with random logits and seeds.
+Tiny-snapshot end-to-end runs compare the token ids and the image bytes with the defaults,
+`cfg_scale` 1.0 (no guidance), top-k, top-p and temperature settings, a guidance interval and
+several seeds. Images are converted to uint8 as `torchvision.utils.save_image(normalize=True,
+value_range=(-1, 1))` does, which a test checks against torchvision.
+
+The prompt is lower-cased and stripped before tokenization; the reference's default caption
+cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the script's
+`use_text_preprocessing=False` behavior.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -1120,7 +1158,8 @@ after the other and each was freed before the next.
   for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
-  the cosine-schedule masked-token scheduler for aMUSEd.
+  the cosine-schedule masked-token scheduler for aMUSEd. LlamaGen samples image tokens
+  autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
@@ -1136,7 +1175,7 @@ after the other and each was freed before the next.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
