@@ -1071,6 +1071,45 @@ equality on these devices.
 Model License; see the license. imagehub does not distribute weights.
 
 
+# Playground v2
+
+Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `playground-v2` · Task: `t2i`
+
+**Architecture.** An SDXL-family model with the same two frozen text encoders, U-Net layout and
+`text_time` micro-conditioning as SDXL. Unlike Playground v2.5, it keeps the standard SDXL
+autoencoder (scaling factor 0.13025) and the Euler ancestral scheduler with the scaled-linear
+noise schedule and `leading` timestep spacing. Its native image size is 1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained playground-v2 checkpoints/playground-v2
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="playground-v2", model="checkpoints/playground-v2", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 3.0 (the value recommended on the model
+card) and `width`/`height` default to 1024. Other supported settings match SDXL. Unrecognized
+settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). The Euler
+ancestral scheduler draws its per-step noise from the same seeded generator. MPS and CUDA runs are
+smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
+refiner model, img2img, other schedulers and fp16 parity are not in this release.
+
+**License.** The weights use the `playground-v2-community` license, which restricts commercial use
+under its terms; see the license. imagehub does not distribute weights.
+
+
 # Playground v2.5
 
 Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

@@ -851,6 +851,27 @@
     ],
     "steps": 20
   },
+  "e2e_playground-v2": {
+    "guidance": 3.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 1234,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 30,
+    "tolerance": {
+      "latents": 0.0,
+      "pixels": 0
+    }
+  },
   "e2e_playground-v2.5": {
     "guidance": 3.0,
     "latents": {
@@ -2364,6 +2385,32 @@
     "mismatch": [],
     "missing": [],
     "tensors": 603
+  },
+  "header_playground-v2": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1680
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
   },
   "header_playground-v2.5": {
     "text_encoder": {
@@ -4438,6 +4485,35 @@
     ],
     "tolerance": 0.0
   },
+  "sdxl_scheduler_playground-v2": {
+    "measurements": {
+      "30": {
+        "sigmas": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "timesteps": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        }
+      },
+      "50": {
+        "sigmas": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "timesteps": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        }
+      }
+    },
+    "steps": [
+      50,
+      30
+    ],
+    "tolerance": 0.0
+  },
   "sdxl_scheduler_playground-v2.5": {
     "measurements": {
       "30": {
@@ -4578,6 +4654,19 @@
     },
     "tolerance": 0.0
   },
+  "sdxl_text_encoder_2_playground-v2": {
+    "hidden_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "text_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0
+  },
   "sdxl_text_encoder_2_playground-v2.5": {
     "hidden_states": {
       "max_abs": 0.0,
@@ -4630,6 +4719,11 @@
     },
     "tolerance": 0.0
   },
+  "sdxl_text_encoder_playground-v2": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_text_encoder_playground-v2.5": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -4646,6 +4740,12 @@
     "tolerance": 0.0
   },
   "sdxl_tokenizers": {
+    "mismatches": [],
+    "prompts": 18,
+    "tokenizers": 2,
+    "tolerance": "exact"
+  },
+  "sdxl_tokenizers_playground-v2": {
     "mismatches": [],
     "prompts": 18,
     "tokenizers": 2,
@@ -4676,6 +4776,16 @@
     "tolerance": "exact"
   },
   "sdxl_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      999,
+      500,
+      1
+    ],
+    "tolerance": 0.0
+  },
+  "sdxl_unet_playground-v2": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "timesteps": [
@@ -4730,6 +4840,11 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sdxl_vae_decode_playground-v2": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_vae_decode_playground-v2.5": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -4751,6 +4866,11 @@
     "tolerance": 0.0
   },
   "sdxl_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_encode_playground-v2": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -4993,6 +5113,18 @@
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 42
+  },
+  "seed_e2e_playground-v2": {
+    "guidance": 3.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+    "seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 30
   },
   "seed_e2e_playground-v2.5": {
     "guidance": 3.0,

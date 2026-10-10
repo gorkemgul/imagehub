@@ -2809,148 +2809,6 @@
       }
     },
     {
-      "model_id": "hunyuan-dit-v1.2",
-      "repo_id": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
-      "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
-      "provenance": "author",
-      "catalog_id": "hunyuan-dit",
-      "license": "Tencent Hunyuan Community License",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "2efa723f3c6d0d3417cdaae521007ab606d20c5f8436183eaf37f10169f9e0a5",
-        "scheduler/scheduler_config.json": "8fec1b96351b2199255f683080e59cee41372334e369465d4c1fca6a242f71cc",
-        "text_encoder/config.json": "968833abc78add3eeb3d2a06db3d6c7a8f1ec8b5ae1100305a6e0d5cee8aa8b2",
-        "text_encoder/model.safetensors": "c6c6348af2cb4d5852fe51102ce39605903dbe7925c005cf8995506cc21ea914",
-        "text_encoder_2/config.json": "e5e73dc1b19e8a61543714a7f61e7873e1b69a774b2a9fe238b1421cc88a5e11",
-        "text_encoder_2/model.safetensors.index.json": "7d1c96db95f747494d7c9000a04e24a65ad2ae8f80d40def94d26c8aa278052a",
-        "text_encoder_2/model-00001-of-00002.safetensors": "2c0c539ab8e8fba3877cc94bc483e427f74c525f817a809b028ebc8d96d75a94",
-        "text_encoder_2/model-00002-of-00002.safetensors": "3b49976cb1fe40da28a600d783f4686024c97eb01f224c54305cce55ddcd8a5e",
-        "tokenizer/special_tokens_map.json": "5d5b662e421ea9fac075174bb0688ee0d9431699900b90662acd44b2a350503a",
-        "tokenizer/tokenizer_config.json": "83a1be3898d73c1f884980d96e0fb94b2728b8165be1804b8d2da077279fb1ff",
-        "tokenizer/vocab.txt": "e4d5b58fd3e4756d6973acd3019f5de1f68114d4e6c1c11b5f61f4cec82a12aa",
-        "tokenizer_2/special_tokens_map.json": "80f4c6c5cf3867d7669ff8aa8f6aebb8a7499322e62d7faae06262d6014edd61",
-        "tokenizer_2/spiece.model": "ef78f86560d809067d12bac6c09f19a462cb3af3f54d2b8acbba26e1433125d6",
-        "tokenizer_2/tokenizer_config.json": "1a58e10cd96de03535d55f2706031b7c7c8a6c5d0ee452cc58408d5890ad51f1",
-        "transformer/config.json": "ddfc9fee88d59bf4f69f6e1e6d8324f0ef24494b46edc5bd9401037d876dcbe2",
-        "transformer/diffusion_pytorch_model.safetensors": "8af691cadb78047d55721259355d708e87ddbba1b7845df9377d9a5ae917b45d",
-        "vae/config.json": "d59730ff7b5f2f4f5abd2f9572727d60ac1f8d3288e77554b10b998c606f9b12",
-        "vae/diffusion_pytorch_model.safetensors": "98a14dc6fe8d71c83576f135a87c61a16561c9c080abba418d2cc976ee034f88"
-      },
-      "tensor_header_check": {
-        "missing": [],
-        "extra": [],
-        "mismatch": [],
-        "tensors": {
-          "text_encoder": 391,
-          "text_encoder_2": 219,
-          "transformer": 1544,
-          "vae": 248
-        }
-      },
-      "end_to_end": {
-        "guidance": 5.0,
-        "latents": {
-          "max_abs": 0.0,
-          "max_rel": 0.0
-        },
-        "noise_seed": 7,
-        "passed": true,
-        "pixels_max_abs": 0,
-        "prompt": "a photograph of an astronaut riding a horse",
-        "scheduler_seed": 42,
-        "size": [
-          1024,
-          1024
-        ],
-        "steps": 10
-      },
-      "seed_end_to_end": {
-        "max_pixel_diff": 0,
-        "passed": true,
-        "seed": 42,
-        "steps": 10
-      }
-    },
-    {
-      "model_id": "hunyuan-dit-v1.2-distilled",
-      "repo_id": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
-      "revision": "ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
-      "provenance": "author",
-      "catalog_id": "hunyuan-dit",
-      "license": "Tencent Hunyuan Community License",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "2efa723f3c6d0d3417cdaae521007ab606d20c5f8436183eaf37f10169f9e0a5",
-        "scheduler/scheduler_config.json": "8fec1b96351b2199255f683080e59cee41372334e369465d4c1fca6a242f71cc",
-        "text_encoder/config.json": "968833abc78add3eeb3d2a06db3d6c7a8f1ec8b5ae1100305a6e0d5cee8aa8b2",
-        "text_encoder/model.safetensors": "c6c6348af2cb4d5852fe51102ce39605903dbe7925c005cf8995506cc21ea914",
-        "text_encoder_2/config.json": "e5e73dc1b19e8a61543714a7f61e7873e1b69a774b2a9fe238b1421cc88a5e11",
-        "text_encoder_2/model.safetensors.index.json": "7d1c96db95f747494d7c9000a04e24a65ad2ae8f80d40def94d26c8aa278052a",
-        "text_encoder_2/model-00001-of-00002.safetensors": "2c0c539ab8e8fba3877cc94bc483e427f74c525f817a809b028ebc8d96d75a94",
-        "text_encoder_2/model-00002-of-00002.safetensors": "3b49976cb1fe40da28a600d783f4686024c97eb01f224c54305cce55ddcd8a5e",
-        "tokenizer/special_tokens_map.json": "5d5b662e421ea9fac075174bb0688ee0d9431699900b90662acd44b2a350503a",
-        "tokenizer/tokenizer_config.json": "83a1be3898d73c1f884980d96e0fb94b2728b8165be1804b8d2da077279fb1ff",
-        "tokenizer/vocab.txt": "e4d5b58fd3e4756d6973acd3019f5de1f68114d4e6c1c11b5f61f4cec82a12aa",
-        "tokenizer_2/special_tokens_map.json": "80f4c6c5cf3867d7669ff8aa8f6aebb8a7499322e62d7faae06262d6014edd61",
-        "tokenizer_2/spiece.model": "ef78f86560d809067d12bac6c09f19a462cb3af3f54d2b8acbba26e1433125d6",
-        "tokenizer_2/tokenizer_config.json": "1a58e10cd96de03535d55f2706031b7c7c8a6c5d0ee452cc58408d5890ad51f1",
-        "transformer/config.json": "ddfc9fee88d59bf4f69f6e1e6d8324f0ef24494b46edc5bd9401037d876dcbe2",
-        "transformer/diffusion_pytorch_model.safetensors": "af0239f15b91e424160581963873466b0eb673993b952a16e5a54ae18d521a1c",
-        "vae/config.json": "d59730ff7b5f2f4f5abd2f9572727d60ac1f8d3288e77554b10b998c606f9b12",
-        "vae/diffusion_pytorch_model.safetensors": "98a14dc6fe8d71c83576f135a87c61a16561c9c080abba418d2cc976ee034f88"
-      },
-      "tensor_header_check": {
-        "missing": [],
-        "extra": [],
-        "mismatch": [],
-        "tensors": {
-          "text_encoder": 391,
-          "text_encoder_2": 219,
-          "transformer": 1544,
-          "vae": 248
-        }
-      },
-      "end_to_end": {
-        "guidance": 5.0,
-        "latents": {
-          "max_abs": 0.0,
-          "max_rel": 0.0
-        },
-        "noise_seed": 7,
-        "passed": true,
-        "pixels_max_abs": 0,
-        "prompt": "a photograph of an astronaut riding a horse",
-        "scheduler_seed": 42,
-        "size": [
-          1024,
-          1024
-        ],
-        "steps": 10
-      },
-      "seed_end_to_end": {
-        "max_pixel_diff": 0,
-        "passed": true,
-        "seed": 42,
-        "steps": 10
-      }
-    },
-    {
       "model_id": "pixart-sigma-xl-1024",
       "repo_id": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
       "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
@@ -3985,6 +3843,87 @@
       }
     },
     {
+      "model_id": "playground-v2",
+      "repo_id": "playgroundai/playground-v2-1024px-aesthetic",
+      "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+      "provenance": "author",
+      "catalog_id": "playground-v2",
+      "license": "playground-v2-community",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "a49b74b866b324104d36d5f7eedcdb528427826a764a849e1e5e2c622e7be7ae",
+        "scheduler/scheduler_config.json": "b149fef4111690fba4388e7912748526ea5fd73188da0161490c797bb601a04c",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "7eb36a76a02551ce8583dbee08d062e672997a5fe1db82ebc642d88c7e79cc96",
+        "tokenizer/special_tokens_map.json": "6a757fc443f84ad1def3b893aac3858178f2a1513e3cf97b35ff131b5d88edd5",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "10bddfdedc5621be3f4563750b70e0a29f464b8a2b2cc8f51e70e118934522cb",
+        "text_encoder_2/config.json": "63ad1cce6af27eb467a5453b091ab6f6a00ccb524cac6e8ff6602a4901b198b3",
+        "unet/config.json": "740736c5e06f3b13db1a393f973bec58c4579f1dbd7e6789f9f89010065970e5",
+        "vae/config.json": "f8629f6833ba5f365a15d36d1ab5c13a96e1ff502799004d75ff4756477319dd",
+        "text_encoder/model.safetensors": "778d02eb9e707c3fbaae0b67b79ea0d1399b52e624fb634f2f19375ae7c047c3",
+        "text_encoder_2/model.safetensors": "fa5b2e6f4c2efc2d82e4b8312faec1a5540eabfc6415126c9a05c8436a530ef4",
+        "unet/diffusion_pytorch_model.safetensors": "28d1e15c3764365fcb2d32bca5c3158617a06dcaf3d84fb9af4d0aa1f5d1c1f8",
+        "vae/diffusion_pytorch_model.safetensors": "e8aef7b00195ec3fa8caaa3434e7516eff7d658e1d30eafc9ad6b0e66e9e827e"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 3.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 1234,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 30,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "seed_end_to_end": {
+        "guidance": 3.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
+        "seed": 42,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 30
+      }
+    },
+    {
       "model_id": "playground-v2.5",
       "repo_id": "playgroundai/playground-v2.5-1024px-aesthetic",
       "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
@@ -4961,6 +4900,35 @@
       ],
       "tolerance": 0.0
     },
+    "sdxl_scheduler_playground-v2": {
+      "measurements": {
+        "30": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "50": {
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        }
+      },
+      "steps": [
+        50,
+        30
+      ],
+      "tolerance": 0.0
+    },
     "sdxl_scheduler_playground-v2.5": {
       "measurements": {
         "30": {
@@ -5101,6 +5069,19 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_2_playground-v2": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_2_playground-v2.5": {
       "hidden_states": {
         "max_abs": 0.0,
@@ -5153,6 +5134,11 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_playground-v2": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_playground-v2.5": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -5169,6 +5155,12 @@
       "tolerance": 0.0
     },
     "sdxl_tokenizers": {
+      "mismatches": [],
+      "prompts": 18,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_playground-v2": {
       "mismatches": [],
       "prompts": 18,
       "tokenizers": 2,
@@ -5199,6 +5191,16 @@
       "tolerance": "exact"
     },
     "sdxl_unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        999,
+        500,
+        1
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_unet_playground-v2": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "timesteps": [
@@ -5253,6 +5255,11 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sdxl_vae_decode_playground-v2": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_vae_decode_playground-v2.5": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -5274,6 +5281,11 @@
       "tolerance": 0.0
     },
     "sdxl_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_playground-v2": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -6329,35 +6341,7 @@
       "steps": 25,
       "tolerance": "exact"
     },
-    "hunyuan_dit_scheduler_hunyuan-dit-v1.2": {
-      "exact": true,
-      "steps": 25,
-      "tolerance": "exact"
-    },
-    "hunyuan_dit_scheduler_hunyuan-dit-v1.2-distilled": {
-      "exact": true,
-      "steps": 25,
-      "tolerance": "exact"
-    },
     "hunyuan_dit_transformer": {
-      "batch": 2,
-      "height": 1024,
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "timestep": 500,
-      "tolerance": 0.0,
-      "width": 1024
-    },
-    "hunyuan_dit_transformer_hunyuan-dit-v1.2": {
-      "batch": 2,
-      "height": 1024,
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "timestep": 500,
-      "tolerance": 0.0,
-      "width": 1024
-    },
-    "hunyuan_dit_transformer_hunyuan-dit-v1.2-distilled": {
       "batch": 2,
       "height": 1024,
       "max_abs": 0.0,
@@ -7774,6 +7758,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "10 passed (hunyuan-dit-v1.2, hunyuan-dit-v1.2-distilled)"
+    "reference_summary": "8 passed (playground-v2)"
   }
 }

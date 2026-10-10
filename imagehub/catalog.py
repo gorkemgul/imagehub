@@ -1526,6 +1526,42 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="playground-v2",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/playgroundai/playground-v2-1024px-aesthetic",
+        repo_id="playgroundai/playground-v2-1024px-aesthetic",
+        revision="737a24ebe3ae4e5421110879168be188853d86c8",
+        provenance="author",
+        catalog_id="playground-v2",
+        format="diffusers",
+        license="playground-v2-community",
+        config={"defaults": {"guidance": 3.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/special_tokens_map.json",
+            "text_encoder/config.json",
+            "text_encoder_2/config.json",
+            "unet/config.json",
+            "vae/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="playground-v2.5",
         task=Task.T2I,
         family="stable-diffusion-xl",
