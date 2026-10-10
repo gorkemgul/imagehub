@@ -36,6 +36,7 @@ def test_catalog_contents():
             "lumina-image-2.0",
             "pixart-alpha-xl-1024",
             "pixart-sigma-xl-1024",
+            "playground-v2",
             "playground-v2.5",
             "qwen-image-2.1",
             "sana-1600m-1024",
@@ -310,6 +311,21 @@ def test_catalog_contents():
     assert ssd1b.format == "diffusers"
     assert ssd1b.license == "Apache-2.0"
     assert len(set(ssd1b.files)) == len(ssd1b.files) == 18
+
+    playground_v2 = model_info("playground-v2")
+    assert playground_v2.task is Task.T2I
+    assert playground_v2.family == "stable-diffusion-xl"
+    assert playground_v2.repo_id == "playgroundai/playground-v2-1024px-aesthetic"
+    assert playground_v2.revision == "737a24ebe3ae4e5421110879168be188853d86c8"
+    assert playground_v2.provenance == "author"
+    assert playground_v2.catalog_id == "playground-v2"
+    assert playground_v2.format == "diffusers"
+    assert playground_v2.license == "playground-v2-community"
+    assert playground_v2.config == {"defaults": {"guidance": 3.0}}
+    assert len(set(playground_v2.files)) == len(playground_v2.files) == 18
+    assert not any(
+        "fp16" in n or n.endswith((".onnx", ".ckpt", ".bin")) for n in playground_v2.files
+    )
 
     playground = model_info("playground-v2.5")
     assert playground.task is Task.T2I

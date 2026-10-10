@@ -129,9 +129,9 @@ The header-only tensor check covered `text_encoder`, `unet` and `vae`: tensor co
 
 ## SDXL
 
-Validated on CPU on October 5, 2026, in the same environment as above. Seven checkpoints, `full`:
+Validated on CPU on October 5, 2026, in the same environment as above. Eight checkpoints, `full`:
 `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`,
-`sdxl-turbo`, `ssd-1b` and `playground-v2.5`. The published tensors were loaded strictly. A
+`sdxl-turbo`, `ssd-1b`, `playground-v2` and `playground-v2.5`. The published tensors were loaded strictly. A
 generation at each model's native size was compared against diffusers from the same initial noise.
 
 ### Comparisons (CPU, float32)
@@ -172,6 +172,14 @@ generation at each model's native size was compared against diffusers from the s
 | Euler timesteps / sigmas (50 and 30 steps) | ssd-1b | 0 / 0 | 0 |
 | End to end: final latent / pixels | ssd-1b | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (pixels) | ssd-1b | 0 | 0 |
+| Tokenizer token ids (2 tokenizers, 18 prompts) | playground-v2 | identical | identical |
+| CLIP ViT-L/14 text encoder (penultimate layer) | playground-v2 | 0 | 0 |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | playground-v2 | 0 / 0 | 0 / 0 |
+| U-Net single step (t = 999, 500, 1) | playground-v2 | 0 | 0 |
+| VAE decode / encode | playground-v2 | 0 | 0 |
+| Euler ancestral timesteps / sigmas (50 and 30 steps) | playground-v2 | 0 / 0 | 0 |
+| End to end: final latent / pixels | playground-v2 | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | playground-v2 | 0 | 0 |
 | Tokenizer token ids (2 tokenizers, 18 prompts) | playground-v2.5 | identical | identical |
 | CLIP ViT-L/14 text encoder (penultimate layer) | playground-v2.5 | 0 | 0 |
 | OpenCLIP bigG text encoder (penultimate layer and pooled output) | playground-v2.5 | 0 / 0 | 0 / 0 |
@@ -190,8 +198,9 @@ riding a horse", 1024×1024, guidance 5.0, initial noise `seed=1234` (the seed 4
 settings). 30 steps are used instead of the default 50 to keep CPU runtime reasonable. SDXL Turbo's
 native size is 512×512. Its default run uses 1 step and guidance 0.0; the guided run uses 4 steps
 and guidance 2.0. Its Euler ancestral scheduler draws the per-step ancestral noise from the same
-seeded CPU generator as the initial noise. `playground-v2.5` uses 1024×1024, 30 steps and guidance
-3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable.
+seeded CPU generator as the initial noise. `playground-v2` and `playground-v2.5` use 1024×1024, 30 steps and guidance
+3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable. The `playground-v2`
+real-checkpoint run took 21 minutes on an M2 Max (CPU).
 
 The SDXL-Lightning reference is built exactly as described by the model card: a float32 U-Net from
 the SDXL base configuration loaded with the published U-Net file, placed in the base pipeline, and
@@ -261,6 +270,11 @@ shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 For `ssd-1b`, the same header-only tensor check covered the four components (`text_encoder`,
 `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 944 / 248, and missing, extra and
 shape-mismatched tensors are **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
+For `playground-v2`, the same header-only tensor check covered the four components
+(`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
+missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
 
 For `playground-v2.5`, the same header-only tensor check covered the four components
@@ -1197,7 +1211,7 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
-  8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
+  8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
