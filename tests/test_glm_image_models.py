@@ -49,7 +49,9 @@ def test_autoregressive_model_matches_published_tensors_without_the_image_input_
     published = _config("vision_language_encoder_tensors.json")
     prepared = model.prepare_state_dict({name: torch.empty(0) for name in published})
     assert sorted(prepared) == sorted(model.state_dict())
-    _check(model, "vision_language_encoder_tensors.json", dropped=("model.visual.", "model.vqmodel."))
+    _check(
+        model, "vision_language_encoder_tensors.json", dropped=("model.visual.", "model.vqmodel.")
+    )
 
 
 def test_autoregressive_model_loads_on_meta_then_moves(tmp_path):

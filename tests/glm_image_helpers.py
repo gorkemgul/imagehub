@@ -63,6 +63,8 @@ TRANSFORMER_CONFIG = {
 VAE_CONFIG = {
     "act_fn": "silu",
     "block_out_channels": [8, 8, 8, 8],
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
     "in_channels": 3,
     "latent_channels": 4,
     "latents_mean": [0.1, -0.2, 0.3, 0.0],
@@ -77,6 +79,21 @@ VAE_CONFIG = {
     "scaling_factor": 0.18215,
     "shift_factor": None,
 }
+PRE_TOKENIZER = {
+    "type": "Sequence",
+    "pretokenizers": [
+        {
+            "type": "Split",
+            "pattern": {
+                "Regex": "(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?\\p{L}+|\\p{N}{1,3}"
+                "| ?[^\\s\\p{L}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+"
+            },
+            "behavior": "Isolated",
+            "invert": False,
+        },
+        {"type": "ByteLevel", "add_prefix_space": False, "trim_offsets": True, "use_regex": False},
+    ],
+}
 PROCESSOR_TOKENS = {"[gMASK]": 256, "<sop>": 257, "<eop>": 258, "<end>": 259, "<begin>": 260}
 
 
@@ -90,13 +107,32 @@ def _component(root: Path, name: str, state: dict, config: dict, weights: str) -
     save_safetensors(state, root / name / weights)
 
 
-def write_tiny_glm_image(root: Path) -> Path:
+def write_tiny_glm_image(root: Path, states: dict[str, dict] | None = None) -> Path:
+    """Write the snapshot; ``states`` may hold ``ar``, ``text_encoder``, ``transformer``, ``vae``."""
     torch.manual_seed(0)
+    states = states or {}
     chars = list(bytes_to_unicode().values())
     tokenizer = {
         "model": {"type": "BPE", "vocab": {c: i for i, c in enumerate(chars)}, "merges": []},
+        "normalizer": None,
+        "pre_tokenizer": PRE_TOKENIZER,
+        "post_processor": None,
+        "decoder": {
+            "type": "ByteLevel",
+            "add_prefix_space": True,
+            "trim_offsets": True,
+            "use_regex": True,
+        },
         "added_tokens": [
-            {"id": index, "content": content, "normalized": False}
+            {
+                "id": index,
+                "content": content,
+                "single_word": False,
+                "lstrip": False,
+                "rstrip": False,
+                "normalized": False,
+                "special": True,
+            }
             for content, index in PROCESSOR_TOKENS.items()
         ],
     }
@@ -128,22 +164,30 @@ def write_tiny_glm_image(root: Path) -> Path:
     _component(
         root,
         "vision_language_encoder",
-        GlmImageARModel(AR_CONFIG).state_dict(),
+        states.get("ar") or GlmImageARModel(AR_CONFIG).state_dict(),
         AR_CONFIG,
         "model.safetensors",
     )
     _write_json(root / "vision_language_encoder" / "generation_config.json", GENERATION)
     _component(
-        root, "text_encoder", T5EncoderModel(T5_CONFIG).state_dict(), T5_CONFIG, "model.safetensors"
+        root,
+        "text_encoder",
+        states.get("text_encoder") or T5EncoderModel(T5_CONFIG).state_dict(),
+        T5_CONFIG,
+        "model.safetensors",
     )
     _component(
         root,
         "transformer",
-        GlmImageTransformer2DModel(TRANSFORMER_CONFIG).state_dict(),
+        states.get("transformer") or GlmImageTransformer2DModel(TRANSFORMER_CONFIG).state_dict(),
         TRANSFORMER_CONFIG,
         "diffusion_pytorch_model.safetensors",
     )
     _component(
-        root, "vae", AutoencoderKL(VAE_CONFIG).state_dict(), VAE_CONFIG, "diffusion_pytorch_model.safetensors"
+        root,
+        "vae",
+        states.get("vae") or AutoencoderKL(VAE_CONFIG).state_dict(),
+        VAE_CONFIG,
+        "diffusion_pytorch_model.safetensors",
     )
     return root

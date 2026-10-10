@@ -18,7 +18,11 @@ def tiny(tmp_path_factory):
 def test_defaults_come_from_the_catalog():
     backend = GlmImageBackend(Path("missing"), model_id="glm-image")
     options = backend.validate_options(T2IRequest("a cat"), {})
-    assert (options["steps"], options["guidance"], options["max_sequence_length"]) == (50, 1.5, 2048)
+    assert (options["steps"], options["guidance"], options["max_sequence_length"]) == (
+        50,
+        1.5,
+        2048,
+    )
 
 
 @pytest.mark.parametrize(

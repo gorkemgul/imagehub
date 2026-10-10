@@ -51,7 +51,9 @@ def _run(config, height, width, text_length, batch_size, drop):
     patches = (height // 2) * (width // 2)
     hidden_states = torch.randn(batch_size, config["in_channels"], height, width)
     encoder_hidden_states = torch.randn(batch_size, text_length, config["text_embed_dim"])
-    prior_token_id = torch.randint(0, config["prior_vq_quantizer_codebook_size"], (batch_size, patches))
+    prior_token_id = torch.randint(
+        0, config["prior_vq_quantizer_codebook_size"], (batch_size, patches)
+    )
     prior_token_drop = torch.full_like(prior_token_id, drop, dtype=torch.bool)
     timestep = torch.tensor([1.0, 753.25, 999.0][:batch_size])
     target_size = torch.tensor([[768.0, 1280.0], [1024.0, 1536.0], [512.0, 512.0]][:batch_size])
