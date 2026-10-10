@@ -737,6 +737,38 @@ the save-then-compare sequence: the reference pipeline ran first, saved its outp
 before the native pipeline ran. The real-checkpoint component and end-to-end runs took about 31 and
 53 minutes, respectively.
 
+## CogView3-Plus
+
+`cogview3-plus-3b` (`zai-org/CogView3-Plus-3B`, revision `5d70e40`) is validated on CPU in float32
+against diffusers 0.40.0 (`CogView3PlusPipeline`) and transformers 5.18.0. The published transformer
+and VAE are bfloat16 and are upcast to float32 by both implementations; the T5-XXL text encoder is
+published in float32. The real-checkpoint run is **pending**: no measured numbers are recorded here
+yet.
+
+Tests that need no weights (all exact, tolerance 0):
+
+- Scheduler: `CogVideoXDDIMScheduler` timesteps, `alphas_cumprod` and `final_alpha_cumprod` for six
+  step counts and seven configuration variants (leading, linspace and trailing spacing, linear,
+  scaled-linear and cosine betas, zero-terminal-SNR rescaling), and 25- and 50-step trajectories for
+  all three prediction types.
+- Tokenizer: the published SentencePiece model (kept as a fixture) against transformers on fixed
+  prompts with the pipeline's `max_length` padding and truncation, 3000 seeded fuzz strings and every
+  Unicode code point.
+- Random-weight parity of the transformer: a tiny configuration, a wider one and the published
+  configuration with two layers.
+- Tiny-snapshot end to end against `CogView3PlusPipeline`: seed and `latents` sources, the zero
+  negative embedding and an explicit negative prompt, guidance on and off, square and non-square
+  sizes, and the SDXL-style `original_size` and `crops_coords_top_left` conditions.
+- Header checks of the text encoder (219 tensors), transformer (436) and VAE (288) against the
+  published safetensors headers, kept as fixtures.
+
+The real-checkpoint file `tests/reference/test_ref_cogview3_plus.py` (skipped without the snapshot
+`IMAGEHUB_SNAPSHOT_COGVIEW3_PLUS_3B`) covers the tensor headers, tokens and the T5 text encoder, the
+transformer at two timesteps (1024×1024, batch 2, 224 text tokens), VAE decode and encode, the
+scheduler at 8 and 50 steps, and end-to-end and seed runs at 1024×1024 with guidance 5.0, seed 0 and
+8 steps instead of the 50-step default to shorten the CPU run. The reference result is computed,
+saved and freed before the native model is loaded.
+
 ## Ideogram 4
 
 `ideogram4-fp8` was loaded strictly from `ideogram-ai/ideogram-4-fp8` at revision `ee79a72` and
@@ -1107,7 +1139,7 @@ after the other and each was freed before the next.
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
-  Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
+  Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
   the cosine-schedule masked-token scheduler for aMUSEd.
 - No image quality benchmark (FID, CLIP score) was run.
