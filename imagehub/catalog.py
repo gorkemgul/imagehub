@@ -1660,6 +1660,48 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="glm-image",
+        task=Task.T2I,
+        family="glm-image",
+        source="https://huggingface.co/zai-org/GLM-Image",
+        repo_id="zai-org/GLM-Image",
+        revision="2c433cc0cbc293bde2ac8ca9624f279b5d23fcf4",
+        provenance="author",
+        catalog_id="glm-image",
+        format="diffusers",
+        license="MIT",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 1.5}},
+        files=(
+            "model_index.json",
+            "processor/tokenizer.json",
+            "processor/tokenizer_config.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+            "vision_language_encoder/config.json",
+            "vision_language_encoder/generation_config.json",
+            "vision_language_encoder/model-00001-of-00004.safetensors",
+            "vision_language_encoder/model-00002-of-00004.safetensors",
+            "vision_language_encoder/model-00003-of-00004.safetensors",
+            "vision_language_encoder/model-00004-of-00004.safetensors",
+            "vision_language_encoder/model.safetensors.index.json",
+        ),
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

@@ -117,6 +117,7 @@ for _task, _name, _path in (
     (Task.T2I, "kandinsky22", "imagehub.backends.kandinsky22:Kandinsky22Backend"),
     (Task.T2I, "stable_cascade", "imagehub.backends.stable_cascade:StableCascadeBackend"),
     (Task.T2I, "wuerstchen", "imagehub.backends.wuerstchen:WuerstchenBackend"),
+    (Task.T2I, "glm-image", "imagehub.backends.glm_image:GlmImageBackend"),
 ):
     backend_registry.register(_task, _name, _path)
 
