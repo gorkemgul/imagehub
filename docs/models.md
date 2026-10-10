@@ -1254,6 +1254,77 @@ caller-supplied latents or embeddings are not supported.
 checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
 distribute weights.
 
+# Lumina-Next
+
+Catalog: [`lumina-next`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `lumina-next` · Task: `t2i`
+
+This is the 2B Next-DiT from the Lumina-T2X family (`Lumina-Next-SFT`), published for diffusers as
+`LuminaPipeline`. It is a different architecture from Lumina-Image 2.0 (`lumina-image-2.0`).
+
+**Architecture.** A Gemma 2B text model (the first-generation Gemma: 18 layers, width 2048, eight
+query heads and one key-value head of size 256) encodes the prompt, and its second-to-last hidden
+state conditions a 2B Next-DiT transformer. The transformer has 24 blocks of width 2304 (32 attention
+heads, 8 key-value heads). Each block runs self-attention over the image tokens and cross-attention
+to the text; the cross-attention output is multiplied by a per-head `tanh` gate before both are
+summed and projected. Queries and keys are normalized with a LayerNorm over all heads, and both
+attentions use two-dimensional rotary position embeddings. A pooled caption feature is added to the
+timestep embedding, which modulates every block through adaptive RMS norms. The transformer works on
+2×2 patches of the four-channel latents of the SDXL autoencoder (scaling factor 0.13025) and predicts
+a variance in four extra channels that is discarded. The scheduler is flow-match Euler without
+shifting. The model treats t=0 as noise, so the timestep is reversed and the prediction is negated
+before each step. The prompt is lower-cased and stripped, then padded to a multiple of eight tokens
+(at most 256, including the start and end tokens). The negative prompt is used as written and padded
+to the prompt's length.
+
+Two options let the model generate at sizes other than the training size of 1024×1024. With
+proportional attention, the self-attention logits are rescaled by the square root of the base-4096
+logarithm of the token count. With time-aware scaled RoPE the rotary positions are stretched
+linearly by the factor `sqrt(width * height / 1024²)` while the reversed timestep is below
+`scaling_watershed`, and the rotary base is multiplied by that factor afterwards. At the training
+size the factor is 1 and both options change nothing. Guidance is applied to the first three latent
+channels only, as the reference pipeline does.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained lumina-next checkpoints/lumina-next
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="lumina-next", model="checkpoints/lumina-next", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The model defaults to 30 steps, guidance 4.0 and 1024×1024, with an empty negative
+prompt. The supported options are `seed`, `steps`, `guidance`, `width`, `height`,
+`negative_prompt`, `scaling_watershed` (default 1.0) and `proportional_attn` (default true).
+`width` and `height` must be multiples of 16 and at most 6144. Guidance is applied as
+`uncond + guidance * (cond - uncond)`; guidance 1.0 or lower skips the unconditional pass
+entirely. The default `scaling_watershed` of 1.0 stretches the rotary positions at every step;
+a lower value switches to the base-scaling form for the later steps. Unrecognized settings raise
+an error.
+
+**Memory.** In float32 the transformer needs about 7.0 GB, the Gemma 2B text model about 10 GB and
+the autoencoder about 0.3 GB. The autoencoder is the SDXL one, which overflows in float16; use
+float32 or bfloat16.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)); the pending
+real-checkpoint run will record the measurements. MPS and CUDA runs are smoke tests only; there is no
+claim of exact equality on these devices.
+
+**Out of scope.** `clean_caption` (the reference needs `beautifulsoup4` and `ftfy`, and falls back
+to lower-casing when they are missing, which is what this backend does), `max_sequence_length` (the
+reference pipeline ignores it and always uses 256), LoRA, fp16/bf16 parity, batches of several
+prompts or images per call, and caller-supplied latents or embeddings.
+
+**License.** The repository declares the Apache-2.0 license. The text encoder is a Gemma
+checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
+distribute weights.
+
 # aMUSEd
 
 Catalog: [`amused`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

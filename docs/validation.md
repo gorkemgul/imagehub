@@ -995,6 +995,43 @@ holds the model's first tensor at its file offsets and copies the other shards i
 and the CPU kernels sum in a layout-dependent order. The transformer now loads its shards the same
 way (`keep_first_shard_mapped`).
 
+## Lumina-Next
+
+`lumina-next` is loaded strictly from `Alpha-VLLM/Lumina-Next-SFT-diffusers` at revision `0ee5ec9` and
+is compared with diffusers 0.40.0 `LuminaPipeline` on CPU in float32 (the weights are stored in
+bfloat16 for the text encoder and the transformer, and in float32 for the autoencoder; the reference
+upcasts the bfloat16 tensors exactly as we do). The measured values are pending the real-checkpoint
+run (`tests/reference/test_ref_lumina_next.py`); the tests assert exact equality.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured difference |
+| --- | --- |
+| Tensor header check: text encoder, transformer, autoencoder (names and shapes) | pending the real-checkpoint run |
+| Gemma tokenizer ids and masks (prompt padding to a multiple of eight, negative prompt padding to the prompt length, fixed prompts and a seeded fuzz test) | pending the real-checkpoint run |
+| `LuminaPipeline.encode_prompt` embeddings and masks (prompt and negative) | pending the real-checkpoint run |
+| Transformer single step (batch 2, 64×64 latents, two timesteps, real conditioning; three rotary scalings, proportional attention on and off) | pending the real-checkpoint run |
+| Autoencoder decode (64×64 latents scaled by the pipeline's factor) | pending the real-checkpoint run |
+| End to end: final latent / pixels (1024×1024, 30 steps, guidance 4.0, seed 0) | pending the real-checkpoint run |
+| End to end with the time-aware watershed inside the schedule (1280×768, 8 steps, `scaling_watershed` 0.3): latent / pixels | pending the real-checkpoint run |
+| End to end, seed 1234, 1360×768 request, 12 steps (pixels) | pending the real-checkpoint run |
+
+The reference text encoder is loaded exactly as `LuminaPipeline.from_pretrained(...,
+torch_dtype=torch.float32)` loads it, and its second-to-last hidden state is the conditioning. The
+end-to-end reference run decodes its own latents with the pipeline's autoencoder and image
+processor. The reference runs with `clean_caption=False`, which is what the pipeline falls back to
+when `beautifulsoup4` and `ftfy` are not installed. The seed test and the watershed test use fewer
+steps than the default to keep the run short.
+
+Without weights, the following run and pass with exactly 0 difference: random-weight parity
+of the Gemma text model (tiny and with the published attention geometry, left and right padding, no
+padding, every entry of the hidden-state tuple), of the transformer (tiny and the published
+configuration with shortened depth, proportional attention on and off, three rotary scalings, with
+and without query/key normalization) and of the rotary tables; tiny-snapshot end-to-end parity
+(default settings, guidance 1.0, negative prompts including one longer than the prompt,
+non-square sizes, five `scaling_watershed` values, proportional attention off, several seeds, one
+step); the scheduler timesteps and sigmas; and the tokenizer on a tiny vocabulary.
+
 ## aMUSEd
 
 `amused-256` and `amused-512` are loaded strictly from `amused/amused-256` at revision `09b6259` and
@@ -1106,7 +1143,7 @@ after the other and each was freed before the next.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base, SSD-1B and Kolors,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
+  for FLUX.1 schnell, Lumina-Image 2.0, Lumina-Next and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
   the cosine-schedule masked-token scheduler for aMUSEd.

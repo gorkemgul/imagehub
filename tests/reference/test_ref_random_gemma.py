@@ -87,7 +87,7 @@ def test_gemma_random_weights_exact(config: dict[str, Any], length: int, side: s
         expected = reference(input_ids, attention_mask=attention_mask).last_hidden_state
         actual = model(input_ids, attention_mask)
     assert torch.equal(actual, expected)
-    record(f"gemma_{side}_{length}_{config['hidden_size']}", max_abs_diff=0.0, tolerance="exact")
+    record(f"gemma1_{side}_{length}_{config['hidden_size']}", max_abs_diff=0.0, tolerance="exact")
 
 
 @pytest.mark.parametrize("config", [TINY, PUBLISHED_GEOMETRY], ids=["tiny", "published-geometry"])
@@ -110,5 +110,5 @@ def test_gemma_hidden_state_index_exact(config: dict[str, Any], index: int, reco
         actual = model(input_ids, attention_mask, hidden_state_index=index)
     assert torch.equal(actual, expected)
     record(
-        f"gemma_hidden_state_{index}_{config['hidden_size']}", max_abs_diff=0.0, tolerance="exact"
+        f"gemma1_hidden_state_{index}_{config['hidden_size']}", max_abs_diff=0.0, tolerance="exact"
     )
