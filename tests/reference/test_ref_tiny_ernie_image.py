@@ -51,7 +51,9 @@ def test_tiny_ernie_image_matches_diffusers_exactly(
     noise = torch.randn(
         (1, 16, height // 4, width // 4), generator=torch.Generator("cpu").manual_seed(seed)
     )
-    components = ErnieImageComponents.load(tiny_root, device=torch.device("cpu"), dtype=torch.float32)
+    components = ErnieImageComponents.load(
+        tiny_root, device=torch.device("cpu"), dtype=torch.float32
+    )
     actual_latents = denoise(
         components,
         prompt=prompt,

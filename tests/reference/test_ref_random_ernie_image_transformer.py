@@ -28,13 +28,22 @@ TINY = {
 SAME_WIDTH = TINY | {"text_in_dim": 32}
 PUBLISHED = json.loads(
     (
-        Path(__file__).parents[1] / "fixtures" / "ernie_image_configs" / "transformer" / "config.json"
+        Path(__file__).parents[1]
+        / "fixtures"
+        / "ernie_image_configs"
+        / "transformer"
+        / "config.json"
     ).read_text()
 )
-PUBLISHED_SMALL = {
-    key: value for key, value in PUBLISHED.items() if not key.startswith("_")
-} | {"num_layers": 2, "hidden_size": 256, "ffn_hidden_size": 384, "num_attention_heads": 2,
-     "text_in_dim": 96, "in_channels": 16, "out_channels": 16}
+PUBLISHED_SMALL = {key: value for key, value in PUBLISHED.items() if not key.startswith("_")} | {
+    "num_layers": 2,
+    "hidden_size": 256,
+    "ffn_hidden_size": 384,
+    "num_attention_heads": 2,
+    "text_in_dim": 96,
+    "in_channels": 16,
+    "out_channels": 16,
+}
 
 
 def _randomise(model):
@@ -60,7 +69,10 @@ def test_transformer_random_weights_exact(config, lens):
     timestep = torch.tensor([999.0, 250.5])
     with torch.inference_mode():
         expected = reference(
-            hidden_states=hidden, timestep=timestep, text_bth=text, text_lens=text_lens,
+            hidden_states=hidden,
+            timestep=timestep,
+            text_bth=text,
+            text_lens=text_lens,
             return_dict=False,
         )[0]
         actual = model(hidden, timestep, text, text_lens)
@@ -79,7 +91,10 @@ def test_transformer_random_weights_published_shape_exact():
     timestep = torch.tensor([1000.0, 3.0])
     with torch.inference_mode():
         expected = reference(
-            hidden_states=hidden, timestep=timestep, text_bth=text, text_lens=text_lens,
+            hidden_states=hidden,
+            timestep=timestep,
+            text_bth=text,
+            text_lens=text_lens,
             return_dict=False,
         )[0]
         actual = model(hidden, timestep, text, text_lens)

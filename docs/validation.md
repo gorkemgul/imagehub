@@ -659,6 +659,35 @@ The roughly 13B transformer uses about 52 GB in float32, so the reference and na
 were never loaded together. Each comparison ran the reference first, saved its outputs, freed it,
 then ran the native model. The full real-checkpoint run on the Apple M2 Max took about 1 hour.
 
+## ERNIE-Image
+
+`ernie-image` is loaded strictly from `baidu/ERNIE-Image` at revision `5346b31`. The weights are
+published in bfloat16 and are upcast to float32. Results are pending the real-checkpoint run.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (transformer, VAE, Ministral 3 language model) | pending the real-checkpoint run | exact |
+| Tokenizer against transformers (fixed prompts, 500 random strings, truncation) | pending the real-checkpoint run | exact |
+| Ministral 3 text encoder (second-to-last hidden state) | pending the real-checkpoint run | 0 |
+| Transformer single step (two latents, ragged text lengths) | pending the real-checkpoint run | 0 |
+| VAE decode with latent de-normalisation | pending the real-checkpoint run | exact pixels |
+| Flow-match Euler scheduler (static shift, 1, 4 and 50 steps) | pending the real-checkpoint run | exact |
+| End to end: final latent / pixels (1024×1024, 4 steps, guidance 4.0) | pending the real-checkpoint run | 0 / 0 |
+| End to end, seed 0 (pixels) | pending the real-checkpoint run | 0 |
+
+Without weights, the same code is compared against diffusers and transformers with random weights:
+the transformer and the Ministral 3 language model (tiny and published-style configs, including
+YaRN positions beyond the original window), and the whole pipeline on a tiny snapshot (guidance on
+and off, non-square sizes, two seeds, several images per prompt). All of these are exact.
+
+The reference runs with `use_pe=False` and without the `pe` components (the prompt enhancer is out
+of scope). The end-to-end runs use 4 steps instead of the default 50 because the 8B transformer is
+slow on CPU. The transformer alone needs about 32 GB in float32 and the text encoder about 14 GB,
+so every comparison runs the reference first, saves its outputs, frees it, then runs the native
+model.
+
 ## LongCat-Image
 
 Validated on CPU in the same environment as above. `longcat-image` was loaded strictly from

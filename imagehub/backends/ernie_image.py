@@ -109,7 +109,9 @@ def pad_text(
 ) -> tuple[Tensor, Tensor]:
     """Stack variable-length text states into a zero-padded batch and their lengths."""
     lengths = torch.tensor([h.shape[0] for h in hiddens], device=device, dtype=torch.long)
-    padded = torch.zeros((len(hiddens), int(lengths.max().item()), width), device=device, dtype=dtype)
+    padded = torch.zeros(
+        (len(hiddens), int(lengths.max().item()), width), device=device, dtype=dtype
+    )
     for index, hidden in enumerate(hiddens):
         padded[index, : hidden.shape[0], :] = hidden.to(device).to(dtype)
     return padded, lengths
@@ -154,9 +156,7 @@ def denoise(
 def decode_latents(vae: AutoencoderKLFlux2, latents: Tensor) -> Tensor:
     """Decode final latents to uint8 images of shape (batch, height, width, 3) on CPU."""
     assert vae.bn.running_mean is not None and vae.bn.running_var is not None
-    latents = denormalize_latents(
-        latents, vae.bn.running_mean, vae.bn.running_var, _BATCH_NORM_EPS
-    )
+    latents = denormalize_latents(latents, vae.bn.running_mean, vae.bn.running_var, _BATCH_NORM_EPS)
     return decode_vae_latents(vae, unpatchify_latents(latents))
 
 
@@ -203,7 +203,12 @@ class ErnieImageBackend(TextToImageBackend):
         if transformer_config.is_file():
             channels = int(read_json(transformer_config).get("in_channels", channels))
         scale = self._vae_scale()
-        return (options["num_images"], channels, options["height"] // scale, options["width"] // scale)
+        return (
+            options["num_images"],
+            channels,
+            options["height"] // scale,
+            options["width"] // scale,
+        )
 
     def validate_options(self, inputs: T2IRequest, options: dict[str, Any]) -> dict[str, Any]:
         merged = dict(inputs.parameters) | options

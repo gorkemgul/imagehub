@@ -1,7 +1,8 @@
-"""Ministral 3 decoder stack (the language model of Mistral3) used as the ERNIE-Image text encoder.
+"""Ministral 3 decoder stack: the language model of Mistral3, the ERNIE-Image text encoder.
 
-The published ``text_encoder`` snapshot is a full ``Mistral3Model`` (vision tower, projector and language
-model). Only the language model takes part in text encoding, so the vision tensors are dropped on loading.
+The published ``text_encoder`` snapshot is a full ``Mistral3Model`` (vision tower, projector and
+language model). Only the language model takes part in text encoding, so the vision tensors are
+dropped on loading.
 """
 
 from __future__ import annotations
@@ -65,7 +66,9 @@ def rope_inverse_frequencies(
 
     if attention_factor is None:
         if mscale and mscale_all_dim:
-            attention_factor = float(get_mscale(factor, mscale) / get_mscale(factor, mscale_all_dim))
+            attention_factor = float(
+                get_mscale(factor, mscale) / get_mscale(factor, mscale_all_dim)
+            )
         else:
             attention_factor = get_mscale(factor)
     beta_fast = parameters.get("beta_fast") or 32
@@ -80,7 +83,9 @@ def rope_inverse_frequencies(
     low, high = max(low, 0), min(high, head_dim - 1)
     if low == high:
         high += 0.001
-    ramp = torch.clamp((torch.arange(head_dim // 2, dtype=torch.float32) - low) / (high - low), 0, 1)
+    ramp = torch.clamp(
+        (torch.arange(head_dim // 2, dtype=torch.float32) - low) / (high - low), 0, 1
+    )
     pos_freqs = base ** (torch.arange(0, head_dim, 2).to(dtype=torch.float) / head_dim)
     extrapolation = 1.0 / pos_freqs
     interpolation = 1.0 / (factor * pos_freqs)
@@ -283,7 +288,9 @@ class Mistral3TextModel(NativeModel):
 
     def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
         """Drop the vision tower and projector tensors; the text path never uses them."""
-        return {name: value for name, value in state.items() if not name.startswith(_DROPPED_PREFIXES)}
+        return {
+            name: value for name, value in state.items() if not name.startswith(_DROPPED_PREFIXES)
+        }
 
     def init_non_persistent_buffers(self) -> None:
         rotary = self.language_model.model.rotary_emb

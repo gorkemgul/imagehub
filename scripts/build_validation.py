@@ -7,7 +7,8 @@ Ideogram 4
 measurements are
 grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
-``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
+``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
+``components_kandinsky22``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
 ``components_lumina2``, ``components_amused``, ``components_auraflow``,
 ``components_wuerstchen``,
@@ -166,6 +167,7 @@ def main() -> None:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
         measurement_id = {
             "krea2-turbo": "krea2_turbo",
+            "ernie-image": "ernie_image",
             "longcat-image": "longcat_image",
             "flux1-kontext-dev": "flux1_kontext_dev",
         }.get(spec.id, spec.id)
@@ -296,6 +298,9 @@ def main() -> None:
         },
         "components_krea2": {
             key: value for key, value in measured.items() if key.startswith("krea2_")
+        },
+        "components_ernie_image": {
+            key: value for key, value in measured.items() if key.startswith("ernie_image_")
         },
         "components_flux2": {
             key: value for key, value in measured.items() if key.startswith("flux2_")

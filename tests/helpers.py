@@ -2111,7 +2111,12 @@ def write_tiny_ernie_tokenizer(directory: str | os.PathLike[str]) -> Path:
             ],
             "special_tokens": {"<s>": {"id": "<s>", "ids": [1], "tokens": ["<s>"]}},
         },
-        "decoder": {"type": "ByteLevel", "add_prefix_space": True, "trim_offsets": True, "use_regex": True},
+        "decoder": {
+            "type": "ByteLevel",
+            "add_prefix_space": True,
+            "trim_offsets": True,
+            "use_regex": True,
+        },
         "model": {
             "type": "BPE",
             "dropout": None,
@@ -2201,5 +2206,7 @@ def write_tiny_ernie_image(directory: str | os.PathLike[str], *, seed: int = 0) 
             model.bn.running_var.uniform_(0.5, 1.5)
         (root / name).mkdir()
         (root / name / "config.json").write_text(json.dumps(config))
-        save_safetensors(dict(model.state_dict()), root / name / "diffusion_pytorch_model.safetensors")
+        save_safetensors(
+            dict(model.state_dict()), root / name / "diffusion_pytorch_model.safetensors"
+        )
     return root

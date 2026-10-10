@@ -186,9 +186,7 @@ class ErnieImageTransformer2DModel(NativeModel):
             raise ValueError("rope_axes_dim must have three entries summing to the head dimension")
         self.x_embedder = ErnieImagePatchEmbed(c["in_channels"], hidden, c["patch_size"])
         self.text_proj = (
-            nn.Linear(c["text_in_dim"], hidden, bias=False)
-            if c["text_in_dim"] != hidden
-            else None
+            nn.Linear(c["text_in_dim"], hidden, bias=False) if c["text_in_dim"] != hidden else None
         )
         self.time_embedding = _TimestepEmbedding(hidden, hidden)
         self.pos_embed = ErnieImageRotaryEmbedding(c["rope_theta"], c["rope_axes_dim"])

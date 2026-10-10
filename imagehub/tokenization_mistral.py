@@ -1,10 +1,11 @@
-"""Native byte-level BPE tokenizer of the Mistral/Ministral "Tekken" vocabulary (``tokenizer.json``).
+"""Native byte-level BPE tokenizer for the Mistral/Ministral ``tokenizer.json`` layout.
 
-The reference (``TokenizersBackend``) applies no normalizer, splits the text with an isolated regex
-split, maps the pieces to bytes-as-unicode and merges them; a piece that is already a vocabulary entry
-skips the merges (``ignore_merges``). Added tokens are matched in the raw text before any of this, and
-the post-processor prepends the beginning-of-sequence token. Python's ``re`` has no ``\\p{..}``
-classes, so they are expanded into explicit code point ranges from ``unicodedata``.
+The reference (``TokenizersBackend``) applies no normalizer, splits the text with an isolated
+regex split, maps the pieces to bytes-as-unicode and merges them; a piece that is already a
+vocabulary entry skips the merges (``ignore_merges``). Added tokens are matched in the raw text
+before any of this, and the post-processor prepends the beginning-of-sequence token. Python's
+``re`` has no ``\\p{..}`` classes, so they are expanded into explicit code point ranges from
+``unicodedata``.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ import os
 import re
 import sys
 import unicodedata
-from functools import lru_cache
+from functools import cache, lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -52,10 +53,15 @@ def _range(start: int, end: int) -> str:
     return f"\\U{start:08x}-\\U{end:08x}"
 
 
-@lru_cache(maxsize=None)
+@cache
 def _property_body(name: str) -> str:
     table = _codepoints_by_category()
-    members = [codepoint for category, points in table.items() if category.startswith(name) for codepoint in points]
+    members = [
+        codepoint
+        for category, points in table.items()
+        if category.startswith(name)
+        for codepoint in points
+    ]
     if not members:
         raise ValueError(f"Unknown Unicode property {name!r}")
     return _ranges(members)

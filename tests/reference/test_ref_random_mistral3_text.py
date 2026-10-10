@@ -117,6 +117,4 @@ def test_published_text_config_small_width_exact():
     with torch.inference_mode():
         expected = reference(input_ids=ids, output_hidden_states=True)
         _, hidden = model(ids, output_hidden_states=True)
-    assert all(
-        torch.equal(a, b) for a, b in zip(hidden, expected.hidden_states, strict=True)
-    )
+    assert all(torch.equal(a, b) for a, b in zip(hidden, expected.hidden_states, strict=True))
