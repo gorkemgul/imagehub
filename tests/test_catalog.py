@@ -56,6 +56,7 @@ def test_catalog_contents():
             "sdxl-lightning-2step",
             "sdxl-lightning-4step",
             "sdxl-lightning-8step",
+            "sdxl-refiner-1.0",
             "sdxl-turbo",
             "ssd-1b",
             "stable-cascade",
@@ -857,7 +858,7 @@ def test_spec_validation():
 def test_image_input_field():
     base = MODEL_CATALOG["sdxl-base-1.0"]
     with_image = {spec.id: spec.image_input for spec in MODEL_CATALOG.values() if spec.image_input}
-    assert with_image == {"flux1-kontext-dev": "optional"}
+    assert with_image == {"flux1-kontext-dev": "optional", "sdxl-refiner-1.0": "required"}
     for value in (None, "optional", "required"):
         assert ModelSpec(**{**base.__dict__, "id": "x", "image_input": value}).image_input == value
     with pytest.raises(ValueError, match="image_input"):

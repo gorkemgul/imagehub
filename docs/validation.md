@@ -282,6 +282,44 @@ For `playground-v2.5`, the same header-only tensor check covered the four compon
 missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
 
+## SDXL refiner
+
+Validated on CPU in the same environment as above. `sdxl-refiner-1.0` was loaded strictly from
+`stabilityai/stable-diffusion-xl-refiner-1.0` (revision `5d4cfe8`) and compared against diffusers
+0.40.0 `StableDiffusionXLImg2ImgPipeline` on CPU in float32. The observed difference in every
+comparison is **exactly 0**: on CPU in float32, the local implementation produces a bit-identical
+result to the reference. The real-checkpoint run took 10 minutes on an Apple M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: text_encoder_2, unet, vae (517 / 1220 / 248 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (8 prompts) | identical | exact |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | 0 / 0 | 0 / 0 |
+| Refiner U-Net single step (t = 999, 500, 1) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 |
+| VAE posterior sample | 0 | 0 |
+| Input preprocessing (640×963, 1000×700, 1024×1024) | 0 | 0 |
+| Euler image-to-image scheduler (30 steps strength 0.5, 50 steps strength 0.3) | exact | exact |
+| End to end: final latent / pixels (1024×1024, 50 steps, strength 0.3, guidance 5.0, seed 0) | 0 / 0 | 0 / 0 |
+| End to end, seed test (pixels) | 0 | 0 |
+
+What the tests cover:
+
+- Random weights, no checkpoint: the refiner U-Net (five time ids) with a tiny configuration and with
+  the published configuration at small spatial sizes; the Euler image-to-image trajectory (begin index,
+  `add_noise`, scaling and steps) for several step counts and strengths; a tiny end to end against the
+  reference pipeline (defaults, odd and non-square sizes, negative prompt, guidance off, full strength,
+  two images per prompt, RGBA input, micro-conditioning and aesthetic scores); input preprocessing
+  against `VaeImageProcessor`; the VAE posterior sample and the generator state it leaves.
+- Real checkpoint (`tests/reference/test_ref_sdxl_refiner.py`): tensor headers, tokenizer, text
+  encoder 2, U-Net single step, VAE decode, encode and sample, preprocessing, scheduler with begin
+  index, end to end at the defaults (50 steps, strength 0.3, guidance 5.0, seed 0) with a synthetic
+  1024x1024 input image, and the seed test through the public API.
+
+Existing SDXL tests are unchanged and still exact.
+
 ## Z-Image
 
 Validated on CPU on October 5, 2026, in the same environment as above. `z-image-turbo` and `z-image`
@@ -1171,8 +1209,8 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
 - Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
-  for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 11 passed
+  for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,

@@ -624,6 +624,83 @@
       }
     },
     {
+      "model_id": "sdxl-refiner-1.0",
+      "repo_id": "stabilityai/stable-diffusion-xl-refiner-1.0",
+      "revision": "5d4cfe854c9a9a87939ff3653551c2b3c99a4356",
+      "provenance": "author",
+      "catalog_id": "sdxl",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "fd8505d561ba844819c270a183d383fcdb2737858f5a4d0a9ffa29b4ffe99170",
+        "scheduler/scheduler_config.json": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2",
+        "text_encoder_2/config.json": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34",
+        "text_encoder_2/model.safetensors": "3a6032f63d37ae02bbc74ccd6a27440578cd71701f96532229d0154f55a8d3ff",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer_2/tokenizer_config.json": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "unet/config.json": "223a875f1fdc4156ef56c2db6ffd37c7871998da8416e1d4dd1f59649acb58ac",
+        "unet/diffusion_pytorch_model.safetensors": "54f9cd2f2daf3aeec0b2708fa3dbc0e84e4f8ddd1ddead42e5bc60c6572c989f",
+        "vae/config.json": "0b331c8ac22ded5f9997a144a575c1d113d6169aff262c353f39015bd24a6264",
+        "vae/diffusion_pytorch_model.safetensors": "1598f3d24932bcfe6634e8b618ea1e30ab1d57f5aad13a6d2de446d2199f2341"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder_2": 517,
+          "unet": 1220,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "input": "synthetic gradient with three filled shapes",
+        "input_size": [
+          1024,
+          1024
+        ],
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "noise_seed": 0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "runtime_note": "50 steps at strength 0.3 run 15 denoising steps.",
+        "steps": 50,
+        "strength": 0.3,
+        "tolerance": {
+          "latents": 0.0,
+          "pixels": 0
+        }
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "50 steps at strength 0.3 run 15 denoising steps.",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 50,
+        "strength": 0.3
+      }
+    },
+    {
       "model_id": "sdxl-lightning-2step",
       "repo_id": "ByteDance/SDXL-Lightning",
       "revision": "c9a24f48e1c025556787b0c58dd67a091ece2e44",
@@ -3766,87 +3843,6 @@
       }
     },
     {
-      "model_id": "playground-v2",
-      "repo_id": "playgroundai/playground-v2-1024px-aesthetic",
-      "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
-      "provenance": "author",
-      "catalog_id": "playground-v2",
-      "license": "playground-v2-community",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "a49b74b866b324104d36d5f7eedcdb528427826a764a849e1e5e2c622e7be7ae",
-        "scheduler/scheduler_config.json": "b149fef4111690fba4388e7912748526ea5fd73188da0161490c797bb601a04c",
-        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
-        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
-        "tokenizer/tokenizer_config.json": "7eb36a76a02551ce8583dbee08d062e672997a5fe1db82ebc642d88c7e79cc96",
-        "tokenizer/special_tokens_map.json": "6a757fc443f84ad1def3b893aac3858178f2a1513e3cf97b35ff131b5d88edd5",
-        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
-        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
-        "tokenizer_2/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
-        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
-        "text_encoder/config.json": "10bddfdedc5621be3f4563750b70e0a29f464b8a2b2cc8f51e70e118934522cb",
-        "text_encoder_2/config.json": "63ad1cce6af27eb467a5453b091ab6f6a00ccb524cac6e8ff6602a4901b198b3",
-        "unet/config.json": "740736c5e06f3b13db1a393f973bec58c4579f1dbd7e6789f9f89010065970e5",
-        "vae/config.json": "f8629f6833ba5f365a15d36d1ab5c13a96e1ff502799004d75ff4756477319dd",
-        "text_encoder/model.safetensors": "778d02eb9e707c3fbaae0b67b79ea0d1399b52e624fb634f2f19375ae7c047c3",
-        "text_encoder_2/model.safetensors": "fa5b2e6f4c2efc2d82e4b8312faec1a5540eabfc6415126c9a05c8436a530ef4",
-        "unet/diffusion_pytorch_model.safetensors": "28d1e15c3764365fcb2d32bca5c3158617a06dcaf3d84fb9af4d0aa1f5d1c1f8",
-        "vae/diffusion_pytorch_model.safetensors": "e8aef7b00195ec3fa8caaa3434e7516eff7d658e1d30eafc9ad6b0e66e9e827e"
-      },
-      "tensor_header_check": {
-        "missing": [],
-        "extra": [],
-        "mismatch": [],
-        "tensors": {
-          "text_encoder": 196,
-          "text_encoder_2": 517,
-          "unet": 1680,
-          "vae": 248
-        }
-      },
-      "end_to_end": {
-        "guidance": 3.0,
-        "latents": {
-          "max_abs": 0.0,
-          "max_rel": 0.0
-        },
-        "noise_seed": 1234,
-        "passed": true,
-        "pixels_max_abs": 0,
-        "prompt": "a photograph of an astronaut riding a horse",
-        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
-        "size": [
-          1024,
-          1024
-        ],
-        "steps": 30,
-        "tolerance": {
-          "latents": 0.0,
-          "pixels": 0
-        }
-      },
-      "seed_end_to_end": {
-        "guidance": 3.0,
-        "passed": true,
-        "pixels_max_abs": 0,
-        "runtime_note": "30 steps are used instead of 50 to keep CPU runtime reasonable.",
-        "seed": 42,
-        "size": [
-          1024,
-          1024
-        ],
-        "steps": 30
-      }
-    },
-    {
       "model_id": "playground-v2.5",
       "repo_id": "playgroundai/playground-v2.5-1024px-aesthetic",
       "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
@@ -4756,36 +4752,45 @@
       "timestep": 999,
       "tolerance": 0.0
     },
-    "sdxl_scheduler": {
-      "measurements": {
-        "30": {
-          "sigmas": {
-            "max_abs": 0.0,
-            "max_rel": 0.0
-          },
-          "timesteps": {
-            "max_abs": 0.0,
-            "max_rel": 0.0
-          }
-        },
-        "50": {
-          "sigmas": {
-            "max_abs": 0.0,
-            "max_rel": 0.0
-          },
-          "timesteps": {
-            "max_abs": 0.0,
-            "max_rel": 0.0
-          }
-        }
-      },
-      "steps": [
-        50,
-        30
+    "sdxl_refiner_preprocess_1000x700_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "shape": [
+        1,
+        3,
+        696,
+        1000
       ],
       "tolerance": 0.0
     },
-    "sdxl_scheduler_playground-v2": {
+    "sdxl_refiner_preprocess_1024x1024_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "shape": [
+        1,
+        3,
+        1024,
+        1024
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_refiner_preprocess_640x963_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "shape": [
+        1,
+        3,
+        960,
+        640
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_refiner_vae_sample_sdxl-refiner-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler": {
       "measurements": {
         "30": {
           "sigmas": {
@@ -4841,6 +4846,41 @@
         50,
         30
       ],
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_sdxl-refiner-1.0": {
+      "measurements": {
+        "30_0.5": {
+          "add_noise": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "start": 15,
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        },
+        "50_0.3": {
+          "add_noise": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "sigmas": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          },
+          "start": 35,
+          "timesteps": {
+            "max_abs": 0.0,
+            "max_rel": 0.0
+          }
+        }
+      },
       "tolerance": 0.0
     },
     "sdxl_scheduler_sdxl-turbo": {
@@ -4919,7 +4959,7 @@
       },
       "tolerance": 0.0
     },
-    "sdxl_text_encoder_2_playground-v2": {
+    "sdxl_text_encoder_2_playground-v2.5": {
       "hidden_states": {
         "max_abs": 0.0,
         "max_rel": 0.0
@@ -4932,7 +4972,7 @@
       },
       "tolerance": 0.0
     },
-    "sdxl_text_encoder_2_playground-v2.5": {
+    "sdxl_text_encoder_2_sdxl-refiner-1.0": {
       "hidden_states": {
         "max_abs": 0.0,
         "max_rel": 0.0
@@ -4971,11 +5011,6 @@
       },
       "tolerance": 0.0
     },
-    "sdxl_text_encoder_playground-v2": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
     "sdxl_text_encoder_playground-v2.5": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -4997,16 +5032,16 @@
       "tokenizers": 2,
       "tolerance": "exact"
     },
-    "sdxl_tokenizers_playground-v2": {
+    "sdxl_tokenizers_playground-v2.5": {
       "mismatches": [],
       "prompts": 18,
       "tokenizers": 2,
       "tolerance": "exact"
     },
-    "sdxl_tokenizers_playground-v2.5": {
+    "sdxl_tokenizers_sdxl-refiner-1.0": {
       "mismatches": [],
-      "prompts": 18,
-      "tokenizers": 2,
+      "prompts": 8,
+      "tokenizers": 1,
       "tolerance": "exact"
     },
     "sdxl_tokenizers_sdxl-turbo": {
@@ -5031,7 +5066,7 @@
       ],
       "tolerance": 0.0
     },
-    "sdxl_unet_playground-v2": {
+    "sdxl_unet_playground-v2.5": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "timesteps": [
@@ -5041,7 +5076,7 @@
       ],
       "tolerance": 0.0
     },
-    "sdxl_unet_playground-v2.5": {
+    "sdxl_unet_sdxl-refiner-1.0": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "timesteps": [
@@ -5076,12 +5111,12 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
-    "sdxl_vae_decode_playground-v2": {
+    "sdxl_vae_decode_playground-v2.5": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
     },
-    "sdxl_vae_decode_playground-v2.5": {
+    "sdxl_vae_decode_sdxl-refiner-1.0": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -5101,12 +5136,12 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
-    "sdxl_vae_encode_playground-v2": {
+    "sdxl_vae_encode_playground-v2.5": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
     },
-    "sdxl_vae_encode_playground-v2.5": {
+    "sdxl_vae_encode_sdxl-refiner-1.0": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -7569,6 +7604,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (playground-v2)"
+    "reference_summary": "11 passed (sdxl-refiner-1.0)"
   }
 }
