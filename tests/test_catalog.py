@@ -22,6 +22,8 @@ def test_catalog_contents():
             "flux2-klein-4b",
             "flux2-klein-9b",
             "hunyuan-dit-v1.1-distilled",
+            "hunyuan-dit-v1.2",
+            "hunyuan-dit-v1.2-distilled",
             "hyper-sdxl-1step",
             "ideogram4-fp8",
             "janus-pro-1b",
@@ -40,6 +42,7 @@ def test_catalog_contents():
             "pixart-sigma-xl-256",
             "pixart-sigma-xl-2k",
             "pixart-sigma-xl-512",
+            "playground-v2",
             "playground-v2.5",
             "qwen-image-2.1",
             "sana-1600m-1024",
@@ -315,6 +318,21 @@ def test_catalog_contents():
     assert ssd1b.license == "Apache-2.0"
     assert len(set(ssd1b.files)) == len(ssd1b.files) == 18
 
+    playground_v2 = model_info("playground-v2")
+    assert playground_v2.task is Task.T2I
+    assert playground_v2.family == "stable-diffusion-xl"
+    assert playground_v2.repo_id == "playgroundai/playground-v2-1024px-aesthetic"
+    assert playground_v2.revision == "737a24ebe3ae4e5421110879168be188853d86c8"
+    assert playground_v2.provenance == "author"
+    assert playground_v2.catalog_id == "playground-v2"
+    assert playground_v2.format == "diffusers"
+    assert playground_v2.license == "playground-v2-community"
+    assert playground_v2.config == {"defaults": {"guidance": 3.0}}
+    assert len(set(playground_v2.files)) == len(playground_v2.files) == 18
+    assert not any(
+        "fp16" in n or n.endswith((".onnx", ".ckpt", ".bin")) for n in playground_v2.files
+    )
+
     playground = model_info("playground-v2.5")
     assert playground.task is Task.T2I
     assert playground.family == "stable-diffusion-xl"
@@ -430,6 +448,37 @@ def test_hunyuan_dit_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+
+
+@pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "steps"),
+    [
+        (
+            "hunyuan-dit-v1.2",
+            "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+            "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+            50,
+        ),
+        (
+            "hunyuan-dit-v1.2-distilled",
+            "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+            "ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
+            25,
+        ),
+    ],
+)
+def test_hunyuan_dit_v12_catalog_entries(model_id, repo, revision, steps):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "hunyuan-dit"
+    assert (spec.repo_id, spec.revision) == (repo, revision)
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "hunyuan-dit"
+    assert spec.format == "diffusers"
+    assert spec.license == "Tencent Hunyuan Community License"
+    assert not spec.gated
+    assert spec.config == {"defaults": {"steps": steps, "guidance": 5.0}}
+    assert spec.files == model_info("hunyuan-dit-v1.1-distilled").files
 
 
 def test_pixart_catalog_entries():
