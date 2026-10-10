@@ -339,6 +339,14 @@ def test_glm_image_end_to_end(record, tmp_path, seed, size, steps):
         PROMPT, seed=seed, width=size, height=size, steps=steps
     )
     actual = result.images[0].tensor
-    differing = int((actual != expected).sum())
-    record(f"glm_image_e2e_seed{seed}_{size}", steps=steps, differing_values=differing)
+    passed = torch.equal(actual, expected)
+    key = "e2e" if seed == 0 else "seed_e2e"
+    record(
+        f"{key}_{MODEL_ID}",
+        passed=passed,
+        pixels_max_abs=int((actual.int() - expected.int()).abs().max()),
+        seed=seed,
+        size=size,
+        steps=steps,
+    )
     assert torch.equal(actual, expected)
