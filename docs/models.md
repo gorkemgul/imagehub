@@ -1354,3 +1354,75 @@ runs are smoke tests only; there is no claim of exact equality on these devices.
 prompt and fp16/bf16 parity are not supported.
 
 **License.** The repository declares the Apache-2.0 license. imagehub does not distribute weights.
+
+# LlamaGen
+
+Catalog: [`llamagen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` · Task: `t2i`
+
+**Architecture.** LlamaGen is an autoregressive image model: the image is a grid of discrete tokens
+and a decoder-only transformer predicts them one at a time, like a language model. A VQ-16
+tokenizer (a codebook of 16384 entries of dimension 8, 16× downsampling) maps between tokens and
+pixels, so the 256 model writes 16×16 = 256 tokens and the 512 model 32×32 = 1024 tokens. The
+transformer (GPT-XL: 36 layers, width 1280, 20 heads, RMSNorm, SwiGLU, two-dimensional rotary
+position embeddings over the token grid) is conditioned on the prompt by a prefix: the prompt is
+encoded by the Flan-T5-XL encoder into 120 vectors of width 2048, a small MLP projects them to the
+model width, and they are placed in front of the image tokens. Each new token is drawn from the
+softmax of the logits after temperature, top-k and top-p filtering. Classifier-free guidance runs a
+second pass in which the caption is replaced by a learned "no caption" embedding and combines the
+logits as `uncond + cfg_scale * (cond - uncond)`.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained llamagen-t2i-xl-256 checkpoints/llamagen-t2i-xl-256
+```
+
+```python
+from imagehub import pipeline
+with pipeline(
+    "t2i", backend="llamagen-t2i-xl-256", model="checkpoints/llamagen-t2i-xl-256", device="mps"
+) as pipe:
+    result = pipe("a blue Porsche 356 parked in front of a yellow brick wall", seed=42)
+    result.images[0].save("porsche.png")
+```
+
+The snapshot holds `vq_ds16_t2i.pt` and the GPT checkpoint (`t2i_XL_stage1_256.pt` or
+`t2i_XL_stage2_512.pt`) at its root, and the Flan-T5-XL files (config, tokenizer and the two
+safetensors shards) in `text_encoder/`. The two image sizes are separate checkpoints; the size is
+fixed by the checkpoint.
+
+**Settings.** The defaults are those of the official sampling script: `cfg_scale` 7.5, `temperature`
+1.0, `top_k` 1000, `top_p` 1.0 and `cfg_interval` -1. The supported options are `seed`,
+`cfg_scale`, `temperature`, `top_k`, `top_p`, `cfg_interval`, `width` and `height`. `width` and
+`height` can only repeat the size of the checkpoint (256 or 512). Guidance is used only when
+`cfg_scale` is above 1.0. With `cfg_interval` of `n` (0 or larger), guidance is dropped for every
+token after the first `n + 2` generated tokens; -1 keeps it for all. `top_k` of 0 and `top_p` of
+1.0 disable the respective filter. Unrecognized settings raise an error.
+
+The seed starts a CPU generator that supplies every random draw, in the same order as the
+reference after `torch.manual_seed(seed)` immediately before sampling, so the same seed gives the
+same tokens on every device up to numerical differences. Images have a batch size of one.
+
+**Prompt handling.** The prompt is lower-cased and stripped and encoded to 120 tokens (longer
+prompts are truncated), which is what the reference's text embedder does when its text
+preprocessing is switched off. The reference enables that preprocessing by default: it also
+removes URLs, HTML, some punctuation, file names and similar noise with the `ftfy` and
+BeautifulSoup packages. imagehub does not implement this caption cleaning, so a prompt that
+contains such text can give different tokens from the default reference script; plain prompts give
+identical tokens.
+
+**Memory.** In float32 the GPT needs about 3.1 GB, the Flan-T5-XL encoder about 4.9 GB (the
+decoder in the downloaded shards is never loaded) and the VQ decoder about 0.3 GB. The download
+holds the full Flan-T5-XL checkpoint, about 11 GB.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same token ids and the same
+image as the official `sample_t2i.py` driver run on CPU in float32 ([validation](validation.md)).
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The class-conditional (ImageNet) checkpoints, the caption cleaning described
+above, `torch.compile`, fp16/bf16 parity, several prompts or images per call, and caller-supplied
+tokens or caption embeddings are not supported.
+
+**License.** The repository declares the MIT license and the text encoder is Apache-2.0.
+imagehub does not distribute weights.

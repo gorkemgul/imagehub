@@ -76,6 +76,7 @@ result.images[0].save("edited.png")
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
+| LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
 | CogView4 | `cogview4-6b` | `t2i` | T | CPU fp32 parity |
