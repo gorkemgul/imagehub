@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-09",
+  "date": "2026-10-10",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -4219,6 +4219,216 @@
       }
     },
     {
+      "model_id": "llamagen-t2i-xl-256",
+      "repo_id": "peizesun/llamagen_t2i",
+      "revision": "276f5c5a3d915b922899a03f1912605531574747",
+      "provenance": "author",
+      "catalog_id": "llamagen",
+      "license": "MIT",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "vq_ds16_t2i.pt": {
+          "repo_id": "peizesun/llamagen_t2i",
+          "revision": "276f5c5a3d915b922899a03f1912605531574747",
+          "sha256": "0e21fc1318e2e9ee641a07bdad0e20675e9ec35e6e3eb911d58b5d7a2cd8d4cb"
+        },
+        "t2i_XL_stage1_256.pt": {
+          "repo_id": "peizesun/llamagen_t2i",
+          "revision": "276f5c5a3d915b922899a03f1912605531574747",
+          "sha256": "87d94b9b11cd80f44bd69122a4d4ed28304956e0fba07edcafce08c7a2716600"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "ed9df0075dda91de9e9431f193203a3f869189e4effa3fc00cf9d41864f514ba"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "4af536474e3441bab3996748fcf730cd47bb4bd66842efda0acdcfdcaa7c7429"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "99196ddfbe886e8ef860f52de979df64890edfc792c3d94ce0502991f347dd18"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "c0c677ddeb21009b6efd97146f37fc3a0396707fb5e63ade7aff64884dce9806"
+        },
+        "text_encoder/spiece.model": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "text_encoder/tokenizer.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "fe2ebbbbde2985be723e0ce18217853e4020c5e9d35bd07be2c27ab9d3ead57a"
+        },
+        "text_encoder/tokenizer_config.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "ef30e0628a2d067c5d9d02d98cbf9a2040f4a51883e5d16e1809eea548db0eff"
+        },
+        "text_encoder/special_tokens_map.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "gpt": 258,
+          "text_encoder": 219,
+          "vq": 344
+        }
+      },
+      "end_to_end": {
+        "cfg_scale": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "A blue Porsche 356 parked in front of a yellow brick wall.",
+        "seed": 0,
+        "size": [
+          256,
+          256
+        ],
+        "tokens_equal": true,
+        "top_k": 1000
+      },
+      "seed_end_to_end": {
+        "cfg_scale": 4.0,
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          256,
+          256
+        ],
+        "temperature": 0.9,
+        "top_k": 500,
+        "top_p": 0.95
+      }
+    },
+    {
+      "model_id": "llamagen-t2i-xl-512",
+      "repo_id": "peizesun/llamagen_t2i",
+      "revision": "276f5c5a3d915b922899a03f1912605531574747",
+      "provenance": "author",
+      "catalog_id": "llamagen",
+      "license": "MIT",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "vq_ds16_t2i.pt": {
+          "repo_id": "peizesun/llamagen_t2i",
+          "revision": "276f5c5a3d915b922899a03f1912605531574747",
+          "sha256": "0e21fc1318e2e9ee641a07bdad0e20675e9ec35e6e3eb911d58b5d7a2cd8d4cb"
+        },
+        "t2i_XL_stage2_512.pt": {
+          "repo_id": "peizesun/llamagen_t2i",
+          "revision": "276f5c5a3d915b922899a03f1912605531574747",
+          "sha256": "7d02d368751c21b61dc3914b0ccba70fc913dafc063dd5b16bc9abf7091f8be1"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "ed9df0075dda91de9e9431f193203a3f869189e4effa3fc00cf9d41864f514ba"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "4af536474e3441bab3996748fcf730cd47bb4bd66842efda0acdcfdcaa7c7429"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "99196ddfbe886e8ef860f52de979df64890edfc792c3d94ce0502991f347dd18"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "c0c677ddeb21009b6efd97146f37fc3a0396707fb5e63ade7aff64884dce9806"
+        },
+        "text_encoder/spiece.model": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "text_encoder/tokenizer.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "fe2ebbbbde2985be723e0ce18217853e4020c5e9d35bd07be2c27ab9d3ead57a"
+        },
+        "text_encoder/tokenizer_config.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "ef30e0628a2d067c5d9d02d98cbf9a2040f4a51883e5d16e1809eea548db0eff"
+        },
+        "text_encoder/special_tokens_map.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "gpt": 258,
+          "text_encoder": 219,
+          "vq": 344
+        }
+      },
+      "end_to_end": {
+        "cfg_scale": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "A blue Porsche 356 parked in front of a yellow brick wall.",
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "tokens_equal": true,
+        "top_k": 1000
+      },
+      "seed_end_to_end": {
+        "cfg_scale": 4.0,
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          512,
+          512
+        ],
+        "temperature": 0.9,
+        "top_k": 500,
+        "top_p": 0.95
+      }
+    },
+    {
       "model_id": "wuerstchen-v2",
       "repo_id": "warp-ai/wuerstchen",
       "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
@@ -6736,6 +6946,102 @@
       "tolerance": 0.0
     }
   },
+  "components_llamagen": {
+    "llamagen-t2i-xl-256_gpt_prefill": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "llamagen-t2i-xl-256_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "llamagen-t2i-xl-512_gpt_prefill": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "llamagen-t2i-xl-512_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "llamagen_gpt_xl_random_weights": {
+      "decode_steps": 3,
+      "prefill_equal": true
+    },
+    "llamagen_t5_caption_embeddings": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "llamagen_tiny_cfg_1": {
+      "cfg_scale": 1.0,
+      "pixels_equal": true,
+      "seed": 0,
+      "tokens_equal": true
+    },
+    "llamagen_tiny_cfg_interval": {
+      "cfg_interval": 4,
+      "cfg_scale": 5.0,
+      "pixels_equal": true,
+      "seed": 0,
+      "tokens_equal": true
+    },
+    "llamagen_tiny_default": {
+      "pixels_equal": true,
+      "seed": 0,
+      "tokens_equal": true
+    },
+    "llamagen_tiny_seed_0": {
+      "pixels_equal": true,
+      "seed": 0,
+      "tokens_equal": true
+    },
+    "llamagen_tiny_seed_123456789": {
+      "pixels_equal": true,
+      "seed": 123456789,
+      "tokens_equal": true
+    },
+    "llamagen_tiny_top_k": {
+      "cfg_scale": 3.0,
+      "pixels_equal": true,
+      "seed": 0,
+      "temperature": 0.7,
+      "tokens_equal": true,
+      "top_k": 5
+    },
+    "llamagen_tiny_top_k_top_p": {
+      "pixels_equal": true,
+      "seed": 0,
+      "tokens_equal": true,
+      "top_k": 20,
+      "top_p": 0.8
+    },
+    "llamagen_tiny_top_p": {
+      "pixels_equal": true,
+      "seed": 0,
+      "temperature": 1.3,
+      "tokens_equal": true,
+      "top_k": 0,
+      "top_p": 0.6
+    },
+    "llamagen_tokenizer": {
+      "cases": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "tolerance": "exact"
+    },
+    "llamagen_vq16_random_weights": {
+      "decode_code_equal": true,
+      "ids": "16x16"
+    }
+  },
   "components_auraflow": {
     "auraflow_auraflow-v0.3_text_encoder_negative": {
       "max_abs": 0.0,
@@ -7104,11 +7410,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "7 passed (wuerstchen-v2)"
+    "reference_summary": "63 passed (llamagen-t2i-xl-256, llamagen-t2i-xl-512)"
   }
 }
