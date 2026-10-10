@@ -1,5 +1,7 @@
+import importlib
 import json
 import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -43,3 +45,25 @@ def pytest_sessionfinish(session, exitstatus):
     existing = json.loads(target.read_text(encoding="utf-8")) if target.exists() else {}
     existing.update(_MEASUREMENTS)
     target.write_text(json.dumps(existing, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/LlamaGen")
+_LLAMAGEN_PACKAGES = ("autoregressive", "tokenizer", "utils")
+
+
+@pytest.fixture(scope="module")
+def llamagen_reference():
+    """The official LlamaGen modules ``(gpt, generate, vq_model)`` imported from a checkout."""
+    if not REFERENCE_ROOT.is_dir():
+        pytest.skip(f"LlamaGen reference checkout not found at {REFERENCE_ROOT}")
+    sys.path.insert(0, str(REFERENCE_ROOT))
+    try:
+        gpt = importlib.import_module("autoregressive.models.gpt")
+        generate = importlib.import_module("autoregressive.models.generate")
+        vq = importlib.import_module("tokenizer.tokenizer_image.vq_model")
+        yield gpt, generate, vq
+    finally:
+        sys.path.remove(str(REFERENCE_ROOT))
+        for name in list(sys.modules):
+            if name.split(".")[0] in _LLAMAGEN_PACKAGES:
+                del sys.modules[name]

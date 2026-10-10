@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**23 architecture families, 52 published checkpoints.** A model is a separately published set of weights;
+**24 architecture families, 56 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -21,6 +21,7 @@ tested with the original weights. In this release every model is `full`.
 | `sd-turbo` | `stable-diffusion` | [stabilityai/sd-turbo](https://huggingface.co/stabilityai/sd-turbo) | `b261bac` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` (SD Turbo) |
 | `lcm-dreamshaper-v7` | `stable-diffusion` | [SimianLuo/LCM_Dreamshaper_v7](https://huggingface.co/SimianLuo/LCM_Dreamshaper_v7) | `a85df6a` | author | full | MIT | `lcm` |
 | `sdxl-base-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) | `4621659` | author | full | CreativeML Open RAIL++-M | `sdxl` |
+| `sdxl-refiner-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-refiner-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0) | `5d4cfe8` | author | full | CreativeML Open RAIL++-M | `sdxl` |
 | `sdxl-lightning-2step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
 | `sdxl-lightning-4step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
 | `sdxl-lightning-8step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
@@ -29,6 +30,7 @@ tested with the original weights. In this release every model is `full`.
 | `dmd2-sdxl-1step` | `stable-diffusion-xl` | [tianweiy/DMD2](https://huggingface.co/tianweiy/DMD2) | `be22767` | author | full | CC-BY-NC-4.0 | `dmd2` |
 | `sdxl-turbo` | `stable-diffusion-xl` | [stabilityai/sdxl-turbo](https://huggingface.co/stabilityai/sdxl-turbo) | `7115331` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` |
 | `ssd-1b` | `stable-diffusion-xl` | [segmind/SSD-1B](https://huggingface.co/segmind/SSD-1B) | `60987f3` | author | full | Apache-2.0 | `ssd-1b` |
+| `playground-v2` | `stable-diffusion-xl` | [playgroundai/playground-v2-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2-1024px-aesthetic) | `737a24e` | author | full | playground-v2-community | `playground-v2` |
 | `playground-v2.5` | `stable-diffusion-xl` | [playgroundai/playground-v2.5-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2.5-1024px-aesthetic) | `1e032f1` | author | full | playground-v2dot5-community | `playground-v2` |
 | `sd3-medium` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3-medium-diffusers](https://huggingface.co/stabilityai/stable-diffusion-3-medium-diffusers) | `ea42f8c` | author | full | Stability AI Community License | `stable-diffusion-3` |
 | `sd3.5-medium` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3.5-medium](https://huggingface.co/stabilityai/stable-diffusion-3.5-medium) | `b940f67` | author | full | Stability AI Community License | `stable-diffusion-3` |
@@ -51,6 +53,8 @@ tested with the original weights. In this release every model is `full`.
 | `amused-256` | `amused` | [amused/amused-256](https://huggingface.co/amused/amused-256) | `09b6259` | author | full | OpenRAIL++ | `amused` |
 | `amused-512` | `amused` | [amused/amused-512](https://huggingface.co/amused/amused-512) | `6f3f309` | author | full | OpenRAIL++ | `amused` |
 | `auraflow-v0.3` | `auraflow` | [fal/AuraFlow-v0.3](https://huggingface.co/fal/AuraFlow-v0.3) | `2cd8588` | author | full | Apache-2.0 | `auraflow` |
+| `llamagen-t2i-xl-256` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
+| `llamagen-t2i-xl-512` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
 | `krea2-turbo` | `krea2` | [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) | `98e0fe1` | author | full | Krea 2 Community License | `krea-2` |
 | `ernie-image` | `ernie-image` | [baidu/ERNIE-Image](https://huggingface.co/baidu/ERNIE-Image) | `5346b31` | author | full | Apache-2.0 | `ernie-image` |
 | `longcat-image` | `longcat-image` | [meituan-longcat/LongCat-Image](https://huggingface.co/meituan-longcat/LongCat-Image) | `d2ea50b` | author | full | Apache-2.0 | `longcat-image` |
@@ -78,6 +82,11 @@ Stable Cascade does the same with `stabilityai/stable-cascade-prior` at revision
 Würstchen v2 with `warp-ai/wuerstchen-prior` at revision `c41be63`.
 `python -m imagehub.pretrained` downloads both sources, each pinned and verified, and the snapshot
 manifest records provenance for every file.
+
+LlamaGen uses the same mechanism for its text encoder: `google/flan-t5-xl` at revision `7d6315d` goes
+into the snapshot's `text_encoder/` subfolder, while the GPT and VQ-16 PyTorch checkpoints of
+`peizesun/llamagen_t2i` (`format` `pytorch`, loaded with `weights_only=True`) stay at the root.
+The Flan-T5 shards also hold the decoder, which imagehub never reads.
 
 The `hyper-sdxl-1step` model card has no license metadata. The `ByteDance/Hyper-SD` repository's
 license file covers only the FLUX-related files, so the Hyper-SDXL weights are recorded as

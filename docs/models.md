@@ -7,6 +7,7 @@ image input, and passing `image` to one raises an error.
 | Model | Image input | Use | Options |
 | --- | --- | --- | --- |
 | `flux1-kontext-dev` | optional | instruction editing | `image` |
+| `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
 
 # Stable Diffusion 1.x
 
@@ -166,6 +167,7 @@ imagehub does not distribute weights.
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
 Models: `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`,
 `sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step` · Task: `t2i`
+(the refiner `sdxl-refiner-1.0` has its own section below)
 
 **Architecture.** Two frozen text encoders: CLIP ViT-L/14 (penultimate layer output) and OpenCLIP
 bigG (penultimate layer output and pooled output). The concatenated outputs condition a
@@ -246,14 +248,66 @@ Unrecognized settings raise an error.
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). As with SD 1.x,
 MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The SDXL base and SDXL-Lightning weights are licensed under CreativeML Open RAIL++-M;
 the license's use restrictions bind whoever downloads and uses the weights. The Hyper-SD model
 card has no license metadata, and the repository's license file covers only the FLUX-related files,
 so the Hyper-SDXL weights are recorded as `Unspecified`. The DMD2 weights are licensed under
 CC-BY-NC-4.0, which prohibits commercial use. imagehub does not distribute weights.
+
+
+# SDXL refiner
+
+Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `sdxl-refiner-1.0` · Task: `t2i` (image input required)
+
+**Architecture.** The refiner is an SDXL U-Net specialised in the low-noise end of the schedule. It
+differs from the base model in four ways: it has a single text encoder (OpenCLIP bigG: penultimate
+hidden state, 1280 channels, and its pooled output), a U-Net with four resolution levels (384, 768,
+1536, 1536 channels; 4 transformer layers per block), a `text_time` conditioning vector of five time
+ids per sample (original size, crop position and an aesthetic score) instead of six, and the VAE
+and scheduler of the base model. `vae/` is used; the repository's second `vae_1_0/` is not.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained sdxl-refiner-1.0 checkpoints/sdxl-refiner-1.0
+```
+
+```python
+from PIL import Image
+from imagehub import pipeline
+with pipeline("t2i", backend="sdxl-refiner-1.0", model="checkpoints/sdxl-refiner-1.0", device="mps") as pipe:
+    result = pipe("a cat, oil painting", image=Image.open("cat.png"), strength=0.3, seed=0)
+    result.images[0].save("refined.png")
+```
+
+- **The image is required.** It is converted to RGB, rounded down to a multiple of 8 and resized
+  with Lanczos as diffusers' `VaeImageProcessor` does, encoded by the VAE by sampling the
+  posterior (this draws from the seeded generator before the noise does) and scaled by 0.13025.
+  The result has the size of the preprocessed input; `width`, `height` and `latents` are not
+  accepted.
+- **Strength.** `strength` (default 0.3) keeps the last `int(steps * strength)` of the `steps`
+  timesteps: the encoded image is noised to the sigma at the first kept step and denoised from
+  there. A `strength` so small that no step remains is rejected.
+- **Defaults.** 50 steps, guidance 5.0, `strength` 0.3, `aesthetic_score` 6.0 and
+  `negative_aesthetic_score` 2.5. Since `force_zeros_for_empty_prompt` is false, an empty negative
+  prompt is encoded, not zeroed. Other settings: `negative_prompt`, `num_images`, `seed`,
+  `original_size`, `crops_coords_top_left`, `target_size` and their `negative_*` counterparts.
+  Unrecognized settings raise an error.
+- **Not supported.** Running the refiner after the base model in latent space (`denoising_end` on
+  the base and `denoising_start` on the refiner, ensemble of expert denoisers) is out of scope: the
+  refiner takes an image. Also not supported: the other schedulers of the img2img pipeline, several
+  input images, IP-Adapter, a safety checker, the invisible watermark and fp16 parity.
+- **Seed compatibility.** On CPU, the same seed, image and settings give the same image as diffusers
+  0.40.0 `StableDiffusionXLImg2ImgPipeline` with `generator=torch.Generator("cpu").manual_seed(seed)`
+  ([validation](validation.md)). MPS and CUDA runs are smoke tests only.
+- **License.** CreativeML Open RAIL++-M; the license's use restrictions bind whoever downloads and
+  uses the weights. The repository is not gated. imagehub does not distribute weights.
+- **Memory.** In float32: U-Net about 9.4 GB, text encoder 2 about 2.8 GB, VAE 0.3 GB.
 
 
 # SDXL Turbo
@@ -289,8 +343,9 @@ guidance and take their default size from the U-Net config. Unrecognized setting
 ancestral noise at every scheduler step. MPS and CUDA runs are smoke tests only; there is no claim
 of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights use the `sai-nc-community` license and are limited to non-commercial use.
 The license's use restrictions bind whoever downloads and uses the weights. imagehub does not
@@ -329,8 +384,9 @@ of 8), `negative_prompt` (None), `num_images` (1), `seed`, `latents`, `original_
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
 
@@ -1057,6 +1113,45 @@ equality on these devices.
 Model License; see the license. imagehub does not distribute weights.
 
 
+# Playground v2
+
+Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `playground-v2` · Task: `t2i`
+
+**Architecture.** An SDXL-family model with the same two frozen text encoders, U-Net layout and
+`text_time` micro-conditioning as SDXL. Unlike Playground v2.5, it keeps the standard SDXL
+autoencoder (scaling factor 0.13025) and the Euler ancestral scheduler with the scaled-linear
+noise schedule and `leading` timestep spacing. Its native image size is 1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained playground-v2 checkpoints/playground-v2
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="playground-v2", model="checkpoints/playground-v2", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 3.0 (the value recommended on the model
+card) and `width`/`height` default to 1024. Other supported settings match SDXL. Unrecognized
+settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). The Euler
+ancestral scheduler draws its per-step noise from the same seeded generator. MPS and CUDA runs are
+smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
+refiner model, img2img, other schedulers and fp16 parity are not in this release.
+
+**License.** The weights use the `playground-v2-community` license, which restricts commercial use
+under its terms; see the license. imagehub does not distribute weights.
+
+
 # Playground v2.5
 
 Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -1088,8 +1183,9 @@ with pipeline("t2i", backend="playground-v2.5", model="checkpoints/playground-v2
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights use the `playground-v2dot5-community` license, which restricts commercial
 use under its terms; see the license. imagehub does not distribute weights.
@@ -1398,3 +1494,75 @@ runs are smoke tests only; there is no claim of exact equality on these devices.
 prompt and fp16/bf16 parity are not supported.
 
 **License.** The repository declares the Apache-2.0 license. imagehub does not distribute weights.
+
+# LlamaGen
+
+Catalog: [`llamagen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` · Task: `t2i`
+
+**Architecture.** LlamaGen is an autoregressive image model: the image is a grid of discrete tokens
+and a decoder-only transformer predicts them one at a time, like a language model. A VQ-16
+tokenizer (a codebook of 16384 entries of dimension 8, 16× downsampling) maps between tokens and
+pixels, so the 256 model writes 16×16 = 256 tokens and the 512 model 32×32 = 1024 tokens. The
+transformer (GPT-XL: 36 layers, width 1280, 20 heads, RMSNorm, SwiGLU, two-dimensional rotary
+position embeddings over the token grid) is conditioned on the prompt by a prefix: the prompt is
+encoded by the Flan-T5-XL encoder into 120 vectors of width 2048, a small MLP projects them to the
+model width, and they are placed in front of the image tokens. Each new token is drawn from the
+softmax of the logits after temperature, top-k and top-p filtering. Classifier-free guidance runs a
+second pass in which the caption is replaced by a learned "no caption" embedding and combines the
+logits as `uncond + cfg_scale * (cond - uncond)`.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained llamagen-t2i-xl-256 checkpoints/llamagen-t2i-xl-256
+```
+
+```python
+from imagehub import pipeline
+with pipeline(
+    "t2i", backend="llamagen-t2i-xl-256", model="checkpoints/llamagen-t2i-xl-256", device="mps"
+) as pipe:
+    result = pipe("a blue Porsche 356 parked in front of a yellow brick wall", seed=42)
+    result.images[0].save("porsche.png")
+```
+
+The snapshot holds `vq_ds16_t2i.pt` and the GPT checkpoint (`t2i_XL_stage1_256.pt` or
+`t2i_XL_stage2_512.pt`) at its root, and the Flan-T5-XL files (config, tokenizer and the two
+safetensors shards) in `text_encoder/`. The two image sizes are separate checkpoints; the size is
+fixed by the checkpoint.
+
+**Settings.** The defaults are those of the official sampling script: `cfg_scale` 7.5, `temperature`
+1.0, `top_k` 1000, `top_p` 1.0 and `cfg_interval` -1. The supported options are `seed`,
+`cfg_scale`, `temperature`, `top_k`, `top_p`, `cfg_interval`, `width` and `height`. `width` and
+`height` can only repeat the size of the checkpoint (256 or 512). Guidance is used only when
+`cfg_scale` is above 1.0. With `cfg_interval` of `n` (0 or larger), guidance is dropped for every
+token after the first `n + 2` generated tokens; -1 keeps it for all. `top_k` of 0 and `top_p` of
+1.0 disable the respective filter. Unrecognized settings raise an error.
+
+The seed starts a CPU generator that supplies every random draw, in the same order as the
+reference after `torch.manual_seed(seed)` immediately before sampling, so the same seed gives the
+same tokens on every device up to numerical differences. Images have a batch size of one.
+
+**Prompt handling.** The prompt is lower-cased and stripped and encoded to 120 tokens (longer
+prompts are truncated), which is what the reference's text embedder does when its text
+preprocessing is switched off. The reference enables that preprocessing by default: it also
+removes URLs, HTML, some punctuation, file names and similar noise with the `ftfy` and
+BeautifulSoup packages. imagehub does not implement this caption cleaning, so a prompt that
+contains such text can give different tokens from the default reference script; plain prompts give
+identical tokens.
+
+**Memory.** In float32 the GPT needs about 3.1 GB, the Flan-T5-XL encoder about 4.9 GB (the
+decoder in the downloaded shards is never loaded) and the VQ decoder about 0.3 GB. The download
+holds the full Flan-T5-XL checkpoint, about 11 GB.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same token ids and the same
+image as the official `sample_t2i.py` driver run on CPU in float32 ([validation](validation.md)).
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The class-conditional (ImageNet) checkpoints, the caption cleaning described
+above, `torch.compile`, fp16/bf16 parity, several prompts or images per call, and caller-supplied
+tokens or caption embeddings are not supported.
+
+**License.** The repository declares the MIT license and the text encoder is Apache-2.0.
+imagehub does not distribute weights.

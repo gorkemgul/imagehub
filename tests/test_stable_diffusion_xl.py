@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 import torch
@@ -31,8 +32,6 @@ def tiny_turbo(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def tiny_playground(tmp_path_factory):
-    from pathlib import Path
-
     config = json.loads(
         (
             Path(__file__).parent / "fixtures/playground_v25_configs/scheduler_config.json"
@@ -69,6 +68,17 @@ def test_turbo_uses_model_scheduler_defaults_and_native_size(tiny_turbo):
     assert (result.images[0].width, result.images[0].height) == (32, 32)
     assert result.metadata["steps"] == 1
     assert result.metadata["guidance"] == 0.0
+    assert result.metadata["scheduler"] == "euler_ancestral"
+
+
+def test_playground_v2_uses_model_guidance_and_euler_ancestral_scheduler(tmp_path):
+    config = json.loads(
+        (Path(__file__).parent / "fixtures/playground_v2_configs/scheduler_config.json").read_text()
+    )
+    root = write_tiny_sdxl(tmp_path / "tiny-playground-v2", scheduler_config=config, sample_size=4)
+    result = pipeline("t2i", backend="playground-v2", model=root)("a cat", seed=7, steps=1)
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["guidance"] == 3.0
     assert result.metadata["scheduler"] == "euler_ancestral"
 
 
