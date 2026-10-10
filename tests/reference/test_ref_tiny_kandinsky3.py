@@ -1,4 +1,4 @@
-"""Kandinsky 3 end to end on a tiny random snapshot in the published layout, against the pipeline."""
+"""Kandinsky 3 end to end on a tiny random snapshot against the reference pipeline."""
 
 import pytest
 import torch
