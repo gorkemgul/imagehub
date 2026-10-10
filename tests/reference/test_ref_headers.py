@@ -41,9 +41,10 @@ WEIGHT_FILES = (
 SDXL_MODEL_IDS = tuple(
     spec.id
     for spec in MODEL_CATALOG.values()
-    if spec.family == "stable-diffusion-xl" and spec.base is None
+    if spec.family == "stable-diffusion-xl" and spec.base is None and spec.id != "sdxl-refiner-1.0"
 )
 SDXL_FIXTURES = {
+    "playground-v2": "sdxl_tensor_shapes.json",
     "playground-v2.5": "sdxl_tensor_shapes.json",
     "sdxl-base-1.0": "sdxl_tensor_shapes.json",
     "ssd-1b": "ssd1b_tensor_shapes.json",

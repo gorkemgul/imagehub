@@ -129,9 +129,9 @@ The header-only tensor check covered `text_encoder`, `unet` and `vae`: tensor co
 
 ## SDXL
 
-Validated on CPU on October 5, 2026, in the same environment as above. Seven checkpoints, `full`:
+Validated on CPU on October 5, 2026, in the same environment as above. Eight checkpoints, `full`:
 `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`,
-`sdxl-turbo`, `ssd-1b` and `playground-v2.5`. The published tensors were loaded strictly. A
+`sdxl-turbo`, `ssd-1b`, `playground-v2` and `playground-v2.5`. The published tensors were loaded strictly. A
 generation at each model's native size was compared against diffusers from the same initial noise.
 
 ### Comparisons (CPU, float32)
@@ -172,6 +172,14 @@ generation at each model's native size was compared against diffusers from the s
 | Euler timesteps / sigmas (50 and 30 steps) | ssd-1b | 0 / 0 | 0 |
 | End to end: final latent / pixels | ssd-1b | 0 / 0 | 0 / 0 |
 | End to end, seed 42 (pixels) | ssd-1b | 0 | 0 |
+| Tokenizer token ids (2 tokenizers, 18 prompts) | playground-v2 | identical | identical |
+| CLIP ViT-L/14 text encoder (penultimate layer) | playground-v2 | 0 | 0 |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | playground-v2 | 0 / 0 | 0 / 0 |
+| U-Net single step (t = 999, 500, 1) | playground-v2 | 0 | 0 |
+| VAE decode / encode | playground-v2 | 0 | 0 |
+| Euler ancestral timesteps / sigmas (50 and 30 steps) | playground-v2 | 0 / 0 | 0 |
+| End to end: final latent / pixels | playground-v2 | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | playground-v2 | 0 | 0 |
 | Tokenizer token ids (2 tokenizers, 18 prompts) | playground-v2.5 | identical | identical |
 | CLIP ViT-L/14 text encoder (penultimate layer) | playground-v2.5 | 0 | 0 |
 | OpenCLIP bigG text encoder (penultimate layer and pooled output) | playground-v2.5 | 0 / 0 | 0 / 0 |
@@ -190,8 +198,9 @@ riding a horse", 1024×1024, guidance 5.0, initial noise `seed=1234` (the seed 4
 settings). 30 steps are used instead of the default 50 to keep CPU runtime reasonable. SDXL Turbo's
 native size is 512×512. Its default run uses 1 step and guidance 0.0; the guided run uses 4 steps
 and guidance 2.0. Its Euler ancestral scheduler draws the per-step ancestral noise from the same
-seeded CPU generator as the initial noise. `playground-v2.5` uses 1024×1024, 30 steps and guidance
-3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable.
+seeded CPU generator as the initial noise. `playground-v2` and `playground-v2.5` use 1024×1024, 30 steps and guidance
+3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable. The `playground-v2`
+real-checkpoint run took 21 minutes on an M2 Max (CPU).
 
 The SDXL-Lightning reference is built exactly as described by the model card: a float32 U-Net from
 the SDXL base configuration loaded with the published U-Net file, placed in the base pipeline, and
@@ -263,10 +272,53 @@ For `ssd-1b`, the same header-only tensor check covered the four components (`te
 shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
 
+For `playground-v2`, the same header-only tensor check covered the four components
+(`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
+missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
+[validation.json](validation.json).
+
 For `playground-v2.5`, the same header-only tensor check covered the four components
 (`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
 missing, extra and shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
+
+## SDXL refiner
+
+Validated on CPU in the same environment as above. `sdxl-refiner-1.0` was loaded strictly from
+`stabilityai/stable-diffusion-xl-refiner-1.0` (revision `5d4cfe8`) and compared against diffusers
+0.40.0 `StableDiffusionXLImg2ImgPipeline` on CPU in float32. The observed difference in every
+comparison is **exactly 0**: on CPU in float32, the local implementation produces a bit-identical
+result to the reference. The real-checkpoint run took 10 minutes on an Apple M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: text_encoder_2, unet, vae (517 / 1220 / 248 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (8 prompts) | identical | exact |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | 0 / 0 | 0 / 0 |
+| Refiner U-Net single step (t = 999, 500, 1) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 |
+| VAE posterior sample | 0 | 0 |
+| Input preprocessing (640×963, 1000×700, 1024×1024) | 0 | 0 |
+| Euler image-to-image scheduler (30 steps strength 0.5, 50 steps strength 0.3) | exact | exact |
+| End to end: final latent / pixels (1024×1024, 50 steps, strength 0.3, guidance 5.0, seed 0) | 0 / 0 | 0 / 0 |
+| End to end, seed test (pixels) | 0 | 0 |
+
+What the tests cover:
+
+- Random weights, no checkpoint: the refiner U-Net (five time ids) with a tiny configuration and with
+  the published configuration at small spatial sizes; the Euler image-to-image trajectory (begin index,
+  `add_noise`, scaling and steps) for several step counts and strengths; a tiny end to end against the
+  reference pipeline (defaults, odd and non-square sizes, negative prompt, guidance off, full strength,
+  two images per prompt, RGBA input, micro-conditioning and aesthetic scores); input preprocessing
+  against `VaeImageProcessor`; the VAE posterior sample and the generator state it leaves.
+- Real checkpoint (`tests/reference/test_ref_sdxl_refiner.py`): tensor headers, tokenizer, text
+  encoder 2, U-Net single step, VAE decode, encode and sample, preprocessing, scheduler with begin
+  index, end to end at the defaults (50 steps, strength 0.3, guidance 5.0, seed 0) with a synthetic
+  1024x1024 input image, and the seed test through the public API.
+
+Existing SDXL tests are unchanged and still exact.
 
 ## Z-Image
 
@@ -1120,6 +1172,44 @@ is additionally covered by fixed-prompt and seeded fuzz tests on a synthetic fol
 The float32 transformer needs about 27 GB, so the reference and native transformers were loaded one
 after the other and each was freed before the next.
 
+## LlamaGen
+
+`llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` are loaded strictly from `peizesun/llamagen_t2i` at
+revision `276f5c5` (GPT, VQ-16) and `google/flan-t5-xl` at revision `7d6315d` (text encoder). They are
+compared on CPU in float32 with the official LlamaGen code (commit `ce98ec4`: `GPT_XL`, `generate`,
+`VQ_16`) and transformers 5.18.0 for the Flan-T5 encoder and tokenizer, driven as
+`autoregressive/sample/sample_t2i.py` drives them without its CUDA-only settings. The random
+generator is seeded right before sampling. The real-checkpoint tests
+(`tests/reference/test_ref_llamagen.py`) assert the exact equalities below for both models. All 63
+tests passed for the two models in a single run of about 19 minutes on an M2 Max (CPU), with
+exactly 0 difference in every comparison. The tiny-snapshot and random-weight comparisons need no
+downloaded weights and pass with exactly 0 difference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance |
+| --- | --- |
+| Tensor header check: GPT (258 tensors), VQ-16 (344) and Flan-T5 encoder (219 used, 339 skipped) (names and shapes), both models | 0 missing, extra or mismatched |
+| Tokenizer ids and attention masks (prompts, `""`, punctuation and case, a truncated prompt; 120 tokens) | exact |
+| Caption embeddings after the driver's left padding and masking | 0 |
+| GPT prefill logits (conditional and unconditional batch, left-padded caption mask) | 0 |
+| VQ-16 decode of fixed token ids | 0 |
+| End to end at the defaults (`cfg_scale` 7.5, `top_k` 1000, seed 0; 256×256 and 512×512): token ids and uint8 image | identical (max pixel difference 0) |
+| Seeded pipeline run with other sampling settings (`cfg_scale` 4.0, `top_k` 500, `top_p` 0.95, temperature 0.9, seed 1234): uint8 image | identical (max pixel difference 0) |
+
+Random-weight comparisons, which pass with exactly 0 difference: the GPT with a tiny configuration
+and with the published GPT-XL configuration (prefill and cached decoding) and the rotation table of
+both sizes; the VQ decoder with a tiny and with the published configuration; and the sampling
+functions (temperature, top-k and top-p filtering and the draws) with random logits and seeds.
+Tiny-snapshot end-to-end runs compare the token ids and the image bytes with the defaults,
+`cfg_scale` 1.0 (no guidance), top-k, top-p and temperature settings, a guidance interval and
+several seeds. Images are converted to uint8 as `torchvision.utils.save_image(normalize=True,
+value_range=(-1, 1))` does, which a test checks against torchvision.
+
+The prompt is lower-cased and stripped before tokenization; the reference's default caption
+cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the script's
+`use_text_preprocessing=False` behavior.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -1141,7 +1231,8 @@ after the other and each was freed before the next.
   for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
-  the cosine-schedule masked-token scheduler for aMUSEd.
+  the cosine-schedule masked-token scheduler for aMUSEd. LlamaGen samples image tokens
+  autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
@@ -1150,14 +1241,14 @@ after the other and each was freed before the next.
 - Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 4 passed
-  for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
-  8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 11 passed
+  for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
+  8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
