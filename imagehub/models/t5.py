@@ -58,7 +58,8 @@ def gelu_new(hidden_states: Tensor) -> Tensor:
 
 
 def _gate_activation(name: str) -> Callable[[Tensor], Tensor]:
-    return {"gelu_new": gelu_new, "silu": F.silu}[name]
+    activations: dict[str, Callable[[Tensor], Tensor]] = {"gelu_new": gelu_new, "silu": F.silu}
+    return activations[name]
 
 
 class T5DenseGatedActDense(nn.Module):

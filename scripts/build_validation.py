@@ -1,8 +1,9 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Kandinsky 3, Stable Cascade,
-PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, Wuerstchen v2, LongCat-Image, CogView4 and
+measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Kandinsky 3,
+Stable Cascade, PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, Wuerstchen v2,
+LongCat-Image, CogView4 and
 Ideogram 4
 measurements are
 grouped in flat

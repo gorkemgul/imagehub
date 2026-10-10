@@ -248,9 +248,9 @@ class DownSampleBlock(nn.Module):
                 self_attention, in_channels, time_embed_dim, None, groups, head_dim
             )
         ]
-        resolutions: list[_Resolutions] = [[None] * 4] * (num_blocks - 1) + [
-            [None, None, False if down_sample else None, None]
-        ]
+        plain: _Resolutions = [None] * 4
+        last: _Resolutions = [None, None, False if down_sample else None, None]
+        resolutions = [plain] * (num_blocks - 1) + [last]
         pairs = [(in_channels, out_channels)] + [(out_channels, out_channels)] * (num_blocks - 1)
         resnets_in = []
         resnets_out = []
