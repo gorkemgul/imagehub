@@ -1545,6 +1545,43 @@ _entries.append(
     )
 )
 
+# Kandinsky 3 publishes float16 weights only; the loaders read the variant file names.
+_entries.append(
+    ModelSpec(
+        id="kandinsky-3",
+        task=Task.T2I,
+        family="kandinsky3",
+        source="https://huggingface.co/kandinsky-community/kandinsky-3",
+        repo_id="kandinsky-community/kandinsky-3",
+        revision="bf79e6c219da8a94abb50235fdc4567eb8fb4632",
+        provenance="author",
+        catalog_id="kandinsky-3",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 25, "guidance": 3.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "movq/config.json",
+            "movq/diffusion_pytorch_model.fp16.safetensors",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.fp16.json",
+            "text_encoder/model.fp16-00001-of-00005.safetensors",
+            "text_encoder/model.fp16-00002-of-00005.safetensors",
+            "text_encoder/model.fp16-00003-of-00005.safetensors",
+            "text_encoder/model.fp16-00004-of-00005.safetensors",
+            "text_encoder/model.fp16-00005-of-00005.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.fp16.safetensors",
+        ),
+    )
+)
+
 _STABLE_CASCADE_REVISION = "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16"
 _STABLE_CASCADE_PRIOR_REVISION = "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91"
 

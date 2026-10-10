@@ -27,6 +27,7 @@ def test_catalog_contents():
             "janus-pro-1b",
             "janus-pro-7b",
             "kandinsky-2.2",
+            "kandinsky-3",
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
@@ -968,3 +969,30 @@ def test_wuerstchen_catalog_entry():
         "defaults": {"steps": 12, "guidance": 0.0, "prior_steps": 60, "prior_guidance": 4.0}
     }
     assert not any(name.endswith(".bin") for name in spec.files + spec.subfolders["prior"].files)
+
+
+def test_kandinsky3_catalog_entry():
+    spec = model_info("kandinsky-3")
+    assert spec.task is Task.T2I
+    assert spec.family == "kandinsky3"
+    assert spec.source == "https://huggingface.co/kandinsky-community/kandinsky-3"
+    assert spec.repo_id == "kandinsky-community/kandinsky-3"
+    assert spec.revision == "bf79e6c219da8a94abb50235fdc4567eb8fb4632"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "kandinsky-3"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 25, "guidance": 3.0, "width": 1024, "height": 1024}
+    }
+    # Only float16 weights are published, so the variant file names are listed.
+    assert len(set(spec.files)) == len(spec.files) == 17
+    assert "movq/diffusion_pytorch_model.fp16.safetensors" in spec.files
+    assert "unet/diffusion_pytorch_model.fp16.safetensors" in spec.files
+    assert [name for name in spec.files if name.startswith("text_encoder/model.fp16")] == [
+        f"text_encoder/model.fp16-0000{index}-of-00005.safetensors" for index in range(1, 6)
+    ]
+    assert "tokenizer/spiece.model" in spec.files
+    assert not any(name.startswith("assets/") for name in spec.files)
+    assert not any(name.endswith(("model.safetensors", ".py")) for name in spec.files)
