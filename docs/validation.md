@@ -791,11 +791,26 @@ before the native pipeline ran. The real-checkpoint component and end-to-end run
 
 ## CogView3-Plus
 
-`cogview3-plus-3b` (`zai-org/CogView3-Plus-3B`, revision `5d70e40`) is validated on CPU in float32
-against diffusers 0.40.0 (`CogView3PlusPipeline`) and transformers 5.18.0. The published transformer
-and VAE are bfloat16 and are upcast to float32 by both implementations; the T5-XXL text encoder is
-published in float32. The real-checkpoint run is **pending**: no measured numbers are recorded here
-yet.
+`cogview3-plus-3b` (`zai-org/CogView3-Plus-3B`, revision `5d70e40`) was loaded strictly and
+validated on CPU in float32 against diffusers 0.40.0 (`CogView3PlusPipeline`) and transformers
+5.18.0. The published transformer and VAE are bfloat16 and are upcast to float32 by both
+implementations; the T5-XXL text encoder is published in float32. The observed difference in every
+comparison is **exactly 0**: on CPU in float32, the local implementation produces a bit-identical
+result to the reference. The real-checkpoint run took 37 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: text encoder, transformer, VAE (219 / 436 / 288 tensors) | 0 missing / extra / mismatched | exact |
+| T5 token ids | identical | exact |
+| T5-XXL text encoder | 0 | 0 |
+| Transformer single step (1024×1024, batch 2, timesteps `[999, 999]` and `[1, 501]`) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 |
+| Shifted-SNR DDIM scheduler timesteps (8 and 50 steps) | exact | exact |
+| End to end: final latent (1024×1024, 8 steps, guidance 5.0) | 0 | 0 |
+| End to end: pixels (1024×1024, 8 steps, guidance 5.0) | 0 | 0 |
+| End to end, seed 0 (1024×1024, 8 steps, guidance 5.0; pixels) | 0 | 0 |
 
 Tests that need no weights (all exact, tolerance 0):
 
@@ -815,11 +830,12 @@ Tests that need no weights (all exact, tolerance 0):
   published safetensors headers, kept as fixtures.
 
 The real-checkpoint file `tests/reference/test_ref_cogview3_plus.py` (skipped without the snapshot
-`IMAGEHUB_SNAPSHOT_COGVIEW3_PLUS_3B`) covers the tensor headers, tokens and the T5 text encoder, the
+`IMAGEHUB_SNAPSHOT_COGVIEW3_PLUS_3B`) covered the tensor headers, tokens and the T5 text encoder, the
 transformer at two timesteps (1024×1024, batch 2, 224 text tokens), VAE decode and encode, the
 scheduler at 8 and 50 steps, and end-to-end and seed runs at 1024×1024 with guidance 5.0, seed 0 and
 8 steps instead of the 50-step default to shorten the CPU run. The reference result is computed,
-saved and freed before the native model is loaded.
+saved and freed before the native model is loaded. Record: `tensor_header_check`,
+[validation.json](validation.json).
 
 ## Ideogram 4
 
@@ -1248,7 +1264,7 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
