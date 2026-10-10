@@ -1147,6 +1147,39 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="lumina-next",
+        task=Task.T2I,
+        family="lumina-next",
+        source="https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers",
+        repo_id="Alpha-VLLM/Lumina-Next-SFT-diffusers",
+        revision="0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+        provenance="author",
+        catalog_id="lumina-next",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 30, "guidance": 4.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 for _amused_id, _amused_revision, _amused_size in (
     ("amused-256", "09b6259bf96dbe6d70a852b70812420fe02df55e", 256),
     ("amused-512", "6f3f309ba188a08e347bff9691a0ac791817ca97", 512),

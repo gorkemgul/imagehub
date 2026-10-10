@@ -1985,3 +1985,120 @@ def write_tiny_auraflow(
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(dict(model.state_dict()), root / name / weights)
     return root
+
+
+LUMINA_NEXT_FIXTURES = Path(__file__).parent / "fixtures" / "lumina_next_configs"
+TINY_LUMINA_NEXT_TEXT_ENCODER = {
+    "architectures": ["GemmaModel"],
+    "model_type": "gemma",
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 3,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 1,
+    "head_dim": 8,
+    "max_position_embeddings": 4096,
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 10000.0,
+    "hidden_act": "gelu",
+    "hidden_activation": "gelu_pytorch_tanh",
+    "pad_token_id": 0,
+    "bos_token_id": 2,
+    "eos_token_id": 1,
+}
+TINY_LUMINA_NEXT_TRANSFORMER = {
+    "_class_name": "LuminaNextDiT2DModel",
+    "in_channels": 4,
+    "hidden_size": 32,
+    "num_layers": 2,
+    "num_attention_heads": 4,
+    "num_kv_heads": 2,
+    "multiple_of": 16,
+    "cross_attention_dim": 32,
+    "patch_size": 2,
+    "qk_norm": True,
+    "learn_sigma": True,
+    "sample_size": 16,
+}
+TINY_LUMINA_NEXT_VAE = {
+    "_class_name": "AutoencoderKL",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 4,
+    "block_out_channels": [8, 8, 16, 16],
+    "layers_per_block": 1,
+    "norm_num_groups": 4,
+    "scaling_factor": 0.13025,
+    "shift_factor": None,
+    "use_quant_conv": True,
+    "use_post_quant_conv": True,
+    "mid_block_add_attention": True,
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "sample_size": 32,
+}
+
+
+def write_tiny_lumina_next(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight Lumina-Next snapshot in the published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.gemma import GemmaModel
+    from imagehub.models.lumina_next_transformer import LuminaNextDiT2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = write_tiny_gemma_tokenizer(root / "tokenizer")
+    vocab_size = len(json.loads((tokenizer / "tokenizer.json").read_text())["model"]["vocab"])
+    # The published tokenizer appends the end token (its post-processor template says so) and
+    # pads on the right.
+    tokenizer_path = tokenizer / "tokenizer.json"
+    data = json.loads(tokenizer_path.read_text(encoding="utf-8"))
+    processor = data["post_processor"]
+    end = {"SpecialToken": {"id": "<eos>", "type_id": 0}}
+    processor["single"].append(end)
+    processor["special_tokens"]["<eos>"] = {"id": "<eos>", "ids": [1], "tokens": ["<eos>"]}
+    del processor["pair"]
+    processor["pair"] = [*processor["single"], {"SpecialToken": {"id": "<bos>", "type_id": 1}}]
+    processor["pair"] += [{"Sequence": {"id": "B", "type_id": 1}}, end]
+    tokenizer_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    config_path = tokenizer / "tokenizer_config.json"
+    tokenizer_config = json.loads(config_path.read_text())
+    config_path.write_text(
+        json.dumps(tokenizer_config | {"add_eos_token": True, "padding_side": "right"})
+    )
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        (LUMINA_NEXT_FIXTURES / "scheduler_scheduler_config.json").read_text(encoding="utf-8")
+    )
+    (root / "model_index.json").write_text(
+        (LUMINA_NEXT_FIXTURES / "model_index.json").read_text(encoding="utf-8")
+    )
+    for name, cls, config, weights, std in (
+        (
+            "text_encoder",
+            GemmaModel,
+            TINY_LUMINA_NEXT_TEXT_ENCODER | {"vocab_size": vocab_size},
+            "model.safetensors",
+            0.1,
+        ),
+        (
+            "transformer",
+            LuminaNextDiT2DModel,
+            TINY_LUMINA_NEXT_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+            0.05,
+        ),
+        ("vae", AutoencoderKL, TINY_LUMINA_NEXT_VAE, "diffusion_pytorch_model.safetensors", 0.05),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, std)
+        if isinstance(model, LuminaNextDiT2DModel):
+            for layer in model.layers:
+                layer.gate.data.normal_(0, 1.0)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
