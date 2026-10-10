@@ -58,3 +58,19 @@ def test_rejects_unsupported_options(option: str, value: object) -> None:
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     with pytest.raises(ValueError, match="Unsupported T5"):
         T5EncoderModel(config | {option: value})
+
+
+def test_matches_kandinsky3_text_encoder_header() -> None:
+    directory = FIXTURES / "kandinsky3_configs"
+    config = json.loads((directory / "text_encoder_config.json").read_text(encoding="utf-8"))
+    published = json.loads((directory / "text_encoder_tensors.json").read_text(encoding="utf-8"))
+    with torch.device("meta"):
+        model = T5EncoderModel(config)
+    shapes = {name: list(value.shape) for name, value in model.state_dict().items()}
+    assert shapes == published
+    assert len(published) == 291
+    assert shapes["encoder.block.0.layer.0.SelfAttention.q.weight"] == [4096, 4096]
+    assert shapes["encoder.block.0.layer.0.SelfAttention.relative_attention_bias.weight"] == [
+        32,
+        16,
+    ]

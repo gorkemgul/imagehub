@@ -28,6 +28,33 @@ MEDIUM_CONFIG = {
     "feed_forward_proj": "gated-gelu",
     "dropout_rate": 0.0,
 }
+SILU_CONFIG = {
+    "vocab_size": 128,
+    "d_model": 32,
+    "d_kv": 16,
+    "d_ff": 64,
+    "num_layers": 2,
+    "num_heads": 4,
+    "feed_forward_proj": "gated-silu",
+    "dense_act_fn": "silu",
+    "layer_norm_epsilon": 1e-6,
+    "dropout_rate": 0.0,
+}
+# Flan-UL2 widths (head size not equal to d_model / heads), two layers.
+UL2_CONFIG = {
+    "vocab_size": 32128,
+    "d_model": 4096,
+    "d_kv": 256,
+    "d_ff": 16384,
+    "num_layers": 2,
+    "num_heads": 16,
+    "feed_forward_proj": "gated-silu",
+    "dense_act_fn": "silu",
+    "layer_norm_epsilon": 1e-6,
+    "relative_attention_max_distance": 128,
+    "relative_attention_num_buckets": 32,
+    "dropout_rate": 0.0,
+}
 
 
 @pytest.mark.parametrize(
@@ -37,8 +64,11 @@ MEDIUM_CONFIG = {
         (TINY_CONFIG, 256, True),
         (MEDIUM_CONFIG, 77, False),
         (MEDIUM_CONFIG, 77, True),
+        (SILU_CONFIG, 128, False),
+        (SILU_CONFIG, 128, True),
+        (UL2_CONFIG, 128, True),
     ],
-    ids=["tiny", "tiny-mask", "medium", "medium-mask"],
+    ids=["tiny", "tiny-mask", "medium", "medium-mask", "silu", "silu-mask", "ul2-widths-mask"],
 )
 def test_t5_encoder_random_weights(
     config: dict[str, int | float | str], sequence_length: int, masked: bool
