@@ -22,6 +22,8 @@ def test_catalog_contents():
             "flux2-klein-4b",
             "flux2-klein-9b",
             "hunyuan-dit-v1.1-distilled",
+            "hunyuan-dit-v1.2",
+            "hunyuan-dit-v1.2-distilled",
             "hyper-sdxl-1step",
             "ideogram4-fp8",
             "janus-pro-1b",
@@ -442,6 +444,37 @@ def test_hunyuan_dit_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+
+
+@pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "steps"),
+    [
+        (
+            "hunyuan-dit-v1.2",
+            "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+            "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+            50,
+        ),
+        (
+            "hunyuan-dit-v1.2-distilled",
+            "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+            "ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
+            25,
+        ),
+    ],
+)
+def test_hunyuan_dit_v12_catalog_entries(model_id, repo, revision, steps):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "hunyuan-dit"
+    assert (spec.repo_id, spec.revision) == (repo, revision)
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "hunyuan-dit"
+    assert spec.format == "diffusers"
+    assert spec.license == "Tencent Hunyuan Community License"
+    assert not spec.gated
+    assert spec.config == {"defaults": {"steps": steps, "guidance": 5.0}}
+    assert spec.files == model_info("hunyuan-dit-v1.1-distilled").files
 
 
 def test_pixart_catalog_entries():

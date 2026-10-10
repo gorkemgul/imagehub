@@ -521,6 +521,38 @@ The reference tokenizers require `sentencepiece` and `protobuf`, which are inclu
 components were loaded together: in float32 the transformer used about 6.1 GB, mT5-XL about 6.7 GB
 and BERT about 1.4 GB. The end-to-end reference test file took 52 minutes.
 
+### HunyuanDiT v1.2
+
+`hunyuan-dit-v1.2` (`Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers`, revision `5e96094`) and
+`hunyuan-dit-v1.2-distilled` (`Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled`, revision
+`ba991d1`) share the layout, text encoders, tokenizers and VAE of v1.1. They differ in two published
+settings that the same code handles: the transformer config sets
+`use_style_cond_and_image_meta_size` to false (no style embedder, 1544 transformer tensors, a
+narrower extra embedder input) and the scheduler uses `beta_end` 0.018. The observed difference in
+every comparison is **exactly 0**: on CPU in float32, the local implementation produces a
+bit-identical result to the reference, with identical bytes for images.
+
+| Comparison | Release | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Header-only tensor check (`text_encoder`, `text_encoder_2`, `transformer`, `vae`): 391 / 219 / 1544 / 248 tensors | hunyuan-dit-v1.2 | missing / extra / mismatched 0 / 0 / 0 | exact |
+| Header-only tensor check (`text_encoder`, `text_encoder_2`, `transformer`, `vae`): 391 / 219 / 1544 / 248 tensors | hunyuan-dit-v1.2-distilled | missing / extra / mismatched 0 / 0 / 0 | exact |
+| DDPM timesteps (25 steps) | both v1.2 releases | exact | exact |
+| Transformer single step (1024×1024, batch 2, timestep 500) | both v1.2 releases | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 10 steps, guidance 5.0) | both v1.2 releases | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (10 steps, pixels) | both v1.2 releases | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with fixed initial noise
+`seed=7` and scheduler generator `seed=42`, as in v1.1; the seed end-to-end check used `seed=42`.
+The checks per release are the header comparison for all four components, the DDPM timesteps, one
+transformer step at 1024×1024 (batch 2, timestep 500), the end-to-end comparison with fixed initial
+noise and the seed end-to-end comparison. The end-to-end runs use 10 steps instead of the defaults
+to keep the CPU float32 runs short. Tiny random-weight pipelines of both releases, including a
+non-square size and guidance switched off, are compared with diffusers in the regular reference
+tests, together with a DDPM trajectory using the published v1.2 scheduler configuration. Records:
+`tensor_header_check` and the comparison measurements, [validation.json](validation.json).
+
+The real-checkpoint run of the two v1.2 releases (10 real tests) took 45 minutes on an M2 Max (CPU).
+
 ## Kandinsky 2.2
 
 Validated on CPU in the same environment as above. `kandinsky-2.2` was loaded strictly from the
@@ -1214,7 +1246,7 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
-  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
+  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, and 7 passed for
