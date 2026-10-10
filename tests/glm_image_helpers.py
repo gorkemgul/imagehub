@@ -108,7 +108,7 @@ def _component(root: Path, name: str, state: dict, config: dict, weights: str) -
 
 
 def write_tiny_glm_image(root: Path, states: dict[str, dict] | None = None) -> Path:
-    """Write the snapshot; ``states`` may hold ``ar``, ``text_encoder``, ``transformer``, ``vae``."""
+    """Write the snapshot; ``states`` may hold ``ar``, ``text_encoder``, ``transformer``, ``vae``"""
     torch.manual_seed(0)
     states = states or {}
     chars = list(bytes_to_unicode().values())

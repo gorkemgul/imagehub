@@ -45,9 +45,7 @@ def _rotate_half(x: Tensor) -> Tensor:
     return torch.cat((-x2, x1), dim=-1)
 
 
-def _apply_rotary_pos_emb(
-    q: Tensor, k: Tensor, cos: Tensor, sin: Tensor
-) -> tuple[Tensor, Tensor]:
+def _apply_rotary_pos_emb(q: Tensor, k: Tensor, cos: Tensor, sin: Tensor) -> tuple[Tensor, Tensor]:
     cos = cos.unsqueeze(1)
     sin = sin.unsqueeze(1)
     rotary_dim = cos.shape[-1]
@@ -103,10 +101,18 @@ class GlmImageTextAttention(nn.Module):
         self.num_key_value_groups = config["num_attention_heads"] // config["num_key_value_heads"]
         self.scaling = self.head_dim**-0.5
         bias = config["attention_bias"]
-        self.q_proj = nn.Linear(hidden_size, config["num_attention_heads"] * self.head_dim, bias=bias)
-        self.k_proj = nn.Linear(hidden_size, config["num_key_value_heads"] * self.head_dim, bias=bias)
-        self.v_proj = nn.Linear(hidden_size, config["num_key_value_heads"] * self.head_dim, bias=bias)
-        self.o_proj = nn.Linear(config["num_attention_heads"] * self.head_dim, hidden_size, bias=False)
+        self.q_proj = nn.Linear(
+            hidden_size, config["num_attention_heads"] * self.head_dim, bias=bias
+        )
+        self.k_proj = nn.Linear(
+            hidden_size, config["num_key_value_heads"] * self.head_dim, bias=bias
+        )
+        self.v_proj = nn.Linear(
+            hidden_size, config["num_key_value_heads"] * self.head_dim, bias=bias
+        )
+        self.o_proj = nn.Linear(
+            config["num_attention_heads"] * self.head_dim, hidden_size, bias=False
+        )
 
     def forward(
         self,
@@ -280,12 +286,16 @@ class GlmImageARModel(NativeModel):
         self.lm_head = nn.Linear(text["hidden_size"], text["vision_vocab_size"], bias=False)
 
     def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
-        return {name: value for name, value in state.items() if not name.startswith(_EXCLUDED_PREFIXES)}
+        return {
+            name: value for name, value in state.items() if not name.startswith(_EXCLUDED_PREFIXES)
+        }
 
     def init_non_persistent_buffers(self) -> None:
         self.model.language_model.rotary_emb.reset_inv_freq()
 
-    def _logits(self, input_ids: Tensor, position_ids: Tensor, caches: list[list[Tensor]]) -> Tensor:
+    def _logits(
+        self, input_ids: Tensor, position_ids: Tensor, caches: list[list[Tensor]]
+    ) -> Tensor:
         hidden_states = self.model.language_model(input_ids, position_ids, caches)
         return self.lm_head(hidden_states[:, -1:, :])
 

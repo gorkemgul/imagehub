@@ -61,7 +61,7 @@ _MULTIPLE = 32
 
 
 def glm_image_sigmas(steps: int, num_train_timesteps: int) -> list[float]:
-    """Sigmas the pipeline derives: truncated linspace timesteps in float32, over the train steps."""
+    """Sigmas the pipeline derives: truncated linspace timesteps in float32 over the train steps."""
     step = (1.0 - num_train_timesteps) / steps
     timesteps = [int(index * step + num_train_timesteps) for index in range(steps)]
     return (torch.tensor(timesteps, dtype=torch.float32) / num_train_timesteps).tolist()
@@ -251,7 +251,9 @@ class GlmImageBackend(TextToImageBackend):
         input_ids, grids = build_prior_prompt(self.glm_tokenizer, prompt, height, width)
         (token_h, token_w), (preview_h, preview_w) = grids
         large, preview = token_h * token_w, preview_h * preview_w
-        model = cast(GlmImageARModel, self._load_component(GlmImageARModel, "vision_language_encoder"))
+        model = cast(
+            GlmImageARModel, self._load_component(GlmImageARModel, "vision_language_encoder")
+        )
         try:
             sequence = model.generate(
                 input_ids.to(self.device),
@@ -356,7 +358,9 @@ class GlmImageBackend(TextToImageBackend):
         vae_config = self.source / "vae" / "config.json"
         if vae_config.is_file():
             vae_scale = 2 ** (len(read_json(vae_config)["block_out_channels"]) - 1)
-        image_seq_len = ((height // vae_scale) * (width // vae_scale)) // (transformer.patch_size**2)
+        image_seq_len = ((height // vae_scale) * (width // vae_scale)) // (
+            transformer.patch_size**2
+        )
         scheduler = FlowMatchEulerDiscreteScheduler(config)
         num_train_timesteps = int(scheduler.config["num_train_timesteps"])
         scheduler.set_timesteps(

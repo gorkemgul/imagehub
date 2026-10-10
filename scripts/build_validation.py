@@ -10,7 +10,7 @@ grouped in flat
 ``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
 ``components_lumina2``, ``components_amused``, ``components_auraflow``,
-``components_wuerstchen``,
+``components_wuerstchen``, ``components_glm_image``,
 ``components_longcat_image``,
 ``components_cogview4`` and ``components_ideogram4`` mappings: the base model keeps its historical
 unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
@@ -338,6 +338,9 @@ def main() -> None:
             key: value
             for key, value in measured.items()
             if key.startswith(("wuerstchen_", "wuerstchen-v2_"))
+        },
+        "components_glm_image": {
+            key: value for key, value in measured.items() if key.startswith("glm_image_")
         },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")

@@ -716,6 +716,62 @@ custom timestep lists, precomputed prompt embeddings and fp16/bf16 parity are no
 distribute weights.
 
 
+# GLM-Image
+
+Catalog: [`glm-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `glm-image` · Task: `t2i`
+
+**Architecture.** GLM-Image generates in two stages. A 9B autoregressive model (the GLM-4 decoder
+with interleaved three-axis rotary positions and a vision head over 16,512 tokens) reads the prompt
+and samples discrete image tokens: first a low-resolution preview (about 16 tokens on the long side) that fixes the
+layout, then the full grid at one token per 32×32 pixels. A 7B single-stream diffusion transformer
+(30 blocks, width 4096, CogView4-style blocks with AdaLN-zero modulation) then denoises 16-channel
+VAE latents. It receives the sampled tokens, upsampled two times to the latent patch grid and
+projected into the image stream, together with ByT5 glyph embeddings of the text the prompt puts in
+quotation marks (single, double, curly and 「」 quotes). For classifier-free guidance the
+unconditional pass drops the tokens and uses the glyph embedding of the empty string. The scheduler
+is flow-match Euler with linear dynamic shifting.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained glm-image checkpoints/glm-image
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", model="glm-image", device="mps") as pipe:
+    result = pipe("A neon sign that reads \"Open Late\" on a rainy street", seed=42)
+    result.images[0].save("sign.png")
+```
+
+**Settings.** Defaults are 50 steps, guidance 1.5 (guidance is active above 1), 1024×1024 and a
+glyph sequence limit of 2048 bytes. `width` and `height` must be multiples of 32. The supported
+options are `steps`, `guidance`, `width`, `height`, `seed`, `max_sequence_length` and `latents`.
+The seed controls both the sampled image tokens and the initial noise, so one seed gives one
+image; `latents` replaces only the initial noise. There is no negative prompt (the reference
+always uses the empty string). Unrecognized settings raise an error.
+
+**Memory.** The published weights are bfloat16. In float32 the autoregressive text tower takes
+about 36 GB (the vision tower and VQ encoder in the same files are not loaded), the transformer
+28 GB, the ByT5 encoder 0.9 GB and the VAE 1.6 GB. The backend loads the stages one after another
+and releases each, so the peak is the autoregressive model alone, and every request reloads them.
+Generating the 1,280 tokens of a 1024×1024 image takes one pass of the 9B model per token.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers
+`GlmImagePipeline` with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). The token sampling consumes the CPU random stream in the same order
+as transformers' `generate`. MPS and CUDA runs are smoke tests only.
+
+**Out of scope.** Only text-to-image is supported, for one prompt at a time. The reference also
+accepts condition images for editing and style transfer; that needs the 40-block vision tower, the
+VQ encoder, the VAE encoder and the decoder's key/value cache for the reference tokens, and is not
+implemented (the catalog entry has no image input). Batches, precomputed prompt embeddings or
+prior tokens, custom timesteps and fp16/bf16 parity are not implemented.
+
+**License.** The weights are published under the MIT license. imagehub does not distribute weights.
+
+
 # PixArt
 
 Catalog: [`pixart-sigma`](https://github.com/gorkemgul/awesome-text-to-image-architectures),

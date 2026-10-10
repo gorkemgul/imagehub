@@ -576,6 +576,39 @@ switched off, a non-square size, a second seed, and a prompt longer than the 77 
 encoders accept; it compares the prior's image embeddings, the decoder's latents and the final
 bytes.
 
+## GLM-Image
+
+`glm-image` is loaded strictly from `zai-org/GLM-Image` at revision `2c433cc`; the reference is
+diffusers 0.40.0 `GlmImagePipeline` with transformers 5.18.0 `GlmImageForConditionalGeneration`,
+`GlmImageProcessor`, `T5EncoderModel` and `ByT5Tokenizer`. The transformer, the autoregressive
+model and the VAE are published in bfloat16 and are widened to float32 on both sides. The model has
+about 16 billion parameters, so the real-checkpoint tests
+(`tests/reference/test_ref_glm_image.py`) run each reference stage in a fresh process, save its
+result and compare it with the native code afterwards, and the end-to-end test shortens the
+diffusion stage to 4 steps at 1024×1024 (the autoregressive stage runs in full) and uses a second
+seed at 512×512 with 2 steps. Results of the real-checkpoint run: pending the real-checkpoint run.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance |
+| --- | --- |
+| Tensor header check: autoregressive model (vision tower and VQ encoder excluded), ByT5 encoder, transformer, VAE | 0 missing, extra or mismatched |
+| Prompt tokenization with the processor's chat template and target grids, fuzz against the processor tokenizer, ByT5 ids | exact |
+| Glyph embeddings for the prompt and the empty string | 0 |
+| Prior tokens (512×512, seed 0) sampled with the published generation settings | exact |
+| Transformer conditional and unconditional single step | 0 |
+| VAE decode | 0 |
+| End to end (1024×1024, 4 steps, seed 0; 512×512, 2 steps, seed 1): pixels | 0 |
+
+The comparisons that need no downloaded weights also pass with exactly 0 difference: random-weight
+transformer parity (tiny, medium and published configurations, with and without the dropped prior),
+random-weight sampling parity of the autoregressive model against `generate` (tiny and published
+head geometry, several seeds, temperature, top-k and top-p settings, one-token prompts), the
+sigma and timestep schedule against diffusers for several step counts and resolutions, the ByT5
+tokenizer against transformers on a fuzz set that includes the special tokens, and a tiny
+end-to-end comparison with the whole diffusers pipeline (processor, sampling, glyph embeddings,
+guidance on and off, non-square sizes, several seeds).
+
 ## PixArt
 
 Validated on CPU in the same environment as above. `pixart-sigma-xl-1024` and

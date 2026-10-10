@@ -12,9 +12,7 @@ class ByT5Tokenizer:
     """Byte-level tokenizer reading ``tokenizer_config.json`` from a snapshot directory."""
 
     def __init__(self, directory: str | os.PathLike[str]) -> None:
-        config = json.loads(
-            (Path(directory) / "tokenizer_config.json").read_text(encoding="utf-8")
-        )
+        config = json.loads((Path(directory) / "tokenizer_config.json").read_text(encoding="utf-8"))
         decoder: dict[str, dict[str, Any]] = config["added_tokens_decoder"]
         self.pad_token_id = self._token_id(config.get("pad_token", "<pad>"), decoder, 0)
         self.eos_token_id = self._token_id(config.get("eos_token", "</s>"), decoder, 1)

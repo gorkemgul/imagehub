@@ -85,7 +85,9 @@ class GlmImageProjection(nn.Module):
 
     def forward(self, hidden_states: Tensor) -> Tensor:
         hidden_states = self.net[0](hidden_states)
-        hidden_states = F.gelu(hidden_states) if self.activation == "gelu" else F.silu(hidden_states)
+        hidden_states = (
+            F.gelu(hidden_states) if self.activation == "gelu" else F.silu(hidden_states)
+        )
         return self.net[2](hidden_states)
 
 

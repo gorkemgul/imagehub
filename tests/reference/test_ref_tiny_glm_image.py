@@ -1,6 +1,5 @@
 """Tiny random-weight GLM-Image pipeline compared with the diffusers pipeline."""
 
-import numpy as np
 import pytest
 import torch
 from glm_image_helpers import (
@@ -16,6 +15,7 @@ from glm_image_helpers import (
 from imagehub import pipeline
 
 pytestmark = pytest.mark.reference
+np = pytest.importorskip("numpy")
 diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 
