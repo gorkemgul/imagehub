@@ -345,8 +345,13 @@ def write_tiny_sdxl(
     scheduler_config: dict | None = None,
     vae_config: dict | None = None,
     sample_size: int = 32,
+    refiner: bool = False,
 ) -> Path:
-    """A random-weight SDXL snapshot in the published diffusers layout."""
+    """A random-weight SDXL snapshot in the published diffusers layout.
+
+    With ``refiner`` the snapshot has the refiner layout: only the second text encoder, five
+    time ids per sample and the image-to-image pipeline class.
+    """
     from imagehub.checkpoints import save_safetensors
     from imagehub.models.autoencoder_kl import AutoencoderKL
     from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
@@ -355,7 +360,8 @@ def write_tiny_sdxl(
     root = Path(directory)
     root.mkdir(parents=True, exist_ok=True)
     torch.manual_seed(seed)
-    write_tiny_tokenizer(root / "tokenizer")
+    if not refiner:
+        write_tiny_tokenizer(root / "tokenizer")
     write_tiny_tokenizer(root / "tokenizer_2", pad_token="!")
 
     text_1 = TINY_TEXT_FILE_CONFIG | {"hidden_act": "quick_gelu"}
@@ -373,11 +379,11 @@ def write_tiny_sdxl(
         "up_block_types": ["CrossAttnUpBlock2D", "CrossAttnUpBlock2D", "UpBlock2D"],
         "transformer_layers_per_block": [1, 1, 1],
         "attention_head_dim": [2, 4, 4],
-        "cross_attention_dim": 64,
+        "cross_attention_dim": 32 if refiner else 64,
         "use_linear_projection": True,
         "addition_embed_type": "text_time",
         "addition_time_embed_dim": 8,
-        "projection_class_embeddings_input_dim": 80,
+        "projection_class_embeddings_input_dim": 72 if refiner else 80,
         "layers_per_block": 1,
         "norm_num_groups": 8,
         "sample_size": sample_size,
@@ -404,6 +410,14 @@ def write_tiny_sdxl(
     (root / "scheduler" / "scheduler_config.json").write_text(
         json.dumps(scheduler_config or SDXL_SCHEDULER)
     )
+    if refiner:
+        model_index |= {
+            "_class_name": "StableDiffusionXLImg2ImgPipeline",
+            "force_zeros_for_empty_prompt": False,
+            "requires_aesthetics_score": True,
+            "text_encoder": [None, None],
+            "tokenizer": [None, None],
+        }
     (root / "model_index.json").write_text(json.dumps(model_index))
 
     for name, cls, config, weights in (
@@ -412,6 +426,8 @@ def write_tiny_sdxl(
         ("unet", UNet2DConditionModel, unet, "diffusion_pytorch_model.safetensors"),
         ("vae", AutoencoderKL, vae, "diffusion_pytorch_model.safetensors"),
     ):
+        if refiner and name == "text_encoder":
+            continue
         model = cls(config)
         for parameter in model.parameters():
             parameter.data.normal_(0, 0.05)
@@ -2233,4 +2249,94 @@ def write_tiny_auraflow(
         (root / name).mkdir()
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
+TINY_LLAMAGEN_GPT = {
+    "dim": 64,
+    "n_layer": 2,
+    "n_head": 4,
+    "multiple_of": 16,
+    "caption_dim": 32,
+    "vocab_size": 64,
+    "cls_token_num": 120,
+}
+TINY_LLAMAGEN_VQ = {"codebook_size": 64, "codebook_embed_dim": 4, "z_channels": 32}
+TINY_LLAMAGEN_T5 = {
+    "architectures": ["T5ForConditionalGeneration"],
+    "model_type": "t5",
+    "vocab_size": 164,
+    "d_model": 32,
+    "d_kv": 8,
+    "d_ff": 64,
+    "num_layers": 2,
+    "num_heads": 4,
+    "relative_attention_num_buckets": 8,
+    "relative_attention_max_distance": 16,
+    "dropout_rate": 0.0,
+    "layer_norm_epsilon": 1e-6,
+    "feed_forward_proj": "gated-gelu",
+    "is_encoder_decoder": True,
+    "tie_word_embeddings": False,
+}
+
+
+def write_tiny_llamagen(
+    directory: str | os.PathLike[str], *, seed: int = 0, image_size: int = 64
+) -> Path:
+    """A random-weight LlamaGen snapshot in the published layout (GPT and VQ pickles, T5 folder).
+
+    A ``config.json`` at the root holds the tiny architecture; the published snapshots have none.
+    ``image_size`` is a multiple of 16 and is part of the GPT file name, as for the real files.
+    """
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.llamagen import LlamaGenGPT, gpt_xl_config
+    from imagehub.models.llamagen_vq import LlamaGenVQ
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    (root / "text_encoder").mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    gpt_config = gpt_xl_config((image_size // 16) ** 2) | TINY_LLAMAGEN_GPT
+    (root / "config.json").write_text(
+        json.dumps({"gpt": TINY_LLAMAGEN_GPT, "vq": TINY_LLAMAGEN_VQ})
+    )
+    for model in (LlamaGenGPT(gpt_config), LlamaGenVQ(TINY_LLAMAGEN_VQ)):
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.1)
+        if isinstance(model, LlamaGenGPT):
+            model.cls_embedding.uncond_embedding.normal_(0, 0.5)
+            # Peaked token distributions, so that sampling options visibly change the draws.
+            model.output.weight.data.normal_(0, 0.6)
+            name = f"t2i_XL_stage1_{image_size}.pt"
+        else:
+            name = "vq_ds16_t2i.pt"
+        torch.save({"model": dict(model.state_dict())}, root / name)
+
+    text_dir = root / "text_encoder"
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", text_dir / "tokenizer.json")
+    tokenizer_config = {
+        "tokenizer_class": "T5TokenizerFast",
+        "model_max_length": 512,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (text_dir / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (text_dir / "special_tokens_map.json").write_text(
+        json.dumps({key: tokenizer_config[key] for key in ("pad_token", "eos_token", "unk_token")})
+    )
+    text = T5EncoderModel(TINY_LLAMAGEN_T5)
+    for parameter in text.parameters():
+        parameter.data.normal_(0, 0.3)
+    state = dict(text.state_dict())
+    # A sequence-to-sequence checkpoint also holds the decoder and the output head.
+    state["encoder.embed_tokens.weight"] = state["shared.weight"].clone()
+    state["lm_head.weight"] = torch.randn(164, 32)
+    state["decoder.embed_tokens.weight"] = state["shared.weight"].clone()
+    (text_dir / "config.json").write_text(json.dumps(TINY_LLAMAGEN_T5))
+    save_safetensors(state, text_dir / "model.safetensors")
     return root

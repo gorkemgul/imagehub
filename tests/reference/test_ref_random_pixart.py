@@ -56,7 +56,17 @@ def _checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
     return {name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"}
 
 
-@pytest.mark.parametrize("model_id", ["pixart-sigma-xl-1024", "pixart-alpha-xl-1024"])
+@pytest.mark.parametrize(
+    "model_id",
+    [
+        "pixart-sigma-xl-1024",
+        "pixart-alpha-xl-1024",
+        "pixart-alpha-xl-512",
+        "pixart-sigma-xl-256",
+        "pixart-sigma-xl-512",
+        "pixart-sigma-xl-2k",
+    ],
+)
 def test_published_layout_and_header(model_id, record):
     root = snapshot_dir(model_id) / "transformer"
     config = read_json(root / "config.json")
@@ -127,4 +137,74 @@ def test_random_weights_exact(config):
             encoder_attention_mask,
             added_cond_kwargs,
         )
+    torch.testing.assert_close(actual, expected, atol=0, rtol=0)
+
+
+FIXTURES = Path(__file__).parents[1] / "fixtures" / "pixart_configs"
+PUBLISHED = {
+    "alpha-512": "alpha_512",
+    "sigma-256": "sigma_256",
+    "sigma-512": "sigma_512",
+    "sigma-2k": "sigma_2k",
+}
+
+
+def _published_config(directory: str) -> dict:
+    return json.loads((FIXTURES / directory / "transformer_config.json").read_text())
+
+
+@pytest.mark.parametrize("directory", PUBLISHED.values(), ids=PUBLISHED.keys())
+def test_published_fixture_layout_matches_diffusers(directory):
+    config = _published_config(directory)
+    accepted = inspect.signature(diffusers.PixArtTransformer2DModel.__init__).parameters
+    clean_config = {
+        name: value
+        for name, value in config.items()
+        if not name.startswith("_") and name in accepted
+    }
+    with torch.device("meta"):
+        reference = diffusers.PixArtTransformer2DModel(**clean_config).state_dict()
+        model = PixArtTransformer2DModel(config)
+    published = {
+        name: tuple(shape)
+        for name, shape in json.loads(
+            (FIXTURES / directory / "transformer_tensors.json").read_text()
+        ).items()
+    }
+    expected = {name: tuple(value.shape) for name, value in reference.items()}
+    if "caption_projection.y_embedding" in published:
+        expected["caption_projection.y_embedding"] = published["caption_projection.y_embedding"]
+    assert {name: tuple(value.shape) for name, value in model.state_dict().items()} == expected
+    assert published == expected
+
+
+@pytest.mark.parametrize("directory", PUBLISHED.values(), ids=PUBLISHED.keys())
+def test_published_config_random_weights_exact_at_small_sizes(directory):
+    config = _published_config(directory)
+    accepted = inspect.signature(diffusers.PixArtTransformer2DModel.__init__).parameters
+    clean_config = {
+        name: value
+        for name, value in config.items()
+        if not name.startswith("_") and name in accepted
+    }
+    torch.manual_seed(0)
+    reference = diffusers.PixArtTransformer2DModel(**clean_config).eval()
+    model = PixArtTransformer2DModel(config).eval()
+    state = reference.state_dict()
+    if "caption_projection.y_embedding" in model.state_dict():
+        state = state | {"caption_projection.y_embedding": torch.randn(120, 4096)}
+    model.load_checkpoint(state)
+
+    hidden_states = torch.randn(2, 4, 12, 20)
+    encoder_hidden_states = torch.randn(2, 9, config["caption_channels"])
+    attention_mask = torch.tensor([[1] * 9, [1] * 5 + [0] * 4])
+    timestep = torch.tensor([500.0, 250.0])
+    with torch.inference_mode():
+        expected = reference(
+            hidden_states,
+            encoder_hidden_states=encoder_hidden_states,
+            timestep=timestep,
+            encoder_attention_mask=attention_mask,
+        ).sample
+        actual = model(hidden_states, encoder_hidden_states, timestep, attention_mask, None)
     torch.testing.assert_close(actual, expected, atol=0, rtol=0)

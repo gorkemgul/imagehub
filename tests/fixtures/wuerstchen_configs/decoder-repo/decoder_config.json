@@ -1,0 +1,43 @@
+{
+  "_class_name": "WuerstchenDiffNeXt",
+  "_diffusers_version": "0.21.0.dev0",
+  "blocks": [
+    4,
+    4,
+    14,
+    4
+  ],
+  "c_cond": 1024,
+  "c_hidden": [
+    320,
+    640,
+    1280,
+    1280
+  ],
+  "c_in": 4,
+  "c_out": 4,
+  "c_r": 64,
+  "clip_embd": 1024,
+  "dropout": 0.1,
+  "effnet_embd": 16,
+  "inject_effnet": [
+    false,
+    true,
+    true,
+    true
+  ],
+  "kernel_size": 3,
+  "level_config": [
+    "CT",
+    "CTA",
+    "CTA",
+    "CTA"
+  ],
+  "nhead": [
+    -1,
+    10,
+    20,
+    20
+  ],
+  "patch_size": 2
+}

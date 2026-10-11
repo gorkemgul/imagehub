@@ -226,6 +226,10 @@ class T5Stack(nn.Module):
 
 
 class T5EncoderModel(NativeModel):
+    # A full sequence-to-sequence checkpoint (for example Flan-T5) also holds the decoder, the
+    # output head and a copy of the tied embedding; an encoder never reads them.
+    skipped_prefixes = ("decoder.", "lm_head.", "encoder.embed_tokens.")
+
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(T5_DEFAULTS | dict(config))
         unsupported = {

@@ -104,6 +104,7 @@ for _task, _name, _path in (
     (Task.T2I, "kolors", "imagehub.backends.kolors:KolorsBackend"),
     (Task.T2I, "lumina2", "imagehub.backends.lumina2:Lumina2Backend"),
     (Task.T2I, "amused", "imagehub.backends.amused:AmusedBackend"),
+    (Task.T2I, "llamagen", "imagehub.backends.llamagen:LlamaGenBackend"),
     (Task.T2I, "auraflow", "imagehub.backends.auraflow:AuraFlowBackend"),
     (Task.T2I, "krea2", "imagehub.backends.krea2:Krea2Backend"),
     (Task.T2I, "hidream", "imagehub.backends.hidream:HiDreamBackend"),
@@ -117,6 +118,7 @@ for _task, _name, _path in (
     (Task.T2I, "janus", "imagehub.backends.janus:JanusBackend"),
     (Task.T2I, "kandinsky22", "imagehub.backends.kandinsky22:Kandinsky22Backend"),
     (Task.T2I, "stable_cascade", "imagehub.backends.stable_cascade:StableCascadeBackend"),
+    (Task.T2I, "wuerstchen", "imagehub.backends.wuerstchen:WuerstchenBackend"),
 ):
     backend_registry.register(_task, _name, _path)
 

@@ -1,0 +1,2498 @@
+{
+"blocks.0.channelwise.0.bias": [
+6144
+],
+"blocks.0.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.0.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.0.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.0.channelwise.4.bias": [
+1536
+],
+"blocks.0.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.0.depthwise.bias": [
+1536
+],
+"blocks.0.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.1.mapper.bias": [
+3072
+],
+"blocks.1.mapper.weight": [
+3072,
+64
+],
+"blocks.10.mapper.bias": [
+3072
+],
+"blocks.10.mapper.weight": [
+3072,
+64
+],
+"blocks.11.attention.to_k.bias": [
+1536
+],
+"blocks.11.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.11.attention.to_out.0.bias": [
+1536
+],
+"blocks.11.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.11.attention.to_q.bias": [
+1536
+],
+"blocks.11.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.11.attention.to_v.bias": [
+1536
+],
+"blocks.11.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.11.kv_mapper.1.bias": [
+1536
+],
+"blocks.11.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.12.channelwise.0.bias": [
+6144
+],
+"blocks.12.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.12.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.12.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.12.channelwise.4.bias": [
+1536
+],
+"blocks.12.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.12.depthwise.bias": [
+1536
+],
+"blocks.12.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.13.mapper.bias": [
+3072
+],
+"blocks.13.mapper.weight": [
+3072,
+64
+],
+"blocks.14.attention.to_k.bias": [
+1536
+],
+"blocks.14.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.14.attention.to_out.0.bias": [
+1536
+],
+"blocks.14.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.14.attention.to_q.bias": [
+1536
+],
+"blocks.14.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.14.attention.to_v.bias": [
+1536
+],
+"blocks.14.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.14.kv_mapper.1.bias": [
+1536
+],
+"blocks.14.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.15.channelwise.0.bias": [
+6144
+],
+"blocks.15.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.15.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.15.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.15.channelwise.4.bias": [
+1536
+],
+"blocks.15.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.15.depthwise.bias": [
+1536
+],
+"blocks.15.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.16.mapper.bias": [
+3072
+],
+"blocks.16.mapper.weight": [
+3072,
+64
+],
+"blocks.17.attention.to_k.bias": [
+1536
+],
+"blocks.17.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.17.attention.to_out.0.bias": [
+1536
+],
+"blocks.17.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.17.attention.to_q.bias": [
+1536
+],
+"blocks.17.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.17.attention.to_v.bias": [
+1536
+],
+"blocks.17.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.17.kv_mapper.1.bias": [
+1536
+],
+"blocks.17.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.18.channelwise.0.bias": [
+6144
+],
+"blocks.18.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.18.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.18.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.18.channelwise.4.bias": [
+1536
+],
+"blocks.18.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.18.depthwise.bias": [
+1536
+],
+"blocks.18.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.19.mapper.bias": [
+3072
+],
+"blocks.19.mapper.weight": [
+3072,
+64
+],
+"blocks.2.attention.to_k.bias": [
+1536
+],
+"blocks.2.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.2.attention.to_out.0.bias": [
+1536
+],
+"blocks.2.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.2.attention.to_q.bias": [
+1536
+],
+"blocks.2.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.2.attention.to_v.bias": [
+1536
+],
+"blocks.2.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.2.kv_mapper.1.bias": [
+1536
+],
+"blocks.2.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.20.attention.to_k.bias": [
+1536
+],
+"blocks.20.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.20.attention.to_out.0.bias": [
+1536
+],
+"blocks.20.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.20.attention.to_q.bias": [
+1536
+],
+"blocks.20.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.20.attention.to_v.bias": [
+1536
+],
+"blocks.20.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.20.kv_mapper.1.bias": [
+1536
+],
+"blocks.20.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.21.channelwise.0.bias": [
+6144
+],
+"blocks.21.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.21.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.21.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.21.channelwise.4.bias": [
+1536
+],
+"blocks.21.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.21.depthwise.bias": [
+1536
+],
+"blocks.21.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.22.mapper.bias": [
+3072
+],
+"blocks.22.mapper.weight": [
+3072,
+64
+],
+"blocks.23.attention.to_k.bias": [
+1536
+],
+"blocks.23.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.23.attention.to_out.0.bias": [
+1536
+],
+"blocks.23.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.23.attention.to_q.bias": [
+1536
+],
+"blocks.23.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.23.attention.to_v.bias": [
+1536
+],
+"blocks.23.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.23.kv_mapper.1.bias": [
+1536
+],
+"blocks.23.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.24.channelwise.0.bias": [
+6144
+],
+"blocks.24.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.24.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.24.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.24.channelwise.4.bias": [
+1536
+],
+"blocks.24.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.24.depthwise.bias": [
+1536
+],
+"blocks.24.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.25.mapper.bias": [
+3072
+],
+"blocks.25.mapper.weight": [
+3072,
+64
+],
+"blocks.26.attention.to_k.bias": [
+1536
+],
+"blocks.26.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.26.attention.to_out.0.bias": [
+1536
+],
+"blocks.26.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.26.attention.to_q.bias": [
+1536
+],
+"blocks.26.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.26.attention.to_v.bias": [
+1536
+],
+"blocks.26.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.26.kv_mapper.1.bias": [
+1536
+],
+"blocks.26.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.27.channelwise.0.bias": [
+6144
+],
+"blocks.27.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.27.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.27.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.27.channelwise.4.bias": [
+1536
+],
+"blocks.27.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.27.depthwise.bias": [
+1536
+],
+"blocks.27.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.28.mapper.bias": [
+3072
+],
+"blocks.28.mapper.weight": [
+3072,
+64
+],
+"blocks.29.attention.to_k.bias": [
+1536
+],
+"blocks.29.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.29.attention.to_out.0.bias": [
+1536
+],
+"blocks.29.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.29.attention.to_q.bias": [
+1536
+],
+"blocks.29.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.29.attention.to_v.bias": [
+1536
+],
+"blocks.29.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.29.kv_mapper.1.bias": [
+1536
+],
+"blocks.29.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.3.channelwise.0.bias": [
+6144
+],
+"blocks.3.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.3.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.3.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.3.channelwise.4.bias": [
+1536
+],
+"blocks.3.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.3.depthwise.bias": [
+1536
+],
+"blocks.3.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.30.channelwise.0.bias": [
+6144
+],
+"blocks.30.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.30.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.30.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.30.channelwise.4.bias": [
+1536
+],
+"blocks.30.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.30.depthwise.bias": [
+1536
+],
+"blocks.30.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.31.mapper.bias": [
+3072
+],
+"blocks.31.mapper.weight": [
+3072,
+64
+],
+"blocks.32.attention.to_k.bias": [
+1536
+],
+"blocks.32.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.32.attention.to_out.0.bias": [
+1536
+],
+"blocks.32.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.32.attention.to_q.bias": [
+1536
+],
+"blocks.32.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.32.attention.to_v.bias": [
+1536
+],
+"blocks.32.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.32.kv_mapper.1.bias": [
+1536
+],
+"blocks.32.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.33.channelwise.0.bias": [
+6144
+],
+"blocks.33.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.33.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.33.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.33.channelwise.4.bias": [
+1536
+],
+"blocks.33.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.33.depthwise.bias": [
+1536
+],
+"blocks.33.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.34.mapper.bias": [
+3072
+],
+"blocks.34.mapper.weight": [
+3072,
+64
+],
+"blocks.35.attention.to_k.bias": [
+1536
+],
+"blocks.35.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.35.attention.to_out.0.bias": [
+1536
+],
+"blocks.35.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.35.attention.to_q.bias": [
+1536
+],
+"blocks.35.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.35.attention.to_v.bias": [
+1536
+],
+"blocks.35.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.35.kv_mapper.1.bias": [
+1536
+],
+"blocks.35.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.36.channelwise.0.bias": [
+6144
+],
+"blocks.36.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.36.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.36.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.36.channelwise.4.bias": [
+1536
+],
+"blocks.36.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.36.depthwise.bias": [
+1536
+],
+"blocks.36.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.37.mapper.bias": [
+3072
+],
+"blocks.37.mapper.weight": [
+3072,
+64
+],
+"blocks.38.attention.to_k.bias": [
+1536
+],
+"blocks.38.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.38.attention.to_out.0.bias": [
+1536
+],
+"blocks.38.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.38.attention.to_q.bias": [
+1536
+],
+"blocks.38.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.38.attention.to_v.bias": [
+1536
+],
+"blocks.38.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.38.kv_mapper.1.bias": [
+1536
+],
+"blocks.38.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.39.channelwise.0.bias": [
+6144
+],
+"blocks.39.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.39.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.39.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.39.channelwise.4.bias": [
+1536
+],
+"blocks.39.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.39.depthwise.bias": [
+1536
+],
+"blocks.39.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.4.mapper.bias": [
+3072
+],
+"blocks.4.mapper.weight": [
+3072,
+64
+],
+"blocks.40.mapper.bias": [
+3072
+],
+"blocks.40.mapper.weight": [
+3072,
+64
+],
+"blocks.41.attention.to_k.bias": [
+1536
+],
+"blocks.41.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.41.attention.to_out.0.bias": [
+1536
+],
+"blocks.41.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.41.attention.to_q.bias": [
+1536
+],
+"blocks.41.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.41.attention.to_v.bias": [
+1536
+],
+"blocks.41.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.41.kv_mapper.1.bias": [
+1536
+],
+"blocks.41.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.42.channelwise.0.bias": [
+6144
+],
+"blocks.42.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.42.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.42.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.42.channelwise.4.bias": [
+1536
+],
+"blocks.42.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.42.depthwise.bias": [
+1536
+],
+"blocks.42.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.43.mapper.bias": [
+3072
+],
+"blocks.43.mapper.weight": [
+3072,
+64
+],
+"blocks.44.attention.to_k.bias": [
+1536
+],
+"blocks.44.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.44.attention.to_out.0.bias": [
+1536
+],
+"blocks.44.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.44.attention.to_q.bias": [
+1536
+],
+"blocks.44.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.44.attention.to_v.bias": [
+1536
+],
+"blocks.44.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.44.kv_mapper.1.bias": [
+1536
+],
+"blocks.44.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.45.channelwise.0.bias": [
+6144
+],
+"blocks.45.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.45.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.45.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.45.channelwise.4.bias": [
+1536
+],
+"blocks.45.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.45.depthwise.bias": [
+1536
+],
+"blocks.45.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.46.mapper.bias": [
+3072
+],
+"blocks.46.mapper.weight": [
+3072,
+64
+],
+"blocks.47.attention.to_k.bias": [
+1536
+],
+"blocks.47.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.47.attention.to_out.0.bias": [
+1536
+],
+"blocks.47.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.47.attention.to_q.bias": [
+1536
+],
+"blocks.47.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.47.attention.to_v.bias": [
+1536
+],
+"blocks.47.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.47.kv_mapper.1.bias": [
+1536
+],
+"blocks.47.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.48.channelwise.0.bias": [
+6144
+],
+"blocks.48.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.48.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.48.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.48.channelwise.4.bias": [
+1536
+],
+"blocks.48.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.48.depthwise.bias": [
+1536
+],
+"blocks.48.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.49.mapper.bias": [
+3072
+],
+"blocks.49.mapper.weight": [
+3072,
+64
+],
+"blocks.5.attention.to_k.bias": [
+1536
+],
+"blocks.5.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.5.attention.to_out.0.bias": [
+1536
+],
+"blocks.5.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.5.attention.to_q.bias": [
+1536
+],
+"blocks.5.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.5.attention.to_v.bias": [
+1536
+],
+"blocks.5.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.5.kv_mapper.1.bias": [
+1536
+],
+"blocks.5.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.50.attention.to_k.bias": [
+1536
+],
+"blocks.50.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.50.attention.to_out.0.bias": [
+1536
+],
+"blocks.50.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.50.attention.to_q.bias": [
+1536
+],
+"blocks.50.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.50.attention.to_v.bias": [
+1536
+],
+"blocks.50.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.50.kv_mapper.1.bias": [
+1536
+],
+"blocks.50.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.51.channelwise.0.bias": [
+6144
+],
+"blocks.51.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.51.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.51.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.51.channelwise.4.bias": [
+1536
+],
+"blocks.51.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.51.depthwise.bias": [
+1536
+],
+"blocks.51.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.52.mapper.bias": [
+3072
+],
+"blocks.52.mapper.weight": [
+3072,
+64
+],
+"blocks.53.attention.to_k.bias": [
+1536
+],
+"blocks.53.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.53.attention.to_out.0.bias": [
+1536
+],
+"blocks.53.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.53.attention.to_q.bias": [
+1536
+],
+"blocks.53.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.53.attention.to_v.bias": [
+1536
+],
+"blocks.53.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.53.kv_mapper.1.bias": [
+1536
+],
+"blocks.53.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.54.channelwise.0.bias": [
+6144
+],
+"blocks.54.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.54.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.54.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.54.channelwise.4.bias": [
+1536
+],
+"blocks.54.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.54.depthwise.bias": [
+1536
+],
+"blocks.54.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.55.mapper.bias": [
+3072
+],
+"blocks.55.mapper.weight": [
+3072,
+64
+],
+"blocks.56.attention.to_k.bias": [
+1536
+],
+"blocks.56.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.56.attention.to_out.0.bias": [
+1536
+],
+"blocks.56.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.56.attention.to_q.bias": [
+1536
+],
+"blocks.56.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.56.attention.to_v.bias": [
+1536
+],
+"blocks.56.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.56.kv_mapper.1.bias": [
+1536
+],
+"blocks.56.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.57.channelwise.0.bias": [
+6144
+],
+"blocks.57.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.57.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.57.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.57.channelwise.4.bias": [
+1536
+],
+"blocks.57.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.57.depthwise.bias": [
+1536
+],
+"blocks.57.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.58.mapper.bias": [
+3072
+],
+"blocks.58.mapper.weight": [
+3072,
+64
+],
+"blocks.59.attention.to_k.bias": [
+1536
+],
+"blocks.59.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.59.attention.to_out.0.bias": [
+1536
+],
+"blocks.59.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.59.attention.to_q.bias": [
+1536
+],
+"blocks.59.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.59.attention.to_v.bias": [
+1536
+],
+"blocks.59.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.59.kv_mapper.1.bias": [
+1536
+],
+"blocks.59.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.6.channelwise.0.bias": [
+6144
+],
+"blocks.6.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.6.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.6.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.6.channelwise.4.bias": [
+1536
+],
+"blocks.6.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.6.depthwise.bias": [
+1536
+],
+"blocks.6.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.60.channelwise.0.bias": [
+6144
+],
+"blocks.60.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.60.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.60.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.60.channelwise.4.bias": [
+1536
+],
+"blocks.60.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.60.depthwise.bias": [
+1536
+],
+"blocks.60.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.61.mapper.bias": [
+3072
+],
+"blocks.61.mapper.weight": [
+3072,
+64
+],
+"blocks.62.attention.to_k.bias": [
+1536
+],
+"blocks.62.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.62.attention.to_out.0.bias": [
+1536
+],
+"blocks.62.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.62.attention.to_q.bias": [
+1536
+],
+"blocks.62.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.62.attention.to_v.bias": [
+1536
+],
+"blocks.62.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.62.kv_mapper.1.bias": [
+1536
+],
+"blocks.62.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.63.channelwise.0.bias": [
+6144
+],
+"blocks.63.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.63.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.63.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.63.channelwise.4.bias": [
+1536
+],
+"blocks.63.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.63.depthwise.bias": [
+1536
+],
+"blocks.63.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.64.mapper.bias": [
+3072
+],
+"blocks.64.mapper.weight": [
+3072,
+64
+],
+"blocks.65.attention.to_k.bias": [
+1536
+],
+"blocks.65.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.65.attention.to_out.0.bias": [
+1536
+],
+"blocks.65.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.65.attention.to_q.bias": [
+1536
+],
+"blocks.65.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.65.attention.to_v.bias": [
+1536
+],
+"blocks.65.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.65.kv_mapper.1.bias": [
+1536
+],
+"blocks.65.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.66.channelwise.0.bias": [
+6144
+],
+"blocks.66.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.66.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.66.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.66.channelwise.4.bias": [
+1536
+],
+"blocks.66.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.66.depthwise.bias": [
+1536
+],
+"blocks.66.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.67.mapper.bias": [
+3072
+],
+"blocks.67.mapper.weight": [
+3072,
+64
+],
+"blocks.68.attention.to_k.bias": [
+1536
+],
+"blocks.68.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.68.attention.to_out.0.bias": [
+1536
+],
+"blocks.68.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.68.attention.to_q.bias": [
+1536
+],
+"blocks.68.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.68.attention.to_v.bias": [
+1536
+],
+"blocks.68.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.68.kv_mapper.1.bias": [
+1536
+],
+"blocks.68.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.69.channelwise.0.bias": [
+6144
+],
+"blocks.69.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.69.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.69.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.69.channelwise.4.bias": [
+1536
+],
+"blocks.69.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.69.depthwise.bias": [
+1536
+],
+"blocks.69.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.7.mapper.bias": [
+3072
+],
+"blocks.7.mapper.weight": [
+3072,
+64
+],
+"blocks.70.mapper.bias": [
+3072
+],
+"blocks.70.mapper.weight": [
+3072,
+64
+],
+"blocks.71.attention.to_k.bias": [
+1536
+],
+"blocks.71.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.71.attention.to_out.0.bias": [
+1536
+],
+"blocks.71.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.71.attention.to_q.bias": [
+1536
+],
+"blocks.71.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.71.attention.to_v.bias": [
+1536
+],
+"blocks.71.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.71.kv_mapper.1.bias": [
+1536
+],
+"blocks.71.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.72.channelwise.0.bias": [
+6144
+],
+"blocks.72.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.72.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.72.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.72.channelwise.4.bias": [
+1536
+],
+"blocks.72.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.72.depthwise.bias": [
+1536
+],
+"blocks.72.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.73.mapper.bias": [
+3072
+],
+"blocks.73.mapper.weight": [
+3072,
+64
+],
+"blocks.74.attention.to_k.bias": [
+1536
+],
+"blocks.74.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.74.attention.to_out.0.bias": [
+1536
+],
+"blocks.74.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.74.attention.to_q.bias": [
+1536
+],
+"blocks.74.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.74.attention.to_v.bias": [
+1536
+],
+"blocks.74.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.74.kv_mapper.1.bias": [
+1536
+],
+"blocks.74.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.75.channelwise.0.bias": [
+6144
+],
+"blocks.75.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.75.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.75.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.75.channelwise.4.bias": [
+1536
+],
+"blocks.75.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.75.depthwise.bias": [
+1536
+],
+"blocks.75.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.76.mapper.bias": [
+3072
+],
+"blocks.76.mapper.weight": [
+3072,
+64
+],
+"blocks.77.attention.to_k.bias": [
+1536
+],
+"blocks.77.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.77.attention.to_out.0.bias": [
+1536
+],
+"blocks.77.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.77.attention.to_q.bias": [
+1536
+],
+"blocks.77.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.77.attention.to_v.bias": [
+1536
+],
+"blocks.77.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.77.kv_mapper.1.bias": [
+1536
+],
+"blocks.77.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.78.channelwise.0.bias": [
+6144
+],
+"blocks.78.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.78.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.78.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.78.channelwise.4.bias": [
+1536
+],
+"blocks.78.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.78.depthwise.bias": [
+1536
+],
+"blocks.78.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.79.mapper.bias": [
+3072
+],
+"blocks.79.mapper.weight": [
+3072,
+64
+],
+"blocks.8.attention.to_k.bias": [
+1536
+],
+"blocks.8.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.8.attention.to_out.0.bias": [
+1536
+],
+"blocks.8.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.8.attention.to_q.bias": [
+1536
+],
+"blocks.8.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.8.attention.to_v.bias": [
+1536
+],
+"blocks.8.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.8.kv_mapper.1.bias": [
+1536
+],
+"blocks.8.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.80.attention.to_k.bias": [
+1536
+],
+"blocks.80.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.80.attention.to_out.0.bias": [
+1536
+],
+"blocks.80.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.80.attention.to_q.bias": [
+1536
+],
+"blocks.80.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.80.attention.to_v.bias": [
+1536
+],
+"blocks.80.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.80.kv_mapper.1.bias": [
+1536
+],
+"blocks.80.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.81.channelwise.0.bias": [
+6144
+],
+"blocks.81.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.81.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.81.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.81.channelwise.4.bias": [
+1536
+],
+"blocks.81.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.81.depthwise.bias": [
+1536
+],
+"blocks.81.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.82.mapper.bias": [
+3072
+],
+"blocks.82.mapper.weight": [
+3072,
+64
+],
+"blocks.83.attention.to_k.bias": [
+1536
+],
+"blocks.83.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.83.attention.to_out.0.bias": [
+1536
+],
+"blocks.83.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.83.attention.to_q.bias": [
+1536
+],
+"blocks.83.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.83.attention.to_v.bias": [
+1536
+],
+"blocks.83.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.83.kv_mapper.1.bias": [
+1536
+],
+"blocks.83.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.84.channelwise.0.bias": [
+6144
+],
+"blocks.84.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.84.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.84.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.84.channelwise.4.bias": [
+1536
+],
+"blocks.84.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.84.depthwise.bias": [
+1536
+],
+"blocks.84.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.85.mapper.bias": [
+3072
+],
+"blocks.85.mapper.weight": [
+3072,
+64
+],
+"blocks.86.attention.to_k.bias": [
+1536
+],
+"blocks.86.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.86.attention.to_out.0.bias": [
+1536
+],
+"blocks.86.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.86.attention.to_q.bias": [
+1536
+],
+"blocks.86.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.86.attention.to_v.bias": [
+1536
+],
+"blocks.86.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.86.kv_mapper.1.bias": [
+1536
+],
+"blocks.86.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.87.channelwise.0.bias": [
+6144
+],
+"blocks.87.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.87.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.87.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.87.channelwise.4.bias": [
+1536
+],
+"blocks.87.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.87.depthwise.bias": [
+1536
+],
+"blocks.87.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.88.mapper.bias": [
+3072
+],
+"blocks.88.mapper.weight": [
+3072,
+64
+],
+"blocks.89.attention.to_k.bias": [
+1536
+],
+"blocks.89.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.89.attention.to_out.0.bias": [
+1536
+],
+"blocks.89.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.89.attention.to_q.bias": [
+1536
+],
+"blocks.89.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.89.attention.to_v.bias": [
+1536
+],
+"blocks.89.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.89.kv_mapper.1.bias": [
+1536
+],
+"blocks.89.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.9.channelwise.0.bias": [
+6144
+],
+"blocks.9.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.9.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.9.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.9.channelwise.4.bias": [
+1536
+],
+"blocks.9.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.9.depthwise.bias": [
+1536
+],
+"blocks.9.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.90.channelwise.0.bias": [
+6144
+],
+"blocks.90.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.90.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.90.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.90.channelwise.4.bias": [
+1536
+],
+"blocks.90.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.90.depthwise.bias": [
+1536
+],
+"blocks.90.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.91.mapper.bias": [
+3072
+],
+"blocks.91.mapper.weight": [
+3072,
+64
+],
+"blocks.92.attention.to_k.bias": [
+1536
+],
+"blocks.92.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.92.attention.to_out.0.bias": [
+1536
+],
+"blocks.92.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.92.attention.to_q.bias": [
+1536
+],
+"blocks.92.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.92.attention.to_v.bias": [
+1536
+],
+"blocks.92.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.92.kv_mapper.1.bias": [
+1536
+],
+"blocks.92.kv_mapper.1.weight": [
+1536,
+1536
+],
+"blocks.93.channelwise.0.bias": [
+6144
+],
+"blocks.93.channelwise.0.weight": [
+6144,
+1536
+],
+"blocks.93.channelwise.2.beta": [
+1,
+1,
+1,
+6144
+],
+"blocks.93.channelwise.2.gamma": [
+1,
+1,
+1,
+6144
+],
+"blocks.93.channelwise.4.bias": [
+1536
+],
+"blocks.93.channelwise.4.weight": [
+1536,
+6144
+],
+"blocks.93.depthwise.bias": [
+1536
+],
+"blocks.93.depthwise.weight": [
+1536,
+1,
+3,
+3
+],
+"blocks.94.mapper.bias": [
+3072
+],
+"blocks.94.mapper.weight": [
+3072,
+64
+],
+"blocks.95.attention.to_k.bias": [
+1536
+],
+"blocks.95.attention.to_k.weight": [
+1536,
+1536
+],
+"blocks.95.attention.to_out.0.bias": [
+1536
+],
+"blocks.95.attention.to_out.0.weight": [
+1536,
+1536
+],
+"blocks.95.attention.to_q.bias": [
+1536
+],
+"blocks.95.attention.to_q.weight": [
+1536,
+1536
+],
+"blocks.95.attention.to_v.bias": [
+1536
+],
+"blocks.95.attention.to_v.weight": [
+1536,
+1536
+],
+"blocks.95.kv_mapper.1.bias": [
+1536
+],
+"blocks.95.kv_mapper.1.weight": [
+1536,
+1536
+],
+"cond_mapper.0.bias": [
+1536
+],
+"cond_mapper.0.weight": [
+1536,
+1280
+],
+"cond_mapper.2.bias": [
+1536
+],
+"cond_mapper.2.weight": [
+1536,
+1536
+],
+"out.1.bias": [
+32
+],
+"out.1.weight": [
+32,
+1536,
+1,
+1
+],
+"projection.bias": [
+1536
+],
+"projection.weight": [
+1536,
+16,
+1,
+1
+]
+}

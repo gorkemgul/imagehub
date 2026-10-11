@@ -25,6 +25,12 @@ _DEFAULTS: dict[str, Any] = {
     "sample_max_value": 1.0,
     "set_alpha_to_one": False,
     "skip_prk_steps": True,
+    # Published by some releases; diffusers' constructor does not read them, so only their
+    # inert values are accepted.
+    "sigma_min": None,
+    "sigma_max": None,
+    "timestep_type": "discrete",
+    "use_karras_sigmas": False,
 }
 _REQUIRED = {
     "beta_schedule": "scaled_linear",
@@ -36,6 +42,10 @@ _REQUIRED = {
     "sample_max_value": 1.0,
     "set_alpha_to_one": False,
     "skip_prk_steps": True,
+    "sigma_min": None,
+    "sigma_max": None,
+    "timestep_type": "discrete",
+    "use_karras_sigmas": False,
 }
 
 

@@ -1,0 +1,11 @@
+{
+  "_class_name": "WuerstchenPrior",
+  "_diffusers_version": "0.21.0.dev0",
+  "c": 1536,
+  "c_cond": 1280,
+  "c_in": 16,
+  "c_r": 64,
+  "depth": 32,
+  "dropout": 0.1,
+  "nhead": 24
+}

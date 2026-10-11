@@ -2,19 +2,21 @@
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
 measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
-PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, LongCat-Image, CogView4, Ideogram 4 and
-HiDream-I1 measurements are
+PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, LlamaGen, Wuerstchen v2, LongCat-Image, CogView4,
+Ideogram 4 and HiDream-I1
+measurements are
 grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
 ``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
-``components_lumina2``, ``components_amused``, ``components_auraflow``,
+``components_lumina2``, ``components_amused``, ``components_auraflow``, ``components_llamagen``,
+``components_wuerstchen``,
 ``components_longcat_image``,
 ``components_cogview4``, ``components_ideogram4`` and ``components_hidream`` mappings: the base
-model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each
-model entry may also contain its own ``seed_end_to_end`` measurement. When a model directory is
-missing, its existing entry in the output is retained unchanged; a missing directory without an
-existing entry is an error.
+model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
+entry may also contain its
+own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
+output is retained unchanged; a missing directory without an existing entry is an error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -51,9 +53,11 @@ LIMITS = [
     "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 "
     "and LongCat-Image, flow-match "
     "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
-    "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade, "
+    "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and "
+    "Wuerstchen v2, "
     "DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for "
-    "aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast.",
+    "aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens "
+    "autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -65,6 +69,10 @@ SDXL_COMPONENT_KEYS = (
     "sdxl_vae_decode",
     "sdxl_vae_encode",
     "sdxl_scheduler",
+    "sdxl_refiner_vae_sample",
+    "sdxl_refiner_preprocess_1024x1024",
+    "sdxl_refiner_preprocess_1000x700",
+    "sdxl_refiner_preprocess_640x963",
 )
 SD_TURBO_COMPONENT_KEYS = (
     "sd_turbo_tokenizer",
@@ -330,8 +338,18 @@ def main() -> None:
         "components_amused": {
             key: value for key, value in measured.items() if key.startswith(("amused_", "amused-"))
         },
+        "components_llamagen": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(("llamagen_", "llamagen-"))
+        },
         "components_auraflow": {
             key: value for key, value in measured.items() if key.startswith("auraflow_")
+        },
+        "components_wuerstchen": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(("wuerstchen_", "wuerstchen-v2_"))
         },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")
