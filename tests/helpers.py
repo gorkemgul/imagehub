@@ -2759,3 +2759,80 @@ def write_tiny_cogview3_plus(directory: str | os.PathLike[str], *, seed: int = 0
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(dict(model.state_dict()), root / name / weights)
     return root
+
+
+OMNIGEN_FIXTURES = Path(__file__).parent / "fixtures" / "omnigen_configs"
+OMNIGEN_TOKENIZER = Path(__file__).parent / "fixtures" / "omnigen_tokenizer"
+TINY_OMNIGEN_TRANSFORMER = {
+    "_class_name": "OmniGenTransformer2DModel",
+    "in_channels": 4,
+    "patch_size": 2,
+    "hidden_size": 32,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 4,
+    "intermediate_size": 48,
+    "num_layers": 2,
+    "pad_token_id": 32000,
+    "vocab_size": 32064,
+    "max_position_embeddings": 131072,
+    "original_max_position_embeddings": 4096,
+    "rope_scaling": {
+        "short_factor": [1.05, 1.1, 1.2, 1.4],
+        "long_factor": [1.5, 2.5, 4.0, 8.0],
+        "type": "su",
+    },
+    "pos_embed_max_size": 16,
+    "time_step_dim": 16,
+}
+TINY_OMNIGEN_VAE = {
+    "_class_name": "AutoencoderKL",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 4,
+    "block_out_channels": [8, 8, 16, 16],
+    "layers_per_block": 1,
+    "norm_num_groups": 4,
+    "scaling_factor": 0.13025,
+    "use_quant_conv": True,
+    "use_post_quant_conv": True,
+    "mid_block_add_attention": True,
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "sample_size": 64,
+}
+
+
+def write_tiny_omnigen(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight OmniGen snapshot in the published diffusers layout (real tokenizer files)."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.omnigen_transformer import OmniGenTransformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    (root / "tokenizer").mkdir()
+    for source in OMNIGEN_TOKENIZER.iterdir():
+        (root / "tokenizer" / source.name).write_bytes(source.read_bytes())
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        (OMNIGEN_FIXTURES / "scheduler_scheduler_config.json").read_text(encoding="utf-8")
+    )
+    (root / "model_index.json").write_text(
+        (OMNIGEN_FIXTURES / "model_index.json").read_text(encoding="utf-8")
+    )
+    for name, cls, config, std in (
+        ("transformer", OmniGenTransformer2DModel, TINY_OMNIGEN_TRANSFORMER, 0.05),
+        ("vae", AutoencoderKL, TINY_OMNIGEN_VAE, 0.05),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, std)
+        if name == "transformer":
+            model.patch_embedding.pos_embed.normal_(0, 0.5)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(
+            dict(model.state_dict()), root / name / "diffusion_pytorch_model.safetensors"
+        )
+    return root

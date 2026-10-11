@@ -45,6 +45,8 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 Most models take a text prompt only. `flux1-kontext-dev` also takes an optional input image
 (`image`) and edits it by instruction; without one it generates from the text alone.
 `sdxl-refiner-1.0` requires an input image (`image`, with `strength`) and refines it.
+`omnigen-v1` also takes one optional input image, which the prompt refers to with the placeholder
+`<img><|image_1|></img>`.
 
 ```python
 from PIL import Image
@@ -77,6 +79,7 @@ result.images[0].save("edited.png")
 | Kolors | `kolors` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |
 | Lumina-Next | `lumina-next` | `t2i` | T | CPU fp32 parity |
+| OmniGen | `omnigen-v1` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 transformer |
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |

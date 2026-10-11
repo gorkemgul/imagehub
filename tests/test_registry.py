@@ -43,6 +43,7 @@ def test_family_and_model_aliases_are_registered():
     assert {"llamagen", "llamagen-t2i-xl-256", "llamagen-t2i-xl-512"} <= set(names)
     assert {"stable_cascade", "stable-cascade", "stable-cascade-lite"} <= set(names)
     assert {"wuerstchen", "wuerstchen-v2"} <= set(names)
+    assert {"omnigen", "omnigen-v1"} <= set(names)
 
 
 def test_registration_rules():

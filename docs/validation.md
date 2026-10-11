@@ -1414,6 +1414,44 @@ mirror with fuzzed text), and the whole backend on a tiny snapshot in the publis
 (default settings, guidance with a negative prompt, non-square sizes, two images, two weight seeds):
 identical latents and identical bytes.
 
+## OmniGen
+
+`omnigen-v1` is loaded strictly from `Shitao/OmniGen-v1-diffusers` at revision `016e2f6` and is compared
+with diffusers 0.40.0 `OmniGenPipeline` on CPU in float32. The published transformer is stored in
+bfloat16 and converted to float32 on load by both implementations; the autoencoder is float32. The
+real-checkpoint tests are in `tests/reference/test_ref_omnigen.py`. All 12 of them passed, and
+every recorded comparison is exactly 0: on CPU in float32, the local implementation produces a
+bit-identical result to the reference. The end-to-end runs use shortened step counts
+because a 1024×1024, 50-step run takes hours on CPU. The real-checkpoint run took 18 minutes on
+an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: transformer (275 tensors), autoencoder (248 tensors) (names and shapes) | 0 missing, extra or mismatched | exact |
+| Tokenizer ids (instruction prompt, edit prompt, long prompt, `""`; 4 cases) and byte equality of the tokenizer files with the fixtures | identical | exact |
+| Transformer single step (timesteps 0.0, 0.31 and 0.87, with and without an input image, real conditioning; 6 calls) | 0 (max abs and max rel) | 0 |
+| Autoencoder encode of the seeded posterior sample / decode | 0 / 0 | 0 / 0 |
+| End to end text-to-image: final latent / pixels (1024×1024, 4 steps, guidance 2.5, seed 0) | 0 / 0 | 0 / 0 |
+| End to end with an input image: final latent / pixels (512×512, 4 steps, 256×320 input, seed 0) | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, 1360×768 request (pixels, 2 steps) | 0 | 0 |
+
+Tests that need no downloaded weights: random-weight parity of the transformer with a tiny and with the
+published configuration (two layers), with and without input-image tokens and with sequences long
+enough to switch the rotary embedding to its long factors; tokenizer parity with transformers on the
+published tokenizer files (fixed prompts, a seeded fuzz test and random Unicode); parity of the image
+preprocessing, token layout, attention masks and position ids with the diffusers processor; parity of
+the inverted flow-match schedule and Euler steps; and tiny-snapshot end-to-end parity covering the
+defaults, guidance 1.0 and above, non-square sizes, several seeds, one step, an input image,
+`use_input_image_size_as_output`, a small `max_input_image_size` and RGBA and grayscale inputs.
+
+Where the reference pipeline cannot run on its own, parity is defined as follows. The reference fails on
+non-RGB input images, so the comparison uses the RGB conversion, as for FLUX.1 Kontext. The reference
+draws the input-image posterior from the global torch generator, so the reference runs call
+`torch.manual_seed(seed)` before the pipeline. The reference rotary embedding builds its table from the
+first sequence of the batch only; the native module reproduces that.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -1432,7 +1470,7 @@ identical latents and identical bytes.
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base, SSD-1B and Kolors,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
-  for FLUX.1 schnell, Lumina-Image 2.0, Lumina-Next and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
+  for FLUX.1 schnell, Lumina-Image 2.0, Lumina-Next and AuraFlow, flow-match Euler with inverted sigmas for OmniGen, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
   the cosine-schedule masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for
@@ -1455,7 +1493,7 @@ identical latents and identical bytes.
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
-  `amused-512`, 7 passed for
+  `amused-512`, 12 passed for `omnigen-v1`, 7 passed for
   `lcm-dreamshaper-v7`, 8 passed for `ernie-image` and 8 passed for `hidream-i1-fast`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

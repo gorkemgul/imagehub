@@ -2057,6 +2057,43 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="omnigen-v1",
+        task=Task.T2I,
+        family="omnigen",
+        source="https://huggingface.co/Shitao/OmniGen-v1-diffusers",
+        repo_id="Shitao/OmniGen-v1-diffusers",
+        revision="016e2f61d12a98303f6bbdf122687694d7984268",
+        provenance="author",
+        catalog_id="omnigen",
+        format="diffusers",
+        license="MIT",
+        gated=False,
+        image_input="optional",
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 2.5,
+                "image_guidance": 1.6,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

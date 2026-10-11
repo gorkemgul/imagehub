@@ -751,6 +751,27 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "e2e_image_omnigen-v1": {
+    "guidance": 2.5,
+    "image_guidance": 1.6,
+    "input_size": [
+      256,
+      320
+    ],
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "Turn <img><|image_1|></img> into a watercolor painting.",
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 4
+  },
   "e2e_janus-pro-1b": {
     "num_images": 1,
     "passed": true,
@@ -890,6 +911,22 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_omnigen-v1": {
+    "guidance": 2.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A photograph of an astronaut riding a horse on the moon.",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4
   },
   "e2e_pixart-alpha-xl-1024": {
     "guidance": 4.5,
@@ -2624,6 +2661,20 @@
       "tensors": 248
     }
   },
+  "header_omnigen-v1": {
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 275
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
   "header_pixart-alpha-xl-1024": {
     "text_encoder": {
       "extra": [],
@@ -4079,6 +4130,56 @@
     "tolerance": 0.0
   },
   "lumina_next_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_tokenizer_real": {
+    "cases": 4,
+    "matches": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "omnigen_transformer_False_0.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_False_0.31": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_False_0.87": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_True_0.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_True_0.31": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_True_0.87": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -5710,6 +5811,16 @@
       768
     ],
     "steps": 12
+  },
+  "seed_e2e_omnigen-v1": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ],
+    "steps": 2
   },
   "seed_e2e_pixart-alpha-xl-1024": {
     "max_pixel_diff": 0,

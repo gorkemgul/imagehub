@@ -1,0 +1,20 @@
+{
+  "_class_name": "OmniGenPipeline",
+  "_diffusers_version": "0.32.0.dev0",
+  "scheduler": [
+    "diffusers",
+    "FlowMatchEulerDiscreteScheduler"
+  ],
+  "tokenizer": [
+    "transformers",
+    "LlamaTokenizerFast"
+  ],
+  "transformer": [
+    "diffusers",
+    "OmniGenTransformer2DModel"
+  ],
+  "vae": [
+    "diffusers",
+    "AutoencoderKL"
+  ]
+}

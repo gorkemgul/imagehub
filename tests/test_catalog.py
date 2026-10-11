@@ -40,6 +40,7 @@ def test_catalog_contents():
             "longcat-image",
             "lumina-image-2.0",
             "lumina-next",
+            "omnigen-v1",
             "pixart-alpha-xl-1024",
             "pixart-alpha-xl-512",
             "pixart-sigma-xl-1024",
@@ -1026,7 +1027,11 @@ def test_spec_validation():
 def test_image_input_field():
     base = MODEL_CATALOG["sdxl-base-1.0"]
     with_image = {spec.id: spec.image_input for spec in MODEL_CATALOG.values() if spec.image_input}
-    assert with_image == {"flux1-kontext-dev": "optional", "sdxl-refiner-1.0": "required"}
+    assert with_image == {
+        "flux1-kontext-dev": "optional",
+        "sdxl-refiner-1.0": "required",
+        "omnigen-v1": "optional",
+    }
     for value in (None, "optional", "required"):
         assert ModelSpec(**{**base.__dict__, "id": "x", "image_input": value}).image_input == value
     with pytest.raises(ValueError, match="image_input"):
@@ -1254,3 +1259,38 @@ def test_ernie_image_catalog_entry():
     # The optional prompt enhancer (pe/, pe_tokenizer/) is not part of the supported snapshot.
     assert not any(name.startswith(("pe/", "pe_tokenizer/")) for name in spec.files)
     assert dict(spec.config["defaults"]) == {"steps": 50, "guidance": 4.0}
+
+
+def test_omnigen_catalog_entry():
+    spec = model_info("omnigen-v1")
+    assert spec.task is Task.T2I
+    assert spec.family == "omnigen"
+    assert spec.source == "https://huggingface.co/Shitao/OmniGen-v1-diffusers"
+    assert spec.repo_id == "Shitao/OmniGen-v1-diffusers"
+    assert spec.revision == "016e2f61d12a98303f6bbdf122687694d7984268"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "omnigen"
+    assert spec.format == "diffusers"
+    assert spec.license == "MIT"
+    assert not spec.gated
+    assert spec.image_input == "optional"
+    assert spec.config == {
+        "defaults": {
+            "steps": 50,
+            "guidance": 2.5,
+            "image_guidance": 1.6,
+            "width": 1024,
+            "height": 1024,
+        }
+    }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
