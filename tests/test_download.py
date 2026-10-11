@@ -217,6 +217,7 @@ def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, 
         ("wuerstchen-v2", "prior"),
         ("llamagen-t2i-xl-256", "text_encoder"),
         ("llamagen-t2i-xl-512", "text_encoder"),
+        ("hidream-i1-fast", "text_encoder_4"),
     ],
 )
 def test_downloads_subrepository_into_snapshot_subfolder(

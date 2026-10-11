@@ -1341,6 +1341,40 @@ The prompt is lower-cased and stripped before tokenization; the reference's defa
 cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the script's
 `use_text_preprocessing=False` behavior.
 
+## HiDream-I1 Fast
+
+`hidream-i1-fast` is the HiDream-I1 Fast repository at revision `4856a5d` plus
+`meta-llama/Llama-3.1-8B-Instruct` at revision `0e9e39f`. The real-checkpoint tests
+(`tests/reference/test_ref_hidream.py`) compare against diffusers 0.40.0 and transformers 5.18.0 on
+CPU in float32 and require exactly 0 everywhere: the tensor headers of all six components, the
+tokenizers (CLIP, T5, Llama), the pooled CLIP, T5 and Llama layer outputs the pipeline uses, one
+transformer step with real conditioning, the VAE decode, the scheduler, and end to end with a
+shortened run (4 steps, seed 0) and a non-square seed test. All 8 real-checkpoint tests passed with
+exactly 0 difference in every comparison (see the table), and the run took 21 minutes on an M2 Max
+(CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: `text_encoder`, `text_encoder_2`, `text_encoder_3`, `text_encoder_4`, `transformer`, `vae` (197 / 517 / 219 / 291 / 1615 / 244 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizers (CLIP ×2, T5, Llama; 6 prompts) | identical | exact |
+| Pooled CLIP embedding | 0 | 0 |
+| T5 encoder outputs used by the pipeline | 0 | 0 |
+| Llama layer outputs used by the pipeline | 0 | 0 |
+| Transformer single step (t = 1000 and 562.5) | 0 | 0 |
+| VAE decode | 0 | 0 |
+| Flow-match LCM scheduler timesteps / sigmas (16 steps) | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels (4 steps, seed 0) | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, non-square request (pixels) | 0 | 0 |
+
+What has been checked with random weights: the Llama text encoder against transformers (grouped
+key/value heads, `llama3` rotary scaling, padding), the Llama 3 tokenizer against the reference
+fast tokenizer on a synthetic vocabulary (and, once, on the Llama 3.1 tokenizer file from a public
+mirror with fuzzed text), and the whole backend on a tiny snapshot in the published layout against `HiDreamImagePipeline`
+(default settings, guidance with a negative prompt, non-square sizes, two images, two weight seeds):
+identical latents and identical bytes.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -1362,8 +1396,8 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
-  the cosine-schedule masked-token scheduler for aMUSEd. LlamaGen samples image tokens
-  autoregressively and has no scheduler.
+  the cosine-schedule masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for
+  HiDream-I1 Fast. LlamaGen samples image tokens autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
@@ -1383,7 +1417,7 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
   `amused-512`, 7 passed for
-  `lcm-dreamshaper-v7`, and 8 passed for `ernie-image`. These include structural parity with random weights, end-to-end parity with
+  `lcm-dreamshaper-v7`, 8 passed for `ernie-image` and 8 passed for `hidream-i1-fast`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

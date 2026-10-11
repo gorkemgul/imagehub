@@ -23,6 +23,7 @@ def test_catalog_contents():
             "flux1-schnell",
             "flux2-klein-4b",
             "flux2-klein-9b",
+            "hidream-i1-fast",
             "hunyuan-dit-v1.1-distilled",
             "hunyuan-dit-v1.2",
             "hunyuan-dit-v1.2-distilled",
@@ -849,6 +850,56 @@ def test_kolors_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.fp16.safetensors",
     )
+
+
+def test_hidream_catalog_entry():
+    spec = model_info("hidream-i1-fast")
+    assert spec.task is Task.T2I
+    assert spec.family == "hidream"
+    assert spec.source == "https://huggingface.co/HiDream-ai/HiDream-I1-Fast"
+    assert spec.repo_id == "HiDream-ai/HiDream-I1-Fast"
+    assert spec.revision == "4856a5d8cd6fbd194780ed9f289bdf696d3afc10"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "hidream-i1"
+    assert spec.format == "diffusers"
+    assert spec.license == "MIT"
+    assert spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 16, "guidance": 0.0, "width": 1024, "height": 1024}
+    }
+    assert len(spec.files) == len(set(spec.files)) == 33
+    assert spec.files[:3] == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+    )
+    shards = tuple(
+        f"transformer/diffusion_pytorch_model-0000{index}-of-00007.safetensors"
+        for index in range(1, 8)
+    )
+    assert [name for name in spec.files if name.startswith("transformer/")] == [
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors.index.json",
+        *shards,
+    ]
+    assert spec.subfolders == {
+        "text_encoder_4": SubRepo(
+            repo_id="meta-llama/Llama-3.1-8B-Instruct",
+            revision="0e9e39f249a16976918f6564b8830bc894c89659",
+            files=(
+                "config.json",
+                "generation_config.json",
+                "model.safetensors.index.json",
+                "model-00001-of-00004.safetensors",
+                "model-00002-of-00004.safetensors",
+                "model-00003-of-00004.safetensors",
+                "model-00004-of-00004.safetensors",
+                "special_tokens_map.json",
+                "tokenizer.json",
+                "tokenizer_config.json",
+            ),
+        )
+    }
 
 
 @pytest.mark.parametrize(

@@ -1956,6 +1956,74 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="hidream-i1-fast",
+        task=Task.T2I,
+        family="hidream",
+        source="https://huggingface.co/HiDream-ai/HiDream-I1-Fast",
+        repo_id="HiDream-ai/HiDream-I1-Fast",
+        revision="4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+        provenance="author",
+        catalog_id="hidream-i1",
+        format="diffusers",
+        license="MIT",
+        gated=True,
+        config={"defaults": {"steps": 16, "guidance": 0.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "text_encoder_3/config.json",
+            "text_encoder_3/model.safetensors.index.json",
+            "text_encoder_3/model-00001-of-00002.safetensors",
+            "text_encoder_3/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_3/special_tokens_map.json",
+            "tokenizer_3/spiece.model",
+            "tokenizer_3/tokenizer.json",
+            "tokenizer_3/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            *(
+                f"transformer/diffusion_pytorch_model-{index:05d}-of-00007.safetensors"
+                for index in range(1, 8)
+            ),
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+        # The Llama 3.1 encoder and its tokenizer come from Meta's gated repository.
+        subfolders={
+            "text_encoder_4": SubRepo(
+                repo_id="meta-llama/Llama-3.1-8B-Instruct",
+                revision="0e9e39f249a16976918f6564b8830bc894c89659",
+                files=(
+                    "config.json",
+                    "generation_config.json",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00004.safetensors",
+                    "model-00002-of-00004.safetensors",
+                    "model-00003-of-00004.safetensors",
+                    "model-00004-of-00004.safetensors",
+                    "special_tokens_map.json",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                ),
+            )
+        },
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

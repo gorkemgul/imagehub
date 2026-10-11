@@ -666,6 +666,12 @@
       "pixels": 0
     }
   },
+  "e2e_hidream_i1_fast": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
+  },
   "e2e_hunyuan-dit-v1.1-distilled": {
     "guidance": 5.0,
     "latents": {
@@ -2223,6 +2229,44 @@
       "tensors": 251
     }
   },
+  "header_hidream-i1-fast": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder_3": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "text_encoder_4": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1615
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
   "header_hunyuan-dit-v1.2": {
     "text_encoder": {
       "extra": [],
@@ -3278,6 +3322,51 @@
       "missing": [],
       "tensors": 244
     }
+  },
+  "hidream_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_llama_layers": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_pooled_clip": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_scheduler_sigmas": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_scheduler_timesteps": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_t5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_transformer_t0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_transformer_t1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
   },
   "hunyuan_dit_bert": {
     "max_abs": 0.0,
@@ -5398,6 +5487,12 @@
     "passed": true,
     "seed": 42
   },
+  "seed_e2e_hidream_i1_fast": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "steps": 4
+  },
   "seed_e2e_hunyuan-dit-v1.1-distilled": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -5961,6 +6056,10 @@
     "mismatches": 0,
     "prompts": 14,
     "tolerance": "exact"
+  },
+  "tokenizers_hidream-i1-fast": {
+    "identical": true,
+    "prompts": 6
   },
   "umt5_random": {
     "length": 48,
