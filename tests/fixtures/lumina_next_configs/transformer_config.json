@@ -1,0 +1,18 @@
+{
+  "_class_name": "LuminaNextDiT2DModel",
+  "_diffusers_version": "0.30.0.dev0",
+  "cross_attention_dim": 2048,
+  "ffn_dim_multiplier": null,
+  "hidden_size": 2304,
+  "in_channels": 4,
+  "learn_sigma": true,
+  "multiple_of": 256,
+  "norm_eps": 1e-05,
+  "num_attention_heads": 32,
+  "num_kv_heads": 8,
+  "num_layers": 24,
+  "patch_size": 2,
+  "qk_norm": true,
+  "sample_size": 128,
+  "scaling_factor": 1.0
+}

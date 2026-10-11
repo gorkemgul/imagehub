@@ -815,7 +815,7 @@ def write_tiny_flux2(directory: str | os.PathLike[str], *, seed: int = 0) -> Pat
 
 
 TINY_QWEN_IMAGE21_TEXT = {
-    "vocab_size": 260,
+    "vocab_size": 262,
     "hidden_size": 16,
     "intermediate_size": 32,
     "num_hidden_layers": 1,
@@ -1006,7 +1006,7 @@ def write_tiny_qwen_image21(directory: str | os.PathLike[str], *, seed: int = 0)
 
 
 TINY_KREA2_TEXT = {
-    "vocab_size": 260,
+    "vocab_size": 262,
     "hidden_size": 16,
     "intermediate_size": 32,
     "num_hidden_layers": 13,
@@ -1312,6 +1312,255 @@ def write_tiny_sd3(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
         if name.startswith("text_encoder") and name != "text_encoder_3":
             state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
         (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
+TINY_HIDREAM_LLAMA = {
+    "architectures": ["LlamaForCausalLM"],
+    "model_type": "llama",
+    "vocab_size": 262,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 3,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "max_position_embeddings": 131072,
+    "rms_norm_eps": 1e-5,
+    "rope_theta": 500000.0,
+    "rope_scaling": {
+        "factor": 8.0,
+        "low_freq_factor": 1.0,
+        "high_freq_factor": 4.0,
+        "original_max_position_embeddings": 8192,
+        "rope_type": "llama3",
+    },
+    "attention_bias": False,
+    "mlp_bias": False,
+    "hidden_act": "silu",
+    "tie_word_embeddings": False,
+    "bos_token_id": 260,
+    "eos_token_id": 261,
+}
+TINY_HIDREAM_TRANSFORMER = {
+    "_class_name": "HiDreamImageTransformer2DModel",
+    "patch_size": 2,
+    "in_channels": 4,
+    "out_channels": 4,
+    "num_layers": 2,
+    "num_single_layers": 2,
+    "attention_head_dim": 16,
+    "num_attention_heads": 2,
+    "caption_channels": [32, 32],
+    "text_emb_dim": 32,
+    "num_routed_experts": 4,
+    "num_activated_experts": 2,
+    "axes_dims_rope": [8, 4, 4],
+    "max_resolution": [128, 128],
+    "llama_layers": [0, 1, 2, 2],
+}
+TINY_HIDREAM_VAE = TINY_VAE_FILE_CONFIG | {
+    "block_out_channels": [16, 16],
+    "down_block_types": ["DownEncoderBlock2D"] * 2,
+    "up_block_types": ["UpDecoderBlock2D"] * 2,
+    "latent_channels": 4,
+    "scaling_factor": 0.3611,
+    "shift_factor": 0.1159,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "sample_size": 32,
+}
+TINY_LLAMA3_MERGES = (("h", "i"), ("c", "a"), ("ca", "t"), ("\u0120", "c"))
+LLAMA3_SPLIT_PATTERN = (
+    r"(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}{1,3}"
+    r"| ?[^\s\p{L}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+"
+)
+
+
+def write_tiny_llama3_tokenizer(directory: str | os.PathLike[str]) -> Path:
+    """A byte-level BPE tokenizer.json in the Llama 3 layout: 256 bytes, 4 merges, BOS and EOT."""
+    path = Path(directory)
+    path.mkdir(parents=True, exist_ok=True)
+    vocab = {char: index for index, char in enumerate(bytes_to_unicode().values())}
+    for left, right in TINY_LLAMA3_MERGES:
+        vocab[left + right] = len(vocab)
+    assert len(vocab) == 260
+    bos, eot = "<|begin_of_text|>", "<|eot_id|>"
+    added = []
+    for token in (bos, eot):
+        added.append(
+            {
+                "id": len(vocab),
+                "content": token,
+                "single_word": False,
+                "lstrip": False,
+                "rstrip": False,
+                "normalized": False,
+                "special": True,
+            }
+        )
+        vocab[token] = len(vocab)
+    data = {
+        "version": "1.0",
+        "truncation": None,
+        "padding": None,
+        "added_tokens": added,
+        "normalizer": None,
+        "pre_tokenizer": {
+            "type": "Sequence",
+            "pretokenizers": [
+                {
+                    "type": "Split",
+                    "pattern": {"Regex": LLAMA3_SPLIT_PATTERN},
+                    "behavior": "Isolated",
+                    "invert": False,
+                },
+                {
+                    "type": "ByteLevel",
+                    "add_prefix_space": False,
+                    "trim_offsets": True,
+                    "use_regex": False,
+                },
+            ],
+        },
+        "post_processor": {
+            "type": "Sequence",
+            "processors": [
+                {
+                    "type": "ByteLevel",
+                    "add_prefix_space": True,
+                    "trim_offsets": False,
+                    "use_regex": True,
+                },
+                {
+                    "type": "TemplateProcessing",
+                    "single": [
+                        {"SpecialToken": {"id": bos, "type_id": 0}},
+                        {"Sequence": {"id": "A", "type_id": 0}},
+                    ],
+                    "pair": [
+                        {"SpecialToken": {"id": bos, "type_id": 0}},
+                        {"Sequence": {"id": "A", "type_id": 0}},
+                        {"SpecialToken": {"id": bos, "type_id": 1}},
+                        {"Sequence": {"id": "B", "type_id": 1}},
+                    ],
+                    "special_tokens": {bos: {"id": bos, "ids": [vocab[bos]], "tokens": [bos]}},
+                },
+            ],
+        },
+        "decoder": {
+            "type": "ByteLevel",
+            "add_prefix_space": True,
+            "trim_offsets": True,
+            "use_regex": True,
+        },
+        "model": {
+            "type": "BPE",
+            "dropout": None,
+            "unk_token": None,
+            "continuing_subword_prefix": None,
+            "end_of_word_suffix": None,
+            "fuse_unk": False,
+            "byte_fallback": False,
+            "ignore_merges": True,
+            "vocab": vocab,
+            "merges": [list(pair) for pair in TINY_LLAMA3_MERGES],
+        },
+    }
+    (path / "tokenizer.json").write_text(json.dumps(data), encoding="utf-8")
+    (path / "tokenizer_config.json").write_text(
+        json.dumps(
+            {
+                "bos_token": bos,
+                "eos_token": eot,
+                "model_max_length": 131072,
+                "tokenizer_class": "PreTrainedTokenizerFast",
+                "clean_up_tokenization_spaces": True,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (path / "special_tokens_map.json").write_text(
+        json.dumps({"bos_token": bos, "eos_token": eot}), encoding="utf-8"
+    )
+    return path
+
+
+def write_tiny_hidream(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight HiDream-I1 snapshot in the published layout, Llama in ``text_encoder_4``."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.clip_text import CLIPTextModelWithProjection
+    from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
+    from imagehub.models.llama_text import LlamaTextModel
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_tokenizer(root / "tokenizer")
+    write_tiny_tokenizer(root / "tokenizer_2", pad_token="!")
+    tokenizer_3 = root / "tokenizer_3"
+    tokenizer_3.mkdir()
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", tokenizer_3 / "tokenizer.json")
+    tokenizer_3_config = {
+        "tokenizer_class": "T5TokenizerFast",
+        "model_max_length": 512,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (tokenizer_3 / "tokenizer_config.json").write_text(json.dumps(tokenizer_3_config))
+    (tokenizer_3 / "special_tokens_map.json").write_text(
+        json.dumps(
+            {key: tokenizer_3_config[key] for key in ("pad_token", "eos_token", "unk_token")}
+        )
+    )
+    write_tiny_llama3_tokenizer(root / "text_encoder_4")
+
+    (root / "scheduler").mkdir()
+    shutil.copy2(
+        FIXTURES / "hidream_configs" / "scheduler_scheduler_config.json",
+        root / "scheduler" / "scheduler_config.json",
+    )
+    (root / "model_index.json").write_text(
+        (FIXTURES / "hidream_configs" / "model_index.json").read_text(encoding="utf-8")
+    )
+    clip_config = TINY_TEXT_FILE_CONFIG | {
+        "architectures": ["CLIPTextModelWithProjection"],
+        "hidden_size": 16,
+        "intermediate_size": 32,
+        "num_attention_heads": 4,
+        "projection_dim": 16,
+        "max_position_embeddings": 128,
+    }
+    for name, cls, config, weights in (
+        ("text_encoder", CLIPTextModelWithProjection, clip_config, "model.safetensors"),
+        ("text_encoder_2", CLIPTextModelWithProjection, clip_config, "model.safetensors"),
+        ("text_encoder_3", T5EncoderModel, TINY_SD3_T5, "model.safetensors"),
+        ("text_encoder_4", LlamaTextModel, TINY_HIDREAM_LLAMA, "model.safetensors"),
+        (
+            "transformer",
+            HiDreamImageTransformer2DModel,
+            TINY_HIDREAM_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_HIDREAM_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name.startswith("text_encoder") and name not in ("text_encoder_3", "text_encoder_4"):
+            state["text_model.embeddings.position_ids"] = torch.arange(128)[None]
+        if name == "text_encoder_4":
+            state = {f"model.{key}": value for key, value in state.items()}
+            state["lm_head.weight"] = torch.randn(262, 32) * 0.05
+        (root / name).mkdir(exist_ok=True)
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(state, root / name / weights)
     return root
@@ -2003,6 +2252,123 @@ def write_tiny_auraflow(
     return root
 
 
+LUMINA_NEXT_FIXTURES = Path(__file__).parent / "fixtures" / "lumina_next_configs"
+TINY_LUMINA_NEXT_TEXT_ENCODER = {
+    "architectures": ["GemmaModel"],
+    "model_type": "gemma",
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 3,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 1,
+    "head_dim": 8,
+    "max_position_embeddings": 4096,
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 10000.0,
+    "hidden_act": "gelu",
+    "hidden_activation": "gelu_pytorch_tanh",
+    "pad_token_id": 0,
+    "bos_token_id": 2,
+    "eos_token_id": 1,
+}
+TINY_LUMINA_NEXT_TRANSFORMER = {
+    "_class_name": "LuminaNextDiT2DModel",
+    "in_channels": 4,
+    "hidden_size": 32,
+    "num_layers": 2,
+    "num_attention_heads": 4,
+    "num_kv_heads": 2,
+    "multiple_of": 16,
+    "cross_attention_dim": 32,
+    "patch_size": 2,
+    "qk_norm": True,
+    "learn_sigma": True,
+    "sample_size": 16,
+}
+TINY_LUMINA_NEXT_VAE = {
+    "_class_name": "AutoencoderKL",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 4,
+    "block_out_channels": [8, 8, 16, 16],
+    "layers_per_block": 1,
+    "norm_num_groups": 4,
+    "scaling_factor": 0.13025,
+    "shift_factor": None,
+    "use_quant_conv": True,
+    "use_post_quant_conv": True,
+    "mid_block_add_attention": True,
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "sample_size": 32,
+}
+
+
+def write_tiny_lumina_next(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight Lumina-Next snapshot in the published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.gemma import GemmaModel
+    from imagehub.models.lumina_next_transformer import LuminaNextDiT2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = write_tiny_gemma_tokenizer(root / "tokenizer")
+    vocab_size = len(json.loads((tokenizer / "tokenizer.json").read_text())["model"]["vocab"])
+    # The published tokenizer appends the end token (its post-processor template says so) and
+    # pads on the right.
+    tokenizer_path = tokenizer / "tokenizer.json"
+    data = json.loads(tokenizer_path.read_text(encoding="utf-8"))
+    processor = data["post_processor"]
+    end = {"SpecialToken": {"id": "<eos>", "type_id": 0}}
+    processor["single"].append(end)
+    processor["special_tokens"]["<eos>"] = {"id": "<eos>", "ids": [1], "tokens": ["<eos>"]}
+    del processor["pair"]
+    processor["pair"] = [*processor["single"], {"SpecialToken": {"id": "<bos>", "type_id": 1}}]
+    processor["pair"] += [{"Sequence": {"id": "B", "type_id": 1}}, end]
+    tokenizer_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    config_path = tokenizer / "tokenizer_config.json"
+    tokenizer_config = json.loads(config_path.read_text())
+    config_path.write_text(
+        json.dumps(tokenizer_config | {"add_eos_token": True, "padding_side": "right"})
+    )
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        (LUMINA_NEXT_FIXTURES / "scheduler_scheduler_config.json").read_text(encoding="utf-8")
+    )
+    (root / "model_index.json").write_text(
+        (LUMINA_NEXT_FIXTURES / "model_index.json").read_text(encoding="utf-8")
+    )
+    for name, cls, config, weights, std in (
+        (
+            "text_encoder",
+            GemmaModel,
+            TINY_LUMINA_NEXT_TEXT_ENCODER | {"vocab_size": vocab_size},
+            "model.safetensors",
+            0.1,
+        ),
+        (
+            "transformer",
+            LuminaNextDiT2DModel,
+            TINY_LUMINA_NEXT_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+            0.05,
+        ),
+        ("vae", AutoencoderKL, TINY_LUMINA_NEXT_VAE, "diffusion_pytorch_model.safetensors", 0.05),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, std)
+        if isinstance(model, LuminaNextDiT2DModel):
+            for layer in model.layers:
+                layer.gate.data.normal_(0, 1.0)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
 TINY_LLAMAGEN_GPT = {
     "dim": 64,
     "n_layer": 2,
@@ -2090,4 +2456,498 @@ def write_tiny_llamagen(
     state["decoder.embed_tokens.weight"] = state["shared.weight"].clone()
     (text_dir / "config.json").write_text(json.dumps(TINY_LLAMAGEN_T5))
     save_safetensors(state, text_dir / "model.safetensors")
+    return root
+
+
+ERNIE_TINY_PRETOKENIZER_REGEX = (
+    r"[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]*[\p{Ll}\p{Lm}\p{Lo}\p{M}]+|"
+    r"[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]+[\p{Ll}\p{Lm}\p{Lo}\p{M}]*|"
+    r"\p{N}| ?[^\s\p{L}\p{N}]+[\r\n/]*|\s*[\r\n]+|\s+(?!\S)|\s+"
+)
+ERNIE_TINY_MERGES = (("Ġ", "t"), ("h", "e"), ("c", "a"), ("ca", "t"), ("Ġ", "a"), ("Ġt", "he"))
+ERNIE_TINY_SPECIALS = ("<unk>", "<s>", "</s>", "<pad>", "[INST]", "[/INST]")
+TINY_ERNIE_TEXT = {
+    "model_type": "ministral3",
+    "vocab_size": 300,
+    "hidden_size": 24,
+    "intermediate_size": 40,
+    "num_hidden_layers": 3,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "head_dim": 8,
+    "max_position_embeddings": 256,
+    "rms_norm_eps": 1e-5,
+    "hidden_act": "silu",
+    "sliding_window": None,
+    "pad_token_id": 3,
+    "rope_parameters": {
+        "beta_fast": 32.0,
+        "beta_slow": 1.0,
+        "factor": 16.0,
+        "llama_4_scaling_beta": 0.1,
+        "mscale": 1.0,
+        "mscale_all_dim": 1.0,
+        "original_max_position_embeddings": 16,
+        "rope_theta": 1000000.0,
+        "rope_type": "yarn",
+        "type": "yarn",
+    },
+}
+TINY_ERNIE_VISION = {
+    "model_type": "pixtral",
+    "hidden_size": 16,
+    "intermediate_size": 32,
+    "num_hidden_layers": 1,
+    "num_attention_heads": 2,
+    "head_dim": 8,
+    "image_size": 28,
+    "patch_size": 14,
+}
+TINY_ERNIE_TRANSFORMER = {
+    "_class_name": "ErnieImageTransformer2DModel",
+    "hidden_size": 32,
+    "num_attention_heads": 4,
+    "num_layers": 2,
+    "ffn_hidden_size": 48,
+    "in_channels": 16,
+    "out_channels": 16,
+    "patch_size": 1,
+    "text_in_dim": 24,
+    "rope_theta": 256,
+    "rope_axes_dim": [2, 2, 4],
+    "eps": 1e-6,
+    "qk_layernorm": True,
+}
+TINY_ERNIE_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "num_train_timesteps": 1000,
+    "shift": 4.0,
+    "use_dynamic_shifting": False,
+}
+
+
+def write_tiny_ernie_tokenizer(directory: str | os.PathLike[str]) -> Path:
+    """A byte-level BPE tokenizer.json in the Mistral layout with a handful of merges."""
+    path = Path(directory)
+    path.mkdir(parents=True, exist_ok=True)
+    vocab = {token: index for index, token in enumerate(ERNIE_TINY_SPECIALS)}
+    for character in bytes_to_unicode().values():
+        vocab[character] = len(vocab)
+    for left, right in ERNIE_TINY_MERGES:
+        vocab[left + right] = len(vocab)
+    data = {
+        "version": "1.0",
+        "truncation": None,
+        "padding": None,
+        "added_tokens": [
+            {
+                "id": vocab[token],
+                "content": token,
+                "single_word": False,
+                "lstrip": False,
+                "rstrip": False,
+                "normalized": False,
+                "special": True,
+            }
+            for token in ERNIE_TINY_SPECIALS
+        ],
+        "normalizer": None,
+        "pre_tokenizer": {
+            "type": "Sequence",
+            "pretokenizers": [
+                {
+                    "type": "Split",
+                    "pattern": {"Regex": ERNIE_TINY_PRETOKENIZER_REGEX},
+                    "behavior": "Isolated",
+                    "invert": False,
+                },
+                {
+                    "type": "ByteLevel",
+                    "add_prefix_space": False,
+                    "trim_offsets": True,
+                    "use_regex": False,
+                },
+            ],
+        },
+        "post_processor": {
+            "type": "TemplateProcessing",
+            "single": [
+                {"SpecialToken": {"id": "<s>", "type_id": 0}},
+                {"Sequence": {"id": "A", "type_id": 0}},
+            ],
+            "pair": [
+                {"SpecialToken": {"id": "<s>", "type_id": 0}},
+                {"Sequence": {"id": "A", "type_id": 0}},
+                {"SpecialToken": {"id": "<s>", "type_id": 1}},
+                {"Sequence": {"id": "B", "type_id": 1}},
+            ],
+            "special_tokens": {"<s>": {"id": "<s>", "ids": [1], "tokens": ["<s>"]}},
+        },
+        "decoder": {
+            "type": "ByteLevel",
+            "add_prefix_space": True,
+            "trim_offsets": True,
+            "use_regex": True,
+        },
+        "model": {
+            "type": "BPE",
+            "dropout": None,
+            "unk_token": None,
+            "continuing_subword_prefix": None,
+            "end_of_word_suffix": None,
+            "fuse_unk": False,
+            "byte_fallback": False,
+            "ignore_merges": True,
+            "vocab": vocab,
+            "merges": [list(pair) for pair in ERNIE_TINY_MERGES],
+        },
+    }
+    (path / "tokenizer.json").write_text(json.dumps(data), encoding="utf-8")
+    (path / "tokenizer_config.json").write_text(
+        json.dumps(
+            {
+                "backend": "tokenizers",
+                "bos_token": "<s>",
+                "eos_token": "</s>",
+                "pad_token": "<pad>",
+                "unk_token": "<unk>",
+                "model_max_length": 64,
+                "tokenizer_class": "TokenizersBackend",
+            }
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def write_tiny_ernie_image(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight ERNIE-Image snapshot in the published diffusers layout."""
+    import transformers
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl_flux2 import AutoencoderKLFlux2
+    from imagehub.models.ernie_image_transformer import ErnieImageTransformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_ernie_tokenizer(root / "tokenizer")
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(TINY_ERNIE_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "ErnieImagePipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Mistral3Model"],
+                "tokenizer": ["transformers", "TokenizersBackend"],
+                "transformer": ["diffusers", "ErnieImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKLFlux2"],
+            }
+        )
+    )
+
+    text_config = {
+        "architectures": ["Mistral3Model"],
+        "model_type": "mistral3",
+        "image_token_index": 10,
+        "text_config": TINY_ERNIE_TEXT,
+        "vision_config": TINY_ERNIE_VISION,
+    }
+    encoder = transformers.Mistral3Model(transformers.Mistral3Config(**text_config))
+    for parameter in encoder.parameters():
+        parameter.data.normal_(0, 0.1)
+    state = {}
+    for name, value in encoder.state_dict().items():
+        if name.startswith("language_model."):
+            name = "language_model.model." + name.removeprefix("language_model.")
+        state[name] = value
+    (root / "text_encoder").mkdir()
+    (root / "text_encoder" / "config.json").write_text(json.dumps(text_config))
+    save_safetensors(state, root / "text_encoder" / "model.safetensors")
+
+    for name, cls, config in (
+        ("transformer", ErnieImageTransformer2DModel, TINY_ERNIE_TRANSFORMER),
+        ("vae", AutoencoderKLFlux2, TINY_FLUX2_VAE),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        if name == "vae":
+            model.bn.running_mean.normal_(0, 0.05)
+            model.bn.running_var.uniform_(0.5, 1.5)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(
+            dict(model.state_dict()), root / name / "diffusion_pytorch_model.safetensors"
+        )
+    return root
+
+
+COGVIEW3_PLUS_FIXTURES = FIXTURES / "cogview3_plus_configs"
+TINY_COGVIEW3_PLUS_T5 = TINY_SD3_T5 | {"is_encoder_decoder": True}
+TINY_COGVIEW3_PLUS_TRANSFORMER = {
+    "_class_name": "CogView3PlusTransformer2DModel",
+    "patch_size": 2,
+    "in_channels": 4,
+    "out_channels": 4,
+    "num_layers": 2,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "text_embed_dim": 32,
+    "time_embed_dim": 16,
+    "condition_dim": 4,
+    "pos_embed_max_size": 8,
+    "sample_size": 8,
+}
+TINY_COGVIEW3_PLUS_VAE = TINY_VAE_FILE_CONFIG | {
+    "latent_channels": 4,
+    "scaling_factor": 1.0,
+    "shift_factor": None,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "mid_block_add_attention": False,
+    "layers_per_block": 3,
+    "sample_size": 64,
+}
+
+
+def write_tiny_cogview3_plus(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight CogView3-Plus snapshot in the published diffusers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.cogview3_plus_transformer import CogView3PlusTransformer2DModel
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", tokenizer / "tokenizer.json")
+    tokenizer_config = {
+        "tokenizer_class": "T5Tokenizer",
+        "model_max_length": 224,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (root / "scheduler").mkdir()
+    shutil.copy2(
+        COGVIEW3_PLUS_FIXTURES / "scheduler_scheduler_config.json",
+        root / "scheduler" / "scheduler_config.json",
+    )
+    shutil.copy2(COGVIEW3_PLUS_FIXTURES / "model_index.json", root / "model_index.json")
+    for name, cls, config, weights in (
+        ("text_encoder", T5EncoderModel, TINY_COGVIEW3_PLUS_T5, "model.safetensors"),
+        (
+            "transformer",
+            CogView3PlusTransformer2DModel,
+            TINY_COGVIEW3_PLUS_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_COGVIEW3_PLUS_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
+OMNIGEN_FIXTURES = Path(__file__).parent / "fixtures" / "omnigen_configs"
+OMNIGEN_TOKENIZER = Path(__file__).parent / "fixtures" / "omnigen_tokenizer"
+TINY_OMNIGEN_TRANSFORMER = {
+    "_class_name": "OmniGenTransformer2DModel",
+    "in_channels": 4,
+    "patch_size": 2,
+    "hidden_size": 32,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 4,
+    "intermediate_size": 48,
+    "num_layers": 2,
+    "pad_token_id": 32000,
+    "vocab_size": 32064,
+    "max_position_embeddings": 131072,
+    "original_max_position_embeddings": 4096,
+    "rope_scaling": {
+        "short_factor": [1.05, 1.1, 1.2, 1.4],
+        "long_factor": [1.5, 2.5, 4.0, 8.0],
+        "type": "su",
+    },
+    "pos_embed_max_size": 16,
+    "time_step_dim": 16,
+}
+TINY_OMNIGEN_VAE = {
+    "_class_name": "AutoencoderKL",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 4,
+    "block_out_channels": [8, 8, 16, 16],
+    "layers_per_block": 1,
+    "norm_num_groups": 4,
+    "scaling_factor": 0.13025,
+    "use_quant_conv": True,
+    "use_post_quant_conv": True,
+    "mid_block_add_attention": True,
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "sample_size": 64,
+}
+
+
+def write_tiny_omnigen(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight OmniGen snapshot in the published diffusers layout (real tokenizer files)."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.omnigen_transformer import OmniGenTransformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    (root / "tokenizer").mkdir()
+    for source in OMNIGEN_TOKENIZER.iterdir():
+        (root / "tokenizer" / source.name).write_bytes(source.read_bytes())
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        (OMNIGEN_FIXTURES / "scheduler_scheduler_config.json").read_text(encoding="utf-8")
+    )
+    (root / "model_index.json").write_text(
+        (OMNIGEN_FIXTURES / "model_index.json").read_text(encoding="utf-8")
+    )
+    for name, cls, config, std in (
+        ("transformer", OmniGenTransformer2DModel, TINY_OMNIGEN_TRANSFORMER, 0.05),
+        ("vae", AutoencoderKL, TINY_OMNIGEN_VAE, 0.05),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, std)
+        if name == "transformer":
+            model.patch_embedding.pos_embed.normal_(0, 0.5)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(
+            dict(model.state_dict()), root / name / "diffusion_pytorch_model.safetensors"
+        )
+    return root
+
+
+TINY_KANDINSKY3_TEXT = {
+    "vocab_size": 16,
+    "d_model": 32,
+    "d_kv": 16,
+    "d_ff": 64,
+    "num_layers": 2,
+    "num_heads": 2,
+    "feed_forward_proj": "gated-silu",
+    "dense_act_fn": "silu",
+    "is_gated_act": True,
+    "layer_norm_epsilon": 1e-6,
+    "dropout_rate": 0.0,
+    "relative_attention_num_buckets": 32,
+    "relative_attention_max_distance": 128,
+    "model_type": "t5",
+    "architectures": ["T5EncoderModel"],
+}
+TINY_KANDINSKY3_UNET = {
+    "_class_name": "Kandinsky3UNet",
+    "in_channels": 4,
+    "time_embedding_dim": 32,
+    "groups": 8,
+    "attention_head_dim": 8,
+    "layers_per_block": 3,
+    "block_out_channels": [32, 64, 64, 128],
+    "cross_attention_dim": 32,
+    "encoder_hid_dim": 32,
+}
+TINY_KANDINSKY3_MOVQ = {
+    "_class_name": "VQModel",
+    "act_fn": "silu",
+    "block_out_channels": [32, 32, 32, 32],
+    "down_block_types": [
+        "DownEncoderBlock2D",
+        "DownEncoderBlock2D",
+        "DownEncoderBlock2D",
+        "AttnDownEncoderBlock2D",
+    ],
+    "in_channels": 3,
+    "latent_channels": 4,
+    "layers_per_block": 1,
+    "norm_num_groups": 32,
+    "norm_type": "spatial",
+    "num_vq_embeddings": 16,
+    "out_channels": 3,
+    "sample_size": 32,
+    "scaling_factor": 0.18215,
+    "up_block_types": [
+        "AttnUpDecoderBlock2D",
+        "UpDecoderBlock2D",
+        "UpDecoderBlock2D",
+        "UpDecoderBlock2D",
+    ],
+    "vq_embed_dim": 4,
+}
+
+
+def write_tiny_kandinsky3(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight Kandinsky 3 snapshot in the published layout (float16 variant files)."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.kandinsky3_unet import Kandinsky3UNet
+    from imagehub.models.t5 import T5EncoderModel
+    from imagehub.models.vq_model import VQModel
+
+    source = FIXTURES / "kandinsky3_configs"
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", tokenizer / "tokenizer.json")
+    tokenizer_config = {
+        "tokenizer_class": "T5Tokenizer",
+        "model_max_length": 2048,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+        "legacy": True,
+    }
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (tokenizer / "special_tokens_map.json").write_text(
+        json.dumps({key: tokenizer_config[key] for key in ("pad_token", "eos_token", "unk_token")})
+    )
+    (root / "scheduler").mkdir()
+    shutil.copy2(source / "scheduler_config.json", root / "scheduler" / "scheduler_config.json")
+    shutil.copy2(source / "model_index.json", root / "model_index.json")
+    for name, cls, config in (
+        ("text_encoder", T5EncoderModel, TINY_KANDINSKY3_TEXT),
+        ("unet", Kandinsky3UNet, TINY_KANDINSKY3_UNET),
+        ("movq", VQModel, TINY_KANDINSKY3_MOVQ),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = {key: value.half() for key, value in model.state_dict().items()}
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        if name != "text_encoder":
+            save_safetensors(state, root / name / "diffusion_pytorch_model.fp16.safetensors")
+            continue
+        shards = [{key: state[key] for key in list(state)[index::2]} for index in range(2)]
+        weight_map = {}
+        for index, shard in enumerate(shards, start=1):
+            file = f"model.fp16-0000{index}-of-00002.safetensors"
+            save_safetensors(shard, root / name / file)
+            weight_map |= dict.fromkeys(shard, file)
+        (root / name / "model.safetensors.index.fp16.json").write_text(
+            json.dumps({"metadata": {"total_size": 0}, "weight_map": weight_map})
+        )
     return root

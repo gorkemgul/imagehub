@@ -290,6 +290,48 @@
     "text_embeds": true,
     "tolerance": "exact"
   },
+  "cogview3_plus_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_scheduler_50": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cogview3_plus_scheduler_8": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cogview3_plus_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_tokens": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cogview3_plus_transformer_0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_transformer_1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "cogview4_e2e_latents": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -447,6 +489,11 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_cogview3-plus-3b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 8
+  },
   "e2e_cogview4-6b": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -502,6 +549,11 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_ernie_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 4
   },
   "e2e_flux1-dev": {
     "max_pixel_diff": 0,
@@ -621,6 +673,12 @@
       "pixels": 0
     }
   },
+  "e2e_hidream_i1_fast": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
+  },
   "e2e_hunyuan-dit-v1.1-distilled": {
     "guidance": 5.0,
     "latents": {
@@ -700,6 +758,27 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "e2e_image_omnigen-v1": {
+    "guidance": 2.5,
+    "image_guidance": 1.6,
+    "input_size": [
+      256,
+      320
+    ],
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "Turn <img><|image_1|></img> into a watercolor painting.",
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 4
+  },
   "e2e_janus-pro-1b": {
     "num_images": 1,
     "passed": true,
@@ -715,6 +794,22 @@
   "e2e_kandinsky-2.2": {
     "passed": true,
     "pixels_max_abs": 0
+  },
+  "e2e_kandinsky3": {
+    "guidance": 3.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A photograph of the inside of a subway train. There are raccoons sitting on the seats.",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4
   },
   "e2e_kolors": {
     "guidance": 5.0,
@@ -803,6 +898,22 @@
     ],
     "steps": 30
   },
+  "e2e_lumina-next": {
+    "guidance": 4.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 30
+  },
   "e2e_multistep_sdxl-turbo": {
     "guidance": 2.0,
     "latents": {
@@ -823,6 +934,22 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_omnigen-v1": {
+    "guidance": 2.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A photograph of an astronaut riding a horse on the moon.",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4
   },
   "e2e_pixart-alpha-xl-1024": {
     "guidance": 4.5,
@@ -1382,6 +1509,23 @@
     "pixels_max_abs": 0,
     "seed": 0
   },
+  "e2e_watershed_lumina-next": {
+    "guidance": 4.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scaling_watershed": 0.3,
+    "seed": 3,
+    "size": [
+      1280,
+      768
+    ],
+    "steps": 8
+  },
   "e2e_wuerstchen-v2": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -1429,6 +1573,39 @@
   },
   "environment": {
     "torch_threads": 12
+  },
+  "ernie_image_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_scheduler": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "ernie_image_text_empty": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_text_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_tokenizer": {
+    "mismatches": 0,
+    "prompts": 507,
+    "tolerance": "exact"
+  },
+  "ernie_image_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_vae_decode": {
+    "max_pixel_diff": 0,
+    "passed": true
   },
   "flux1_clip": {
     "max_abs": 0.0,
@@ -1961,6 +2138,26 @@
       "tensors": 248
     }
   },
+  "header_cogview3-plus-3b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 436
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    }
+  },
   "header_cogview4-6b": {
     "text_encoder": {
       "extra": [],
@@ -1992,6 +2189,26 @@
     "mismatch": [],
     "missing": [],
     "tensors": 1680
+  },
+  "header_ernie_image": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 236
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 409
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 251
+    }
   },
   "header_flux1-dev": {
     "text_encoder": {
@@ -2163,6 +2380,44 @@
       "tensors": 1011
     }
   },
+  "header_hidream-i1-fast": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder_3": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "text_encoder_4": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1615
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
   "header_hunyuan-dit-v1.2": {
     "text_encoder": {
       "extra": [],
@@ -2325,6 +2580,26 @@
       "tensors": 724
     }
   },
+  "header_kandinsky3": {
+    "movq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 431
+    },
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1071
+    }
+  },
   "header_kolors": {
     "text_encoder": {
       "extra": [],
@@ -2465,6 +2740,40 @@
       "mismatch": [],
       "missing": [],
       "tensors": 244
+    }
+  },
+  "header_lumina-next": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 164
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 639
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_omnigen-v1": {
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 275
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
     }
   },
   "header_pixart-alpha-xl-1024": {
@@ -3219,6 +3528,51 @@
       "tensors": 244
     }
   },
+  "hidream_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_llama_layers": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_pooled_clip": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_scheduler_sigmas": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_scheduler_timesteps": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_t5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_transformer_t0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_transformer_t1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "hunyuan_dit_bert": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -3401,6 +3755,45 @@
     "tolerance": "exact"
   },
   "kandinsky22_zero_image": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_movq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_text_encoder_none": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_text_encoder_single": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_text_encoder_text": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_tokenizer_snapshot": {
+    "cases": 6,
+    "tolerance": "exact"
+  },
+  "kandinsky3_unet_step_1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_unet_step_501": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_unet_step_981": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -3833,6 +4226,100 @@
     "tolerance": 0.0
   },
   "lumina2_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_text_encoder_masks": {
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "lumina_next_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_tokenizer": {
+    "mismatches": 0,
+    "prompts": 15,
+    "tolerance": "exact"
+  },
+  "lumina_next_tokenizer_fuzz": {
+    "mismatches": 0,
+    "prompts": 600,
+    "tolerance": "exact"
+  },
+  "lumina_next_transformer_1.0_1.0_True": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_transformer_1.0_1.5_False": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_transformer_1.3_1.0_True": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_tokenizer_real": {
+    "cases": 4,
+    "matches": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "omnigen_transformer_False_0.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_False_0.31": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_False_0.87": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_True_0.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_True_0.31": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_transformer_True_0.87": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "omnigen_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -5255,6 +5742,12 @@
       768
     ]
   },
+  "seed_e2e_cogview3-plus-3b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 8
+  },
   "seed_e2e_cogview4-6b": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -5291,6 +5784,12 @@
       499,
       249
     ]
+  },
+  "seed_e2e_ernie_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
   },
   "seed_e2e_flux1-dev": {
     "max_pixel_diff": 0,
@@ -5332,6 +5831,12 @@
     "seed": 1,
     "size": 512,
     "steps": 2
+  },
+  "seed_e2e_hidream_i1_fast": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "steps": 4
   },
   "seed_e2e_hunyuan-dit-v1.1-distilled": {
     "max_pixel_diff": 0,
@@ -5382,6 +5887,16 @@
   "seed_e2e_kandinsky-2.2": {
     "passed": true,
     "seed": 42
+  },
+  "seed_e2e_kandinsky3": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      768,
+      512
+    ],
+    "steps": 3
   },
   "seed_e2e_kolors": {
     "max_pixel_diff": 0,
@@ -5443,6 +5958,26 @@
       1360,
       768
     ]
+  },
+  "seed_e2e_lumina-next": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ],
+    "steps": 12
+  },
+  "seed_e2e_omnigen-v1": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ],
+    "steps": 2
   },
   "seed_e2e_pixart-alpha-xl-1024": {
     "max_pixel_diff": 0,
@@ -5896,6 +6431,10 @@
     "mismatches": 0,
     "prompts": 14,
     "tolerance": "exact"
+  },
+  "tokenizers_hidream-i1-fast": {
+    "identical": true,
+    "prompts": 6
   },
   "umt5_random": {
     "length": 48,

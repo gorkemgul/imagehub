@@ -172,10 +172,12 @@ def test_downloads_transformer_only_pixart_sigma_on_top_of_the_1024_snapshot(
         "sana-1600m-1024",
         "sana-600m-1024",
         "kolors",
+        "kandinsky-3",
         "lumina-image-2.0",
         "amused-256",
         "amused-512",
         "auraflow-v0.3",
+        "omnigen-v1",
     ],
 )
 def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, tmp_path, model_id):
@@ -217,6 +219,7 @@ def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, 
         ("wuerstchen-v2", "prior"),
         ("llamagen-t2i-xl-256", "text_encoder"),
         ("llamagen-t2i-xl-512", "text_encoder"),
+        ("hidream-i1-fast", "text_encoder_4"),
     ],
 )
 def test_downloads_subrepository_into_snapshot_subfolder(

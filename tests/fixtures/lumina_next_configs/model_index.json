@@ -1,0 +1,24 @@
+{
+  "_class_name": "LuminaText2ImgPipeline",
+  "_diffusers_version": "0.30.0.dev0",
+  "scheduler": [
+    "diffusers",
+    "FlowMatchEulerDiscreteScheduler"
+  ],
+  "text_encoder": [
+    "transformers",
+    "GemmaModel"
+  ],
+  "tokenizer": [
+    "transformers",
+    "GemmaTokenizerFast"
+  ],
+  "transformer": [
+    "diffusers",
+    "LuminaNextDiT2DModel"
+  ],
+  "vae": [
+    "diffusers",
+    "AutoencoderKL"
+  ]
+}

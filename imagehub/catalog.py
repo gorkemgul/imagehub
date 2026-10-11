@@ -1288,6 +1288,39 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="lumina-next",
+        task=Task.T2I,
+        family="lumina-next",
+        source="https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers",
+        repo_id="Alpha-VLLM/Lumina-Next-SFT-diffusers",
+        revision="0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+        provenance="author",
+        catalog_id="lumina-next",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 30, "guidance": 4.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 for _amused_id, _amused_revision, _amused_size in (
     ("amused-256", "09b6259bf96dbe6d70a852b70812420fe02df55e", 256),
     ("amused-512", "6f3f309ba188a08e347bff9691a0ac791817ca97", 512),
@@ -1485,6 +1518,43 @@ _entries.append(
             "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
             "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
             "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="cogview3-plus-3b",
+        task=Task.T2I,
+        family="cogview3",
+        source="https://huggingface.co/zai-org/CogView3-Plus-3B",
+        repo_id="zai-org/CogView3-Plus-3B",
+        revision="5d70e40732ac0efac98524c51a7fa9c82707f1e5",
+        provenance="author",
+        catalog_id="cogview3-plus",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
             "vae/config.json",
             "vae/diffusion_pytorch_model.safetensors",
         ),
@@ -1722,6 +1792,43 @@ _entries.append(
     )
 )
 
+# Kandinsky 3 publishes float16 weights only; the loaders read the variant file names.
+_entries.append(
+    ModelSpec(
+        id="kandinsky-3",
+        task=Task.T2I,
+        family="kandinsky3",
+        source="https://huggingface.co/kandinsky-community/kandinsky-3",
+        repo_id="kandinsky-community/kandinsky-3",
+        revision="bf79e6c219da8a94abb50235fdc4567eb8fb4632",
+        provenance="author",
+        catalog_id="kandinsky-3",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 25, "guidance": 3.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "movq/config.json",
+            "movq/diffusion_pytorch_model.fp16.safetensors",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.fp16.json",
+            "text_encoder/model.fp16-00001-of-00005.safetensors",
+            "text_encoder/model.fp16-00002-of-00005.safetensors",
+            "text_encoder/model.fp16-00003-of-00005.safetensors",
+            "text_encoder/model.fp16-00004-of-00005.safetensors",
+            "text_encoder/model.fp16-00005-of-00005.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.fp16.safetensors",
+        ),
+    )
+)
+
 _STABLE_CASCADE_REVISION = "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16"
 _STABLE_CASCADE_PRIOR_REVISION = "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91"
 
@@ -1929,6 +2036,141 @@ _entries.append(
             "vision_language_encoder/model-00003-of-00004.safetensors",
             "vision_language_encoder/model-00004-of-00004.safetensors",
             "vision_language_encoder/model.safetensors.index.json",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="ernie-image",
+        task=Task.T2I,
+        family="ernie-image",
+        source="https://huggingface.co/baidu/ERNIE-Image",
+        repo_id="baidu/ERNIE-Image",
+        revision="5346b31d68c9c23758ba56ef8be5e9dc174c7f99",
+        provenance="author",
+        catalog_id="ernie-image",
+        format="diffusers",
+        license="Apache-2.0",
+        config={"defaults": {"steps": 50, "guidance": 4.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hidream-i1-fast",
+        task=Task.T2I,
+        family="hidream",
+        source="https://huggingface.co/HiDream-ai/HiDream-I1-Fast",
+        repo_id="HiDream-ai/HiDream-I1-Fast",
+        revision="4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+        provenance="author",
+        catalog_id="hidream-i1",
+        format="diffusers",
+        license="MIT",
+        gated=True,
+        config={"defaults": {"steps": 16, "guidance": 0.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "text_encoder_3/config.json",
+            "text_encoder_3/model.safetensors.index.json",
+            "text_encoder_3/model-00001-of-00002.safetensors",
+            "text_encoder_3/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_3/special_tokens_map.json",
+            "tokenizer_3/spiece.model",
+            "tokenizer_3/tokenizer.json",
+            "tokenizer_3/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            *(
+                f"transformer/diffusion_pytorch_model-{index:05d}-of-00007.safetensors"
+                for index in range(1, 8)
+            ),
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+        # The Llama 3.1 encoder and its tokenizer come from Meta's gated repository.
+        subfolders={
+            "text_encoder_4": SubRepo(
+                repo_id="meta-llama/Llama-3.1-8B-Instruct",
+                revision="0e9e39f249a16976918f6564b8830bc894c89659",
+                files=(
+                    "config.json",
+                    "generation_config.json",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00004.safetensors",
+                    "model-00002-of-00004.safetensors",
+                    "model-00003-of-00004.safetensors",
+                    "model-00004-of-00004.safetensors",
+                    "special_tokens_map.json",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                ),
+            )
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="omnigen-v1",
+        task=Task.T2I,
+        family="omnigen",
+        source="https://huggingface.co/Shitao/OmniGen-v1-diffusers",
+        repo_id="Shitao/OmniGen-v1-diffusers",
+        revision="016e2f61d12a98303f6bbdf122687694d7984268",
+        provenance="author",
+        catalog_id="omnigen",
+        format="diffusers",
+        license="MIT",
+        gated=False,
+        image_input="optional",
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 2.5,
+                "image_guidance": 1.6,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
         ),
     )
 )

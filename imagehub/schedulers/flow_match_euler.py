@@ -91,7 +91,7 @@ def _stretch_to_terminal(values: list[float], terminal: float, *, float32: bool)
 class FlowMatchEulerDiscreteScheduler:
     """Stateful deterministic flow-match Euler scheduler."""
 
-    def __init__(self, config: Mapping[str, Any]) -> None:
+    def __init__(self, config: Mapping[str, Any], *, allow_inverted_sigmas: bool = False) -> None:
         unknown = sorted(
             key for key in config if not key.startswith("_") and key not in FLOW_MATCH_DEFAULTS
         )
@@ -101,6 +101,8 @@ class FlowMatchEulerDiscreteScheduler:
             key: value for key, value in config.items() if not key.startswith("_")
         }
         for key, expected in _REQUIRED.items():
+            if key == "invert_sigmas" and allow_inverted_sigmas:
+                continue
             if cfg[key] != expected:
                 raise ValueError(f"Unsupported FlowMatch Euler setting {key}={cfg[key]!r}")
         if cfg["time_shift_type"] not in _TIME_SHIFT_TYPES:
@@ -197,8 +199,14 @@ class FlowMatchEulerDiscreteScheduler:
 
         schedule = schedule.to(torch.float32)
 
-        self.timesteps = schedule * self.config["num_train_timesteps"]
-        self.sigmas = torch.cat([schedule, torch.zeros(1, dtype=torch.float32)])
+        if self.config["invert_sigmas"]:
+            # The reference inverts after shifting and appends a terminal sigma of one.
+            schedule = 1.0 - schedule
+            self.timesteps = schedule * self.config["num_train_timesteps"]
+            self.sigmas = torch.cat([schedule, torch.ones(1, dtype=torch.float32)])
+        else:
+            self.timesteps = schedule * self.config["num_train_timesteps"]
+            self.sigmas = torch.cat([schedule, torch.zeros(1, dtype=torch.float32)])
         self._step_index = None
         self._begin_index = None
 
