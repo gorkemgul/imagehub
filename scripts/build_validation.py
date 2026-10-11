@@ -2,15 +2,15 @@
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
 measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
-PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, LlamaGen, Wuerstchen v2, LongCat-Image,
-CogView3-Plus, CogView4, Ideogram 4 and HiDream-I1
-measurements are
+PixArt, Sana, Lumina-Image 2.0, Lumina-Next, aMUSEd, AuraFlow, LlamaGen, Wuerstchen v2,
+LongCat-Image, CogView3-Plus, CogView4, Ideogram 4 and HiDream-I1 measurements are
 grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
 ``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
 ``components_kandinsky22``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
-``components_lumina2``, ``components_amused``, ``components_auraflow``, ``components_llamagen``,
+``components_lumina2``, ``components_lumina_next``, ``components_amused``, ``components_auraflow``,
+``components_llamagen``,
 ``components_wuerstchen``,
 ``components_longcat_image``,
 ``components_cogview3_plus``,
@@ -341,6 +341,11 @@ def main() -> None:
         },
         "components_lumina2": {
             key: value for key, value in measured.items() if key.startswith("lumina2_")
+        },
+        "components_lumina_next": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(("lumina_next_", "gemma1_", "e2e_watershed_lumina"))
         },
         "components_amused": {
             key: value for key, value in measured.items() if key.startswith(("amused_", "amused-"))

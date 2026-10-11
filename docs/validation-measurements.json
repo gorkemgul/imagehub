@@ -854,6 +854,22 @@
     ],
     "steps": 30
   },
+  "e2e_lumina-next": {
+    "guidance": 4.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 30
+  },
   "e2e_multistep_sdxl-turbo": {
     "guidance": 2.0,
     "latents": {
@@ -1432,6 +1448,23 @@
     "passed": true,
     "pixels_max_abs": 0,
     "seed": 0
+  },
+  "e2e_watershed_lumina-next": {
+    "guidance": 4.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scaling_watershed": 0.3,
+    "seed": 3,
+    "size": [
+      1280,
+      768
+    ],
+    "steps": 8
   },
   "e2e_wuerstchen-v2": {
     "passed": true,
@@ -2569,6 +2602,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 244
+    }
+  },
+  "header_lumina-next": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 164
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 639
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
     }
   },
   "header_pixart-alpha-xl-1024": {
@@ -3982,6 +4035,50 @@
     "tolerance": 0.0
   },
   "lumina2_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_text_encoder_masks": {
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "lumina_next_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_tokenizer": {
+    "mismatches": 0,
+    "prompts": 15,
+    "tolerance": "exact"
+  },
+  "lumina_next_tokenizer_fuzz": {
+    "mismatches": 0,
+    "prompts": 600,
+    "tolerance": "exact"
+  },
+  "lumina_next_transformer_1.0_1.0_True": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_transformer_1.0_1.5_False": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_transformer_1.3_1.0_True": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_next_vae_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -5603,6 +5700,16 @@
       1360,
       768
     ]
+  },
+  "seed_e2e_lumina-next": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ],
+    "steps": 12
   },
   "seed_e2e_pixart-alpha-xl-1024": {
     "max_pixel_diff": 0,

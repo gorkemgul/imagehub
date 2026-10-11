@@ -39,6 +39,7 @@ def test_catalog_contents():
             "llamagen-t2i-xl-512",
             "longcat-image",
             "lumina-image-2.0",
+            "lumina-next",
             "pixart-alpha-xl-1024",
             "pixart-alpha-xl-512",
             "pixart-sigma-xl-1024",
@@ -1204,6 +1205,39 @@ def test_wuerstchen_catalog_entry():
         "defaults": {"steps": 12, "guidance": 0.0, "prior_steps": 60, "prior_guidance": 4.0}
     }
     assert not any(name.endswith(".bin") for name in spec.files + spec.subfolders["prior"].files)
+
+
+def test_lumina_next_catalog_entry():
+    spec = model_info("lumina-next")
+    assert spec.task is Task.T2I
+    assert spec.family == "lumina-next"
+    assert spec.source == "https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers"
+    assert spec.repo_id == "Alpha-VLLM/Lumina-Next-SFT-diffusers"
+    assert spec.revision == "0ee5ec90043acf5cb41fe96274af36eb7fad8d95"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "lumina-next"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 30, "guidance": 4.0, "width": 1024, "height": 1024}
+    }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.json",
+        "text_encoder/model-00001-of-00002.safetensors",
+        "text_encoder/model-00002-of-00002.safetensors",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer.model",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
 
 
 def test_ernie_image_catalog_entry():
