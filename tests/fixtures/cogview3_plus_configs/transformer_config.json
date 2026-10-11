@@ -1,0 +1,16 @@
+{
+  "_class_name": "CogView3PlusTransformer2DModel",
+  "_diffusers_version": "0.31.0.dev0",
+  "attention_head_dim": 40,
+  "condition_dim": 256,
+  "in_channels": 16,
+  "num_attention_heads": 64,
+  "num_layers": 30,
+  "out_channels": 16,
+  "patch_size": 2,
+  "pooled_projection_dim": 1536,
+  "pos_embed_max_size": 128,
+  "sample_size": 128,
+  "text_embed_dim": 4096,
+  "time_embed_dim": 512
+}

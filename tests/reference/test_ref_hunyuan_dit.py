@@ -25,6 +25,14 @@ transformers = pytest.importorskip("transformers")
 
 CPU = torch.device("cpu")
 MODEL_ID = "hunyuan-dit-v1.1-distilled"
+# The v1.2 repositories share the text encoders, tokenizers and VAE with v1.1, so those component
+# tests run once. End-to-end runs of the v1.2 releases use fewer steps.
+MODEL_STEPS = {
+    "hunyuan-dit-v1.1-distilled": 25,
+    "hunyuan-dit-v1.2": 10,
+    "hunyuan-dit-v1.2-distilled": 10,
+}
+MODEL_IDS = list(MODEL_STEPS)
 PROMPT = "a photograph of an astronaut riding a horse"
 PROMPTS = [PROMPT, "一个宇航员在骑马", ""]
 
@@ -53,8 +61,9 @@ def _check(record, name, actual, expected):
     torch.testing.assert_close(actual, expected, atol=0, rtol=0)
 
 
-def test_headers(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_headers(record, model_id):
+    root = snapshot_dir(model_id)
     result = {}
     for component, cls in {
         "text_encoder": BertModel,
@@ -78,7 +87,7 @@ def test_headers(record):
             ),
             "tensors": len(shapes),
         }
-    record("header_hunyuan_dit", **result)
+    record("header_hunyuan_dit" if model_id == MODEL_ID else f"header_{model_id}", **result)
     assert all(
         not entry[key] for entry in result.values() for key in ("missing", "extra", "mismatch")
     )
@@ -141,26 +150,28 @@ def test_vae(record):
     gc.collect()
 
 
-def test_scheduler_timesteps(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_scheduler_timesteps(record, model_id):
+    root = snapshot_dir(model_id)
     config = read_json(root / "scheduler" / "scheduler_config.json")
     ours = DDPMScheduler(config)
     reference = diffusers.DDPMScheduler.from_config(config)
     ours.set_timesteps(25)
     reference.set_timesteps(25)
     exact = torch.equal(ours.timesteps, reference.timesteps.cpu())
-    record("hunyuan_dit_scheduler", exact=exact, steps=25, tolerance="exact")
+    name = "hunyuan_dit_scheduler" if model_id == MODEL_ID else f"hunyuan_dit_scheduler_{model_id}"
+    record(name, exact=exact, steps=25, tolerance="exact")
     assert exact
 
 
-def _reference_output(root, *, latents=None, seed=42):
+def _reference_output(root, steps, *, latents=None, seed=42):
     reference = diffusers.HunyuanDiTPipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     )
     reference.set_progress_bar_config(disable=True)
     kwargs = {
         "prompt": PROMPT,
-        "num_inference_steps": 25,
+        "num_inference_steps": steps,
         "guidance_scale": 5.0,
         "height": 1024,
         "width": 1024,
@@ -177,16 +188,18 @@ def _reference_output(root, *, latents=None, seed=42):
     return expected_latents, expected_pixels
 
 
-def test_end_to_end_fixed_latents(record):
-    root = snapshot_dir(MODEL_ID)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_end_to_end_fixed_latents(record, model_id):
+    root = snapshot_dir(model_id)
+    steps = MODEL_STEPS[model_id]
     noise = torch.randn(1, 4, 128, 128, generator=torch.Generator("cpu").manual_seed(7))
-    expected_latents, expected_pixels = _reference_output(root, latents=noise)
+    expected_latents, expected_pixels = _reference_output(root, steps, latents=noise)
     components = HunyuanDiTComponents.load(root, device=CPU, dtype=torch.float32)
     actual_latents = denoise(
         components,
         prompt=PROMPT,
         negative_prompt=None,
-        steps=25,
+        steps=steps,
         guidance=5.0,
         guidance_rescale=0.0,
         width=1024,
@@ -198,12 +211,12 @@ def test_end_to_end_fixed_latents(record):
     latent_diff = max_diff(actual_latents, expected_latents)
     pixel_diff = int((actual_pixels.int() - expected_pixels.int()).abs().max())
     record(
-        "e2e_hunyuan-dit-v1.1-distilled",
+        f"e2e_{model_id}",
         latents=latent_diff,
         pixels_max_abs=pixel_diff,
         passed=latent_diff["max_abs"] == 0 and pixel_diff == 0,
         prompt=PROMPT,
-        steps=25,
+        steps=steps,
         guidance=5.0,
         size=[1024, 1024],
         noise_seed=7,
@@ -214,17 +227,20 @@ def test_end_to_end_fixed_latents(record):
     gc.collect()
 
 
-def test_seed_end_to_end(record):
-    root = snapshot_dir(MODEL_ID)
-    _, expected = _reference_output(root, seed=42)
-    actual = pipeline("t2i", backend=MODEL_ID, model=root)(PROMPT, seed=42)
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_seed_end_to_end(record, model_id):
+    root = snapshot_dir(model_id)
+    steps = MODEL_STEPS[model_id]
+    _, expected = _reference_output(root, steps, seed=42)
+    actual = pipeline("t2i", backend=model_id, model=root)(PROMPT, seed=42, steps=steps)
     pixels = torch.stack([image.tensor for image in actual.images])
     passed = torch.equal(pixels, expected)
     pixel_diff = int((pixels.int() - expected.int()).abs().max())
     record(
-        "seed_e2e_hunyuan-dit-v1.1-distilled",
+        f"seed_e2e_{model_id}",
         passed=passed,
         max_pixel_diff=pixel_diff,
         seed=42,
+        steps=steps,
     )
     assert passed

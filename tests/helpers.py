@@ -2316,3 +2316,80 @@ def write_tiny_ernie_image(directory: str | os.PathLike[str], *, seed: int = 0) 
             dict(model.state_dict()), root / name / "diffusion_pytorch_model.safetensors"
         )
     return root
+
+
+COGVIEW3_PLUS_FIXTURES = FIXTURES / "cogview3_plus_configs"
+TINY_COGVIEW3_PLUS_T5 = TINY_SD3_T5 | {"is_encoder_decoder": True}
+TINY_COGVIEW3_PLUS_TRANSFORMER = {
+    "_class_name": "CogView3PlusTransformer2DModel",
+    "patch_size": 2,
+    "in_channels": 4,
+    "out_channels": 4,
+    "num_layers": 2,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "text_embed_dim": 32,
+    "time_embed_dim": 16,
+    "condition_dim": 4,
+    "pos_embed_max_size": 8,
+    "sample_size": 8,
+}
+TINY_COGVIEW3_PLUS_VAE = TINY_VAE_FILE_CONFIG | {
+    "latent_channels": 4,
+    "scaling_factor": 1.0,
+    "shift_factor": None,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "mid_block_add_attention": False,
+    "layers_per_block": 3,
+    "sample_size": 64,
+}
+
+
+def write_tiny_cogview3_plus(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight CogView3-Plus snapshot in the published diffusers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.cogview3_plus_transformer import CogView3PlusTransformer2DModel
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", tokenizer / "tokenizer.json")
+    tokenizer_config = {
+        "tokenizer_class": "T5Tokenizer",
+        "model_max_length": 224,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (root / "scheduler").mkdir()
+    shutil.copy2(
+        COGVIEW3_PLUS_FIXTURES / "scheduler_scheduler_config.json",
+        root / "scheduler" / "scheduler_config.json",
+    )
+    shutil.copy2(COGVIEW3_PLUS_FIXTURES / "model_index.json", root / "model_index.json")
+    for name, cls, config, weights in (
+        ("text_encoder", T5EncoderModel, TINY_COGVIEW3_PLUS_T5, "model.safetensors"),
+        (
+            "transformer",
+            CogView3PlusTransformer2DModel,
+            TINY_COGVIEW3_PLUS_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_COGVIEW3_PLUS_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root

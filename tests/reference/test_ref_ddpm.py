@@ -61,6 +61,34 @@ def test_ddpm_trajectory_matches_reference(prediction_type, record):
     )
 
 
+def test_hunyuan_dit_v12_scheduler_config_trajectory_exact():
+    config = json.loads(
+        (
+            Path(__file__).parents[1]
+            / "fixtures/hunyuan_dit_v12_configs/scheduler_scheduler_config.json"
+        ).read_text()
+    )
+    assert config["beta_end"] == 0.018
+    reference = diffusers.DDPMScheduler.from_config(config)
+    native = DDPMScheduler(config)
+    for steps in (25, 50):
+        reference.set_timesteps(steps)
+        native.set_timesteps(steps)
+        assert torch.equal(native.timesteps, reference.timesteps)
+    generator = torch.Generator().manual_seed(0)
+    sample = torch.randn(2, 4, 8, 12, generator=generator)
+    expected, actual = sample.clone(), sample.clone()
+    expected_generator = torch.Generator().manual_seed(5)
+    actual_generator = torch.Generator().manual_seed(5)
+    for timestep in reference.timesteps:
+        output = torch.randn(2, 4, 8, 12, generator=generator)
+        expected = reference.step(
+            output, timestep, expected, generator=expected_generator
+        ).prev_sample
+        actual = native.step(output, timestep, actual, generator=actual_generator)
+        assert torch.equal(actual, expected)
+
+
 def test_kandinsky22_decoder_config_trajectory_exact():
     config = json.loads(
         (

@@ -958,6 +958,27 @@ _entries.append(
     )
 )
 
+_HUNYUAN_DIT_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors",
+    "text_encoder_2/config.json",
+    "text_encoder_2/model.safetensors.index.json",
+    "text_encoder_2/model-00001-of-00002.safetensors",
+    "text_encoder_2/model-00002-of-00002.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/vocab.txt",
+    "tokenizer_2/special_tokens_map.json",
+    "tokenizer_2/spiece.model",
+    "tokenizer_2/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+
 _entries.append(
     ModelSpec(
         id="hunyuan-dit-v1.1-distilled",
@@ -972,26 +993,43 @@ _entries.append(
         license="Tencent Hunyuan Community License",
         gated=False,
         config={"defaults": {"steps": 25, "guidance": 5.0}},
-        files=(
-            "model_index.json",
-            "scheduler/scheduler_config.json",
-            "text_encoder/config.json",
-            "text_encoder/model.safetensors",
-            "text_encoder_2/config.json",
-            "text_encoder_2/model.safetensors.index.json",
-            "text_encoder_2/model-00001-of-00002.safetensors",
-            "text_encoder_2/model-00002-of-00002.safetensors",
-            "tokenizer/special_tokens_map.json",
-            "tokenizer/tokenizer_config.json",
-            "tokenizer/vocab.txt",
-            "tokenizer_2/special_tokens_map.json",
-            "tokenizer_2/spiece.model",
-            "tokenizer_2/tokenizer_config.json",
-            "transformer/config.json",
-            "transformer/diffusion_pytorch_model.safetensors",
-            "vae/config.json",
-            "vae/diffusion_pytorch_model.safetensors",
-        ),
+        files=_HUNYUAN_DIT_FILES,
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hunyuan-dit-v1.2",
+        task=Task.T2I,
+        family="hunyuan-dit",
+        source="https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+        repo_id="Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+        revision="5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+        provenance="author",
+        catalog_id="hunyuan-dit",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0}},
+        files=_HUNYUAN_DIT_FILES,
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hunyuan-dit-v1.2-distilled",
+        task=Task.T2I,
+        family="hunyuan-dit",
+        source="https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+        repo_id="Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+        revision="ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
+        provenance="author",
+        catalog_id="hunyuan-dit",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 25, "guidance": 5.0}},
+        files=_HUNYUAN_DIT_FILES,
     )
 )
 
@@ -1010,13 +1048,20 @@ _PIXART_COMMON = (
     "vae/config.json",
     "vae/diffusion_pytorch_model.safetensors",
 )
-for _id, _repo, _revision, _catalog_id, _max_length, _files in (
+_PIXART_ALPHA_512_FILES = (
+    _PIXART_COMMON[:4]
+    + tuple(f"text_encoder/model-0000{index}-of-00004.safetensors" for index in range(1, 5))
+    + ("tokenizer/added_tokens.json",)
+    + _PIXART_COMMON[6:]
+)
+for _id, _repo, _revision, _catalog_id, _max_length, _size, _files in (
     (
         "pixart-sigma-xl-1024",
         "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
         "e102b3591cc82e97071b8b4cb90d834d0c487207",
         "pixart-sigma",
         300,
+        1024,
         _PIXART_COMMON,
     ),
     (
@@ -1025,7 +1070,17 @@ for _id, _repo, _revision, _catalog_id, _max_length, _files in (
         "b89adadeccd9ead2adcb9fa2825d3fabec48d404",
         "pixart-alpha",
         120,
+        1024,
         _PIXART_COMMON[:6] + ("tokenizer/added_tokens.json",) + _PIXART_COMMON[6:],
+    ),
+    (
+        "pixart-alpha-xl-512",
+        "PixArt-alpha/PixArt-XL-2-512x512",
+        "50f702106901db6d0f8b67eb88e814c56ded2692",
+        "pixart-alpha",
+        120,
+        512,
+        _PIXART_ALPHA_512_FILES,
     ),
 ):
     _entries.append(
@@ -1046,9 +1101,65 @@ for _id, _repo, _revision, _catalog_id, _max_length, _files in (
                     "steps": 20,
                     "guidance": 4.5,
                     "max_sequence_length": _max_length,
+                    **({"width": _size, "height": _size} if _size != 1024 else {}),
                 }
             },
             files=_files,
+        )
+    )
+
+# The PixArt-Sigma 256, 512 and 2K repositories publish only a transformer; the text encoder,
+# tokenizer, VAE and scheduler come from the 1024 repository, as in the model cards.
+for _id, _repo, _revision, _size in (
+    (
+        "pixart-sigma-xl-256",
+        "PixArt-alpha/PixArt-Sigma-XL-2-256x256",
+        "495cb1bafac48d71ca96761409c5fd7e48354df2",
+        256,
+    ),
+    (
+        "pixart-sigma-xl-512",
+        "PixArt-alpha/PixArt-Sigma-XL-2-512-MS",
+        "76fb7eb5a9314bc1e4e479d2f13447517fca9be4",
+        512,
+    ),
+    (
+        "pixart-sigma-xl-2k",
+        "PixArt-alpha/PixArt-Sigma-XL-2-2K-MS",
+        "cd274f4c8b01de0dcc87b65887dd357d473bf516",
+        2048,
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="pixart",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="pixart-sigma",
+            format="diffusers",
+            license="CreativeML-OpenRAIL++-M",
+            gated=False,
+            base="pixart-sigma-xl-1024",
+            config={
+                "defaults": {
+                    "steps": 20,
+                    "guidance": 4.5,
+                    "max_sequence_length": 300,
+                    "width": _size,
+                    "height": _size,
+                }
+            },
+            files=("transformer/config.json", "transformer/diffusion_pytorch_model.safetensors"),
+            overlay={
+                "transformer/config.json": "transformer/config.json",
+                "transformer/diffusion_pytorch_model.safetensors": (
+                    "transformer/diffusion_pytorch_model.safetensors"
+                ),
+            },
         )
     )
 
@@ -1374,6 +1485,43 @@ _entries.append(
             "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
             "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
             "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="cogview3-plus-3b",
+        task=Task.T2I,
+        family="cogview3",
+        source="https://huggingface.co/zai-org/CogView3-Plus-3B",
+        repo_id="zai-org/CogView3-Plus-3B",
+        revision="5d70e40732ac0efac98524c51a7fa9c82707f1e5",
+        provenance="author",
+        catalog_id="cogview3-plus",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
             "vae/config.json",
             "vae/diffusion_pytorch_model.safetensors",
         ),

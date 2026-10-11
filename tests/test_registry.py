@@ -20,11 +20,17 @@ def test_family_and_model_aliases_are_registered():
     assert {"qwen-image", "qwen-image-2.1"} <= set(names)
     assert {"flux1-dev", "flux1-kontext-dev", "flux1-krea-dev"} <= set(names)
     assert {"flux2", "flux2-klein-4b", "flux2-klein-9b"} <= set(names)
-    assert {"hunyuan-dit", "hunyuan-dit-v1.1-distilled"} <= set(names)
+    assert {
+        "hunyuan-dit",
+        "hunyuan-dit-v1.1-distilled",
+        "hunyuan-dit-v1.2",
+        "hunyuan-dit-v1.2-distilled",
+    } <= set(names)
     assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024"} <= set(names)
     assert {"krea2", "krea2-turbo"} <= set(names)
     assert "ernie-image" in names
     assert "longcat-image" in names
+    assert {"cogview3", "cogview3-plus-3b"} <= set(names)
     assert {"cogview4", "cogview4-6b"} <= set(names)
     assert {"ideogram4", "ideogram4-fp8"} <= set(names)
     assert {"kandinsky22", "kandinsky-2.2"} <= set(names)

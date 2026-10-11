@@ -68,11 +68,11 @@ result.images[0].save("edited.png")
 | FLUX.1 | `flux1-schnell`, `flux1-dev`, `flux1-krea-dev` | `t2i` | T | CPU fp32 parity |
 | FLUX.1 Kontext | `flux1-kontext-dev` | `t2i` | T, I | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | T | CPU fp32 parity |
-| HunyuanDiT | `hunyuan-dit-v1.1-distilled` | `t2i` | T | CPU fp32 parity |
+| HunyuanDiT | `hunyuan-dit-v1.1-distilled`, `hunyuan-dit-v1.2`, `hunyuan-dit-v1.2-distilled` | `t2i` | T | CPU fp32 parity |
 | Kandinsky 2.2 | `kandinsky-2.2` | `t2i` | T | CPU fp32 parity |
 | Stable Cascade | `stable-cascade`, `stable-cascade-lite` | `t2i` | T | CPU fp32 parity |
 | Würstchen v2 | `wuerstchen-v2` | `t2i` | T | CPU fp32 parity |
-| PixArt | `pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` | `t2i` | T | CPU fp32 parity |
+| PixArt | `pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`, `pixart-alpha-xl-1024`, `pixart-alpha-xl-512` | `t2i` | T | CPU fp32 parity |
 | Sana | `sana-1600m-1024`, `sana-600m-1024` | `t2i` | T | CPU fp32 parity |
 | Kolors | `kolors` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |
@@ -82,6 +82,7 @@ result.images[0].save("edited.png")
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
+| CogView3-Plus | `cogview3-plus-3b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 transformer and VAE |
 | CogView4 | `cogview4-6b` | `t2i` | T | CPU fp32 parity |
 | Ideogram 4 | `ideogram4-fp8` | `t2i` | T | CPU fp32 parity with the official implementation |
 | Qwen-Image | `qwen-image-2.1` | `t2i` | T | CPU fp32 parity |

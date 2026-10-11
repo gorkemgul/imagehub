@@ -2,8 +2,8 @@
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
 measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
-PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, LlamaGen, Wuerstchen v2, LongCat-Image, CogView4
-and Ideogram 4
+PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, LlamaGen, Wuerstchen v2, LongCat-Image,
+CogView3-Plus, CogView4 and Ideogram 4
 measurements are
 grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
@@ -13,6 +13,7 @@ grouped in flat
 ``components_lumina2``, ``components_amused``, ``components_auraflow``, ``components_llamagen``,
 ``components_wuerstchen``,
 ``components_longcat_image``,
+``components_cogview3_plus``,
 ``components_cogview4`` and ``components_ideogram4`` mappings: the base model keeps its historical
 unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
 own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
@@ -52,7 +53,8 @@ LIMITS = [
     "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
     "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 "
     "and LongCat-Image, flow-match "
-    "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
+    "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR "
+    "DDIM for CogView3-Plus, DDPM for "
     "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and "
     "Wuerstchen v2, "
     "DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for "
@@ -355,6 +357,9 @@ def main() -> None:
         },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")
+        },
+        "components_cogview3_plus": {
+            key: value for key, value in measured.items() if key.startswith("cogview3_plus_")
         },
         "components_cogview4": {
             key: value for key, value in measured.items() if key.startswith("cogview4_")
