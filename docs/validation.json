@@ -5362,6 +5362,58 @@
         "passed": true,
         "seed": 1234
       }
+    },
+    {
+      "model_id": "ernie-image",
+      "repo_id": "baidu/ERNIE-Image",
+      "revision": "5346b31d68c9c23758ba56ef8be5e9dc174c7f99",
+      "provenance": "author",
+      "catalog_id": "ernie-image",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "2a483750fcc40efff027e9bd77f4ea8fc56b18beb65e486f8f0c6d214bedd409",
+        "scheduler/scheduler_config.json": "96031c39fcd4651aeaa07fa6b64262b9332967199e0b89c3a4694db127756f34",
+        "text_encoder/config.json": "447db17aa66bcd837a59394cc31b2675feb2acb3fd2742f30990f7036f7f2bef",
+        "text_encoder/model.safetensors": "c2188c5b3d759ac35e3770056153fdcb348276bd1d10f0443a60a2bdcbb6ff7b",
+        "tokenizer/tokenizer.json": "577575622324b2e099e2648be26bdeb5e5815ffe66d7004e9e3ddbf421db6bf1",
+        "tokenizer/tokenizer_config.json": "dfd5e67b652177f3e697dd67b0792bef7779c66522f47f502af2ce1715c5ec59",
+        "transformer/config.json": "cd3542dbfb6259a7356380aa93ed61f793ef0f13684a36d75046eb638251652f",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "7c0fa2e62388bafbd3d444906317640f6a9df4f484b49ab71e86c455498d00d3",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "e6074cea278d453b35444940904ef9fe5f0475750f3bdd68c377cc4bec2f9b3f",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "dadf2d3ebc81b7fd2d6049754b3f3938d737c4052fae2d7dbc54d29c2e6be02f",
+        "vae/config.json": "cc913e305a1f714ac1c076e91646fe66c8f1848d01a678a8ebed5fbd3be711d3",
+        "vae/diffusion_pytorch_model.safetensors": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 236,
+          "transformer": 409,
+          "vae": 251
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "steps": 4
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 4
+      }
     }
   ],
   "components": {
@@ -6809,6 +6861,41 @@
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
+    }
+  },
+  "components_ernie_image": {
+    "ernie_image_e2e_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ernie_image_scheduler": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "ernie_image_text_empty": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ernie_image_text_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ernie_image_tokenizer": {
+      "mismatches": 0,
+      "prompts": 507,
+      "tolerance": "exact"
+    },
+    "ernie_image_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ernie_image_vae_decode": {
+      "max_pixel_diff": 0,
+      "passed": true
     }
   },
   "components_flux2": {
@@ -8745,6 +8832,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (cogview3-plus-3b)"
+    "reference_summary": "8 passed (ernie-image)"
   }
 }
