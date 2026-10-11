@@ -74,11 +74,16 @@ def test_tiny_sdxl_generation_matches_diffusers(tmp_path, case):
     assert torch.equal(actual, expected)
 
 
-def test_tiny_ancestral_generation_matches_diffusers_exactly(tmp_path):
+@pytest.mark.parametrize(
+    ("model_id", "fixture", "guidance"),
+    [
+        ("sdxl-turbo", "sdxl_turbo_configs", 0.0),
+        ("playground-v2", "playground_v2_configs", 3.0),
+    ],
+)
+def test_tiny_ancestral_generation_matches_diffusers_exactly(tmp_path, model_id, fixture, guidance):
     config = json.loads(
-        (
-            Path(__file__).parents[1] / "fixtures/sdxl_turbo_configs/scheduler_config.json"
-        ).read_text()
+        (Path(__file__).parents[1] / "fixtures" / fixture / "scheduler_config.json").read_text()
     )
     root = write_tiny_sdxl(tmp_path / "tiny-ancestral", scheduler_config=config, sample_size=4)
     ref = diffusers.StableDiffusionXLPipeline.from_pretrained(
@@ -88,15 +93,15 @@ def test_tiny_ancestral_generation_matches_diffusers_exactly(tmp_path):
     expected = ref(
         "a cat",
         num_inference_steps=2,
-        guidance_scale=0.0,
+        guidance_scale=guidance,
         height=32,
         width=32,
         generator=torch.Generator("cpu").manual_seed(42),
         output_type="np",
     ).images
     expected = torch.from_numpy((expected * 255).round().astype("uint8"))
-    result = pipeline("t2i", backend="sdxl-turbo", model=root)(
-        "a cat", seed=42, steps=2, guidance=0.0, height=32, width=32
+    result = pipeline("t2i", backend=model_id, model=root)(
+        "a cat", seed=42, steps=2, guidance=guidance, height=32, width=32
     )
     actual = torch.stack([image.tensor for image in result.images])
     assert torch.equal(actual, expected)

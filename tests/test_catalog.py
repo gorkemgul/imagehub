@@ -22,6 +22,8 @@ def test_catalog_contents():
             "flux2-klein-4b",
             "flux2-klein-9b",
             "hunyuan-dit-v1.1-distilled",
+            "hunyuan-dit-v1.2",
+            "hunyuan-dit-v1.2-distilled",
             "hyper-sdxl-1step",
             "ideogram4-fp8",
             "janus-pro-1b",
@@ -30,11 +32,18 @@ def test_catalog_contents():
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
+            "llamagen-t2i-xl-256",
+            "llamagen-t2i-xl-512",
             "longcat-image",
             "lumina-image-2.0",
             "omnigen-v1",
             "pixart-alpha-xl-1024",
+            "pixart-alpha-xl-512",
             "pixart-sigma-xl-1024",
+            "pixart-sigma-xl-256",
+            "pixart-sigma-xl-2k",
+            "pixart-sigma-xl-512",
+            "playground-v2",
             "playground-v2.5",
             "qwen-image-2.1",
             "sana-1600m-1024",
@@ -54,6 +63,7 @@ def test_catalog_contents():
             "sdxl-lightning-2step",
             "sdxl-lightning-4step",
             "sdxl-lightning-8step",
+            "sdxl-refiner-1.0",
             "sdxl-turbo",
             "ssd-1b",
             "stable-cascade",
@@ -309,6 +319,21 @@ def test_catalog_contents():
     assert ssd1b.license == "Apache-2.0"
     assert len(set(ssd1b.files)) == len(ssd1b.files) == 18
 
+    playground_v2 = model_info("playground-v2")
+    assert playground_v2.task is Task.T2I
+    assert playground_v2.family == "stable-diffusion-xl"
+    assert playground_v2.repo_id == "playgroundai/playground-v2-1024px-aesthetic"
+    assert playground_v2.revision == "737a24ebe3ae4e5421110879168be188853d86c8"
+    assert playground_v2.provenance == "author"
+    assert playground_v2.catalog_id == "playground-v2"
+    assert playground_v2.format == "diffusers"
+    assert playground_v2.license == "playground-v2-community"
+    assert playground_v2.config == {"defaults": {"guidance": 3.0}}
+    assert len(set(playground_v2.files)) == len(playground_v2.files) == 18
+    assert not any(
+        "fp16" in n or n.endswith((".onnx", ".ckpt", ".bin")) for n in playground_v2.files
+    )
+
     playground = model_info("playground-v2.5")
     assert playground.task is Task.T2I
     assert playground.family == "stable-diffusion-xl"
@@ -426,6 +451,37 @@ def test_hunyuan_dit_catalog_entry():
     )
 
 
+@pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "steps"),
+    [
+        (
+            "hunyuan-dit-v1.2",
+            "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+            "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+            50,
+        ),
+        (
+            "hunyuan-dit-v1.2-distilled",
+            "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+            "ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
+            25,
+        ),
+    ],
+)
+def test_hunyuan_dit_v12_catalog_entries(model_id, repo, revision, steps):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "hunyuan-dit"
+    assert (spec.repo_id, spec.revision) == (repo, revision)
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "hunyuan-dit"
+    assert spec.format == "diffusers"
+    assert spec.license == "Tencent Hunyuan Community License"
+    assert not spec.gated
+    assert spec.config == {"defaults": {"steps": steps, "guidance": 5.0}}
+    assert spec.files == model_info("hunyuan-dit-v1.1-distilled").files
+
+
 def test_pixart_catalog_entries():
     common = (
         "model_index.json",
@@ -442,6 +498,12 @@ def test_pixart_catalog_entries():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+    alpha_512 = (
+        common[:4]
+        + tuple(f"text_encoder/model-0000{index}-of-00004.safetensors" for index in range(1, 5))
+        + ("tokenizer/added_tokens.json",)
+        + common[6:]
+    )
     expected = {
         "pixart-sigma-xl-1024": (
             "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
@@ -457,6 +519,13 @@ def test_pixart_catalog_entries():
             120,
             common[:6] + ("tokenizer/added_tokens.json",) + common[6:],
         ),
+        "pixart-alpha-xl-512": (
+            "PixArt-alpha/PixArt-XL-2-512x512",
+            "50f702106901db6d0f8b67eb88e814c56ded2692",
+            "pixart-alpha",
+            120,
+            alpha_512,
+        ),
     }
     for model_id, (repo, revision, catalog_id, max_length, files) in expected.items():
         spec = model_info(model_id)
@@ -469,10 +538,56 @@ def test_pixart_catalog_entries():
         assert spec.format == "diffusers"
         assert spec.license == "CreativeML-OpenRAIL++-M"
         assert not spec.gated
+        size = {"pixart-alpha-xl-512": {"width": 512, "height": 512}}.get(model_id, {})
         assert spec.config == {
-            "defaults": {"steps": 20, "guidance": 4.5, "max_sequence_length": max_length}
+            "defaults": {"steps": 20, "guidance": 4.5, "max_sequence_length": max_length} | size
         }
         assert spec.files == files
+        assert spec.base is None
+
+
+def test_pixart_sigma_transformer_only_catalog_entries():
+    transformer = ("transformer/config.json", "transformer/diffusion_pytorch_model.safetensors")
+    expected = {
+        "pixart-sigma-xl-256": (
+            "PixArt-alpha/PixArt-Sigma-XL-2-256x256",
+            "495cb1bafac48d71ca96761409c5fd7e48354df2",
+            256,
+        ),
+        "pixart-sigma-xl-512": (
+            "PixArt-alpha/PixArt-Sigma-XL-2-512-MS",
+            "76fb7eb5a9314bc1e4e479d2f13447517fca9be4",
+            512,
+        ),
+        "pixart-sigma-xl-2k": (
+            "PixArt-alpha/PixArt-Sigma-XL-2-2K-MS",
+            "cd274f4c8b01de0dcc87b65887dd357d473bf516",
+            2048,
+        ),
+    }
+    base = model_info("pixart-sigma-xl-1024")
+    for model_id, (repo, revision, size) in expected.items():
+        spec = model_info(model_id)
+        assert spec.task is Task.T2I
+        assert spec.family == "pixart"
+        assert (spec.repo_id, spec.revision) == (repo, revision)
+        assert spec.provenance == "author"
+        assert spec.catalog_id == "pixart-sigma"
+        assert spec.license == "CreativeML-OpenRAIL++-M"
+        assert not spec.gated
+        assert spec.base == base.id
+        assert spec.files == transformer
+        assert spec.overlay == {name: name for name in transformer}
+        assert not spec.base_exclude
+        assert spec.config == {
+            "defaults": {
+                "steps": 20,
+                "guidance": 4.5,
+                "max_sequence_length": 300,
+                "width": size,
+                "height": size,
+            }
+        }
 
 
 def test_cogview4_catalog_entry():
@@ -840,7 +955,11 @@ def test_spec_validation():
 def test_image_input_field():
     base = MODEL_CATALOG["sdxl-base-1.0"]
     with_image = {spec.id: spec.image_input for spec in MODEL_CATALOG.values() if spec.image_input}
-    assert with_image == {"flux1-kontext-dev": "optional", "omnigen-v1": "optional"}
+    assert with_image == {
+        "flux1-kontext-dev": "optional",
+        "sdxl-refiner-1.0": "required",
+        "omnigen-v1": "optional",
+    }
     for value in (None, "optional", "required"):
         assert ModelSpec(**{**base.__dict__, "id": "x", "image_input": value}).image_input == value
     with pytest.raises(ValueError, match="image_input"):
@@ -919,6 +1038,56 @@ def test_amused_catalog_entries(model_id, revision, size):
         "vqvae/config.json",
         "vqvae/diffusion_pytorch_model.safetensors",
     )
+
+
+@pytest.mark.parametrize(
+    ("model_id", "gpt_file", "size"),
+    [
+        ("llamagen-t2i-xl-256", "t2i_XL_stage1_256.pt", 256),
+        ("llamagen-t2i-xl-512", "t2i_XL_stage2_512.pt", 512),
+    ],
+)
+def test_llamagen_catalog_entries(model_id, gpt_file, size):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "llamagen"
+    assert spec.source == "https://huggingface.co/peizesun/llamagen_t2i"
+    assert spec.repo_id == "peizesun/llamagen_t2i"
+    assert spec.revision == "276f5c5a3d915b922899a03f1912605531574747"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "llamagen"
+    assert spec.format == "pytorch"
+    assert spec.license == "MIT"
+    assert not spec.gated
+    assert spec.config == {
+        "gpt_checkpoint": gpt_file,
+        "defaults": {
+            "cfg_scale": 7.5,
+            "temperature": 1.0,
+            "top_k": 1000,
+            "top_p": 1.0,
+            "cfg_interval": -1,
+            "width": size,
+            "height": size,
+        },
+    }
+    assert spec.files == ("vq_ds16_t2i.pt", gpt_file)
+    assert spec.subfolders == {
+        "text_encoder": SubRepo(
+            repo_id="google/flan-t5-xl",
+            revision="7d6315df2c2fb742f0f5b556879d730926ca9001",
+            files=(
+                "config.json",
+                "model.safetensors.index.json",
+                "model-00001-of-00002.safetensors",
+                "model-00002-of-00002.safetensors",
+                "spiece.model",
+                "tokenizer.json",
+                "tokenizer_config.json",
+                "special_tokens_map.json",
+            ),
+        )
+    }
 
 
 def test_wuerstchen_catalog_entry():

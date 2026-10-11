@@ -20,7 +20,12 @@ def test_family_and_model_aliases_are_registered():
     assert {"qwen-image", "qwen-image-2.1"} <= set(names)
     assert {"flux1-dev", "flux1-kontext-dev", "flux1-krea-dev"} <= set(names)
     assert {"flux2", "flux2-klein-4b", "flux2-klein-9b"} <= set(names)
-    assert {"hunyuan-dit", "hunyuan-dit-v1.1-distilled"} <= set(names)
+    assert {
+        "hunyuan-dit",
+        "hunyuan-dit-v1.1-distilled",
+        "hunyuan-dit-v1.2",
+        "hunyuan-dit-v1.2-distilled",
+    } <= set(names)
     assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024"} <= set(names)
     assert {"krea2", "krea2-turbo"} <= set(names)
     assert "longcat-image" in names
@@ -32,6 +37,7 @@ def test_family_and_model_aliases_are_registered():
     assert {"sana", "sana-1600m-1024", "sana-600m-1024"} <= set(names)
     assert {"lumina2", "lumina-image-2.0"} <= set(names)
     assert {"amused", "amused-256", "amused-512"} <= set(names)
+    assert {"llamagen", "llamagen-t2i-xl-256", "llamagen-t2i-xl-512"} <= set(names)
     assert {"stable_cascade", "stable-cascade", "stable-cascade-lite"} <= set(names)
     assert {"wuerstchen", "wuerstchen-v2"} <= set(names)
     assert {"omnigen", "omnigen-v1"} <= set(names)

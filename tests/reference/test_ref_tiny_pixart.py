@@ -131,7 +131,9 @@ def _write_tokenizer(directory: Path) -> None:
     )
 
 
-def _write_tiny_pixart(directory: Path, class_name: str) -> Path:
+def _write_tiny_pixart(
+    directory: Path, class_name: str, transformer_overrides: dict | None = None
+) -> Path:
     directory.mkdir()
     _write_tokenizer(directory / "tokenizer")
     (directory / "scheduler").mkdir()
@@ -151,10 +153,14 @@ def _write_tiny_pixart(directory: Path, class_name: str) -> Path:
         ),
         encoding="utf-8",
     )
-    transformer_config = TRANSFORMER_CONFIG | {
-        "_class_name": "PixArtTransformer2DModel",
-        "use_additional_conditions": False,
-    }
+    transformer_config = (
+        TRANSFORMER_CONFIG
+        | {
+            "_class_name": "PixArtTransformer2DModel",
+            "use_additional_conditions": False,
+        }
+        | (transformer_overrides or {})
+    )
     torch.manual_seed(0)
     for name, cls, config, weights in (
         ("text_encoder", T5EncoderModel, T5_CONFIG, "model.safetensors"),
@@ -176,15 +182,31 @@ def _write_tiny_pixart(directory: Path, class_name: str) -> Path:
 
 
 @pytest.mark.parametrize(
-    ("class_name", "max_sequence_length"),
-    [("PixArtSigmaPipeline", 300), ("PixArtAlphaPipeline", 120)],
-    ids=["sigma", "alpha"],
+    ("class_name", "max_sequence_length", "overrides", "bin_name"),
+    [
+        ("PixArtSigmaPipeline", 300, {}, "ASPECT_RATIO_256_BIN"),
+        ("PixArtAlphaPipeline", 120, {}, "ASPECT_RATIO_256_BIN"),
+        (
+            "PixArtSigmaPipeline",
+            300,
+            {"sample_size": 32, "interpolation_scale": 0.5},
+            "ASPECT_RATIO_256_BIN",
+        ),
+        (
+            "PixArtSigmaPipeline",
+            300,
+            {"sample_size": 64, "interpolation_scale": 1},
+            "ASPECT_RATIO_512_BIN",
+        ),
+        ("PixArtAlphaPipeline", 120, {"sample_size": 64}, "ASPECT_RATIO_512_BIN"),
+    ],
+    ids=["sigma", "alpha", "sigma-256", "sigma-512", "alpha-512"],
 )
 @pytest.mark.parametrize("negative_prompt", [None, "blurry"], ids=["empty-negative", "negative"])
 def test_tiny_pixart_matches_diffusers_exactly(
-    tmp_path, class_name, max_sequence_length, negative_prompt
+    tmp_path, class_name, max_sequence_length, overrides, bin_name, negative_prompt
 ):
-    root = _write_tiny_pixart(tmp_path / "tiny", class_name)
+    root = _write_tiny_pixart(tmp_path / "tiny", class_name, overrides)
     pipeline_class = getattr(diffusers, class_name)
     reference = pipeline_class.from_pretrained(root, local_files_only=True)
     reference.set_progress_bar_config(disable=True)
@@ -192,7 +214,7 @@ def test_tiny_pixart_matches_diffusers_exactly(
     binned_height, binned_width = reference.image_processor.classify_height_width_bin(
         height,
         width,
-        ratios=diffusers.pipelines.pixart_alpha.pipeline_pixart_alpha.ASPECT_RATIO_256_BIN,
+        ratios=getattr(diffusers.pipelines.pixart_alpha.pipeline_pixart_alpha, bin_name),
     )
     noise = torch.randn(
         1,
@@ -251,3 +273,37 @@ def test_tiny_pixart_matches_diffusers_exactly(
         seed=42,
     )
     assert torch.equal(torch.stack([image.tensor for image in actual.images]), expected_pixels)
+
+
+@pytest.mark.parametrize("guidance", [1.0, 4.5], ids=["guidance-off", "guidance-on"])
+@pytest.mark.parametrize("seed", [3, 11])
+def test_tiny_sigma_2k_layout_without_binning_matches_diffusers(tmp_path, guidance, seed):
+    root = _write_tiny_pixart(
+        tmp_path / "tiny",
+        "PixArtSigmaPipeline",
+        {"sample_size": 256, "interpolation_scale": 4},
+    )
+    reference = diffusers.PixArtSigmaPipeline.from_pretrained(root, local_files_only=True)
+    reference.set_progress_bar_config(disable=True)
+    kwargs = {
+        "prompt": "a cat",
+        "num_inference_steps": 2,
+        "guidance_scale": guidance,
+        "height": 48,
+        "width": 80,
+        "use_resolution_binning": False,
+        "generator": torch.Generator("cpu").manual_seed(seed),
+        "clean_caption": False,
+    }
+    expected = reference(**kwargs, output_type="np").images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
+    actual = pipeline("t2i", backend="pixart", model=root)(
+        "a cat",
+        steps=2,
+        guidance=guidance,
+        width=80,
+        height=48,
+        use_resolution_binning=False,
+        seed=seed,
+    )
+    assert torch.equal(torch.stack([image.tensor for image in actual.images]), expected)

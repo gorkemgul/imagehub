@@ -11,6 +11,21 @@ CONFIG = json.loads(
 )
 
 
+def test_accepts_inert_published_settings():
+    config = json.loads(
+        (Path(__file__).parent / "fixtures/playground_v2_configs/scheduler_config.json").read_text()
+    )
+    scheduler = EulerAncestralDiscreteScheduler(config)
+    scheduler.set_timesteps(4)
+    assert scheduler.sigmas.shape == (5,)
+
+
+@pytest.mark.parametrize("option", [{"use_karras_sigmas": True}, {"sigma_max": 80.0}])
+def test_rejects_active_inert_settings(option):
+    with pytest.raises(ValueError, match="Unsupported Euler ancestral setting"):
+        EulerAncestralDiscreteScheduler(CONFIG | option)
+
+
 @pytest.mark.parametrize("spacing", ["leading", "trailing"])
 def test_constructs_supported_release_schedules(spacing):
     scheduler = EulerAncestralDiscreteScheduler(CONFIG | {"timestep_spacing": spacing})
