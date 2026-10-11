@@ -212,8 +212,13 @@ def load_weights(
     container_key: str | None = None,
     clone_shards: bool = True,
     mapped_key: str | None = None,
+    skip_prefixes: tuple[str, ...] = (),
 ) -> dict[str, Tensor]:
-    """Read safetensors, tensor-only PT/BIN, or a (sharded) model directory."""
+    """Read safetensors, tensor-only PT/BIN, or a (sharded) model directory.
+
+    Tensors whose names start with one of ``skip_prefixes`` are left out (and, in sharded
+    checkpoints, never copied; a shard that holds only such tensors is not opened).
+    """
     source = Path(path)
     if source.is_dir():
         for name in _INDEX_FILES:
@@ -226,6 +231,11 @@ def load_weights(
                 ):
                     raise CheckpointError(f"Invalid weight_map in {index_path}")
                 result: dict[str, Tensor] = {}
+                weight_map = {
+                    name: shard
+                    for name, shard in weight_map.items()
+                    if not name.startswith(skip_prefixes)
+                }
                 for shard_name in sorted(set(weight_map.values())):
                     if (
                         not shard_name
@@ -250,7 +260,9 @@ def load_weights(
                     )
                     values = {
                         name: tensor.clone() if clone else tensor
-                        for name, tensor in load_weights(shard, container_key=container_key).items()
+                        for name, tensor in load_weights(
+                            shard, container_key=container_key, skip_prefixes=skip_prefixes
+                        ).items()
                     }
                     if result.keys() & values.keys():
                         raise CheckpointError("Duplicate tensor names across checkpoint shards")
@@ -260,15 +272,23 @@ def load_weights(
                 return result
         for name in WEIGHT_FILES:
             if (source / name).is_file():
-                return load_weights(source / name, container_key=container_key)
+                return load_weights(
+                    source / name, container_key=container_key, skip_prefixes=skip_prefixes
+                )
         raise CheckpointError(f"No supported checkpoint found in {source}")
     if not source.is_file():
         raise CheckpointError(f"No supported checkpoint found at {source}")
     if source.suffix == ".safetensors":
         if container_key is not None:
             raise CheckpointError("container_key is not supported for safetensors files")
-        return load_safetensors(source)
-    return _load_pickle(source, container_key)
+        state = load_safetensors(source)
+    else:
+        state = _load_pickle(source, container_key)
+    if skip_prefixes:
+        state = {
+            name: tensor for name, tensor in state.items() if not name.startswith(skip_prefixes)
+        }
+    return state
 
 
 def _describe(missing: list[str], unexpected: list[str]) -> str:
@@ -290,6 +310,9 @@ class NativeModel(nn.Module):
     # With ``clone_shards``, keep the shard that holds the model's first state-dict key at its file
     # offsets: diffusers (without accelerate) assigns that shard's tensors and copies the others.
     keep_first_shard_mapped = False
+    # Tensor-name prefixes of a published checkpoint that this model does not use (for example
+    # the decoder of a sequence-to-sequence checkpoint loaded as an encoder); they are never read.
+    skipped_prefixes: tuple[str, ...] = ()
 
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
@@ -341,6 +364,7 @@ class NativeModel(nn.Module):
                 container_key=container_key,
                 clone_shards=cls.clone_shards,
                 mapped_key=mapped_key,
+                skip_prefixes=cls.skipped_prefixes,
             )
         )
         model.init_non_persistent_buffers()

@@ -93,14 +93,19 @@ SCHEDULER_CONFIG = {
 }
 
 
-def _write_tiny_hunyuan_dit(directory):
+def _write_tiny_hunyuan_dit(directory, *, release="v1.1"):
+    v12 = release == "v1.2"
+    transformer_config = TRANSFORMER_CONFIG | (
+        {"use_style_cond_and_image_meta_size": False} if v12 else {}
+    )
+    scheduler_config = SCHEDULER_CONFIG | ({"beta_end": 0.018} if v12 else {})
     tokenizer_source = snapshot_dir("hunyuan-dit-v1.1-distilled")
     directory.mkdir()
     for name in ("tokenizer", "tokenizer_2"):
         shutil.copytree(tokenizer_source / name, directory / name)
     (directory / "scheduler").mkdir()
     (directory / "scheduler" / "scheduler_config.json").write_text(
-        json.dumps(SCHEDULER_CONFIG), encoding="utf-8"
+        json.dumps(scheduler_config), encoding="utf-8"
     )
     (directory / "model_index.json").write_text(
         json.dumps(
@@ -127,7 +132,7 @@ def _write_tiny_hunyuan_dit(directory):
         (
             "transformer",
             HunyuanDiT2DModel,
-            TRANSFORMER_CONFIG,
+            transformer_config,
             "diffusion_pytorch_model.safetensors",
         ),
         ("vae", AutoencoderKL, VAE_CONFIG, "diffusion_pytorch_model.safetensors"),
@@ -142,39 +147,53 @@ def _write_tiny_hunyuan_dit(directory):
 
 
 @pytest.mark.parametrize(
+    ("release", "width", "height", "noise_seed", "seed", "guidance"),
+    [
+        ("v1.1", 32, 32, 7, 42, 5.0),
+        ("v1.2", 32, 32, 7, 42, 5.0),
+        ("v1.2", 48, 32, 11, 3, 5.0),
+        ("v1.2", 32, 32, 7, 42, 1.0),
+    ],
+    ids=["v1.1", "v1.2", "v1.2-non-square", "v1.2-no-guidance"],
+)
+@pytest.mark.parametrize(
     ("negative_prompt", "guidance_rescale"),
     [(None, 0.0), ("blurry", 0.0), ("blurry", 0.7)],
     ids=["empty-negative", "negative", "guidance-rescale"],
 )
-def test_tiny_hunyuan_dit_matches_diffusers_exactly(tmp_path, negative_prompt, guidance_rescale):
-    root = _write_tiny_hunyuan_dit(tmp_path / "tiny")
+def test_tiny_hunyuan_dit_matches_diffusers_exactly(
+    tmp_path, negative_prompt, guidance_rescale, release, width, height, noise_seed, seed, guidance
+):
+    root = _write_tiny_hunyuan_dit(tmp_path / "tiny", release=release)
     reference = diffusers.HunyuanDiTPipeline.from_pretrained(root, local_files_only=True)
     reference.set_progress_bar_config(disable=True)
-    noise = torch.randn(1, 4, 4, 4, generator=torch.Generator("cpu").manual_seed(7))
+    noise = torch.randn(
+        1, 4, height // 8, width // 8, generator=torch.Generator("cpu").manual_seed(noise_seed)
+    )
     expected_latents = reference(
         "a cat",
         negative_prompt=negative_prompt,
         num_inference_steps=2,
-        guidance_scale=5.0,
+        guidance_scale=guidance,
         guidance_rescale=guidance_rescale,
-        height=32,
-        width=32,
+        height=height,
+        width=width,
         use_resolution_binning=False,
         latents=noise.clone(),
-        generator=torch.Generator("cpu").manual_seed(42),
+        generator=torch.Generator("cpu").manual_seed(seed),
         output_type="latent",
     ).images
     expected_pixels = reference(
         "a cat",
         negative_prompt=negative_prompt,
         num_inference_steps=2,
-        guidance_scale=5.0,
+        guidance_scale=guidance,
         guidance_rescale=guidance_rescale,
-        height=32,
-        width=32,
+        height=height,
+        width=width,
         use_resolution_binning=False,
         latents=noise.clone(),
-        generator=torch.Generator("cpu").manual_seed(42),
+        generator=torch.Generator("cpu").manual_seed(seed),
         output_type="np",
     ).images
     expected_pixels = torch.from_numpy((expected_pixels * 255).round().astype("uint8"))
@@ -184,12 +203,12 @@ def test_tiny_hunyuan_dit_matches_diffusers_exactly(tmp_path, negative_prompt, g
         prompt="a cat",
         negative_prompt=negative_prompt,
         steps=2,
-        guidance=5.0,
+        guidance=guidance,
         guidance_rescale=guidance_rescale,
-        width=32,
-        height=32,
+        width=width,
+        height=height,
         latents=noise.clone(),
-        generator=torch.Generator("cpu").manual_seed(42),
+        generator=torch.Generator("cpu").manual_seed(seed),
     )
     torch.testing.assert_close(actual_latents, expected_latents, rtol=0, atol=0)
     assert torch.equal(decode_latents(components.vae, actual_latents), expected_pixels)
@@ -197,12 +216,12 @@ def test_tiny_hunyuan_dit_matches_diffusers_exactly(tmp_path, negative_prompt, g
         "a cat",
         negative_prompt=negative_prompt,
         steps=2,
-        guidance=5.0,
+        guidance=guidance,
         guidance_rescale=guidance_rescale,
-        width=32,
-        height=32,
+        width=width,
+        height=height,
         use_resolution_binning=False,
         latents=noise,
-        seed=42,
+        seed=seed,
     )
     assert torch.equal(torch.stack([image.tensor for image in actual.images]), expected_pixels)
