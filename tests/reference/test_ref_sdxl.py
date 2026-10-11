@@ -57,7 +57,7 @@ CPU = torch.device("cpu")
 SDXL_MODEL_IDS = tuple(
     spec.id
     for spec in MODEL_CATALOG.values()
-    if spec.family == "stable-diffusion-xl" and spec.base is None
+    if spec.family == "stable-diffusion-xl" and spec.base is None and spec.id != "sdxl-refiner-1.0"
 )
 SCHEDULERS = {
     "EDMDPMSolverMultistepScheduler": EDMDPMSolverMultistepScheduler,

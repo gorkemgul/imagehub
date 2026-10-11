@@ -16,8 +16,11 @@ pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
 
-def test_hunyuan_dit_transformer_checkpoint_matches_reference(record):
-    root = snapshot_dir("hunyuan-dit-v1.1-distilled") / "transformer"
+@pytest.mark.parametrize(
+    "model_id", ["hunyuan-dit-v1.1-distilled", "hunyuan-dit-v1.2", "hunyuan-dit-v1.2-distilled"]
+)
+def test_hunyuan_dit_transformer_checkpoint_matches_reference(record, model_id):
+    root = snapshot_dir(model_id) / "transformer"
     reference = diffusers.HunyuanDiT2DModel.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     ).eval()
@@ -54,7 +57,9 @@ def test_hunyuan_dit_transformer_checkpoint_matches_reference(record):
         actual = model(hidden_states, **kwargs)
     measured = max_diff(actual, expected)
     record(
-        "hunyuan_dit_transformer",
+        "hunyuan_dit_transformer"
+        if model_id == "hunyuan-dit-v1.1-distilled"
+        else f"hunyuan_dit_transformer_{model_id}",
         **measured,
         batch=2,
         height=1024,

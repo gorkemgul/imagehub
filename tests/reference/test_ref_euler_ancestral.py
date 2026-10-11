@@ -51,3 +51,19 @@ def test_ancestral_seeded_trajectory_matches_diffusers_exactly():
             generator=expected_generator,
         ).prev_sample
         assert torch.equal(actual_sample, expected_sample)
+
+
+@pytest.mark.parametrize("steps", [2, 30, 50])
+def test_playground_v2_schedule_matches_diffusers_exactly(steps):
+    config = json.loads(
+        (
+            Path(__file__).parents[1] / "fixtures/playground_v2_configs/scheduler_config.json"
+        ).read_text()
+    )
+    actual = EulerAncestralDiscreteScheduler(config)
+    expected = diffusers.EulerAncestralDiscreteScheduler.from_config(config)
+    actual.set_timesteps(steps)
+    expected.set_timesteps(steps)
+    assert torch.equal(actual.timesteps, expected.timesteps)
+    assert torch.equal(actual.sigmas, expected.sigmas)
+    assert torch.equal(actual.init_noise_sigma, expected.init_noise_sigma)
