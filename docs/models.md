@@ -535,6 +535,52 @@ with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-konte
   diffusers 0.40.0 `FluxKontextPipeline` ([validation](validation.md)).
 
 
+# Chroma
+
+Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `chroma1-hd` · Task: `t2i`
+
+**Architecture.** Chroma1-HD is a ~8.9B diffusion transformer built on the FLUX.1 latent-flow
+foundation. It reuses the FLUX.1 VAE (16 latent channels, scaling factor 0.3611, shift factor 0.1159)
+and the flow-match Euler scheduler with exponential shifting. The text encoder is T5-XXL (4.7B
+parameters, bfloat16 weights) with a native SentencePiece Unigram tokenizer. The new Chroma
+transformer replaces FLUX.1's timestep-plus-pooled-text embedding with a distilled-guidance
+approximator: a sinusoidal timestep projection is combined with a fixed modulation projection and
+fed through a small MLP to produce per-block scale, shift and gate vectors for all 19 double-stream
+and 38 single-stream blocks. Attention is joint over text and image tokens, using 3-axis RoPE and an
+attention mask that keeps the real text tokens plus one padding token (the remaining padding tokens
+are masked out). Classifier-free guidance is applied when `guidance > 1`; otherwise the negative
+pass is skipped.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained chroma1-hd checkpoints/chroma1-hd
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="chroma1-hd", model="checkpoints/chroma1-hd", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The model defaults to 35 steps, guidance 5.0 and 1024×1024; `width` and `height` must
+be multiples of 16. The other supported options are `num_images`, `seed`, `latents`,
+`negative_prompt` and `max_sequence_length` (default 512, at most 512). Unrecognized settings raise
+an error.
+
+**Seed compatibility.** Random-weight parity against diffusers 0.40.0 `ChromaPipeline` is exact on
+CPU in float32. Real-weight parity with the published bfloat16 weights will be measured when the
+local snapshot is available ([validation](validation.md)). MPS and CUDA runs are smoke tests only;
+there is no claim of exact equality on these devices.
+
+**Out of scope.** Img2img, inpainting, IP-Adapter, LoRA, single-file checkpoint loading and
+fp16/bf16 parity are not supported.
+
+**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+
+
 # FLUX.2 klein
 
 Catalog: [`flux-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

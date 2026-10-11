@@ -55,7 +55,8 @@ LIMITS = [
     "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
     "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 "
     "and LongCat-Image, flow-match "
-    "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR "
+    "Euler with exponential shifting for Krea 2 and Chroma, and linear shifting for "
+    "CogView4, shifted-SNR "
     "DDIM for CogView3-Plus, DDPM for "
     "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and "
     "Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, "
@@ -116,6 +117,14 @@ QWEN_IMAGE_COMPONENT_KEYS = (
     "qwen_image_vae_decode",
     "qwen_image_vae_encode",
     "qwen_image_scheduler",
+)
+CHROMA_COMPONENT_KEYS = (
+    "chroma_tokenizer",
+    "chroma_text_encoder",
+    "chroma_transformer",
+    "chroma_vae_decode",
+    "chroma_vae_encode",
+    "chroma_scheduler",
 )
 JANUS_COMPONENT_KEYS = ("janus_language_model", "janus_vq_decode")
 SD3_COMPONENT_KEYS = (
@@ -390,6 +399,9 @@ def main() -> None:
         },
         "components_omnigen": {
             key: value for key, value in measured.items() if key.startswith("omnigen_")
+        },
+        "components_chroma": {
+            key: value for key, value in measured.items() if key in CHROMA_COMPONENT_KEYS
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},

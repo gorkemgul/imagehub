@@ -450,6 +450,52 @@ The reference and native transformers were never held in one process (the transf
 saves the reference output first, then runs the native model). The real-checkpoint run took about
 2 hours 7 minutes on an Apple M2 Max CPU.
 
+## Chroma
+
+Compared with diffusers 0.40.0 `ChromaPipeline` on CPU in the same environment as above.
+The random-weight and tiny-snapshot comparisons below are exact: on CPU in float32, the local
+implementation produces a bit-identical result to the reference.
+
+### Comparisons without published weights (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tiny Chroma transformer vs `ChromaTransformer2DModel` | 0 | 0 |
+| Tiny Chroma transformer with the published config at small spatial size | 0 | 0 |
+| Flow-match Euler scheduler with exponential shifting | exact | exact |
+| Tiny end to end (128×128, 2 steps, guidance 5.0): final latent / pixels | 0 / 0 | 0 / 0 |
+| Tiny end to end without guidance (guidance 1.0): final latent / pixels | 0 / 0 | 0 / 0 |
+| Tiny end to end, seed 42, non-square 128×160 (pixels) | 0 | 0 |
+
+The tiny end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
+`seed=1234`. The tests use random weights, several seeds, square and non-square latent sizes, and
+guidance on and off. They also verify the attention mask: all real text tokens plus exactly one
+padding token are unmasked, while the remaining padding tokens are masked.
+
+### Real-checkpoint validation (pending)
+
+`chroma1-hd` (`lodestones/Chroma1-HD`, revision
+`0e0c60ece1e82b17cb7f77342d765ba5024c40c0`) is not yet validated against the published weights in
+this checkout because the local snapshot is not present. The reference test file
+`tests/reference/test_ref_chroma.py` is ready and will run when `IMAGEHUB_SNAPSHOT_CHROMA1_HD` is
+set to a local snapshot directory. The intended checks are:
+
+| Comparison | Expected tolerance |
+| --- | --- |
+| Tensor header names and shapes (`text_encoder`, `transformer`, `vae`) | exact |
+| SentencePiece tokenizer token ids / attention masks | exact / exact |
+| T5-XXL text encoder (512 tokens) | 0 |
+| Chroma transformer single step (1024×1024, with guidance embedding) | 0 |
+| VAE decode / encode | 0 / 0 |
+| Flow-match Euler scheduler with exponential shifting | exact |
+| End to end (1024×1024, 4 steps, guidance 5.0): final latent / pixels | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 |
+
+The reference and native transformers will be loaded one at a time. Once the snapshot is available,
+run `IMAGEHUB_REFERENCE_TESTS=1 IMAGEHUB_SNAPSHOT_CHROMA1_HD=<path> pytest
+tests/reference/test_ref_chroma.py` and then regenerate [validation.json](validation.json) with
+`scripts/build_validation.py`.
+
 ## FLUX.2 klein
 
 Validated on CPU in the same environment as above. `flux2-klein-4b` and `flux2-klein-9b` were loaded
