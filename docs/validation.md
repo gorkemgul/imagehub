@@ -1263,21 +1263,23 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
 `omnigen-v1` is loaded strictly from `Shitao/OmniGen-v1-diffusers` at revision `016e2f6` and is compared
 with diffusers 0.40.0 `OmniGenPipeline` on CPU in float32. The published transformer is stored in
 bfloat16 and converted to float32 on load by both implementations; the autoencoder is float32. The
-real-checkpoint tests are in `tests/reference/test_ref_omnigen.py`; their measurements are pending the
-real-checkpoint run, so none are listed here yet. The end-to-end runs use shortened step counts
-because a 1024×1024, 50-step run takes hours on CPU.
+real-checkpoint tests are in `tests/reference/test_ref_omnigen.py`. All 12 of them passed, and
+every recorded comparison is exactly 0: on CPU in float32, the local implementation produces a
+bit-identical result to the reference. The end-to-end runs use shortened step counts
+because a 1024×1024, 50-step run takes hours on CPU. The real-checkpoint run took 18 minutes on
+an M2 Max (CPU).
 
 ### Comparisons (CPU, float32)
 
-| Comparison | Measured difference |
-| --- | --- |
-| Tensor header check: transformer, autoencoder (names and shapes) | pending the real-checkpoint run |
-| Tokenizer ids (instruction prompt, edit prompt, long prompt, `""`) and byte equality of the tokenizer files with the fixtures | pending the real-checkpoint run |
-| Transformer single step (3 timesteps, with and without an input image, real conditioning) | pending the real-checkpoint run |
-| Autoencoder posterior sample and decode | pending the real-checkpoint run |
-| End to end text-to-image: final latent / pixels (1024×1024, shortened steps, guidance 2.5, seed 0) | pending the real-checkpoint run |
-| End to end with an input image: final latent / pixels (512×512, shortened steps, seed 0) | pending the real-checkpoint run |
-| End to end, seed 1234, 1360×768 request (pixels, shortened steps) | pending the real-checkpoint run |
+| Comparison | Measured difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: transformer (275 tensors), autoencoder (248 tensors) (names and shapes) | 0 missing, extra or mismatched | exact |
+| Tokenizer ids (instruction prompt, edit prompt, long prompt, `""`; 4 cases) and byte equality of the tokenizer files with the fixtures | identical | exact |
+| Transformer single step (timesteps 0.0, 0.31 and 0.87, with and without an input image, real conditioning; 6 calls) | 0 (max abs and max rel) | 0 |
+| Autoencoder encode of the seeded posterior sample / decode | 0 / 0 | 0 / 0 |
+| End to end text-to-image: final latent / pixels (1024×1024, 4 steps, guidance 2.5, seed 0) | 0 / 0 | 0 / 0 |
+| End to end with an input image: final latent / pixels (512×512, 4 steps, 256×320 input, seed 0) | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, 1360×768 request (pixels, 2 steps) | 0 | 0 |
 
 Tests that need no downloaded weights: random-weight parity of the transformer with a tiny and with the
 published configuration (two layers), with and without input-image tokens and with sequences long
@@ -1335,7 +1337,7 @@ first sequence of the batch only; the native module reproduces that.
   `pixart-sigma-xl-256`, `pixart-sigma-xl-512` and `pixart-sigma-xl-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
-  `amused-512`, and 7 passed for
+  `amused-512`, 12 passed for `omnigen-v1`, and 7 passed for
   `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
