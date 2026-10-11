@@ -68,3 +68,14 @@ def test_dynamic_shifting_requires_mu_and_stretches_to_terminal():
 def test_rejects_unsupported_options(key, value):
     with pytest.raises(ValueError, match=key):
         FlowMatchEulerDiscreteScheduler(CONFIG | {key: value})
+
+
+def test_inverted_sigmas_need_an_explicit_opt_in():
+    config = CONFIG | {"invert_sigmas": True, "num_train_timesteps": 1, "shift": 1.0}
+    scheduler = FlowMatchEulerDiscreteScheduler(config, allow_inverted_sigmas=True)
+    scheduler.set_timesteps(4, sigmas=[1.0, 0.75, 0.5, 0.25])
+    assert scheduler.timesteps.tolist() == [0.0, 0.25, 0.5, 0.75]
+    assert scheduler.sigmas.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
+    sample = torch.zeros(2)
+    out = scheduler.step(torch.ones(2), scheduler.timesteps[0], sample)
+    assert torch.equal(out, torch.full((2,), 0.25))

@@ -167,7 +167,8 @@ def _split_added(text: str, tokens: dict[str, int]) -> list[_AddedPiece]:
     return pieces
 
 
-def _pretokenize(text: str) -> list[str]:
+def _pretokenize(text: str, digit_group: int = 1) -> list[str]:
+    """Split like the GPT-4 style pattern; numbers are cut into runs of ``digit_group`` digits."""
     pieces: list[str] = []
     i = 0
     while i < len(text):
@@ -200,8 +201,11 @@ def _pretokenize(text: str) -> list[str]:
             continue
 
         if _is_number(text[i]):
-            pieces.append(text[i])
-            i += 1
+            end = i + 1
+            while end < len(text) and end - i < digit_group and _is_number(text[end]):
+                end += 1
+            pieces.append(text[i:end])
+            i = end
             continue
 
         punctuation_start = i

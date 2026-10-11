@@ -45,6 +45,8 @@ Downloads happen only through `imagehub.pretrained`, and only when you run it.
 Most models take a text prompt only. `flux1-kontext-dev` also takes an optional input image
 (`image`) and edits it by instruction; without one it generates from the text alone.
 `sdxl-refiner-1.0` requires an input image (`image`, with `strength`) and refines it.
+`omnigen-v1` also takes one optional input image, which the prompt refers to with the placeholder
+`<img><|image_1|></img>`.
 
 ```python
 from PIL import Image
@@ -77,16 +79,21 @@ result.images[0].save("edited.png")
 | Sana | `sana-1600m-1024`, `sana-600m-1024` | `t2i` | T | CPU fp32 parity |
 | Kolors | `kolors` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |
+| Lumina-Next | `lumina-next` | `t2i` | T | CPU fp32 parity |
+| OmniGen | `omnigen-v1` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 transformer |
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
+| ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
+| CogView3-Plus | `cogview3-plus-3b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 transformer and VAE |
 | CogView4 | `cogview4-6b` | `t2i` | T | CPU fp32 parity |
 | Ideogram 4 | `ideogram4-fp8` | `t2i` | T | CPU fp32 parity with the official implementation |
 | Qwen-Image | `qwen-image-2.1` | `t2i` | T | CPU fp32 parity |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | T | CPU fp32 parity |
+| HiDream-I1 | `hidream-i1-fast` | `t2i` | T | CPU fp32 parity on a tiny model; real-checkpoint run pending |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
 [Third-party notices](THIRD_PARTY_NOTICES.md)

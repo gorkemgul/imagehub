@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**24 architecture families, 62 published checkpoints.** A model is a separately published set of weights;
+**29 architecture families, 67 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -57,13 +57,20 @@ tested with the original weights. In this release every model is `full`.
 | `sana-600m-1024` | `sana` | [Efficient-Large-Model/Sana_600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_600M_1024px_diffusers) | `28f3af7` | author | full | Apache-2.0 | `sana` |
 | `kolors` | `kolors` | [Kwai-Kolors/Kolors-diffusers](https://huggingface.co/Kwai-Kolors/Kolors-diffusers) | `7e091c7` | author | full | Apache-2.0 | `kolors` |
 | `lumina-image-2.0` | `lumina2` | [Alpha-VLLM/Lumina-Image-2.0](https://huggingface.co/Alpha-VLLM/Lumina-Image-2.0) | `53504ab` | author | full | Apache-2.0 | `lumina-image-2` |
+<<<<<<< HEAD
+| `omnigen-v1` | `omnigen` | [Shitao/OmniGen-v1-diffusers](https://huggingface.co/Shitao/OmniGen-v1-diffusers) | `016e2f6` | author | full | MIT | `omnigen` |
+=======
+| `lumina-next` | `lumina-next` | [Alpha-VLLM/Lumina-Next-SFT-diffusers](https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers) | `0ee5ec9` | author | full | Apache-2.0 | `lumina-next` |
+>>>>>>> origin/main
 | `amused-256` | `amused` | [amused/amused-256](https://huggingface.co/amused/amused-256) | `09b6259` | author | full | OpenRAIL++ | `amused` |
 | `amused-512` | `amused` | [amused/amused-512](https://huggingface.co/amused/amused-512) | `6f3f309` | author | full | OpenRAIL++ | `amused` |
 | `auraflow-v0.3` | `auraflow` | [fal/AuraFlow-v0.3](https://huggingface.co/fal/AuraFlow-v0.3) | `2cd8588` | author | full | Apache-2.0 | `auraflow` |
 | `llamagen-t2i-xl-256` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
 | `llamagen-t2i-xl-512` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
 | `krea2-turbo` | `krea2` | [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) | `98e0fe1` | author | full | Krea 2 Community License | `krea-2` |
+| `ernie-image` | `ernie-image` | [baidu/ERNIE-Image](https://huggingface.co/baidu/ERNIE-Image) | `5346b31` | author | full | Apache-2.0 | `ernie-image` |
 | `longcat-image` | `longcat-image` | [meituan-longcat/LongCat-Image](https://huggingface.co/meituan-longcat/LongCat-Image) | `d2ea50b` | author | full | Apache-2.0 | `longcat-image` |
+| `cogview3-plus-3b` | `cogview3` | [zai-org/CogView3-Plus-3B](https://huggingface.co/zai-org/CogView3-Plus-3B) | `5d70e40` | author | full | Apache-2.0 | `cogview3-plus` |
 | `cogview4-6b` | `cogview4` | [zai-org/CogView4-6B](https://huggingface.co/zai-org/CogView4-6B) | `63a52b7` | author | full | Apache-2.0 | `cogview4` |
 | `ideogram4-fp8` | `ideogram4` | [ideogram-ai/ideogram-4-fp8](https://huggingface.co/ideogram-ai/ideogram-4-fp8) | `ee79a72` | author | full | Ideogram 4 Non-Commercial License | `ideogram-4` |
 | `qwen-image-2.1` | `qwen-image` | [Qwen/Qwen-Image-2.1](https://huggingface.co/Qwen/Qwen-Image-2.1) | `d26bb61` | author | full | Qwen Research License (research use; see the license) | `qwen-image-2` |
@@ -74,6 +81,7 @@ tested with the original weights. In this release every model is `full`.
 | `stable-cascade` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
 | `stable-cascade-lite` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
 | `wuerstchen-v2` | `wuerstchen` | [warp-ai/wuerstchen](https://huggingface.co/warp-ai/wuerstchen) | `c3da414` | author | full | mit | `wuerstchen` |
+| `hidream-i1-fast` | `hidream` | [HiDream-ai/HiDream-I1-Fast](https://huggingface.co/HiDream-ai/HiDream-I1-Fast) | `4856a5d` | author | full | MIT | `hidream-i1` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
 repository used is a community mirror. The v1.1–v1.3 fp32 weights are published only as `.bin`
@@ -131,6 +139,13 @@ License; see the license.
 Kolors publishes float16 weights only (`*.fp16.safetensors`), so its file list uses those names. Parity is
 measured on their float32 upcast, which is also what diffusers computes with
 `from_pretrained(..., variant="fp16", torch_dtype=torch.float32)`.
+
+The `hidream-i1-fast` entry combines two repositories: the HiDream-I1 Fast repository at revision
+`4856a5d` (MIT) and `meta-llama/Llama-3.1-8B-Instruct` at revision `0e9e39f`, which is placed in the
+snapshot's `text_encoder_4/` subfolder together with its tokenizer. The Llama repository is gated:
+accept its terms (Llama 3.1 Community License) on Hugging Face, then set `HF_TOKEN` when downloading
+with `python -m imagehub.pretrained`. The HiDream repository does not ship that encoder, and the
+pipeline loads it separately.
 
 The `stable-cascade` and `stable-cascade-lite` weights use the Stable Cascade Non-Commercial
 Community License (`stable-cascade-nc-community`), which prohibits commercial use; see the license

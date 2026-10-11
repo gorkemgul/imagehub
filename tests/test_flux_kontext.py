@@ -151,6 +151,11 @@ def test_catalog_entry():
         name for name in model_info("flux1-dev").files if name in spec.files
     )
     assert MODEL_CATALOG[KONTEXT].image_input == "optional"
+    assert {m for m, s in MODEL_CATALOG.items() if s.image_input} == {
+        KONTEXT,
+        "sdxl-refiner-1.0",
+        "omnigen-v1",
+    }
 
 
 def test_defaults_and_size_rescale():
