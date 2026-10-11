@@ -5742,6 +5742,90 @@
         "seed": 1234,
         "steps": 4
       }
+    },
+    {
+      "model_id": "omnigen-v1",
+      "repo_id": "Shitao/OmniGen-v1-diffusers",
+      "revision": "016e2f61d12a98303f6bbdf122687694d7984268",
+      "provenance": "author",
+      "catalog_id": "omnigen",
+      "license": "MIT",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "3dffe1dfbed6afdde8b94079afd614c1c735862c362e7d498879da46a64b09fa",
+        "scheduler/scheduler_config.json": "9576c1255183b951a6704239a1574f12e70b6a4351850d0a969dd19ec84e2916",
+        "tokenizer/special_tokens_map.json": "f9535fada19315e0d8eb89521cebe111c008fee98d16e7c6744acfb50505d8c3",
+        "tokenizer/tokenizer.json": "5858ff02a80bbcc98d0d480da6508cbfa5dce50965da32c161e6a2a637549656",
+        "tokenizer/tokenizer_config.json": "3fe4a437810ff08f3e8ecff6cbf24657e358a929a59e8f056701a187692e4439",
+        "transformer/config.json": "a498588f3bc753b2434ff7138c244ef86e7082392ee8b7e530ad5bc041b37a5d",
+        "transformer/diffusion_pytorch_model.safetensors": "da89cdbea388e9019c74cff11421cbbef62be172176295fb69590d54c1420b7e",
+        "vae/config.json": "f7e98fd875de04b277e5ccb4171c77d676020fd9b062f3ead16d78942e8a542d",
+        "vae/diffusion_pytorch_model.safetensors": "1598f3d24932bcfe6634e8b618ea1e30ab1d57f5aad13a6d2de446d2199f2341"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "transformer": 275,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 2.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "A photograph of an astronaut riding a horse on the moon.",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 4
+      },
+      "end_to_end_image": {
+        "guidance": 2.5,
+        "image_guidance": 1.6,
+        "input_size": [
+          256,
+          320
+        ],
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "Turn <img><|image_1|></img> into a watercolor painting.",
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 4
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          1360,
+          768
+        ],
+        "steps": 2
+      }
     }
   ],
   "components": {
@@ -9243,6 +9327,58 @@
       "tolerance": 0.0
     }
   },
+  "components_omnigen": {
+    "omnigen_tokenizer_real": {
+      "cases": 4,
+      "matches": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "tolerance": "exact"
+    },
+    "omnigen_transformer_False_0.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "omnigen_transformer_False_0.31": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "omnigen_transformer_False_0.87": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "omnigen_transformer_True_0.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "omnigen_transformer_True_0.31": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "omnigen_transformer_True_0.87": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "omnigen_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "omnigen_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -9265,11 +9401,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "11 passed (lumina-next)"
+    "reference_summary": "12 passed (omnigen-v1)"
   }
 }
