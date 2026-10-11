@@ -37,3 +37,11 @@ def test_codebook_lookup_returns_embeddings():
 def test_unsupported_norm_type_is_rejected():
     with pytest.raises(ValueError, match="norm_type"):
         VQModel(TINY_AMUSED_VQVAE | {"norm_type": "layer"})
+
+
+def test_kandinsky3_movq_matches_published_tensor_layout():
+    directory = Path(__file__).parent / "fixtures" / "kandinsky3_configs"
+    config = json.loads((directory / "movq_config.json").read_text(encoding="utf-8"))
+    expected = json.loads((directory / "movq_tensors.json").read_text(encoding="utf-8"))
+    assert meta_shapes(VQModel, config) == expected
+    assert len(expected) == 431

@@ -1,9 +1,9 @@
-"""T5 encoder used as the Stable Diffusion 3.5 third text encoder."""
+"""T5 encoder (gated GELU or gated SiLU feed-forward), without a decoder."""
 
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Any
 
 import torch
@@ -57,15 +57,21 @@ def gelu_new(hidden_states: Tensor) -> Tensor:
     )
 
 
+def _gate_activation(name: str) -> Callable[[Tensor], Tensor]:
+    activations: dict[str, Callable[[Tensor], Tensor]] = {"gelu_new": gelu_new, "silu": F.silu}
+    return activations[name]
+
+
 class T5DenseGatedActDense(nn.Module):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
+        self.act = _gate_activation(config["dense_act_fn"])
         self.wi_0 = nn.Linear(config["d_model"], config["d_ff"], bias=False)
         self.wi_1 = nn.Linear(config["d_model"], config["d_ff"], bias=False)
         self.wo = nn.Linear(config["d_ff"], config["d_model"], bias=False)
 
     def forward(self, hidden_states: Tensor) -> Tensor:
-        hidden_gelu = gelu_new(self.wi_0(hidden_states))
+        hidden_gelu = self.act(self.wi_0(hidden_states))
         hidden_linear = self.wi_1(hidden_states)
         hidden_states = hidden_gelu * hidden_linear
         if hidden_states.dtype != self.wo.weight.dtype and self.wo.weight.dtype != torch.int8:
@@ -233,8 +239,10 @@ class T5EncoderModel(NativeModel):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(T5_DEFAULTS | dict(config))
         unsupported = {
-            "feed-forward projection": self.config["feed_forward_proj"] != "gated-gelu",
-            "activation": self.config["dense_act_fn"] != "gelu_new",
+            "feed-forward projection": self.config["feed_forward_proj"]
+            not in ("gated-gelu", "gated-silu"),
+            "activation": (self.config["feed_forward_proj"], self.config["dense_act_fn"])
+            not in (("gated-gelu", "gelu_new"), ("gated-silu", "silu")),
             "ungated feed-forward": not self.config["is_gated_act"],
         }
         for option, is_unsupported in unsupported.items():

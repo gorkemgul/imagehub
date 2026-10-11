@@ -1,0 +1,4353 @@
+{
+"add_time_condition.attention.to_k.weight": [
+1536,
+4096
+],
+"add_time_condition.attention.to_out.0.weight": [
+1536,
+1536
+],
+"add_time_condition.attention.to_q.weight": [
+1536,
+4096
+],
+"add_time_condition.attention.to_v.weight": [
+1536,
+4096
+],
+"conv_in.bias": [
+192
+],
+"conv_in.weight": [
+192,
+4,
+3,
+3
+],
+"conv_norm_out.bias": [
+192
+],
+"conv_norm_out.weight": [
+192
+],
+"conv_out.bias": [
+4
+],
+"conv_out.weight": [
+4,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.0.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.0.projection.weight": [
+192,
+192,
+1,
+1
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.1.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.2.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.3.projection.bias": [
+384
+],
+"down_blocks.0.resnets_in.0.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"down_blocks.0.resnets_in.0.shortcut_projection.bias": [
+384
+],
+"down_blocks.0.resnets_in.0.shortcut_projection.weight": [
+384,
+192,
+1,
+1
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.0.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.1.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.2.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.3.projection.bias": [
+384
+],
+"down_blocks.0.resnets_in.1.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.0.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.1.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.2.projection.bias": [
+192
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.3.projection.bias": [
+384
+],
+"down_blocks.0.resnets_in.2.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.0.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.1.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.2.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.3.projection.bias": [
+384
+],
+"down_blocks.0.resnets_out.0.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.0.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.1.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.2.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.3.projection.bias": [
+384
+],
+"down_blocks.0.resnets_out.1.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.0.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.1.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.2.down_sample.bias": [
+192
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.2.down_sample.weight": [
+192,
+192,
+2,
+2
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.2.projection.bias": [
+192
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.3.projection.bias": [
+384
+],
+"down_blocks.0.resnets_out.2.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"down_blocks.0.resnets_out.2.shortcut_down_sample.bias": [
+384
+],
+"down_blocks.0.resnets_out.2.shortcut_down_sample.weight": [
+384,
+384,
+2,
+2
+],
+"down_blocks.1.attentions.0.attention.to_k.weight": [
+384,
+384
+],
+"down_blocks.1.attentions.0.attention.to_out.0.weight": [
+384,
+384
+],
+"down_blocks.1.attentions.0.attention.to_q.weight": [
+384,
+384
+],
+"down_blocks.1.attentions.0.attention.to_v.weight": [
+384,
+384
+],
+"down_blocks.1.attentions.0.feed_forward.0.weight": [
+1536,
+384,
+1,
+1
+],
+"down_blocks.1.attentions.0.feed_forward.2.weight": [
+384,
+1536,
+1,
+1
+],
+"down_blocks.1.attentions.0.in_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.attentions.0.in_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.attentions.0.out_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.attentions.0.out_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.attentions.1.attention.to_k.weight": [
+768,
+4096
+],
+"down_blocks.1.attentions.1.attention.to_out.0.weight": [
+768,
+768
+],
+"down_blocks.1.attentions.1.attention.to_q.weight": [
+768,
+768
+],
+"down_blocks.1.attentions.1.attention.to_v.weight": [
+768,
+4096
+],
+"down_blocks.1.attentions.1.feed_forward.0.weight": [
+3072,
+768,
+1,
+1
+],
+"down_blocks.1.attentions.1.feed_forward.2.weight": [
+768,
+3072,
+1,
+1
+],
+"down_blocks.1.attentions.1.in_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.attentions.1.in_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.attentions.1.out_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.attentions.1.out_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.attentions.2.attention.to_k.weight": [
+768,
+4096
+],
+"down_blocks.1.attentions.2.attention.to_out.0.weight": [
+768,
+768
+],
+"down_blocks.1.attentions.2.attention.to_q.weight": [
+768,
+768
+],
+"down_blocks.1.attentions.2.attention.to_v.weight": [
+768,
+4096
+],
+"down_blocks.1.attentions.2.feed_forward.0.weight": [
+3072,
+768,
+1,
+1
+],
+"down_blocks.1.attentions.2.feed_forward.2.weight": [
+768,
+3072,
+1,
+1
+],
+"down_blocks.1.attentions.2.in_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.attentions.2.in_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.attentions.2.out_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.attentions.2.out_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.attentions.3.attention.to_k.weight": [
+768,
+4096
+],
+"down_blocks.1.attentions.3.attention.to_out.0.weight": [
+768,
+768
+],
+"down_blocks.1.attentions.3.attention.to_q.weight": [
+768,
+768
+],
+"down_blocks.1.attentions.3.attention.to_v.weight": [
+768,
+4096
+],
+"down_blocks.1.attentions.3.feed_forward.0.weight": [
+3072,
+768,
+1,
+1
+],
+"down_blocks.1.attentions.3.feed_forward.2.weight": [
+768,
+3072,
+1,
+1
+],
+"down_blocks.1.attentions.3.in_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.attentions.3.in_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.attentions.3.out_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.attentions.3.out_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.0.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.0.projection.weight": [
+384,
+384,
+1,
+1
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.1.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.2.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.3.projection.bias": [
+768
+],
+"down_blocks.1.resnets_in.0.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"down_blocks.1.resnets_in.0.shortcut_projection.bias": [
+768
+],
+"down_blocks.1.resnets_in.0.shortcut_projection.weight": [
+768,
+384,
+1,
+1
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.0.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.1.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.2.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.3.projection.bias": [
+768
+],
+"down_blocks.1.resnets_in.1.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.0.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.1.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.2.projection.bias": [
+384
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.3.projection.bias": [
+768
+],
+"down_blocks.1.resnets_in.2.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.0.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.1.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.2.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.3.projection.bias": [
+768
+],
+"down_blocks.1.resnets_out.0.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.0.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.1.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.2.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.3.projection.bias": [
+768
+],
+"down_blocks.1.resnets_out.1.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.0.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.1.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.2.down_sample.bias": [
+384
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.2.down_sample.weight": [
+384,
+384,
+2,
+2
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.2.projection.bias": [
+384
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.3.projection.bias": [
+768
+],
+"down_blocks.1.resnets_out.2.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"down_blocks.1.resnets_out.2.shortcut_down_sample.bias": [
+768
+],
+"down_blocks.1.resnets_out.2.shortcut_down_sample.weight": [
+768,
+768,
+2,
+2
+],
+"down_blocks.2.attentions.0.attention.to_k.weight": [
+768,
+768
+],
+"down_blocks.2.attentions.0.attention.to_out.0.weight": [
+768,
+768
+],
+"down_blocks.2.attentions.0.attention.to_q.weight": [
+768,
+768
+],
+"down_blocks.2.attentions.0.attention.to_v.weight": [
+768,
+768
+],
+"down_blocks.2.attentions.0.feed_forward.0.weight": [
+3072,
+768,
+1,
+1
+],
+"down_blocks.2.attentions.0.feed_forward.2.weight": [
+768,
+3072,
+1,
+1
+],
+"down_blocks.2.attentions.0.in_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.attentions.0.in_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.attentions.0.out_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.attentions.0.out_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.attentions.1.attention.to_k.weight": [
+1536,
+4096
+],
+"down_blocks.2.attentions.1.attention.to_out.0.weight": [
+1536,
+1536
+],
+"down_blocks.2.attentions.1.attention.to_q.weight": [
+1536,
+1536
+],
+"down_blocks.2.attentions.1.attention.to_v.weight": [
+1536,
+4096
+],
+"down_blocks.2.attentions.1.feed_forward.0.weight": [
+6144,
+1536,
+1,
+1
+],
+"down_blocks.2.attentions.1.feed_forward.2.weight": [
+1536,
+6144,
+1,
+1
+],
+"down_blocks.2.attentions.1.in_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.attentions.1.in_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.attentions.1.out_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.attentions.1.out_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.attentions.2.attention.to_k.weight": [
+1536,
+4096
+],
+"down_blocks.2.attentions.2.attention.to_out.0.weight": [
+1536,
+1536
+],
+"down_blocks.2.attentions.2.attention.to_q.weight": [
+1536,
+1536
+],
+"down_blocks.2.attentions.2.attention.to_v.weight": [
+1536,
+4096
+],
+"down_blocks.2.attentions.2.feed_forward.0.weight": [
+6144,
+1536,
+1,
+1
+],
+"down_blocks.2.attentions.2.feed_forward.2.weight": [
+1536,
+6144,
+1,
+1
+],
+"down_blocks.2.attentions.2.in_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.attentions.2.in_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.attentions.2.out_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.attentions.2.out_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.attentions.3.attention.to_k.weight": [
+1536,
+4096
+],
+"down_blocks.2.attentions.3.attention.to_out.0.weight": [
+1536,
+1536
+],
+"down_blocks.2.attentions.3.attention.to_q.weight": [
+1536,
+1536
+],
+"down_blocks.2.attentions.3.attention.to_v.weight": [
+1536,
+4096
+],
+"down_blocks.2.attentions.3.feed_forward.0.weight": [
+6144,
+1536,
+1,
+1
+],
+"down_blocks.2.attentions.3.feed_forward.2.weight": [
+1536,
+6144,
+1,
+1
+],
+"down_blocks.2.attentions.3.in_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.attentions.3.in_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.attentions.3.out_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.attentions.3.out_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.0.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.0.projection.weight": [
+768,
+768,
+1,
+1
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.1.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.2.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.3.projection.bias": [
+1536
+],
+"down_blocks.2.resnets_in.0.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"down_blocks.2.resnets_in.0.shortcut_projection.bias": [
+1536
+],
+"down_blocks.2.resnets_in.0.shortcut_projection.weight": [
+1536,
+768,
+1,
+1
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.0.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.1.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.2.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.3.projection.bias": [
+1536
+],
+"down_blocks.2.resnets_in.1.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.0.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.1.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.2.projection.bias": [
+768
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.3.projection.bias": [
+1536
+],
+"down_blocks.2.resnets_in.2.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.0.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.1.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.2.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.3.projection.bias": [
+1536
+],
+"down_blocks.2.resnets_out.0.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.0.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.1.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.2.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.3.projection.bias": [
+1536
+],
+"down_blocks.2.resnets_out.1.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.0.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.1.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.2.down_sample.bias": [
+768
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.2.down_sample.weight": [
+768,
+768,
+2,
+2
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.2.projection.bias": [
+768
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.3.projection.bias": [
+1536
+],
+"down_blocks.2.resnets_out.2.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"down_blocks.2.resnets_out.2.shortcut_down_sample.bias": [
+1536
+],
+"down_blocks.2.resnets_out.2.shortcut_down_sample.weight": [
+1536,
+1536,
+2,
+2
+],
+"down_blocks.3.attentions.0.attention.to_k.weight": [
+1536,
+1536
+],
+"down_blocks.3.attentions.0.attention.to_out.0.weight": [
+1536,
+1536
+],
+"down_blocks.3.attentions.0.attention.to_q.weight": [
+1536,
+1536
+],
+"down_blocks.3.attentions.0.attention.to_v.weight": [
+1536,
+1536
+],
+"down_blocks.3.attentions.0.feed_forward.0.weight": [
+6144,
+1536,
+1,
+1
+],
+"down_blocks.3.attentions.0.feed_forward.2.weight": [
+1536,
+6144,
+1,
+1
+],
+"down_blocks.3.attentions.0.in_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.attentions.0.in_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.attentions.0.out_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.attentions.0.out_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.attentions.1.attention.to_k.weight": [
+3072,
+4096
+],
+"down_blocks.3.attentions.1.attention.to_out.0.weight": [
+3072,
+3072
+],
+"down_blocks.3.attentions.1.attention.to_q.weight": [
+3072,
+3072
+],
+"down_blocks.3.attentions.1.attention.to_v.weight": [
+3072,
+4096
+],
+"down_blocks.3.attentions.1.feed_forward.0.weight": [
+12288,
+3072,
+1,
+1
+],
+"down_blocks.3.attentions.1.feed_forward.2.weight": [
+3072,
+12288,
+1,
+1
+],
+"down_blocks.3.attentions.1.in_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.attentions.1.in_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.attentions.1.out_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.attentions.1.out_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.attentions.2.attention.to_k.weight": [
+3072,
+4096
+],
+"down_blocks.3.attentions.2.attention.to_out.0.weight": [
+3072,
+3072
+],
+"down_blocks.3.attentions.2.attention.to_q.weight": [
+3072,
+3072
+],
+"down_blocks.3.attentions.2.attention.to_v.weight": [
+3072,
+4096
+],
+"down_blocks.3.attentions.2.feed_forward.0.weight": [
+12288,
+3072,
+1,
+1
+],
+"down_blocks.3.attentions.2.feed_forward.2.weight": [
+3072,
+12288,
+1,
+1
+],
+"down_blocks.3.attentions.2.in_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.attentions.2.in_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.attentions.2.out_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.attentions.2.out_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.attentions.3.attention.to_k.weight": [
+3072,
+4096
+],
+"down_blocks.3.attentions.3.attention.to_out.0.weight": [
+3072,
+3072
+],
+"down_blocks.3.attentions.3.attention.to_q.weight": [
+3072,
+3072
+],
+"down_blocks.3.attentions.3.attention.to_v.weight": [
+3072,
+4096
+],
+"down_blocks.3.attentions.3.feed_forward.0.weight": [
+12288,
+3072,
+1,
+1
+],
+"down_blocks.3.attentions.3.feed_forward.2.weight": [
+3072,
+12288,
+1,
+1
+],
+"down_blocks.3.attentions.3.in_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.attentions.3.in_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.attentions.3.out_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.attentions.3.out_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.0.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.0.projection.weight": [
+1536,
+1536,
+1,
+1
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.1.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.2.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.3.projection.bias": [
+3072
+],
+"down_blocks.3.resnets_in.0.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"down_blocks.3.resnets_in.0.shortcut_projection.bias": [
+3072
+],
+"down_blocks.3.resnets_in.0.shortcut_projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.0.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.1.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.2.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.3.projection.bias": [
+3072
+],
+"down_blocks.3.resnets_in.1.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.0.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.1.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.2.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.3.projection.bias": [
+3072
+],
+"down_blocks.3.resnets_in.2.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.0.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.1.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.2.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.3.projection.bias": [
+3072
+],
+"down_blocks.3.resnets_out.0.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.0.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.1.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.2.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.3.projection.bias": [
+3072
+],
+"down_blocks.3.resnets_out.1.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.0.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.1.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.2.projection.bias": [
+1536
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.3.projection.bias": [
+3072
+],
+"down_blocks.3.resnets_out.2.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"encoder_hid_proj.projection_linear.weight": [
+4096,
+4096
+],
+"encoder_hid_proj.projection_norm.bias": [
+4096
+],
+"encoder_hid_proj.projection_norm.weight": [
+4096
+],
+"time_embedding.linear_1.bias": [
+1536
+],
+"time_embedding.linear_1.weight": [
+1536,
+192
+],
+"time_embedding.linear_2.bias": [
+1536
+],
+"time_embedding.linear_2.weight": [
+1536,
+1536
+],
+"up_blocks.0.attentions.0.attention.to_k.weight": [
+1536,
+1536
+],
+"up_blocks.0.attentions.0.attention.to_out.0.weight": [
+1536,
+1536
+],
+"up_blocks.0.attentions.0.attention.to_q.weight": [
+1536,
+1536
+],
+"up_blocks.0.attentions.0.attention.to_v.weight": [
+1536,
+1536
+],
+"up_blocks.0.attentions.0.feed_forward.0.weight": [
+6144,
+1536,
+1,
+1
+],
+"up_blocks.0.attentions.0.feed_forward.2.weight": [
+1536,
+6144,
+1,
+1
+],
+"up_blocks.0.attentions.0.in_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.attentions.0.in_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.attentions.0.out_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.attentions.0.out_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.attentions.1.attention.to_k.weight": [
+3072,
+4096
+],
+"up_blocks.0.attentions.1.attention.to_out.0.weight": [
+3072,
+3072
+],
+"up_blocks.0.attentions.1.attention.to_q.weight": [
+3072,
+3072
+],
+"up_blocks.0.attentions.1.attention.to_v.weight": [
+3072,
+4096
+],
+"up_blocks.0.attentions.1.feed_forward.0.weight": [
+12288,
+3072,
+1,
+1
+],
+"up_blocks.0.attentions.1.feed_forward.2.weight": [
+3072,
+12288,
+1,
+1
+],
+"up_blocks.0.attentions.1.in_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.attentions.1.in_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.attentions.1.out_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.attentions.1.out_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.attentions.2.attention.to_k.weight": [
+3072,
+4096
+],
+"up_blocks.0.attentions.2.attention.to_out.0.weight": [
+3072,
+3072
+],
+"up_blocks.0.attentions.2.attention.to_q.weight": [
+3072,
+3072
+],
+"up_blocks.0.attentions.2.attention.to_v.weight": [
+3072,
+4096
+],
+"up_blocks.0.attentions.2.feed_forward.0.weight": [
+12288,
+3072,
+1,
+1
+],
+"up_blocks.0.attentions.2.feed_forward.2.weight": [
+3072,
+12288,
+1,
+1
+],
+"up_blocks.0.attentions.2.in_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.attentions.2.in_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.attentions.2.out_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.attentions.2.out_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.attentions.3.attention.to_k.weight": [
+3072,
+4096
+],
+"up_blocks.0.attentions.3.attention.to_out.0.weight": [
+3072,
+3072
+],
+"up_blocks.0.attentions.3.attention.to_q.weight": [
+3072,
+3072
+],
+"up_blocks.0.attentions.3.attention.to_v.weight": [
+3072,
+4096
+],
+"up_blocks.0.attentions.3.feed_forward.0.weight": [
+12288,
+3072,
+1,
+1
+],
+"up_blocks.0.attentions.3.feed_forward.2.weight": [
+3072,
+12288,
+1,
+1
+],
+"up_blocks.0.attentions.3.in_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.attentions.3.in_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.attentions.3.out_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.attentions.3.out_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.0.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.1.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.2.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.3.projection.bias": [
+3072
+],
+"up_blocks.0.resnets_in.0.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.0.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.1.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.2.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.3.projection.bias": [
+3072
+],
+"up_blocks.0.resnets_in.1.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.0.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.1.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.2.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.3.projection.bias": [
+3072
+],
+"up_blocks.0.resnets_in.2.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.0.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.1.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.2.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.3.projection.bias": [
+3072
+],
+"up_blocks.0.resnets_out.0.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.0.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.1.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.2.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.3.projection.bias": [
+3072
+],
+"up_blocks.0.resnets_out.1.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.0.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.1.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.2.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.3.projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.2.resnet_blocks.3.projection.weight": [
+1536,
+1536,
+1,
+1
+],
+"up_blocks.0.resnets_out.2.shortcut_projection.bias": [
+1536
+],
+"up_blocks.0.resnets_out.2.shortcut_projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.1.attentions.0.attention.to_k.weight": [
+768,
+768
+],
+"up_blocks.1.attentions.0.attention.to_out.0.weight": [
+768,
+768
+],
+"up_blocks.1.attentions.0.attention.to_q.weight": [
+768,
+768
+],
+"up_blocks.1.attentions.0.attention.to_v.weight": [
+768,
+768
+],
+"up_blocks.1.attentions.0.feed_forward.0.weight": [
+3072,
+768,
+1,
+1
+],
+"up_blocks.1.attentions.0.feed_forward.2.weight": [
+768,
+3072,
+1,
+1
+],
+"up_blocks.1.attentions.0.in_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.attentions.0.in_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.attentions.0.out_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.attentions.0.out_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.attentions.1.attention.to_k.weight": [
+3072,
+4096
+],
+"up_blocks.1.attentions.1.attention.to_out.0.weight": [
+3072,
+3072
+],
+"up_blocks.1.attentions.1.attention.to_q.weight": [
+3072,
+3072
+],
+"up_blocks.1.attentions.1.attention.to_v.weight": [
+3072,
+4096
+],
+"up_blocks.1.attentions.1.feed_forward.0.weight": [
+12288,
+3072,
+1,
+1
+],
+"up_blocks.1.attentions.1.feed_forward.2.weight": [
+3072,
+12288,
+1,
+1
+],
+"up_blocks.1.attentions.1.in_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.1.attentions.1.in_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.1.attentions.1.out_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.1.attentions.1.out_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.1.attentions.2.attention.to_k.weight": [
+1536,
+4096
+],
+"up_blocks.1.attentions.2.attention.to_out.0.weight": [
+1536,
+1536
+],
+"up_blocks.1.attentions.2.attention.to_q.weight": [
+1536,
+1536
+],
+"up_blocks.1.attentions.2.attention.to_v.weight": [
+1536,
+4096
+],
+"up_blocks.1.attentions.2.feed_forward.0.weight": [
+6144,
+1536,
+1,
+1
+],
+"up_blocks.1.attentions.2.feed_forward.2.weight": [
+1536,
+6144,
+1,
+1
+],
+"up_blocks.1.attentions.2.in_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.attentions.2.in_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.attentions.2.out_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.attentions.2.out_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.attentions.3.attention.to_k.weight": [
+1536,
+4096
+],
+"up_blocks.1.attentions.3.attention.to_out.0.weight": [
+1536,
+1536
+],
+"up_blocks.1.attentions.3.attention.to_q.weight": [
+1536,
+1536
+],
+"up_blocks.1.attentions.3.attention.to_v.weight": [
+1536,
+4096
+],
+"up_blocks.1.attentions.3.feed_forward.0.weight": [
+6144,
+1536,
+1,
+1
+],
+"up_blocks.1.attentions.3.feed_forward.2.weight": [
+1536,
+6144,
+1,
+1
+],
+"up_blocks.1.attentions.3.in_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.attentions.3.in_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.attentions.3.out_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.attentions.3.out_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.0.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.1.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.1.up_sample.bias": [
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.1.up_sample.weight": [
+1536,
+1536,
+2,
+2
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.2.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.3.projection.bias": [
+3072
+],
+"up_blocks.1.resnets_in.0.resnet_blocks.3.projection.weight": [
+3072,
+1536,
+1,
+1
+],
+"up_blocks.1.resnets_in.0.shortcut_up_sample.bias": [
+3072
+],
+"up_blocks.1.resnets_in.0.shortcut_up_sample.weight": [
+3072,
+3072,
+2,
+2
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.0.projection.bias": [
+768
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.1.projection.bias": [
+768
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.2.projection.bias": [
+768
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.3.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_in.1.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.0.projection.bias": [
+768
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.1.projection.bias": [
+768
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.2.projection.bias": [
+768
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.3.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_in.2.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+6144
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+6144,
+1536
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.0.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.0.projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.1.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.1.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.2.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.2.projection.weight": [
+1536,
+1536,
+3,
+3
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.3.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_out.0.resnet_blocks.3.projection.weight": [
+1536,
+1536,
+1,
+1
+],
+"up_blocks.1.resnets_out.0.shortcut_projection.bias": [
+1536
+],
+"up_blocks.1.resnets_out.0.shortcut_projection.weight": [
+1536,
+3072,
+1,
+1
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.0.projection.bias": [
+768
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.1.projection.bias": [
+768
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.2.projection.bias": [
+768
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.3.projection.bias": [
+1536
+],
+"up_blocks.1.resnets_out.1.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.0.projection.bias": [
+768
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.1.projection.bias": [
+768
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.2.projection.bias": [
+768
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.3.projection.bias": [
+768
+],
+"up_blocks.1.resnets_out.2.resnet_blocks.3.projection.weight": [
+768,
+768,
+1,
+1
+],
+"up_blocks.1.resnets_out.2.shortcut_projection.bias": [
+768
+],
+"up_blocks.1.resnets_out.2.shortcut_projection.weight": [
+768,
+1536,
+1,
+1
+],
+"up_blocks.2.attentions.0.attention.to_k.weight": [
+384,
+384
+],
+"up_blocks.2.attentions.0.attention.to_out.0.weight": [
+384,
+384
+],
+"up_blocks.2.attentions.0.attention.to_q.weight": [
+384,
+384
+],
+"up_blocks.2.attentions.0.attention.to_v.weight": [
+384,
+384
+],
+"up_blocks.2.attentions.0.feed_forward.0.weight": [
+1536,
+384,
+1,
+1
+],
+"up_blocks.2.attentions.0.feed_forward.2.weight": [
+384,
+1536,
+1,
+1
+],
+"up_blocks.2.attentions.0.in_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.attentions.0.in_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.attentions.0.out_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.attentions.0.out_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.attentions.1.attention.to_k.weight": [
+1536,
+4096
+],
+"up_blocks.2.attentions.1.attention.to_out.0.weight": [
+1536,
+1536
+],
+"up_blocks.2.attentions.1.attention.to_q.weight": [
+1536,
+1536
+],
+"up_blocks.2.attentions.1.attention.to_v.weight": [
+1536,
+4096
+],
+"up_blocks.2.attentions.1.feed_forward.0.weight": [
+6144,
+1536,
+1,
+1
+],
+"up_blocks.2.attentions.1.feed_forward.2.weight": [
+1536,
+6144,
+1,
+1
+],
+"up_blocks.2.attentions.1.in_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.2.attentions.1.in_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.2.attentions.1.out_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.2.attentions.1.out_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.2.attentions.2.attention.to_k.weight": [
+768,
+4096
+],
+"up_blocks.2.attentions.2.attention.to_out.0.weight": [
+768,
+768
+],
+"up_blocks.2.attentions.2.attention.to_q.weight": [
+768,
+768
+],
+"up_blocks.2.attentions.2.attention.to_v.weight": [
+768,
+4096
+],
+"up_blocks.2.attentions.2.feed_forward.0.weight": [
+3072,
+768,
+1,
+1
+],
+"up_blocks.2.attentions.2.feed_forward.2.weight": [
+768,
+3072,
+1,
+1
+],
+"up_blocks.2.attentions.2.in_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.attentions.2.in_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.attentions.2.out_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.attentions.2.out_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.attentions.3.attention.to_k.weight": [
+768,
+4096
+],
+"up_blocks.2.attentions.3.attention.to_out.0.weight": [
+768,
+768
+],
+"up_blocks.2.attentions.3.attention.to_q.weight": [
+768,
+768
+],
+"up_blocks.2.attentions.3.attention.to_v.weight": [
+768,
+4096
+],
+"up_blocks.2.attentions.3.feed_forward.0.weight": [
+3072,
+768,
+1,
+1
+],
+"up_blocks.2.attentions.3.feed_forward.2.weight": [
+768,
+3072,
+1,
+1
+],
+"up_blocks.2.attentions.3.in_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.attentions.3.in_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.attentions.3.out_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.attentions.3.out_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.0.projection.bias": [
+768
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.1.projection.bias": [
+768
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.1.up_sample.bias": [
+768
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.1.up_sample.weight": [
+768,
+768,
+2,
+2
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.2.projection.bias": [
+768
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.3.projection.bias": [
+1536
+],
+"up_blocks.2.resnets_in.0.resnet_blocks.3.projection.weight": [
+1536,
+768,
+1,
+1
+],
+"up_blocks.2.resnets_in.0.shortcut_up_sample.bias": [
+1536
+],
+"up_blocks.2.resnets_in.0.shortcut_up_sample.weight": [
+1536,
+1536,
+2,
+2
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.0.projection.bias": [
+384
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.1.projection.bias": [
+384
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.2.projection.bias": [
+384
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.3.projection.bias": [
+768
+],
+"up_blocks.2.resnets_in.1.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.0.projection.bias": [
+384
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.1.projection.bias": [
+384
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.2.projection.bias": [
+384
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.3.projection.bias": [
+768
+],
+"up_blocks.2.resnets_in.2.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+3072
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+3072,
+1536
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.0.projection.bias": [
+768
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.0.projection.weight": [
+768,
+1536,
+1,
+1
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.1.projection.bias": [
+768
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.1.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.2.projection.bias": [
+768
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.2.projection.weight": [
+768,
+768,
+3,
+3
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.3.projection.bias": [
+768
+],
+"up_blocks.2.resnets_out.0.resnet_blocks.3.projection.weight": [
+768,
+768,
+1,
+1
+],
+"up_blocks.2.resnets_out.0.shortcut_projection.bias": [
+768
+],
+"up_blocks.2.resnets_out.0.shortcut_projection.weight": [
+768,
+1536,
+1,
+1
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.0.projection.bias": [
+384
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.1.projection.bias": [
+384
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.2.projection.bias": [
+384
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.3.projection.bias": [
+768
+],
+"up_blocks.2.resnets_out.1.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.0.projection.bias": [
+384
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.1.projection.bias": [
+384
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.2.projection.bias": [
+384
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.3.projection.bias": [
+384
+],
+"up_blocks.2.resnets_out.2.resnet_blocks.3.projection.weight": [
+384,
+384,
+1,
+1
+],
+"up_blocks.2.resnets_out.2.shortcut_projection.bias": [
+384
+],
+"up_blocks.2.resnets_out.2.shortcut_projection.weight": [
+384,
+768,
+1,
+1
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.0.projection.bias": [
+384
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.1.projection.bias": [
+384
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.1.up_sample.bias": [
+384
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.1.up_sample.weight": [
+384,
+384,
+2,
+2
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.2.projection.bias": [
+384
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.3.projection.bias": [
+768
+],
+"up_blocks.3.resnets_in.0.resnet_blocks.3.projection.weight": [
+768,
+384,
+1,
+1
+],
+"up_blocks.3.resnets_in.0.shortcut_up_sample.bias": [
+768
+],
+"up_blocks.3.resnets_in.0.shortcut_up_sample.weight": [
+768,
+768,
+2,
+2
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.0.projection.bias": [
+192
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.1.projection.bias": [
+192
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.2.projection.bias": [
+192
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.3.projection.bias": [
+384
+],
+"up_blocks.3.resnets_in.1.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.0.projection.bias": [
+192
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.1.projection.bias": [
+192
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.2.projection.bias": [
+192
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.3.projection.bias": [
+384
+],
+"up_blocks.3.resnets_in.2.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+1536
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+1536,
+1536
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.0.projection.bias": [
+384
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.0.projection.weight": [
+384,
+768,
+1,
+1
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.1.projection.bias": [
+384
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.1.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.2.projection.bias": [
+384
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.2.projection.weight": [
+384,
+384,
+3,
+3
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.3.projection.bias": [
+384
+],
+"up_blocks.3.resnets_out.0.resnet_blocks.3.projection.weight": [
+384,
+384,
+1,
+1
+],
+"up_blocks.3.resnets_out.0.shortcut_projection.bias": [
+384
+],
+"up_blocks.3.resnets_out.0.shortcut_projection.weight": [
+384,
+768,
+1,
+1
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.0.projection.bias": [
+192
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.1.projection.bias": [
+192
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.2.projection.bias": [
+192
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.3.projection.bias": [
+384
+],
+"up_blocks.3.resnets_out.1.resnet_blocks.3.projection.weight": [
+384,
+192,
+1,
+1
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.bias": [
+768
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.0.group_norm.context_mlp.1.weight": [
+768,
+1536
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.0.projection.bias": [
+192
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.0.projection.weight": [
+192,
+384,
+1,
+1
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.1.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.1.projection.bias": [
+192
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.1.projection.weight": [
+192,
+192,
+3,
+3
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.2.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.2.projection.bias": [
+192
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.2.projection.weight": [
+192,
+192,
+3,
+3
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.bias": [
+384
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.3.group_norm.context_mlp.1.weight": [
+384,
+1536
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.3.projection.bias": [
+192
+],
+"up_blocks.3.resnets_out.2.resnet_blocks.3.projection.weight": [
+192,
+192,
+1,
+1
+],
+"up_blocks.3.resnets_out.2.shortcut_projection.bias": [
+192
+],
+"up_blocks.3.resnets_out.2.shortcut_projection.weight": [
+192,
+384,
+1,
+1
+]
+}

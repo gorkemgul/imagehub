@@ -2836,3 +2836,118 @@ def write_tiny_omnigen(directory: str | os.PathLike[str], *, seed: int = 0) -> P
             dict(model.state_dict()), root / name / "diffusion_pytorch_model.safetensors"
         )
     return root
+
+
+TINY_KANDINSKY3_TEXT = {
+    "vocab_size": 16,
+    "d_model": 32,
+    "d_kv": 16,
+    "d_ff": 64,
+    "num_layers": 2,
+    "num_heads": 2,
+    "feed_forward_proj": "gated-silu",
+    "dense_act_fn": "silu",
+    "is_gated_act": True,
+    "layer_norm_epsilon": 1e-6,
+    "dropout_rate": 0.0,
+    "relative_attention_num_buckets": 32,
+    "relative_attention_max_distance": 128,
+    "model_type": "t5",
+    "architectures": ["T5EncoderModel"],
+}
+TINY_KANDINSKY3_UNET = {
+    "_class_name": "Kandinsky3UNet",
+    "in_channels": 4,
+    "time_embedding_dim": 32,
+    "groups": 8,
+    "attention_head_dim": 8,
+    "layers_per_block": 3,
+    "block_out_channels": [32, 64, 64, 128],
+    "cross_attention_dim": 32,
+    "encoder_hid_dim": 32,
+}
+TINY_KANDINSKY3_MOVQ = {
+    "_class_name": "VQModel",
+    "act_fn": "silu",
+    "block_out_channels": [32, 32, 32, 32],
+    "down_block_types": [
+        "DownEncoderBlock2D",
+        "DownEncoderBlock2D",
+        "DownEncoderBlock2D",
+        "AttnDownEncoderBlock2D",
+    ],
+    "in_channels": 3,
+    "latent_channels": 4,
+    "layers_per_block": 1,
+    "norm_num_groups": 32,
+    "norm_type": "spatial",
+    "num_vq_embeddings": 16,
+    "out_channels": 3,
+    "sample_size": 32,
+    "scaling_factor": 0.18215,
+    "up_block_types": [
+        "AttnUpDecoderBlock2D",
+        "UpDecoderBlock2D",
+        "UpDecoderBlock2D",
+        "UpDecoderBlock2D",
+    ],
+    "vq_embed_dim": 4,
+}
+
+
+def write_tiny_kandinsky3(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight Kandinsky 3 snapshot in the published layout (float16 variant files)."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.kandinsky3_unet import Kandinsky3UNet
+    from imagehub.models.t5 import T5EncoderModel
+    from imagehub.models.vq_model import VQModel
+
+    source = FIXTURES / "kandinsky3_configs"
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", tokenizer / "tokenizer.json")
+    tokenizer_config = {
+        "tokenizer_class": "T5Tokenizer",
+        "model_max_length": 2048,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+        "legacy": True,
+    }
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (tokenizer / "special_tokens_map.json").write_text(
+        json.dumps({key: tokenizer_config[key] for key in ("pad_token", "eos_token", "unk_token")})
+    )
+    (root / "scheduler").mkdir()
+    shutil.copy2(source / "scheduler_config.json", root / "scheduler" / "scheduler_config.json")
+    shutil.copy2(source / "model_index.json", root / "model_index.json")
+    for name, cls, config in (
+        ("text_encoder", T5EncoderModel, TINY_KANDINSKY3_TEXT),
+        ("unet", Kandinsky3UNet, TINY_KANDINSKY3_UNET),
+        ("movq", VQModel, TINY_KANDINSKY3_MOVQ),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = {key: value.half() for key, value in model.state_dict().items()}
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        if name != "text_encoder":
+            save_safetensors(state, root / name / "diffusion_pytorch_model.fp16.safetensors")
+            continue
+        shards = [{key: state[key] for key in list(state)[index::2]} for index in range(2)]
+        weight_map = {}
+        for index, shard in enumerate(shards, start=1):
+            file = f"model.fp16-0000{index}-of-00002.safetensors"
+            save_safetensors(shard, root / name / file)
+            weight_map |= dict.fromkeys(shard, file)
+        (root / name / "model.safetensors.index.fp16.json").write_text(
+            json.dumps({"metadata": {"total_size": 0}, "weight_map": weight_map})
+        )
+    return root

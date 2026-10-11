@@ -172,6 +172,7 @@ def test_downloads_transformer_only_pixart_sigma_on_top_of_the_1024_snapshot(
         "sana-1600m-1024",
         "sana-600m-1024",
         "kolors",
+        "kandinsky-3",
         "lumina-image-2.0",
         "amused-256",
         "amused-512",

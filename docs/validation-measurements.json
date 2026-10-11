@@ -788,6 +788,22 @@
     "passed": true,
     "pixels_max_abs": 0
   },
+  "e2e_kandinsky3": {
+    "guidance": 3.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "A photograph of the inside of a subway train. There are raccoons sitting on the seats.",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4
+  },
   "e2e_kolors": {
     "guidance": 5.0,
     "latents": {
@@ -2499,6 +2515,26 @@
       "tensors": 724
     }
   },
+  "header_kandinsky3": {
+    "movq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 431
+    },
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1071
+    }
+  },
   "header_kolors": {
     "text_encoder": {
       "extra": [],
@@ -3654,6 +3690,45 @@
     "tolerance": "exact"
   },
   "kandinsky22_zero_image": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_movq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_text_encoder_none": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_text_encoder_single": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_text_encoder_text": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_tokenizer_snapshot": {
+    "cases": 6,
+    "tolerance": "exact"
+  },
+  "kandinsky3_unet_step_1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_unet_step_501": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky3_unet_step_981": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -5740,6 +5815,16 @@
   "seed_e2e_kandinsky-2.2": {
     "passed": true,
     "seed": 42
+  },
+  "seed_e2e_kandinsky3": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      768,
+      512
+    ],
+    "steps": 3
   },
   "seed_e2e_kolors": {
     "max_pixel_diff": 0,

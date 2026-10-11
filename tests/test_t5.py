@@ -87,3 +87,19 @@ def test_loads_a_sequence_to_sequence_checkpoint_as_an_encoder(tmp_path) -> None
 
     assert torch.equal(model.shared.weight, state["shared.weight"])
     assert not any(name.startswith(("decoder.", "lm_head.")) for name in model.state_dict())
+
+
+def test_matches_kandinsky3_text_encoder_header() -> None:
+    directory = FIXTURES / "kandinsky3_configs"
+    config = json.loads((directory / "text_encoder_config.json").read_text(encoding="utf-8"))
+    published = json.loads((directory / "text_encoder_tensors.json").read_text(encoding="utf-8"))
+    with torch.device("meta"):
+        model = T5EncoderModel(config)
+    shapes = {name: list(value.shape) for name, value in model.state_dict().items()}
+    assert shapes == published
+    assert len(published) == 291
+    assert shapes["encoder.block.0.layer.0.SelfAttention.q.weight"] == [4096, 4096]
+    assert shapes["encoder.block.0.layer.0.SelfAttention.relative_attention_bias.weight"] == [
+        32,
+        16,
+    ]

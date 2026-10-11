@@ -112,3 +112,33 @@ def test_kandinsky22_decoder_config_trajectory_exact():
             output, timestep, actual, generator=torch.Generator().manual_seed(int(timestep))
         )
     torch.testing.assert_close(actual, expected, atol=0, rtol=0)
+
+
+def test_kandinsky3_scheduler_config_trajectory_exact():
+    config = json.loads(
+        (
+            Path(__file__).parents[1] / "fixtures/kandinsky3_configs/scheduler_config.json"
+        ).read_text()
+    )
+    reference = diffusers.DDPMScheduler.from_config(config)
+    native = DDPMScheduler(config)
+    assert torch.equal(native.betas, reference.betas)
+    assert torch.equal(native.alphas_cumprod, reference.alphas_cumprod)
+    for steps in (1, 5, 25, 100):
+        reference.set_timesteps(steps)
+        native.set_timesteps(steps)
+        assert torch.equal(native.timesteps, reference.timesteps)
+    reference.set_timesteps(25)
+    native.set_timesteps(25)
+    generator = torch.Generator().manual_seed(0)
+    sample = torch.randn(2, 4, 8, 12, generator=generator)
+    expected, actual = sample.clone(), sample.clone()
+    expected_generator = torch.Generator().manual_seed(7)
+    actual_generator = torch.Generator().manual_seed(7)
+    for timestep in reference.timesteps:
+        output = torch.randn(2, 4, 8, 12, generator=generator)
+        expected = reference.step(
+            output, timestep, expected, generator=expected_generator
+        ).prev_sample
+        actual = native.step(output, timestep, actual, generator=actual_generator)
+    torch.testing.assert_close(actual, expected, atol=0, rtol=0)

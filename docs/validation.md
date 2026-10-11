@@ -1312,6 +1312,41 @@ the latents. The Euler scheduler ignores the configuration keys that diffusers' 
 not read (`thresholding`, `dynamic_thresholding_ratio`, `clip_sample_range`), which this release's
 configuration contains.
 
+## Kandinsky 3
+
+`kandinsky-3` is loaded strictly from `kandinsky-community/kandinsky-3` at revision `bf79e6c` and
+compared with diffusers 0.40.0 `Kandinsky3Pipeline` on CPU in float32, on the float32 upcast of the
+published float16 weights (only float16 weights are published). The observed difference in every
+comparison is **exactly 0**: on CPU in float32, the local implementation produces a bit-identical
+result to the reference (identical bytes for images). The real-checkpoint run of 7 tests took about
+4 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference |
+| --- | --- |
+| Tensor header check: text encoder (291 tensors), U-Net (1071), MoVQ (431) (names and shapes) | 0 missing, extra or mismatched |
+| T5 tokenizer ids / attention masks (6 prompts, 128 tokens) | identical / identical |
+| `Kandinsky3Pipeline.encode_prompt` embeddings and masks (no negative prompt, a negative prompt, no guidance) | 0 |
+| U-Net single step (batch 2, 64×64 latents, masked context, three timesteps) | 0 |
+| MoVQ decode (64×64 latents, no quantization) | 0 |
+| End to end: final latent / pixels (1024×1024, 4 steps, guidance 3.0, seed 0) | 0 / 0 |
+| End to end, seed 1234, 768×512 with a negative prompt, 3 steps (pixels) | 0 |
+
+The text encoder needs about 35 GB in float32, so the reference conditioning is computed, saved to
+disk and freed before the native text encoder is loaded, and the reference denoiser is run without
+a text encoder on the saved conditioning. The end-to-end runs use 4 and 3 steps instead of 25 to
+keep the run short; the sampler is stochastic at every step, so each step exercises the generator.
+The reference pipeline is loaded with `variant="fp16"` and `torch_dtype=torch.float32`.
+
+Random-weight parity covers the T5 encoder with the gated SiLU feed-forward (a small model and the
+Flan-UL2 widths with two layers, with and without a padding mask), the MoVQ decoder at the
+published configuration, the U-Net (small and published widths, masked, unmasked and fully masked
+rows) and the squared-cosine DDPM schedule. Tiny-snapshot end-to-end parity covers seven cases (the
+default settings, guidance 1.0, a non-square size rounded up to 64 pixels with a negative prompt, an
+empty negative prompt, two images, a prompt longer than the context and a single step) with two
+sets of random weights each, plus checks of the latents and of the cut context.
+
 ## AuraFlow
 
 Validated on CPU in the same environment as above. `auraflow-v0.3` is loaded strictly from
@@ -1488,7 +1523,7 @@ first sequence of the batch only; the native module reproduces that.
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
-  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
+  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 28 passed for `pixart-alpha-xl-512`,
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
