@@ -796,7 +796,7 @@ then ran the native model. The full real-checkpoint run on the Apple M2 Max took
 `ernie-image` is loaded strictly from `baidu/ERNIE-Image` at revision `5346b31`. The weights are
 published in bfloat16 and are upcast to float32. The observed difference in every comparison is
 **exactly 0**: on CPU in float32, the local implementation produces a bit-identical result to the
-reference. The real-checkpoint run took 37 minutes on an M2 Max (CPU).
+reference. The real-checkpoint run took 36 minutes on an M2 Max (CPU).
 
 ### Comparisons (CPU, float32)
 
