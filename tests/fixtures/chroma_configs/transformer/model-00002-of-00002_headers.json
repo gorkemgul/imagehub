@@ -1,0 +1,1437 @@
+{
+"proj_out.bias": [
+64
+],
+"proj_out.weight": [
+64,
+3072
+],
+"single_transformer_blocks.10.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.10.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.10.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.10.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.10.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.10.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.10.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.10.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.10.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.10.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.10.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.10.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.11.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.11.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.11.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.11.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.11.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.11.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.11.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.11.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.11.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.11.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.11.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.11.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.12.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.12.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.12.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.12.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.12.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.12.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.12.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.12.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.12.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.12.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.12.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.12.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.13.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.13.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.13.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.13.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.13.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.13.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.13.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.13.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.13.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.13.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.13.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.13.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.14.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.14.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.14.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.14.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.14.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.14.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.14.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.14.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.14.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.14.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.14.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.14.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.15.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.15.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.15.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.15.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.15.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.15.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.15.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.15.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.15.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.15.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.15.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.15.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.16.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.16.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.16.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.16.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.16.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.16.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.16.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.16.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.16.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.16.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.16.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.16.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.17.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.17.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.17.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.17.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.17.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.17.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.17.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.17.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.17.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.17.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.17.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.17.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.18.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.18.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.18.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.18.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.18.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.18.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.18.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.18.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.18.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.18.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.18.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.18.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.19.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.19.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.19.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.19.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.19.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.19.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.19.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.19.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.19.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.19.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.19.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.19.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.20.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.20.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.20.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.20.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.20.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.20.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.20.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.20.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.20.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.20.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.20.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.20.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.21.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.21.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.21.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.21.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.21.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.21.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.21.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.21.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.21.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.21.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.21.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.21.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.22.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.22.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.22.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.22.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.22.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.22.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.22.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.22.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.22.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.22.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.22.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.22.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.23.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.23.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.23.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.23.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.23.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.23.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.23.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.23.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.23.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.23.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.23.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.23.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.24.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.24.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.24.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.24.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.24.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.24.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.24.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.24.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.24.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.24.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.24.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.24.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.25.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.25.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.25.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.25.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.25.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.25.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.25.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.25.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.25.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.25.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.25.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.25.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.26.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.26.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.26.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.26.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.26.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.26.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.26.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.26.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.26.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.26.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.26.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.26.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.27.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.27.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.27.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.27.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.27.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.27.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.27.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.27.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.27.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.27.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.27.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.27.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.28.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.28.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.28.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.28.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.28.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.28.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.28.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.28.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.28.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.28.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.28.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.28.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.29.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.29.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.29.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.29.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.29.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.29.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.29.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.29.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.29.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.29.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.29.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.29.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.3.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.3.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.3.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.3.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.3.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.3.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.3.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.3.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.3.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.3.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.30.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.30.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.30.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.30.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.30.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.30.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.30.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.30.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.30.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.30.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.30.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.30.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.31.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.31.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.31.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.31.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.31.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.31.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.31.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.31.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.31.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.31.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.31.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.31.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.32.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.32.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.32.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.32.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.32.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.32.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.32.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.32.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.32.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.32.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.32.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.32.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.33.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.33.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.33.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.33.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.33.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.33.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.33.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.33.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.33.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.33.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.33.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.33.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.34.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.34.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.34.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.34.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.34.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.34.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.34.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.34.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.34.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.34.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.34.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.34.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.35.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.35.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.35.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.35.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.35.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.35.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.35.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.35.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.35.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.35.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.35.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.35.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.36.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.36.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.36.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.36.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.36.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.36.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.36.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.36.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.36.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.36.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.36.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.36.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.37.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.37.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.37.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.37.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.37.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.37.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.37.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.37.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.37.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.37.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.37.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.37.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.4.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.4.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.4.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.4.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.4.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.4.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.4.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.4.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.4.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.4.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.4.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.4.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.5.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.5.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.5.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.5.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.5.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.5.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.5.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.5.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.5.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.5.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.5.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.5.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.6.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.6.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.6.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.6.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.6.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.6.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.6.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.6.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.6.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.6.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.6.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.6.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.7.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.7.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.7.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.7.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.7.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.7.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.7.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.7.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.7.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.7.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.7.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.7.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.8.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.8.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.8.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.8.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.8.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.8.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.8.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.8.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.8.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.8.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.8.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.8.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.9.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.9.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.9.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.9.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.9.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.9.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.9.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.9.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.9.proj_mlp.bias": [
+12288
+],
+"single_transformer_blocks.9.proj_mlp.weight": [
+12288,
+3072
+],
+"single_transformer_blocks.9.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.9.proj_out.weight": [
+3072,
+15360
+]
+}
