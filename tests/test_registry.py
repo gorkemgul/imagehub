@@ -28,6 +28,7 @@ def test_family_and_model_aliases_are_registered():
     } <= set(names)
     assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024"} <= set(names)
     assert {"krea2", "krea2-turbo"} <= set(names)
+    assert "ernie-image" in names
     assert "longcat-image" in names
     assert {"cogview3", "cogview3-plus-3b"} <= set(names)
     assert {"cogview4", "cogview4-6b"} <= set(names)

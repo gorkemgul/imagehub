@@ -550,6 +550,11 @@
       "pixels": 0
     }
   },
+  "e2e_ernie_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 4
+  },
   "e2e_flux1-dev": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -1476,6 +1481,39 @@
   "environment": {
     "torch_threads": 12
   },
+  "ernie_image_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_scheduler": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "ernie_image_text_empty": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_text_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_tokenizer": {
+    "mismatches": 0,
+    "prompts": 507,
+    "tolerance": "exact"
+  },
+  "ernie_image_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_vae_decode": {
+    "max_pixel_diff": 0,
+    "passed": true
+  },
   "flux1_clip": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -2026,6 +2064,26 @@
     "mismatch": [],
     "missing": [],
     "tensors": 1680
+  },
+  "header_ernie_image": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 236
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 409
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 251
+    }
   },
   "header_flux1-dev": {
     "text_encoder": {
@@ -5388,6 +5446,12 @@
       499,
       249
     ]
+  },
+  "seed_e2e_ernie_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
   },
   "seed_e2e_flux1-dev": {
     "max_pixel_diff": 0,
