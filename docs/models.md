@@ -867,6 +867,50 @@ LoRA and fp16/bf16 parity are not supported.
 distribute weights.
 
 
+# ERNIE-Image
+
+Catalog: [`ernie-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`ernie-image` · Task: `t2i`
+
+**Architecture.** The language model of Ministral 3 (26 layers, width 3072, grouped-query
+attention with YaRN rotary embeddings and a position-dependent query scale) supplies the
+second-to-last hidden state of the prompt. An 8B single-stream diffusion transformer with 36
+blocks, width 4096 and 32 heads of width 128 processes the image tokens and the text tokens
+together, with shared AdaLN modulation and 3-axis RoPE. The FLUX.2 VAE decodes 32-channel latents
+that are patchified to 128 channels. The flow-match Euler scheduler uses a static shift of 4.0.
+The native image size is 1024×1024.
+
+**Usage.** The repository is not gated. The weights are published in bfloat16 and are upcast on
+loading; the snapshot is about 32 GB, and float32 needs about 46 GB of memory.
+
+```bash
+python -m imagehub.pretrained ernie-image checkpoints/ernie-image
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="ernie-image", model="checkpoints/ernie-image", device="mps") as pipe:
+    result = pipe("a poster that says 'HELLO', flat design", seed=42)
+    result.images[0].save("poster.png")
+```
+
+**Settings.** The model defaults to 50 steps, guidance 4.0 and 1024×1024; `width` and `height`
+must be multiples of 16. Guidance above 1.0 also runs the negative prompt (default empty).
+The other supported options are `num_images`, `seed` and `latents`. Unrecognized settings raise
+an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` and `use_pe=False` ([validation](validation.md)).
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The optional prompt enhancer (the `pe` model that rewrites a short prompt, which
+diffusers enables by default with `use_pe=True`) is not implemented: it samples text with the global
+random generator, and its weights are not part of the snapshot. Images match the reference run with
+`use_pe=False`. Image input, LoRA and fp16/bf16 parity are not supported either.
+
+**License.** Apache-2.0. imagehub does not distribute weights.
+
+
 # LongCat-Image
 
 Catalog: [`longcat-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -908,6 +952,53 @@ runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** LongCat-Image-Edit and fp16/bf16 parity are not supported. The published weights
 are bfloat16; validated parity is in float32 after upcasting.
+
+**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+
+
+# CogView3-Plus
+
+Catalog: [`cogview3-plus`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `cogview3-plus-3b` · Task: `t2i`
+
+**Architecture.** A T5-XXL encoder (24 layers, width 4096) supplies the prompt features, padded to
+224 tokens and used without an attention mask. A 3B diffusion transformer with 30 blocks and 64
+attention heads of width 40 attends jointly over text and image tokens; each block is modulated by
+AdaLN-Zero from a timestep embedding plus SDXL-style original-size, target-size and crop-coordinate
+conditions. Image tokens receive a fixed 2D sine-cosine position embedding. A 16-channel VAE with
+scaling factor 1.0 decodes the latents. The scheduler is a DDIM sampler with shifted SNR
+(`CogVideoXDDIMScheduler`, trailing spacing, zero terminal SNR, v-prediction). The native image
+size is 1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained cogview3-plus-3b checkpoints/cogview3-plus-3b
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="cogview3-plus-3b", model="checkpoints/cogview3-plus-3b", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 5.0, `width`/`height` default to 1024
+and `max_sequence_length` defaults to 224. The other supported options are `seed`, `latents`,
+`negative_prompt`, `original_size` and `crops_coords_top_left`. `width` and `height` must be
+multiples of 16 and at most 2048. Guidance is applied when it is greater than 1. Without a
+`negative_prompt` the unconditional features are zeros, as in the reference pipeline; an explicit
+`negative_prompt` (even an empty string) is encoded by the text encoder. Unrecognized settings raise
+an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The `CogVideoXDPMScheduler`, stochastic sampling (`eta` above 0), multiple images
+per prompt, prompt embeddings passed in directly and fp16/bf16 parity are not supported. The
+published transformer and VAE weights are bfloat16; CPU parity is measured in float32 after
+upcasting. In float32 the text encoder needs about 19 GB and the transformer about 11 GB.
 
 **License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
 
@@ -1602,4 +1693,80 @@ above, `torch.compile`, fp16/bf16 parity, several prompts or images per call, an
 tokens or caption embeddings are not supported.
 
 **License.** The repository declares the MIT license and the text encoder is Apache-2.0.
+imagehub does not distribute weights.
+
+
+# HiDream-I1
+
+Catalog: [`hidream-i1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`hidream-i1-fast` · Task: `t2i`
+
+**Architecture.** Four text encoders condition a 17B-parameter sparse flow-matching transformer.
+Two CLIP text encoders with projection (CLIP-L and CLIP-G, 128 tokens) give a pooled vector of width
+2048 that is added to the timestep embedding. A T5-XXL encoder (128 tokens, width 4096) and a
+Llama-3.1-8B-Instruct decoder supply the token-level context: the Llama encoder contributes the
+output of every one of its 32 layers (the last one after the final norm), and the transformer
+projects the layers named in `llama_layers` separately, one per block. The transformer has 16
+dual-stream blocks followed by 32 single-stream blocks of width 2560 (20 heads of 128), 2×2 patches
+and rotary embeddings; every feed-forward layer is a mixture of four routed SwiGLU experts (two
+activated per token) plus a shared expert. Images are decoded by the 16-channel, 8× FLUX VAE
+(scaling factor 0.3611, shift factor 0.1159). The scheduler is the flow-match LCM scheduler with a
+static shift of 3.0: each step predicts the clean sample and re-noises it to the next sigma with
+fresh Gaussian noise.
+
+**Usage.**
+
+```bash
+export HF_TOKEN=...   # an account with access to meta-llama/Llama-3.1-8B-Instruct
+python -m imagehub.pretrained hidream-i1-fast checkpoints/hidream-i1-fast
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="hidream-i1-fast", model="checkpoints/hidream-i1-fast", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Gated Llama encoder.** The HiDream repository does not contain the Llama encoder. The catalog entry
+therefore also downloads `meta-llama/Llama-3.1-8B-Instruct` (revision `0e9e39f`) into the snapshot's
+`text_encoder_4/` folder, together with the tokenizer files the pipeline needs. That repository is
+gated: accept the Llama 3.1 Community License on Hugging Face and pass a token that has access.
+The pipeline reads the tokenizer and the model from this folder; no chat template is applied, the
+prompt is tokenized as plain text with a leading begin-of-text token and padded with the end-of-turn
+token.
+
+**Settings.** The Fast model defaults to 16 steps, guidance 0.0 and 1024×1024. The supported options
+are `seed`, `latents`, `steps`, `guidance`, `width`, `height`, `num_images`, `negative_prompt` and
+`max_sequence_length` (default 128 for every encoder, at most 512). All four encoders see the same
+prompt. Guidance above 1.0 runs the unconditional pass with the negative prompt (default empty) and
+combines the two predictions as usual; at 1.0 or below one pass is made. Like the diffusers pipeline,
+the requested width and height are only used for the aspect ratio: the image is rescaled to about one
+megapixel and rounded down to a multiple of 16, so `width=1024, height=512` gives a 1440×720 image.
+`metadata` reports the size actually used. Unrecognized settings raise an error.
+
+**Random numbers.** The scheduler adds fresh noise at every step. The diffusers pipeline draws the
+initial latents from the generator it is given but calls the scheduler without one, so the step noise
+comes from the global random state. imagehub never touches global random state. With a `seed` it uses
+two generators seeded with that value, one for the initial latents and one for the step noise; the
+result equals the pipeline's when its caller runs `torch.manual_seed(seed)` immediately before the
+call and passes `generator=torch.Generator("cpu").manual_seed(seed)`. Nothing else in the pipeline
+consumes global random numbers between those points. When `latents` are passed, `seed` only seeds the
+step noise; without a seed that noise is random.
+
+**Memory.** In float32 the transformer needs about 68 GB, the Llama encoder about 32 GB, the T5
+encoder about 19 GB, the two CLIP encoders about 3.5 GB and the VAE about 0.3 GB. The backend loads
+the text encoders one at a time, encodes the prompt, frees each of them, then loads the transformer,
+so the peak is the transformer alone; the next call loads the encoders again from disk. bfloat16
+halves every figure.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with the
+generator and global seed described above ([validation](validation.md)). MPS and CUDA runs are smoke
+tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The Full and Dev variants, separate prompts for the individual encoders,
+precomputed prompt embeddings, other schedulers, LoRA and fp16/bf16 parity are not supported.
+
+**License.** The HiDream repository declares the MIT license. The text encoders carry their own
+terms: Llama 3.1 Community License and Apache-2.0 for T5; the VAE comes from FLUX.1 [schnell].
 imagehub does not distribute weights.

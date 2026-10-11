@@ -791,6 +791,41 @@ The roughly 13B transformer uses about 52 GB in float32, so the reference and na
 were never loaded together. Each comparison ran the reference first, saved its outputs, freed it,
 then ran the native model. The full real-checkpoint run on the Apple M2 Max took about 1 hour.
 
+## ERNIE-Image
+
+`ernie-image` is loaded strictly from `baidu/ERNIE-Image` at revision `5346b31`. The weights are
+published in bfloat16 and are upcast to float32. The observed difference in every comparison is
+**exactly 0**: on CPU in float32, the local implementation produces a bit-identical result to the
+reference. The real-checkpoint run took 36 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (transformer, VAE, Ministral 3 language model) | 0 missing / extra / mismatched | exact |
+| Tokenizer against transformers (fixed prompts, 500 random strings, truncation) | identical | exact |
+| Ministral 3 text encoder (second-to-last hidden state) | 0 | 0 |
+| Transformer single step (two latents, ragged text lengths) | 0 | 0 |
+| VAE decode with latent de-normalisation | 0 | exact pixels |
+| Flow-match Euler scheduler (static shift, 1, 4 and 50 steps) | exact | exact |
+| End to end: final latent / pixels (1024×1024, 4 steps, guidance 4.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 0 (pixels) | 0 | 0 |
+
+Without weights, the same code is compared against diffusers and transformers with random weights:
+the transformer and the Ministral 3 language model (tiny and published-style configs, including
+YaRN positions beyond the original window), and the whole pipeline on a tiny snapshot (guidance on
+and off, non-square sizes, two seeds, several images per prompt). All of these are exact.
+
+The header-only tensor check covered `text_encoder`, `transformer` and `vae`: tensor counts were
+236 / 409 / 251, with missing, extra and shape-mismatched tensors all **0**. Record:
+`tensor_header_check`, [validation.json](validation.json).
+
+The reference runs with `use_pe=False` and without the `pe` components (the prompt enhancer is out
+of scope). The end-to-end runs use 4 steps instead of the default 50 because the 8B transformer is
+slow on CPU. The transformer alone needs about 32 GB in float32 and the text encoder about 14 GB,
+so every comparison runs the reference first, saves its outputs, frees it, then runs the native
+model.
+
 ## LongCat-Image
 
 Validated on CPU in the same environment as above. `longcat-image` was loaded strictly from
@@ -868,6 +903,54 @@ The text encoder used about 36 GB and the transformer about 25 GB in float32. En
 the save-then-compare sequence: the reference pipeline ran first, saved its outputs and was freed
 before the native pipeline ran. The real-checkpoint component and end-to-end runs took about 31 and
 53 minutes, respectively.
+
+## CogView3-Plus
+
+`cogview3-plus-3b` (`zai-org/CogView3-Plus-3B`, revision `5d70e40`) was loaded strictly and
+validated on CPU in float32 against diffusers 0.40.0 (`CogView3PlusPipeline`) and transformers
+5.18.0. The published transformer and VAE are bfloat16 and are upcast to float32 by both
+implementations; the T5-XXL text encoder is published in float32. The observed difference in every
+comparison is **exactly 0**: on CPU in float32, the local implementation produces a bit-identical
+result to the reference. The real-checkpoint run took 37 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: text encoder, transformer, VAE (219 / 436 / 288 tensors) | 0 missing / extra / mismatched | exact |
+| T5 token ids | identical | exact |
+| T5-XXL text encoder | 0 | 0 |
+| Transformer single step (1024×1024, batch 2, timesteps `[999, 999]` and `[1, 501]`) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 |
+| Shifted-SNR DDIM scheduler timesteps (8 and 50 steps) | exact | exact |
+| End to end: final latent (1024×1024, 8 steps, guidance 5.0) | 0 | 0 |
+| End to end: pixels (1024×1024, 8 steps, guidance 5.0) | 0 | 0 |
+| End to end, seed 0 (1024×1024, 8 steps, guidance 5.0; pixels) | 0 | 0 |
+
+Tests that need no weights (all exact, tolerance 0):
+
+- Scheduler: `CogVideoXDDIMScheduler` timesteps, `alphas_cumprod` and `final_alpha_cumprod` for six
+  step counts and seven configuration variants (leading, linspace and trailing spacing, linear,
+  scaled-linear and cosine betas, zero-terminal-SNR rescaling), and 25- and 50-step trajectories for
+  all three prediction types.
+- Tokenizer: the published SentencePiece model (kept as a fixture) against transformers on fixed
+  prompts with the pipeline's `max_length` padding and truncation, 3000 seeded fuzz strings and every
+  Unicode code point.
+- Random-weight parity of the transformer: a tiny configuration, a wider one and the published
+  configuration with two layers.
+- Tiny-snapshot end to end against `CogView3PlusPipeline`: seed and `latents` sources, the zero
+  negative embedding and an explicit negative prompt, guidance on and off, square and non-square
+  sizes, and the SDXL-style `original_size` and `crops_coords_top_left` conditions.
+- Header checks of the text encoder (219 tensors), transformer (436) and VAE (288) against the
+  published safetensors headers, kept as fixtures.
+
+The real-checkpoint file `tests/reference/test_ref_cogview3_plus.py` (skipped without the snapshot
+`IMAGEHUB_SNAPSHOT_COGVIEW3_PLUS_3B`) covered the tensor headers, tokens and the T5 text encoder, the
+transformer at two timesteps (1024×1024, batch 2, 224 text tokens), VAE decode and encode, the
+scheduler at 8 and 50 steps, and end-to-end and seed runs at 1024×1024 with guidance 5.0, seed 0 and
+8 steps instead of the 50-step default to shorten the CPU run. The reference result is computed,
+saved and freed before the native model is loaded. Record: `tensor_header_check`,
+[validation.json](validation.json).
 
 ## Ideogram 4
 
@@ -1297,6 +1380,40 @@ The prompt is lower-cased and stripped before tokenization; the reference's defa
 cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the script's
 `use_text_preprocessing=False` behavior.
 
+## HiDream-I1 Fast
+
+`hidream-i1-fast` is the HiDream-I1 Fast repository at revision `4856a5d` plus
+`meta-llama/Llama-3.1-8B-Instruct` at revision `0e9e39f`. The real-checkpoint tests
+(`tests/reference/test_ref_hidream.py`) compare against diffusers 0.40.0 and transformers 5.18.0 on
+CPU in float32 and require exactly 0 everywhere: the tensor headers of all six components, the
+tokenizers (CLIP, T5, Llama), the pooled CLIP, T5 and Llama layer outputs the pipeline uses, one
+transformer step with real conditioning, the VAE decode, the scheduler, and end to end with a
+shortened run (4 steps, seed 0) and a non-square seed test. All 8 real-checkpoint tests passed with
+exactly 0 difference in every comparison (see the table), and the run took 21 minutes on an M2 Max
+(CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: `text_encoder`, `text_encoder_2`, `text_encoder_3`, `text_encoder_4`, `transformer`, `vae` (197 / 517 / 219 / 291 / 1615 / 244 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizers (CLIP ×2, T5, Llama; 6 prompts) | identical | exact |
+| Pooled CLIP embedding | 0 | 0 |
+| T5 encoder outputs used by the pipeline | 0 | 0 |
+| Llama layer outputs used by the pipeline | 0 | 0 |
+| Transformer single step (t = 1000 and 562.5) | 0 | 0 |
+| VAE decode | 0 | 0 |
+| Flow-match LCM scheduler timesteps / sigmas (16 steps) | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels (4 steps, seed 0) | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, non-square request (pixels) | 0 | 0 |
+
+What has been checked with random weights: the Llama text encoder against transformers (grouped
+key/value heads, `llama3` rotary scaling, padding), the Llama 3 tokenizer against the reference
+fast tokenizer on a synthetic vocabulary (and, once, on the Llama 3.1 tokenizer file from a public
+mirror with fuzzed text), and the whole backend on a tiny snapshot in the published layout against `HiDreamImagePipeline`
+(default settings, guidance with a negative prompt, non-square sizes, two images, two weight seeds):
+identical latents and identical bytes.
+
 ## Device smoke tests (no parity claim)
 
 | Device | Result | Largest latent difference from CPU | Largest pixel difference | PSNR |
@@ -1316,10 +1433,10 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
   for FLUX.1 schnell, Lumina-Image 2.0, Lumina-Next and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
-  Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT,
+  Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
-  the cosine-schedule masked-token scheduler for aMUSEd. LlamaGen samples image tokens
-  autoregressively and has no scheduler.
+  the cosine-schedule masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for
+  HiDream-I1 Fast. LlamaGen samples image tokens autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
@@ -1335,11 +1452,11 @@ cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 5 passed for `kandinsky-2.2`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 28 passed for `pixart-alpha-xl-512`,
-  `pixart-sigma-xl-256`, `pixart-sigma-xl-512` and `pixart-sigma-xl-2k` together, 7 passed for
+  `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
-  `amused-512`, and 7 passed for
-  `lcm-dreamshaper-v7`. These include structural parity with random weights, end-to-end parity with
+  `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `amused-512`, 7 passed for
+  `lcm-dreamshaper-v7`, 8 passed for `ernie-image` and 8 passed for `hidream-i1-fast`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

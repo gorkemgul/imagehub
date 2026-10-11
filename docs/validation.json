@@ -3784,75 +3784,6 @@
       }
     },
     {
-      "model_id": "lumina-next",
-      "repo_id": "Alpha-VLLM/Lumina-Next-SFT-diffusers",
-      "revision": "0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
-      "provenance": "author",
-      "catalog_id": "lumina-next",
-      "license": "Apache-2.0",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "a20a439cd2e262f614927d4dead3e389fef9212cf80b44516f5c124760a70412",
-        "scheduler/scheduler_config.json": "3944e5af804e1a7eec04e2e01911de26b15ddda871fc80da7e5d00be97632c76",
-        "text_encoder/config.json": "41691d3ce1da7f192958e7b510f07e77f97d892ab57be235adb303b951ada6c8",
-        "text_encoder/model.safetensors.index.json": "d47b0173786ca23b98fac689f80055aa6e33c3cc728714b3c1d13ea3e6dbb8e9",
-        "text_encoder/model-00001-of-00002.safetensors": "01676b4c6e765f737a5e9854a315de3887e939c370cae116d505777729099a68",
-        "text_encoder/model-00002-of-00002.safetensors": "a5df19ba067f127d5c9588e2c50f034cf34fdd1b7fe3e16e4dbd5cb0fd7f3149",
-        "tokenizer/special_tokens_map.json": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
-        "tokenizer/tokenizer.json": "cd1df914b205b134e52f15364524a919423b48c9056d725b45c5b89187541de0",
-        "tokenizer/tokenizer.model": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2",
-        "tokenizer/tokenizer_config.json": "c10840544aaa731378719a541c9f79744ea6865bb49ad3261554a2013e7b8347",
-        "transformer/config.json": "045dec3435aaa49e214b23d2f24b24e3c3adbdccb4b999547834b5dff76140d1",
-        "transformer/diffusion_pytorch_model.safetensors": "371153b7c7b7a64899d4016970c7cc472039f9c9b21ebe073adf0b8525cdf1bd",
-        "vae/config.json": "c326f5b073bb19018434467c7bbd2f15b72386c7e2170777d5e3202b5186afca",
-        "vae/diffusion_pytorch_model.safetensors": "1598f3d24932bcfe6634e8b618ea1e30ab1d57f5aad13a6d2de446d2199f2341"
-      },
-      "tensor_header_check": {
-        "missing": [],
-        "extra": [],
-        "mismatch": [],
-        "tensors": {
-          "text_encoder": 164,
-          "transformer": 639,
-          "vae": 248
-        }
-      },
-      "end_to_end": {
-        "guidance": 4.0,
-        "latents": {
-          "max_abs": 0.0,
-          "max_rel": 0.0
-        },
-        "passed": true,
-        "pixels_max_abs": 0,
-        "prompt": "a photograph of an astronaut riding a horse",
-        "seed": 0,
-        "size": [
-          1024,
-          1024
-        ],
-        "steps": 30
-      },
-      "seed_end_to_end": {
-        "max_pixel_diff": 0,
-        "passed": true,
-        "seed": 1234,
-        "size": [
-          1360,
-          768
-        ],
-        "steps": 12
-      }
-    },
-    {
       "model_id": "amused-256",
       "repo_id": "amused/amused-256",
       "revision": "09b6259bf96dbe6d70a852b70812420fe02df55e",
@@ -4226,6 +4157,64 @@
         "max_pixel_diff": 0,
         "passed": true,
         "seed": 42,
+        "steps": 8
+      }
+    },
+    {
+      "model_id": "cogview3-plus-3b",
+      "repo_id": "zai-org/CogView3-Plus-3B",
+      "revision": "5d70e40732ac0efac98524c51a7fa9c82707f1e5",
+      "provenance": "author",
+      "catalog_id": "cogview3-plus",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "23e9b363ddd2313f2ed70886ec4a627f01c3f5699c2a21f68ee845ed3a57f60c",
+        "scheduler/scheduler_config.json": "8d230c843868651a5118b10cf35df0fe8c25e52a72cef949a64abd2e124e4c0b",
+        "text_encoder/config.json": "825f56e15325ed3188f2e3b536849b160b4cc0d6722a1d32b0175a248afb5e05",
+        "text_encoder/model.safetensors.index.json": "a545bb25dc0f423d84be7b577311bba8bb7c6931f1eefcea65fc8b0a61a60a76",
+        "text_encoder/model-00001-of-00004.safetensors": "8e0e98242fed1de128a73ee6fee174aa30186c66f7d70811c8ebf67d72067f38",
+        "text_encoder/model-00002-of-00004.safetensors": "7309a33cd1780b20e3d84b2e14585d7a64ccea45079aecc86c507e381e00ed14",
+        "text_encoder/model-00003-of-00004.safetensors": "d278bf7cb4de9957cb67d8a92dc9273f88186f0c90e0f2a3de13882217d9a95c",
+        "text_encoder/model-00004-of-00004.safetensors": "69afce9a62402b82095baa1dfef572be92dfd9a4062693d49a5948e4d27585a5",
+        "tokenizer/added_tokens.json": "ea5a91a3234f66ea642c8e672d67f0f493759a9bee6910ae304ea9b9492118b5",
+        "tokenizer/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
+        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer/tokenizer_config.json": "668b8251d6e694c1fb51cc2336b1c9a2047e540f2aeedee8bc509411aef117f1",
+        "transformer/config.json": "9b3c6a2ff0c9745ab701460f7ba5f6619b5217371d87f7d816d981df0608fe5d",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "dd8fa92a11a5f2ee1ce217b124cca7f883a7ff7f55818f3a5009d2c0844ced42",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "f6227325d23f2e06c40b7f222322c1db36af8d0122d6f6cd99f395d63945ce7e",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "5e34e2a9eaf09ab752673a33d451cc0f5e5304cf32be7f98a6553a494fccecab",
+        "vae/config.json": "a5914b8a82d1771976db1712ff951813a9c0ce750f0172193049c10172eb6833",
+        "vae/diffusion_pytorch_model.safetensors": "40aabe789e1591a3a3d8a2f598eda99f60a42275c410e7292a714b5270b97747"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 436,
+          "vae": 288
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "steps": 8
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
         "steps": 8
       }
     },
@@ -5372,6 +5361,317 @@
       "seed_end_to_end": {
         "passed": true,
         "seed": 1234
+      }
+    },
+    {
+      "model_id": "ernie-image",
+      "repo_id": "baidu/ERNIE-Image",
+      "revision": "5346b31d68c9c23758ba56ef8be5e9dc174c7f99",
+      "provenance": "author",
+      "catalog_id": "ernie-image",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "2a483750fcc40efff027e9bd77f4ea8fc56b18beb65e486f8f0c6d214bedd409",
+        "scheduler/scheduler_config.json": "96031c39fcd4651aeaa07fa6b64262b9332967199e0b89c3a4694db127756f34",
+        "text_encoder/config.json": "447db17aa66bcd837a59394cc31b2675feb2acb3fd2742f30990f7036f7f2bef",
+        "text_encoder/model.safetensors": "c2188c5b3d759ac35e3770056153fdcb348276bd1d10f0443a60a2bdcbb6ff7b",
+        "tokenizer/tokenizer.json": "577575622324b2e099e2648be26bdeb5e5815ffe66d7004e9e3ddbf421db6bf1",
+        "tokenizer/tokenizer_config.json": "dfd5e67b652177f3e697dd67b0792bef7779c66522f47f502af2ce1715c5ec59",
+        "transformer/config.json": "cd3542dbfb6259a7356380aa93ed61f793ef0f13684a36d75046eb638251652f",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "7c0fa2e62388bafbd3d444906317640f6a9df4f484b49ab71e86c455498d00d3",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "e6074cea278d453b35444940904ef9fe5f0475750f3bdd68c377cc4bec2f9b3f",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "dadf2d3ebc81b7fd2d6049754b3f3938d737c4052fae2d7dbc54d29c2e6be02f",
+        "vae/config.json": "cc913e305a1f714ac1c076e91646fe66c8f1848d01a678a8ebed5fbd3be711d3",
+        "vae/diffusion_pytorch_model.safetensors": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 236,
+          "transformer": 409,
+          "vae": 251
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "steps": 4
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 4
+      }
+    },
+    {
+      "model_id": "hidream-i1-fast",
+      "repo_id": "HiDream-ai/HiDream-I1-Fast",
+      "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+      "provenance": "author",
+      "catalog_id": "hidream-i1",
+      "license": "MIT",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "6dcf42120d2aeb2b2219dca2ed7ced3e11e8e7d06b2a316075140df3d0d03067"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "40850c7d2ddbe87a0afe1007b6b7f9107022c34b401d2bf86b999c6e9dc3f812"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "65295d66c6ec90847bfb701c99bcb5c888d709ef3a400c49633e691690c93904"
+        },
+        "text_encoder/model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "b70c11ad5d7e9abf6109348908f599ea382f8019e1f36910bbc8ebecde936633"
+        },
+        "text_encoder_2/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "c0efd277569d6f63b752b632b208ed5eddb00cb3ec69a615dcd76e967f5078ea"
+        },
+        "text_encoder_2/model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "4d6effa7a5e600cabf7528ed7234146a13ead1b2c151211d706b293a060b112a"
+        },
+        "text_encoder_3/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "eb1bbf7f5b360baf88505d979fc02b47f7e82603639eb1835cdd2447b784cfb3"
+        },
+        "text_encoder_3/model.safetensors.index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a"
+        },
+        "text_encoder_3/model-00001-of-00002.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "ec87bffd1923e8b2774a6d240c922a41f6143081d52cf83b8fe39e9d838c893e"
+        },
+        "text_encoder_3/model-00002-of-00002.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "a5640855b301fcdbceddfa90ae8066cd9414aff020552a201a255ecf2059da00"
+        },
+        "tokenizer/merges.txt": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563"
+        },
+        "tokenizer/vocab.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+        },
+        "tokenizer_2/merges.txt": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "tokenizer_2/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6"
+        },
+        "tokenizer_2/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf"
+        },
+        "tokenizer_2/vocab.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+        },
+        "tokenizer_3/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2"
+        },
+        "tokenizer_3/spiece.model": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "tokenizer_3/tokenizer.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "f5dfec163765e18e270537fe896c49f5fad74db1525641d9b255a3008b999596"
+        },
+        "tokenizer_3/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "1a3d2db64215ed77854dd4208aac5f8361c1b5471cabd19c0ef1472d1a895eb0"
+        },
+        "transformer/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "7daa489bf0eaa4b0123ded64c2068544fc622f8c67603d1511815e2c1ffc1d61"
+        },
+        "transformer/diffusion_pytorch_model.safetensors.index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "4bc6f02f4725201cfbb22e98772974e549cd8249df74aba0e95645aa47917f0b"
+        },
+        "transformer/diffusion_pytorch_model-00001-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "7a2bd00486df24742f5e6a9c1fe2729f1decb9fccb95efc421836ec963e1b37d"
+        },
+        "transformer/diffusion_pytorch_model-00002-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "833d842fd1f0bb4aaf0c77d3a482b1a033638e3cfdea5a0720708dc431146dad"
+        },
+        "transformer/diffusion_pytorch_model-00003-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "ccddaf0d33ad01b203ea93f457e7a948470d7f44bad1455d156564e80e0fba82"
+        },
+        "transformer/diffusion_pytorch_model-00004-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "d8ffd12e207e8f6e628c67dc7ac6989584681e07541d22d4ddb3950d28b3b057"
+        },
+        "transformer/diffusion_pytorch_model-00005-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "6c81d99d1db6f4b648c3eb437f855d3d17c7416153660112b43fa6a10545ac72"
+        },
+        "transformer/diffusion_pytorch_model-00006-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "b4caec33feaeeb4333c7907b2d34bd5f2729aa1bf8242392bd563e7e182cdf45"
+        },
+        "transformer/diffusion_pytorch_model-00007-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "65e10d42f22067920891ea004d733c5de61a6a1d5bc99a6fa2bc2c233e9029b3"
+        },
+        "vae/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "ad6f0acb584ceb3d136d1e32b684dec65db24bffe9223df2bac0b45539d4e6b5"
+        },
+        "vae/diffusion_pytorch_model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Fast",
+          "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+          "sha256": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
+        },
+        "text_encoder_4/config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "29e4c210b0d6ac178b16b2a255a568bdb23b581e50ca1ef6a6d071dd85704e6e"
+        },
+        "text_encoder_4/generation_config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "189fb0c0d7fd8a527db217c0a60a0e013f0394cd8800f9697a666a9e75e5f7fd"
+        },
+        "text_encoder_4/model.safetensors.index.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "146776fce3f6db1103aa6f249e65ee5544c5923ce6f971b092eee79aa6e5d37b"
+        },
+        "text_encoder_4/model-00001-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "2b1879f356aed350030bb40eb45ad362c89d9891096f79a3ab323d3ba5607668"
+        },
+        "text_encoder_4/model-00002-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "09d433f650646834a83c580877bd60c6d1f88f7755305c12576b5c7058f9af15"
+        },
+        "text_encoder_4/model-00003-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "fc1cdddd6bfa91128d6e94ee73d0ce62bfcdb7af29e978ddcab30c66ae9ea7fa"
+        },
+        "text_encoder_4/model-00004-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "92ecfe1a2414458b4821ac8c13cf8cb70aed66b5eea8dc5ad9eeb4ff309d6d7b"
+        },
+        "text_encoder_4/special_tokens_map.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec"
+        },
+        "text_encoder_4/tokenizer.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4"
+        },
+        "text_encoder_4/tokenizer_config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 197,
+          "text_encoder_2": 517,
+          "text_encoder_3": 219,
+          "text_encoder_4": 291,
+          "transformer": 1615,
+          "vae": 244
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 4
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "steps": 4
       }
     }
   ],
@@ -6822,6 +7122,41 @@
       "tolerance": 0.0
     }
   },
+  "components_ernie_image": {
+    "ernie_image_e2e_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ernie_image_scheduler": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "ernie_image_text_empty": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ernie_image_text_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ernie_image_tokenizer": {
+      "mismatches": 0,
+      "prompts": 507,
+      "tolerance": "exact"
+    },
+    "ernie_image_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "ernie_image_vae_decode": {
+      "max_pixel_diff": 0,
+      "passed": true
+    }
+  },
   "components_flux2": {
     "flux2_e2e_latents": {
       "max_abs": 0.0,
@@ -8163,69 +8498,6 @@
       "tolerance": 0.0
     }
   },
-  "components_lumina_next": {
-    "e2e_watershed_lumina-next": {
-      "guidance": 4.0,
-      "latents": {
-        "max_abs": 0.0,
-        "max_rel": 0.0
-      },
-      "passed": true,
-      "pixels_max_abs": 0,
-      "prompt": "a photograph of an astronaut riding a horse",
-      "scaling_watershed": 0.3,
-      "seed": 3,
-      "size": [
-        1280,
-        768
-      ],
-      "steps": 8
-    },
-    "lumina_next_text_encoder_masks": {
-      "masks_match": true,
-      "tolerance": "exact"
-    },
-    "lumina_next_text_encoder_negative": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "lumina_next_text_encoder_prompt": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "lumina_next_tokenizer": {
-      "mismatches": 0,
-      "prompts": 15,
-      "tolerance": "exact"
-    },
-    "lumina_next_tokenizer_fuzz": {
-      "mismatches": 0,
-      "prompts": 600,
-      "tolerance": "exact"
-    },
-    "lumina_next_transformer_1.0_1.0_True": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "lumina_next_transformer_1.0_1.5_False": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "lumina_next_transformer_1.3_1.0_True": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "lumina_next_vae_decode": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    }
-  },
   "components_amused": {
     "amused-256_hidden_state_negative": {
       "max_abs": 0.0,
@@ -8671,6 +8943,50 @@
       "tolerance": 0.0
     }
   },
+  "components_cogview3_plus": {
+    "cogview3_plus_e2e_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview3_plus_scheduler_50": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "cogview3_plus_scheduler_8": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "cogview3_plus_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview3_plus_tokens": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "cogview3_plus_transformer_0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview3_plus_transformer_1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview3_plus_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cogview3_plus_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_cogview4": {
     "cogview4_e2e_latents": {
       "max_abs": 0.0,
@@ -8748,6 +9064,53 @@
       "tolerance": 0.0
     }
   },
+  "components_hidream": {
+    "hidream_e2e_latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_llama_layers": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_pooled_clip": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_scheduler_sigmas": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_scheduler_timesteps": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_t5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_transformer_t0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_transformer_t1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -8770,11 +9133,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "11 passed (lumina-next)"
+    "reference_summary": "8 passed (hidream-i1-fast)"
   }
 }

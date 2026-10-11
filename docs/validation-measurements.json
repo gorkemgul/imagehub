@@ -290,6 +290,48 @@
     "text_embeds": true,
     "tolerance": "exact"
   },
+  "cogview3_plus_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_scheduler_50": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cogview3_plus_scheduler_8": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cogview3_plus_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_tokens": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cogview3_plus_transformer_0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_transformer_1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cogview3_plus_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "cogview4_e2e_latents": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -447,6 +489,11 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_cogview3-plus-3b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 8
+  },
   "e2e_cogview4-6b": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -502,6 +549,11 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_ernie_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 4
   },
   "e2e_flux1-dev": {
     "max_pixel_diff": 0,
@@ -613,6 +665,12 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_hidream_i1_fast": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
   },
   "e2e_hunyuan-dit-v1.1-distilled": {
     "guidance": 5.0,
@@ -1456,6 +1514,39 @@
   "environment": {
     "torch_threads": 12
   },
+  "ernie_image_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_scheduler": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "ernie_image_text_empty": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_text_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_tokenizer": {
+    "mismatches": 0,
+    "prompts": 507,
+    "tolerance": "exact"
+  },
+  "ernie_image_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ernie_image_vae_decode": {
+    "max_pixel_diff": 0,
+    "passed": true
+  },
   "flux1_clip": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -1955,6 +2046,26 @@
       "tensors": 248
     }
   },
+  "header_cogview3-plus-3b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 436
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    }
+  },
   "header_cogview4-6b": {
     "text_encoder": {
       "extra": [],
@@ -1986,6 +2097,26 @@
     "mismatch": [],
     "missing": [],
     "tensors": 1680
+  },
+  "header_ernie_image": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 236
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 409
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 251
+    }
   },
   "header_flux1-dev": {
     "text_encoder": {
@@ -2129,6 +2260,44 @@
       "mismatch": [],
       "missing": [],
       "tensors": 251
+    }
+  },
+  "header_hidream-i1-fast": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder_3": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "text_encoder_4": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1615
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
     }
   },
   "header_hunyuan-dit-v1.2": {
@@ -3206,6 +3375,51 @@
       "missing": [],
       "tensors": 244
     }
+  },
+  "hidream_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_llama_layers": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_pooled_clip": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_scheduler_sigmas": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_scheduler_timesteps": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_t5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_transformer_t0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_transformer_t1": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
   },
   "hunyuan_dit_bert": {
     "max_abs": 0.0,
@@ -5287,6 +5501,12 @@
       768
     ]
   },
+  "seed_e2e_cogview3-plus-3b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 8
+  },
   "seed_e2e_cogview4-6b": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -5324,6 +5544,12 @@
       249
     ]
   },
+  "seed_e2e_ernie_image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
+  },
   "seed_e2e_flux1-dev": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -5357,6 +5583,12 @@
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 42
+  },
+  "seed_e2e_hidream_i1_fast": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "steps": 4
   },
   "seed_e2e_hunyuan-dit-v1.1-distilled": {
     "max_pixel_diff": 0,
@@ -5931,6 +6163,10 @@
     "mismatches": 0,
     "prompts": 14,
     "tolerance": "exact"
+  },
+  "tokenizers_hidream-i1-fast": {
+    "identical": true,
+    "prompts": 6
   },
   "umt5_random": {
     "length": 48,
