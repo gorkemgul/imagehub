@@ -2093,6 +2093,231 @@ def write_tiny_llamagen(
     return root
 
 
+ERNIE_TINY_PRETOKENIZER_REGEX = (
+    r"[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]*[\p{Ll}\p{Lm}\p{Lo}\p{M}]+|"
+    r"[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]+[\p{Ll}\p{Lm}\p{Lo}\p{M}]*|"
+    r"\p{N}| ?[^\s\p{L}\p{N}]+[\r\n/]*|\s*[\r\n]+|\s+(?!\S)|\s+"
+)
+ERNIE_TINY_MERGES = (("Ġ", "t"), ("h", "e"), ("c", "a"), ("ca", "t"), ("Ġ", "a"), ("Ġt", "he"))
+ERNIE_TINY_SPECIALS = ("<unk>", "<s>", "</s>", "<pad>", "[INST]", "[/INST]")
+TINY_ERNIE_TEXT = {
+    "model_type": "ministral3",
+    "vocab_size": 300,
+    "hidden_size": 24,
+    "intermediate_size": 40,
+    "num_hidden_layers": 3,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "head_dim": 8,
+    "max_position_embeddings": 256,
+    "rms_norm_eps": 1e-5,
+    "hidden_act": "silu",
+    "sliding_window": None,
+    "pad_token_id": 3,
+    "rope_parameters": {
+        "beta_fast": 32.0,
+        "beta_slow": 1.0,
+        "factor": 16.0,
+        "llama_4_scaling_beta": 0.1,
+        "mscale": 1.0,
+        "mscale_all_dim": 1.0,
+        "original_max_position_embeddings": 16,
+        "rope_theta": 1000000.0,
+        "rope_type": "yarn",
+        "type": "yarn",
+    },
+}
+TINY_ERNIE_VISION = {
+    "model_type": "pixtral",
+    "hidden_size": 16,
+    "intermediate_size": 32,
+    "num_hidden_layers": 1,
+    "num_attention_heads": 2,
+    "head_dim": 8,
+    "image_size": 28,
+    "patch_size": 14,
+}
+TINY_ERNIE_TRANSFORMER = {
+    "_class_name": "ErnieImageTransformer2DModel",
+    "hidden_size": 32,
+    "num_attention_heads": 4,
+    "num_layers": 2,
+    "ffn_hidden_size": 48,
+    "in_channels": 16,
+    "out_channels": 16,
+    "patch_size": 1,
+    "text_in_dim": 24,
+    "rope_theta": 256,
+    "rope_axes_dim": [2, 2, 4],
+    "eps": 1e-6,
+    "qk_layernorm": True,
+}
+TINY_ERNIE_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "num_train_timesteps": 1000,
+    "shift": 4.0,
+    "use_dynamic_shifting": False,
+}
+
+
+def write_tiny_ernie_tokenizer(directory: str | os.PathLike[str]) -> Path:
+    """A byte-level BPE tokenizer.json in the Mistral layout with a handful of merges."""
+    path = Path(directory)
+    path.mkdir(parents=True, exist_ok=True)
+    vocab = {token: index for index, token in enumerate(ERNIE_TINY_SPECIALS)}
+    for character in bytes_to_unicode().values():
+        vocab[character] = len(vocab)
+    for left, right in ERNIE_TINY_MERGES:
+        vocab[left + right] = len(vocab)
+    data = {
+        "version": "1.0",
+        "truncation": None,
+        "padding": None,
+        "added_tokens": [
+            {
+                "id": vocab[token],
+                "content": token,
+                "single_word": False,
+                "lstrip": False,
+                "rstrip": False,
+                "normalized": False,
+                "special": True,
+            }
+            for token in ERNIE_TINY_SPECIALS
+        ],
+        "normalizer": None,
+        "pre_tokenizer": {
+            "type": "Sequence",
+            "pretokenizers": [
+                {
+                    "type": "Split",
+                    "pattern": {"Regex": ERNIE_TINY_PRETOKENIZER_REGEX},
+                    "behavior": "Isolated",
+                    "invert": False,
+                },
+                {
+                    "type": "ByteLevel",
+                    "add_prefix_space": False,
+                    "trim_offsets": True,
+                    "use_regex": False,
+                },
+            ],
+        },
+        "post_processor": {
+            "type": "TemplateProcessing",
+            "single": [
+                {"SpecialToken": {"id": "<s>", "type_id": 0}},
+                {"Sequence": {"id": "A", "type_id": 0}},
+            ],
+            "pair": [
+                {"SpecialToken": {"id": "<s>", "type_id": 0}},
+                {"Sequence": {"id": "A", "type_id": 0}},
+                {"SpecialToken": {"id": "<s>", "type_id": 1}},
+                {"Sequence": {"id": "B", "type_id": 1}},
+            ],
+            "special_tokens": {"<s>": {"id": "<s>", "ids": [1], "tokens": ["<s>"]}},
+        },
+        "decoder": {
+            "type": "ByteLevel",
+            "add_prefix_space": True,
+            "trim_offsets": True,
+            "use_regex": True,
+        },
+        "model": {
+            "type": "BPE",
+            "dropout": None,
+            "unk_token": None,
+            "continuing_subword_prefix": None,
+            "end_of_word_suffix": None,
+            "fuse_unk": False,
+            "byte_fallback": False,
+            "ignore_merges": True,
+            "vocab": vocab,
+            "merges": [list(pair) for pair in ERNIE_TINY_MERGES],
+        },
+    }
+    (path / "tokenizer.json").write_text(json.dumps(data), encoding="utf-8")
+    (path / "tokenizer_config.json").write_text(
+        json.dumps(
+            {
+                "backend": "tokenizers",
+                "bos_token": "<s>",
+                "eos_token": "</s>",
+                "pad_token": "<pad>",
+                "unk_token": "<unk>",
+                "model_max_length": 64,
+                "tokenizer_class": "TokenizersBackend",
+            }
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def write_tiny_ernie_image(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight ERNIE-Image snapshot in the published diffusers layout."""
+    import transformers
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl_flux2 import AutoencoderKLFlux2
+    from imagehub.models.ernie_image_transformer import ErnieImageTransformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_ernie_tokenizer(root / "tokenizer")
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(TINY_ERNIE_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "ErnieImagePipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Mistral3Model"],
+                "tokenizer": ["transformers", "TokenizersBackend"],
+                "transformer": ["diffusers", "ErnieImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKLFlux2"],
+            }
+        )
+    )
+
+    text_config = {
+        "architectures": ["Mistral3Model"],
+        "model_type": "mistral3",
+        "image_token_index": 10,
+        "text_config": TINY_ERNIE_TEXT,
+        "vision_config": TINY_ERNIE_VISION,
+    }
+    encoder = transformers.Mistral3Model(transformers.Mistral3Config(**text_config))
+    for parameter in encoder.parameters():
+        parameter.data.normal_(0, 0.1)
+    state = {}
+    for name, value in encoder.state_dict().items():
+        if name.startswith("language_model."):
+            name = "language_model.model." + name.removeprefix("language_model.")
+        state[name] = value
+    (root / "text_encoder").mkdir()
+    (root / "text_encoder" / "config.json").write_text(json.dumps(text_config))
+    save_safetensors(state, root / "text_encoder" / "model.safetensors")
+
+    for name, cls, config in (
+        ("transformer", ErnieImageTransformer2DModel, TINY_ERNIE_TRANSFORMER),
+        ("vae", AutoencoderKLFlux2, TINY_FLUX2_VAE),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        if name == "vae":
+            model.bn.running_mean.normal_(0, 0.05)
+            model.bn.running_var.uniform_(0.5, 1.5)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(
+            dict(model.state_dict()), root / name / "diffusion_pytorch_model.safetensors"
+        )
+    return root
+
+
 COGVIEW3_PLUS_FIXTURES = FIXTURES / "cogview3_plus_configs"
 TINY_COGVIEW3_PLUS_T5 = TINY_SD3_T5 | {"is_encoder_decoder": True}
 TINY_COGVIEW3_PLUS_TRANSFORMER = {

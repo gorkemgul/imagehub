@@ -16,6 +16,7 @@ def test_catalog_contents():
             "cogview4-6b",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
+            "ernie-image",
             "flux1-dev",
             "flux1-kontext-dev",
             "flux1-krea-dev",
@@ -1152,3 +1153,19 @@ def test_wuerstchen_catalog_entry():
         "defaults": {"steps": 12, "guidance": 0.0, "prior_steps": 60, "prior_guidance": 4.0}
     }
     assert not any(name.endswith(".bin") for name in spec.files + spec.subfolders["prior"].files)
+
+
+def test_ernie_image_catalog_entry():
+    spec = model_info("ernie-image")
+    assert spec.family == "ernie-image"
+    assert spec.task is Task.T2I
+    assert spec.repo_id == "baidu/ERNIE-Image"
+    assert spec.revision == "5346b31d68c9c23758ba56ef8be5e9dc174c7f99"
+    assert spec.catalog_id == "ernie-image"
+    assert spec.provenance == "author"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert len(spec.files) == len(set(spec.files)) == 12
+    # The optional prompt enhancer (pe/, pe_tokenizer/) is not part of the supported snapshot.
+    assert not any(name.startswith(("pe/", "pe_tokenizer/")) for name in spec.files)
+    assert dict(spec.config["defaults"]) == {"steps": 50, "guidance": 4.0}

@@ -80,6 +80,7 @@ result.images[0].save("edited.png")
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
+| ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
 | CogView3-Plus | `cogview3-plus-3b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 transformer and VAE |
 | CogView4 | `cogview4-6b` | `t2i` | T | CPU fp32 parity |

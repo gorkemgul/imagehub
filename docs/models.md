@@ -867,6 +867,50 @@ LoRA and fp16/bf16 parity are not supported.
 distribute weights.
 
 
+# ERNIE-Image
+
+Catalog: [`ernie-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`ernie-image` · Task: `t2i`
+
+**Architecture.** The language model of Ministral 3 (26 layers, width 3072, grouped-query
+attention with YaRN rotary embeddings and a position-dependent query scale) supplies the
+second-to-last hidden state of the prompt. An 8B single-stream diffusion transformer with 36
+blocks, width 4096 and 32 heads of width 128 processes the image tokens and the text tokens
+together, with shared AdaLN modulation and 3-axis RoPE. The FLUX.2 VAE decodes 32-channel latents
+that are patchified to 128 channels. The flow-match Euler scheduler uses a static shift of 4.0.
+The native image size is 1024×1024.
+
+**Usage.** The repository is not gated. The weights are published in bfloat16 and are upcast on
+loading; the snapshot is about 32 GB, and float32 needs about 46 GB of memory.
+
+```bash
+python -m imagehub.pretrained ernie-image checkpoints/ernie-image
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="ernie-image", model="checkpoints/ernie-image", device="mps") as pipe:
+    result = pipe("a poster that says 'HELLO', flat design", seed=42)
+    result.images[0].save("poster.png")
+```
+
+**Settings.** The model defaults to 50 steps, guidance 4.0 and 1024×1024; `width` and `height`
+must be multiples of 16. Guidance above 1.0 also runs the negative prompt (default empty).
+The other supported options are `num_images`, `seed` and `latents`. Unrecognized settings raise
+an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` and `use_pe=False` ([validation](validation.md)).
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The optional prompt enhancer (the `pe` model that rewrites a short prompt, which
+diffusers enables by default with `use_pe=True`) is not implemented: it samples text with the global
+random generator, and its weights are not part of the snapshot. Images match the reference run with
+`use_pe=False`. Image input, LoRA and fp16/bf16 parity are not supported either.
+
+**License.** Apache-2.0. imagehub does not distribute weights.
+
+
 # LongCat-Image
 
 Catalog: [`longcat-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
