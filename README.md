@@ -89,6 +89,7 @@ result.images[0].save("edited.png")
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
 | CogView3-Plus | `cogview3-plus-3b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 transformer and VAE |
 | CogView4 | `cogview4-6b` | `t2i` | T | CPU fp32 parity |
+| GLM-Image | `glm-image` | `t2i` | T | CPU fp32 parity |
 | Ideogram 4 | `ideogram4-fp8` | `t2i` | T | CPU fp32 parity with the official implementation |
 | Qwen-Image | `qwen-image-2.1` | `t2i` | T | CPU fp32 parity |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |

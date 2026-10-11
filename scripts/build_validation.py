@@ -11,8 +11,7 @@ measurements are grouped in flat
 ``components_kandinsky3``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
 ``components_lumina2``, ``components_lumina_next``, ``components_amused``, ``components_auraflow``,
-``components_llamagen``,
-``components_wuerstchen``,
+``components_llamagen``, ``components_wuerstchen``, ``components_glm_image``,
 ``components_longcat_image``,
 ``components_cogview3_plus``,
 ``components_cogview4``, ``components_ideogram4``, ``components_hidream`` and
@@ -370,6 +369,9 @@ def main() -> None:
             key: value
             for key, value in measured.items()
             if key.startswith(("wuerstchen_", "wuerstchen-v2_"))
+        },
+        "components_glm_image": {
+            key: value for key, value in measured.items() if key.startswith("glm_image_")
         },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")

@@ -660,6 +660,41 @@ switched off, a non-square size, a second seed, and a prompt longer than the 77 
 encoders accept; it compares the prior's image embeddings, the decoder's latents and the final
 bytes.
 
+## GLM-Image
+
+`glm-image` is loaded strictly from `zai-org/GLM-Image` at revision `2c433cc`; the reference is
+diffusers 0.40.0 `GlmImagePipeline` with transformers 5.18.0 `GlmImageForConditionalGeneration`,
+`GlmImageProcessor`, `T5EncoderModel` and `ByT5Tokenizer`. The transformer, the autoregressive
+model and the VAE are published in bfloat16 and are widened to float32 on both sides. The model has
+about 16 billion parameters, so the real-checkpoint tests
+(`tests/reference/test_ref_glm_image.py`) run each reference stage in a fresh process, save its
+result and compare it with the native code afterwards, and the end-to-end test shortens the
+diffusion stage to 4 steps at 1024×1024 (the autoregressive stage runs in full) and uses a second
+seed at 512×512 with 2 steps. All 8 real-checkpoint tests passed, and every comparison in the
+table below is exact: the difference is 0 or the tokens are identical. The real-checkpoint run took
+64 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured | Tolerance |
+| --- | --- | --- |
+| Tensor header check: autoregressive model (vision tower and VQ encoder excluded), ByT5 encoder, transformer, VAE | 0 missing, extra or mismatched (1011 autoregressive model, 111 ByT5 encoder, 443 transformer, 288 VAE tensors) | 0 missing, extra or mismatched |
+| Prompt tokenization with the processor's chat template and target grids, fuzz against the processor tokenizer, ByT5 ids | identical (5 prompts at three target grids, 300 fuzz strings) | exact |
+| Glyph embeddings for the prompt and the empty string | 0 (max abs and max rel) | 0 |
+| Prior tokens (512×512, seed 0) sampled with the published generation settings | exact | exact |
+| Transformer conditional and unconditional single step | 0 | 0 |
+| VAE decode | 0 | 0 |
+| End to end (1024×1024, 4 steps, seed 0; 512×512, 2 steps, seed 1): pixels | 0 in both runs | 0 |
+
+The comparisons that need no downloaded weights also pass with exactly 0 difference: random-weight
+transformer parity (tiny, medium and published configurations, with and without the dropped prior),
+random-weight sampling parity of the autoregressive model against `generate` (tiny and published
+head geometry, several seeds, temperature, top-k and top-p settings, one-token prompts), the
+sigma and timestep schedule against diffusers for several step counts and resolutions, the ByT5
+tokenizer against transformers on a fuzz set that includes the special tokens, and a tiny
+end-to-end comparison with the whole diffusers pipeline (processor, sampling, glyph embeddings,
+guidance on and off, non-square sizes, several seeds).
+
 ## PixArt
 
 ### Further resolutions
@@ -1528,7 +1563,7 @@ first sequence of the batch only; the native module reproduces that.
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
-  `amused-512`, 12 passed for `omnigen-v1`, 7 passed for
+  `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 8 passed for `ernie-image` and 8 passed for `hidream-i1-fast`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

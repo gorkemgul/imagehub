@@ -23,6 +23,7 @@ def test_catalog_contents():
             "flux1-schnell",
             "flux2-klein-4b",
             "flux2-klein-9b",
+            "glm-image",
             "hidream-i1-fast",
             "hunyuan-dit-v1.1-distilled",
             "hunyuan-dit-v1.2",
@@ -1211,6 +1212,22 @@ def test_wuerstchen_catalog_entry():
         "defaults": {"steps": 12, "guidance": 0.0, "prior_steps": 60, "prior_guidance": 4.0}
     }
     assert not any(name.endswith(".bin") for name in spec.files + spec.subfolders["prior"].files)
+
+
+def test_glm_image_catalog_entry():
+    spec = model_info("glm-image")
+    assert spec.task is Task.T2I
+    assert spec.family == "glm-image"
+    assert spec.repo_id == "zai-org/GLM-Image"
+    assert spec.revision == "2c433cc0cbc293bde2ac8ca9624f279b5d23fcf4"
+    assert spec.catalog_id == "glm-image"
+    assert spec.license == "MIT"
+    assert not spec.gated
+    assert spec.provenance == "author"
+    assert spec.image_input is None
+    assert spec.config == {"defaults": {"steps": 50, "guidance": 1.5}}
+    assert len(spec.files) == 25
+    assert not any(name.endswith(".py") for name in spec.files)
 
 
 def test_lumina_next_catalog_entry():

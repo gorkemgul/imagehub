@@ -590,6 +590,13 @@
     "max_pixel_diff": 0,
     "passed": true
   },
+  "e2e_glm-image": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0,
+    "size": 1024,
+    "steps": 4
+  },
   "e2e_guided_qwen-image-2.1": {
     "latents": {
       "max_abs": 0.0,
@@ -2039,6 +2046,38 @@
     "prompts": 600,
     "tolerance": "exact"
   },
+  "glm_image_glyph_cond": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "glm_image_glyph_uncond": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "glm_image_prior_tokens_512": {
+    "equal": true
+  },
+  "glm_image_tokenizers": {
+    "fuzz": 300,
+    "prompts": 5
+  },
+  "glm_image_transformer_cond": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "glm_image_transformer_uncond": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "glm_image_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "header_amused-256": {
     "text_encoder": {
       "extra": [],
@@ -2313,6 +2352,32 @@
       "mismatch": [],
       "missing": [],
       "tensors": 251
+    }
+  },
+  "header_glm-image": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 111
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 443
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    },
+    "vision_language_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1011
     }
   },
   "header_hidream-i1-fast": {
@@ -5759,6 +5824,13 @@
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 42
+  },
+  "seed_e2e_glm-image": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 1,
+    "size": 512,
+    "steps": 2
   },
   "seed_e2e_hidream_i1_fast": {
     "max_pixel_diff": 0,
