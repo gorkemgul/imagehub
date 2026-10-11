@@ -3784,6 +3784,75 @@
       }
     },
     {
+      "model_id": "lumina-next",
+      "repo_id": "Alpha-VLLM/Lumina-Next-SFT-diffusers",
+      "revision": "0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+      "provenance": "author",
+      "catalog_id": "lumina-next",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "a20a439cd2e262f614927d4dead3e389fef9212cf80b44516f5c124760a70412",
+        "scheduler/scheduler_config.json": "3944e5af804e1a7eec04e2e01911de26b15ddda871fc80da7e5d00be97632c76",
+        "text_encoder/config.json": "41691d3ce1da7f192958e7b510f07e77f97d892ab57be235adb303b951ada6c8",
+        "text_encoder/model.safetensors.index.json": "d47b0173786ca23b98fac689f80055aa6e33c3cc728714b3c1d13ea3e6dbb8e9",
+        "text_encoder/model-00001-of-00002.safetensors": "01676b4c6e765f737a5e9854a315de3887e939c370cae116d505777729099a68",
+        "text_encoder/model-00002-of-00002.safetensors": "a5df19ba067f127d5c9588e2c50f034cf34fdd1b7fe3e16e4dbd5cb0fd7f3149",
+        "tokenizer/special_tokens_map.json": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+        "tokenizer/tokenizer.json": "cd1df914b205b134e52f15364524a919423b48c9056d725b45c5b89187541de0",
+        "tokenizer/tokenizer.model": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2",
+        "tokenizer/tokenizer_config.json": "c10840544aaa731378719a541c9f79744ea6865bb49ad3261554a2013e7b8347",
+        "transformer/config.json": "045dec3435aaa49e214b23d2f24b24e3c3adbdccb4b999547834b5dff76140d1",
+        "transformer/diffusion_pytorch_model.safetensors": "371153b7c7b7a64899d4016970c7cc472039f9c9b21ebe073adf0b8525cdf1bd",
+        "vae/config.json": "c326f5b073bb19018434467c7bbd2f15b72386c7e2170777d5e3202b5186afca",
+        "vae/diffusion_pytorch_model.safetensors": "1598f3d24932bcfe6634e8b618ea1e30ab1d57f5aad13a6d2de446d2199f2341"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 164,
+          "transformer": 639,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 30
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          1360,
+          768
+        ],
+        "steps": 12
+      }
+    },
+    {
       "model_id": "amused-256",
       "repo_id": "amused/amused-256",
       "revision": "09b6259bf96dbe6d70a852b70812420fe02df55e",
@@ -8094,6 +8163,69 @@
       "tolerance": 0.0
     }
   },
+  "components_lumina_next": {
+    "e2e_watershed_lumina-next": {
+      "guidance": 4.0,
+      "latents": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "passed": true,
+      "pixels_max_abs": 0,
+      "prompt": "a photograph of an astronaut riding a horse",
+      "scaling_watershed": 0.3,
+      "seed": 3,
+      "size": [
+        1280,
+        768
+      ],
+      "steps": 8
+    },
+    "lumina_next_text_encoder_masks": {
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "lumina_next_text_encoder_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_next_text_encoder_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_next_tokenizer": {
+      "mismatches": 0,
+      "prompts": 15,
+      "tolerance": "exact"
+    },
+    "lumina_next_tokenizer_fuzz": {
+      "mismatches": 0,
+      "prompts": 600,
+      "tolerance": "exact"
+    },
+    "lumina_next_transformer_1.0_1.0_True": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_next_transformer_1.0_1.5_False": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_next_transformer_1.3_1.0_True": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_next_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_amused": {
     "amused-256_hidden_state_negative": {
       "max_abs": 0.0,
@@ -8643,6 +8775,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "28 passed (pixart-alpha-xl-512, pixart-sigma-xl-256, pixart-sigma-xl-512, pixart-sigma-xl-2k)"
+    "reference_summary": "11 passed (lumina-next)"
   }
 }
