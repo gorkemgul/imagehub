@@ -58,8 +58,11 @@ def _checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
     return {name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"}
 
 
-def test_hunyuan_dit_published_layout_and_header(record):
-    root = snapshot_dir("hunyuan-dit-v1.1-distilled") / "transformer"
+@pytest.mark.parametrize(
+    "model_id", ["hunyuan-dit-v1.1-distilled", "hunyuan-dit-v1.2", "hunyuan-dit-v1.2-distilled"]
+)
+def test_hunyuan_dit_published_layout_and_header(record, model_id):
+    root = snapshot_dir(model_id) / "transformer"
     config = read_json(root / "config.json")
     clean_config = {name: value for name, value in config.items() if not name.startswith("_")}
     with torch.device("meta"):
@@ -77,7 +80,8 @@ def test_hunyuan_dit_published_layout_and_header(record):
         ),
         "tensors": len(published),
     }
-    record("header_hunyuan_dit_transformer", **result)
+    name = "header_hunyuan_dit_transformer"
+    record(name if model_id == "hunyuan-dit-v1.1-distilled" else f"{name}_{model_id}", **result)
     assert native == expected
     assert not result["missing"]
     assert not result["extra"]
@@ -87,7 +91,16 @@ def test_hunyuan_dit_published_layout_and_header(record):
     )
 
 
-@pytest.mark.parametrize("config", [TINY, MEDIUM], ids=["tiny", "medium"])
+@pytest.mark.parametrize(
+    "config",
+    [
+        TINY,
+        MEDIUM,
+        TINY | {"use_style_cond_and_image_meta_size": False},
+        MEDIUM | {"use_style_cond_and_image_meta_size": False},
+    ],
+    ids=["tiny", "medium", "tiny-no-style", "medium-no-style"],
+)
 def test_hunyuan_dit_transformer_random_weights_exact(config):
     torch.manual_seed(0)
     reference = diffusers.HunyuanDiT2DModel(**config).eval()
