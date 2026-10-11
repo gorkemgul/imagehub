@@ -46,7 +46,6 @@ def test_options_change_the_result(tiny_lumina_next):
     for override in (
         {"guidance": 1.0},
         {"negative_prompt": "blurry"},
-        {"proportional_attn": False},
     ):
         other = pipe("a cat", seed=1, steps=3, width=64, height=64, **override)
         assert not torch.equal(base.images[0].tensor, other.images[0].tensor), override
@@ -69,6 +68,20 @@ def test_watershed_switches_the_rotary_scaling(tiny_lumina_next):
             proportional_attn=True,
             latents=noise,
         )
+
+    # Proportional attention rescales the attention logits; the effect is too small to survive
+    # uint8 rounding with tiny random weights, so it is checked on the latents.
+    no_proportional = denoise(
+        components,
+        prompt="a cat",
+        negative_prompt="",
+        steps=4,
+        guidance=4.0,
+        scaling_watershed=1.0,
+        proportional_attn=False,
+        latents=noise,
+    )
+    assert not torch.equal(run(1.0), no_proportional)
 
     # Every step is below 1.0, so the default always stretches the positions linearly.
     assert torch.equal(run(1.0), run(5.0))
