@@ -12,15 +12,18 @@ def test_catalog_contents():
             "amused-256",
             "amused-512",
             "auraflow-v0.3",
+            "cogview3-plus-3b",
             "cogview4-6b",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
+            "ernie-image",
             "flux1-dev",
             "flux1-kontext-dev",
             "flux1-krea-dev",
             "flux1-schnell",
             "flux2-klein-4b",
             "flux2-klein-9b",
+            "hidream-i1-fast",
             "hunyuan-dit-v1.1-distilled",
             "hunyuan-dit-v1.2",
             "hunyuan-dit-v1.2-distilled",
@@ -36,6 +39,7 @@ def test_catalog_contents():
             "llamagen-t2i-xl-512",
             "longcat-image",
             "lumina-image-2.0",
+            "lumina-next",
             "omnigen-v1",
             "pixart-alpha-xl-1024",
             "pixart-alpha-xl-512",
@@ -590,6 +594,24 @@ def test_pixart_sigma_transformer_only_catalog_entries():
         }
 
 
+def test_cogview3_plus_catalog_entry():
+    spec = model_info("cogview3-plus-3b")
+    assert spec.task is Task.T2I
+    assert spec.family == "cogview3"
+    assert spec.source == "https://huggingface.co/zai-org/CogView3-Plus-3B"
+    assert spec.repo_id == "zai-org/CogView3-Plus-3B"
+    assert spec.revision == "5d70e40732ac0efac98524c51a7fa9c82707f1e5"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "cogview3-plus"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {"defaults": {"steps": 50, "guidance": 5.0}}
+    assert len(spec.files) == 18
+    assert "tokenizer/spiece.model" in spec.files
+    assert not any(name.endswith(".py") for name in spec.files)
+
+
 def test_cogview4_catalog_entry():
     spec = model_info("cogview4-6b")
     assert spec.task is Task.T2I
@@ -830,6 +852,56 @@ def test_kolors_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.fp16.safetensors",
     )
+
+
+def test_hidream_catalog_entry():
+    spec = model_info("hidream-i1-fast")
+    assert spec.task is Task.T2I
+    assert spec.family == "hidream"
+    assert spec.source == "https://huggingface.co/HiDream-ai/HiDream-I1-Fast"
+    assert spec.repo_id == "HiDream-ai/HiDream-I1-Fast"
+    assert spec.revision == "4856a5d8cd6fbd194780ed9f289bdf696d3afc10"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "hidream-i1"
+    assert spec.format == "diffusers"
+    assert spec.license == "MIT"
+    assert spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 16, "guidance": 0.0, "width": 1024, "height": 1024}
+    }
+    assert len(spec.files) == len(set(spec.files)) == 33
+    assert spec.files[:3] == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+    )
+    shards = tuple(
+        f"transformer/diffusion_pytorch_model-0000{index}-of-00007.safetensors"
+        for index in range(1, 8)
+    )
+    assert [name for name in spec.files if name.startswith("transformer/")] == [
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors.index.json",
+        *shards,
+    ]
+    assert spec.subfolders == {
+        "text_encoder_4": SubRepo(
+            repo_id="meta-llama/Llama-3.1-8B-Instruct",
+            revision="0e9e39f249a16976918f6564b8830bc894c89659",
+            files=(
+                "config.json",
+                "generation_config.json",
+                "model.safetensors.index.json",
+                "model-00001-of-00004.safetensors",
+                "model-00002-of-00004.safetensors",
+                "model-00003-of-00004.safetensors",
+                "model-00004-of-00004.safetensors",
+                "special_tokens_map.json",
+                "tokenizer.json",
+                "tokenizer_config.json",
+            ),
+        )
+    }
 
 
 @pytest.mark.parametrize(
@@ -1138,6 +1210,55 @@ def test_wuerstchen_catalog_entry():
         "defaults": {"steps": 12, "guidance": 0.0, "prior_steps": 60, "prior_guidance": 4.0}
     }
     assert not any(name.endswith(".bin") for name in spec.files + spec.subfolders["prior"].files)
+
+
+def test_lumina_next_catalog_entry():
+    spec = model_info("lumina-next")
+    assert spec.task is Task.T2I
+    assert spec.family == "lumina-next"
+    assert spec.source == "https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers"
+    assert spec.repo_id == "Alpha-VLLM/Lumina-Next-SFT-diffusers"
+    assert spec.revision == "0ee5ec90043acf5cb41fe96274af36eb7fad8d95"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "lumina-next"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 30, "guidance": 4.0, "width": 1024, "height": 1024}
+    }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.json",
+        "text_encoder/model-00001-of-00002.safetensors",
+        "text_encoder/model-00002-of-00002.safetensors",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer.model",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
+def test_ernie_image_catalog_entry():
+    spec = model_info("ernie-image")
+    assert spec.family == "ernie-image"
+    assert spec.task is Task.T2I
+    assert spec.repo_id == "baidu/ERNIE-Image"
+    assert spec.revision == "5346b31d68c9c23758ba56ef8be5e9dc174c7f99"
+    assert spec.catalog_id == "ernie-image"
+    assert spec.provenance == "author"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert len(spec.files) == len(set(spec.files)) == 12
+    # The optional prompt enhancer (pe/, pe_tokenizer/) is not part of the supported snapshot.
+    assert not any(name.startswith(("pe/", "pe_tokenizer/")) for name in spec.files)
+    assert dict(spec.config["defaults"]) == {"steps": 50, "guidance": 4.0}
 
 
 def test_omnigen_catalog_entry():

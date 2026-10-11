@@ -28,11 +28,14 @@ def test_family_and_model_aliases_are_registered():
     } <= set(names)
     assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024"} <= set(names)
     assert {"krea2", "krea2-turbo"} <= set(names)
+    assert "ernie-image" in names
     assert "longcat-image" in names
+    assert {"cogview3", "cogview3-plus-3b"} <= set(names)
     assert {"cogview4", "cogview4-6b"} <= set(names)
     assert {"ideogram4", "ideogram4-fp8"} <= set(names)
     assert {"kandinsky22", "kandinsky-2.2"} <= set(names)
     assert "kolors" in names
+    assert {"hidream", "hidream-i1-fast"} <= set(names)
     assert {"auraflow", "auraflow-v0.3"} <= set(names)
     assert {"sana", "sana-1600m-1024", "sana-600m-1024"} <= set(names)
     assert {"lumina2", "lumina-image-2.0"} <= set(names)

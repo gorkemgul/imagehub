@@ -1,0 +1,48 @@
+{
+  "_class_name": "HiDreamImagePipeline",
+  "_diffusers_version": "0.32.1",
+  "scheduler": [
+    "diffusers",
+    "FlowMatchLCMScheduler"
+  ],
+  "text_encoder": [
+    "transformers",
+    "CLIPTextModelWithProjection"
+  ],
+  "text_encoder_2": [
+    "transformers",
+    "CLIPTextModelWithProjection"
+  ],
+  "text_encoder_3": [
+    "transformers",
+    "T5EncoderModel"
+  ],
+  "text_encoder_4": [
+    "transformers",
+    "LlamaForCausalLM"
+  ],
+  "tokenizer": [
+    "transformers",
+    "CLIPTokenizer"
+  ],
+  "tokenizer_2": [
+    "transformers",
+    "CLIPTokenizer"
+  ],
+  "tokenizer_3": [
+    "transformers",
+    "T5Tokenizer"
+  ],
+  "tokenizer_4": [
+    "transformers",
+    "PreTrainedTokenizerFast"
+  ],
+  "transformer": [
+    "diffusers",
+    "HiDreamImageTransformer2DModel"
+  ],
+  "vae": [
+    "diffusers",
+    "AutoencoderKL"
+  ]
+}

@@ -2,21 +2,24 @@
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
 measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
-PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, LlamaGen, Wuerstchen v2, LongCat-Image, CogView4
-and Ideogram 4 and OmniGen
-measurements are
+PixArt, Sana, Lumina-Image 2.0, Lumina-Next, aMUSEd, AuraFlow, LlamaGen, Wuerstchen v2,
+LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen measurements are
 grouped in flat
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
-``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
+``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
+``components_kandinsky22``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
-``components_lumina2``, ``components_amused``, ``components_auraflow``, ``components_llamagen``,
+``components_lumina2``, ``components_lumina_next``, ``components_amused``, ``components_auraflow``,
+``components_llamagen``,
 ``components_wuerstchen``,
 ``components_longcat_image``,
-``components_cogview4``, ``components_ideogram4`` and ``components_omnigen`` mappings: the base
-model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each
-model entry may also contain its own ``seed_end_to_end`` measurement. When a model directory is
-missing, its existing entry in the output is retained unchanged; a missing directory without an
-existing entry is an error.
+``components_cogview3_plus``,
+``components_cogview4``, ``components_ideogram4``, ``components_hidream`` and
+``components_omnigen`` mappings: the base
+model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
+entry may also contain its
+own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
+output is retained unchanged; a missing directory without an existing entry is an error.
 
 Usage:
   python scripts/build_validation.py --measurements docs/validation-measurements.json \
@@ -52,11 +55,13 @@ LIMITS = [
     "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
     "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 "
     "and LongCat-Image, flow-match "
-    "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
+    "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR "
+    "DDIM for CogView3-Plus, DDPM for "
     "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and "
     "Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, "
     "DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for "
-    "aMUSEd; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens "
+    "autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -171,8 +176,10 @@ def main() -> None:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
         measurement_id = {
             "krea2-turbo": "krea2_turbo",
+            "ernie-image": "ernie_image",
             "longcat-image": "longcat_image",
             "flux1-kontext-dev": "flux1_kontext_dev",
+            "hidream-i1-fast": "hidream_i1_fast",
         }.get(spec.id, spec.id)
         e2e = measured.get(f"e2e_{measurement_id}")
         e2e_batch2 = measured.get(f"e2e_batch2_{spec.id}")
@@ -304,6 +311,9 @@ def main() -> None:
         "components_krea2": {
             key: value for key, value in measured.items() if key.startswith("krea2_")
         },
+        "components_ernie_image": {
+            key: value for key, value in measured.items() if key.startswith("ernie_image_")
+        },
         "components_flux2": {
             key: value for key, value in measured.items() if key.startswith("flux2_")
         },
@@ -335,6 +345,11 @@ def main() -> None:
         "components_lumina2": {
             key: value for key, value in measured.items() if key.startswith("lumina2_")
         },
+        "components_lumina_next": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(("lumina_next_", "gemma1_", "e2e_watershed_lumina"))
+        },
         "components_amused": {
             key: value for key, value in measured.items() if key.startswith(("amused_", "amused-"))
         },
@@ -354,11 +369,17 @@ def main() -> None:
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")
         },
+        "components_cogview3_plus": {
+            key: value for key, value in measured.items() if key.startswith("cogview3_plus_")
+        },
         "components_cogview4": {
             key: value for key, value in measured.items() if key.startswith("cogview4_")
         },
         "components_ideogram4": {
             key: value for key, value in measured.items() if key.startswith("ideogram4_")
+        },
+        "components_hidream": {
+            key: value for key, value in measured.items() if key.startswith("hidream_")
         },
         "components_omnigen": {
             key: value for key, value in measured.items() if key.startswith("omnigen_")

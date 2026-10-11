@@ -8,9 +8,15 @@ and outputs can be compared with them.
 
 | Project | Attribution | Relevant imagehub components | License |
 | --- | --- | --- | --- |
-| [diffusers](https://github.com/huggingface/diffusers) v0.40.0 | The HuggingFace Team and contributors | U-Net, KL autoencoder, PNDM scheduler, SD sampling order, checkpoint layout | [Apache 2.0](licenses/Diffusers-Apache-2.0.txt) |
-| [transformers](https://github.com/huggingface/transformers) v5.18.0 | The HuggingFace Team, OpenAI and contributors | CLIP text encoder, CLIP tokenizer normalization and splitting | [Apache 2.0](licenses/Transformers-Apache-2.0.txt) |
+| [diffusers](https://github.com/huggingface/diffusers) v0.40.0 (plus the Qwen-Image 2.1 pipeline from commit `7997e4e`) | The HuggingFace Team and contributors | U-Nets and diffusion transformers of the supported families, prior and Würstchen/Cascade networks, KL/VQ/Paella/DC autoencoders, DDPM/DDIM/PNDM/Euler/Euler-ancestral/DPM-Solver/EDM/flow-matching/LCM/UnCLIP/aMUSEd schedulers, classifier-free guidance, pipeline sampling order and checkpoint layout | [Apache 2.0](licenses/Diffusers-Apache-2.0.txt) |
+| [transformers](https://github.com/huggingface/transformers) v5.18.0 | The HuggingFace Team, OpenAI and contributors | CLIP, T5/UMT5, Gemma-2, Llama, Qwen, Qwen2.5-VL/Qwen3-VL, GLM, ChatGLM, BERT and Janus encoders; CLIP, Qwen, Gemma, ChatGLM, BERT, T5 and DeepSeek tokenizers | [Apache 2.0](licenses/Transformers-Apache-2.0.txt) |
 | [CLIP](https://github.com/openai/CLIP) | 2021 OpenAI | Byte-level BPE vocabulary conventions | [MIT](licenses/OpenAI-CLIP-MIT.txt) |
+| [LlamaGen](https://github.com/FoundationVision/LlamaGen) at `ce98ec4` | FoundationVision and contributors | GPT-XL caption embedder and autoregressive sampler, VQ-16 image tokenizer, 2D RoPE layout and KV-cache generation order | [MIT](licenses/LlamaGen-MIT.txt) |
+| [ideogram4](https://github.com/ideogram-oss/ideogram4) at `990fe1c` | Ideogram AI and contributors | Ideogram 4 transformer and text-model hidden-state selection, fp8 linear dequantization, sampler presets and prompt format | [Apache 2.0](licenses/Ideogram4-Apache-2.0.txt) |
 
-Model weights are not distributed with imagehub. Stable Diffusion 1.x weights are released under the
-CreativeML OpenRAIL-M license, whose use restrictions bind whoever downloads and uses them.
+Model weights are not distributed with imagehub; each checkpoint is downloaded by the user from the
+repository listed in the [model catalog](docs/catalog.md), and its weight license — recorded there —
+binds whoever downloads it. Several catalog licenses are non-commercial (`sai-nc-community`,
+`CC-BY-NC-4.0`, `FLUX.1-dev Non-Commercial License`, `FLUX Non-Commercial License`,
+`Ideogram 4 Non-Commercial License` and `stable-cascade-nc-community`); read the license before
+downloading.
