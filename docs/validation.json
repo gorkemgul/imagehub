@@ -4708,6 +4708,78 @@
       }
     },
     {
+      "model_id": "kandinsky-3",
+      "repo_id": "kandinsky-community/kandinsky-3",
+      "revision": "bf79e6c219da8a94abb50235fdc4567eb8fb4632",
+      "provenance": "author",
+      "catalog_id": "kandinsky-3",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "6b437e9e2d1d66fbf9dc99f6871da3705d1ba67591a9298b3b5b4e4ddc050b49",
+        "movq/config.json": "f6943ecf69ea1fd24aabcf74fa5a244e8d79c1d01e7c942046314d3a70b6576d",
+        "movq/diffusion_pytorch_model.fp16.safetensors": "8a4705625c160c49025e1f9b98776aaf5287240ca0d5ed39a1a235598fc39244",
+        "scheduler/scheduler_config.json": "9e05a641fe4024b17b85cba59f894fc2b5324c148ea31b10c5cb12f3c0cb5471",
+        "text_encoder/config.json": "b90d3446a476f7bb04a4c3252ef3df0b7ae29997a623150345079fe476d9ffba",
+        "text_encoder/model.safetensors.index.fp16.json": "f78893f120f7e17d98a2f4336d5c22a1e94c699c69b97d674608c2a9c0821e57",
+        "text_encoder/model.fp16-00001-of-00005.safetensors": "2745f08c74c13536c67282afc1e5ba80daf67e5ded7925845f3cb5e1983a2826",
+        "text_encoder/model.fp16-00002-of-00005.safetensors": "a1c184e0f3a2e8c80360379ada2d9fce40bee23647a63e3baefa00d837084408",
+        "text_encoder/model.fp16-00003-of-00005.safetensors": "3a6e4c548e5c2e6aa080a5eefad31e973dbba55b6918f95fb77af97fce341c94",
+        "text_encoder/model.fp16-00004-of-00005.safetensors": "3e7652beb11f33c5549d391c2affacd6642d9ca21bc0d4319cba60fe1b357ff0",
+        "text_encoder/model.fp16-00005-of-00005.safetensors": "f41b9aea886f3d583c026011cb7251ff21f615774ad604264aaaa01605e02326",
+        "tokenizer/added_tokens.json": "216e1a64353ae2f6201c1a15952eac240db3064db82c3ae5cb4190a6c80abbae",
+        "tokenizer/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
+        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer/tokenizer_config.json": "dbe0f3be808f3d0aa27548ead286f164226724212fe6b8587c5e0386ecc7156b",
+        "unet/config.json": "f94b4b98017a72081a5b0ca31f8e922588c4a3755b8643be3f57154671a75d0e",
+        "unet/diffusion_pytorch_model.fp16.safetensors": "805179fe9c10cd1e01c59057f0c2bb07ce57834ad343f721e50ca16bef6952f6"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "movq": 431,
+          "text_encoder": 291,
+          "unet": 1071
+        }
+      },
+      "end_to_end": {
+        "guidance": 3.0,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "A photograph of the inside of a subway train. There are raccoons sitting on the seats.",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 4
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          768,
+          512
+        ],
+        "steps": 3
+      }
+    },
+    {
       "model_id": "stable-cascade",
       "repo_id": "stabilityai/stable-cascade",
       "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
@@ -6994,6 +7066,47 @@
       "tolerance": 0.0
     }
   },
+  "components_kandinsky3": {
+    "kandinsky3_movq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky3_text_encoder_none": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky3_text_encoder_single": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky3_text_encoder_text": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky3_tokenizer_snapshot": {
+      "cases": 6,
+      "tolerance": "exact"
+    },
+    "kandinsky3_unet_step_1": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky3_unet_step_501": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky3_unet_step_981": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_stable_cascade": {
     "clip_text_mask_gelu_all_ones": {
       "hidden_states": true,
@@ -8643,6 +8756,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "28 passed (pixart-alpha-xl-512, pixart-sigma-xl-256, pixart-sigma-xl-512, pixart-sigma-xl-2k)"
+    "reference_summary": "7 passed (kandinsky-3)"
   }
 }
