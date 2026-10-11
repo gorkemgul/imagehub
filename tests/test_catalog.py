@@ -983,5 +983,5 @@ def test_glm_image_catalog_entry():
     assert spec.provenance == "author"
     assert spec.image_input is None
     assert spec.config == {"defaults": {"steps": 50, "guidance": 1.5}}
-    assert len(spec.files) == 23
+    assert len(spec.files) == 25
     assert not any(name.endswith(".py") for name in spec.files)

@@ -1676,6 +1676,8 @@ _entries.append(
         config={"defaults": {"steps": 50, "guidance": 1.5}},
         files=(
             "model_index.json",
+            "processor/chat_template.jinja",
+            "processor/preprocessor_config.json",
             "processor/tokenizer.json",
             "processor/tokenizer_config.json",
             "scheduler/scheduler_config.json",
