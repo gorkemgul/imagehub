@@ -11,3 +11,10 @@ def test_every_model_is_documented():
     for spec in MODEL_CATALOG.values():
         assert f"`{spec.id}`" in catalog and f"`{spec.id}`" in readme
         assert spec.revision[:7] in catalog
+
+
+def test_no_merge_conflict_markers():
+    paths = [ROOT / "README.md", *(ROOT / "docs").rglob("*.md")]
+    for path in paths:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            assert not line.startswith(("<<<<<<< ", ">>>>>>> ")), path
