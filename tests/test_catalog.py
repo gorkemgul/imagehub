@@ -12,6 +12,7 @@ def test_catalog_contents():
             "amused-256",
             "amused-512",
             "auraflow-v0.3",
+            "cogview3-plus-3b",
             "cogview4-6b",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
@@ -588,6 +589,24 @@ def test_pixart_sigma_transformer_only_catalog_entries():
                 "height": size,
             }
         }
+
+
+def test_cogview3_plus_catalog_entry():
+    spec = model_info("cogview3-plus-3b")
+    assert spec.task is Task.T2I
+    assert spec.family == "cogview3"
+    assert spec.source == "https://huggingface.co/zai-org/CogView3-Plus-3B"
+    assert spec.repo_id == "zai-org/CogView3-Plus-3B"
+    assert spec.revision == "5d70e40732ac0efac98524c51a7fa9c82707f1e5"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "cogview3-plus"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {"defaults": {"steps": 50, "guidance": 5.0}}
+    assert len(spec.files) == 18
+    assert "tokenizer/spiece.model" in spec.files
+    assert not any(name.endswith(".py") for name in spec.files)
 
 
 def test_cogview4_catalog_entry():
