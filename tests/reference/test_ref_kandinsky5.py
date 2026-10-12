@@ -27,6 +27,7 @@ pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 np = pytest.importorskip("numpy")
+safetensors = pytest.importorskip("safetensors.torch")
 
 CPU = torch.device("cpu")
 MODEL_ID = "kandinsky-5-t2i-lite"
@@ -83,6 +84,15 @@ def _header_result(model, shapes):
         ),
         "tensors": len(shapes),
     }
+
+
+def _load_diffusers_component(model_class, directory):
+    """Load a float32 Diffusers model without requiring accelerate."""
+    model = model_class.from_config(read_json(directory / "config.json"))
+    state = safetensors.load_file(directory / "diffusion_pytorch_model.safetensors", device="cpu")
+    model.load_state_dict(state)
+    del state
+    return model.eval()
 
 
 def test_headers(record):
@@ -194,7 +204,11 @@ def test_text_encoders(record, tmp_path):
     with torch.inference_mode():
         hidden = clip(clip_ids)
         eos = int(clip.config["eos_token_id"])
-        positions = (clip_ids.to(torch.int) == eos).int().argmax(dim=-1)
+        positions = (
+            clip_ids.to(torch.int).argmax(dim=-1)
+            if eos == 2
+            else (clip_ids.to(torch.int) == eos).int().argmax(dim=-1)
+        )
         actual_clip = hidden[torch.arange(hidden.shape[0]), positions]
     _check(record, "kandinsky5_clip", actual_clip, expected_clip)
 
@@ -209,9 +223,9 @@ def test_transformer_and_vae(record, tmp_path):
     )
     del qwen_ids, qwen_mask, clip_ids
     qwen_embed = qwen_hidden[:, 41:]
-    reference = diffusers.Kandinsky5Transformer3DModel.from_pretrained(
-        root / "transformer", local_files_only=True, torch_dtype=torch.float32
-    ).eval()
+    reference = _load_diffusers_component(
+        diffusers.Kandinsky5Transformer3DModel, root / "transformer"
+    )
     with torch.inference_mode():
         expected_transformer = reference(
             latents,
@@ -241,9 +255,7 @@ def test_transformer_and_vae(record, tmp_path):
     _check(record, "kandinsky5_transformer", actual_transformer, expected_transformer)
     del transformer
     gc.collect()
-    reference = diffusers.AutoencoderKL.from_pretrained(
-        root / "vae", local_files_only=True, torch_dtype=torch.float32
-    )
+    reference = _load_diffusers_component(diffusers.AutoencoderKL, root / "vae")
     with torch.inference_mode():
         expected_vae = reference.decode(
             latents.permute(0, 4, 1, 2, 3).reshape(1, 16, 128, 128)
@@ -260,8 +272,16 @@ def test_transformer_and_vae(record, tmp_path):
 @pytest.mark.parametrize("height,width,seed", [(1024, 1024, 0), (640, 1408, 7)])
 def test_end_to_end(record, tmp_path, height, width, seed):
     root = snapshot_dir(MODEL_ID)
+    transformer = _load_diffusers_component(
+        diffusers.Kandinsky5Transformer3DModel, root / "transformer"
+    )
+    vae = _load_diffusers_component(diffusers.AutoencoderKL, root / "vae")
     reference = diffusers.Kandinsky5T2IPipeline.from_pretrained(
-        root, local_files_only=True, torch_dtype=torch.float32
+        root,
+        transformer=transformer,
+        vae=vae,
+        local_files_only=True,
+        torch_dtype=torch.float32,
     )
     reference.set_progress_bar_config(disable=True)
     expected = reference(
@@ -275,7 +295,7 @@ def test_end_to_end(record, tmp_path, height, width, seed):
     ).images
     saved = tmp_path / f"e2e-{height}-{width}-{seed}.pt"
     torch.save(torch.from_numpy((expected * 255).round().astype("uint8")), saved)
-    del reference, expected
+    del reference, transformer, vae, expected
     gc.collect()
     actual = pipeline("t2i", backend=MODEL_ID, model=root)(
         PROMPT, height=height, width=width, steps=STEPS, guidance=3.5, seed=seed
