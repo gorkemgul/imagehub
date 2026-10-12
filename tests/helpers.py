@@ -2968,7 +2968,7 @@ TINY_KANDINSKY3_MOVQ = {
 
 
 def write_tiny_kandinsky3(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
-    """A random-weight Kandinsky 3 snapshot in the published layout (float16 variant files)."""
+    """A random-weight Kandinsky 3 snapshot in the published layout (float16 variant file names)."""
     import shutil
 
     from imagehub.checkpoints import save_safetensors
@@ -3022,4 +3022,192 @@ def write_tiny_kandinsky3(directory: str | os.PathLike[str], *, seed: int = 0) -
         (root / name / "model.safetensors.index.fp16.json").write_text(
             json.dumps({"metadata": {"total_size": 0}, "weight_map": weight_map})
         )
+    return root
+
+
+TINY_KANDINSKY5_TEXT = {
+    "vocab_size": 152064,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 1,
+    "max_position_embeddings": 128000,
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 1_000_000.0,
+    "rope_scaling": {"type": "mrope", "mrope_section": [1, 1, 2]},
+    "attention_bias": True,
+    "attention_dropout": 0.0,
+    "hidden_act": "silu",
+    "use_sliding_window": False,
+    "tie_word_embeddings": False,
+}
+TINY_KANDINSKY5_CLIP = {
+    "architectures": ["CLIPModel"],
+    "model_type": "clip",
+    "projection_dim": 32,
+    "text_config": {
+        "hidden_size": 32,
+        "intermediate_size": 64,
+        "num_attention_heads": 4,
+        "num_hidden_layers": 2,
+        "projection_dim": 32,
+        "hidden_act": "quick_gelu",
+        "layer_norm_eps": 1e-5,
+        "max_position_embeddings": 77,
+        "vocab_size": 49408,
+        "bos_token_id": 0,
+        "eos_token_id": 2,
+        "pad_token_id": 1,
+    },
+}
+TINY_KANDINSKY5_TRANSFORMER = {
+    "_class_name": "Kandinsky5Transformer3DModel",
+    "in_visual_dim": 4,
+    "out_visual_dim": 4,
+    "time_dim": 64,
+    "patch_size": [1, 2, 2],
+    "model_dim": 128,
+    "ff_dim": 256,
+    "num_text_blocks": 2,
+    "num_visual_blocks": 2,
+    "axes_dims": [16, 24, 24],
+    "visual_cond": False,
+    "in_text_dim": 32,
+    "in_text_dim2": 32,
+    "attention_type": "regular",
+}
+TINY_KANDINSKY5_VAE = {
+    "_class_name": "AutoencoderKL",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 4,
+    "block_out_channels": [32, 32, 64, 64],
+    "layers_per_block": 2,
+    "norm_num_groups": 8,
+    "down_block_types": ["DownEncoderBlock2D"] * 4,
+    "up_block_types": ["UpDecoderBlock2D"] * 4,
+    "scaling_factor": 0.3611,
+    "shift_factor": 0.1159,
+    "use_quant_conv": False,
+    "use_post_quant_conv": False,
+    "mid_block_add_attention": True,
+    "sample_size": 32,
+    "force_upcast": True,
+}
+TINY_KANDINSKY5_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "num_train_timesteps": 1000,
+    "shift": 5.0,
+}
+
+
+def write_tiny_kandinsky5(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight Kandinsky 5 T2I snapshot in the published diffusers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.clip_text import CLIPTextModel
+    from imagehub.models.kandinsky5_transformer import Kandinsky5Transformer3DModel
+    from imagehub.models.qwen2_5_vl_text import Qwen25VLTextModel
+
+    source = FIXTURES / "kandinsky5_configs"
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    shutil.copytree(source / "tokenizer", root / "tokenizer", dirs_exist_ok=True)
+    shutil.copytree(source / "tokenizer_2", root / "tokenizer_2", dirs_exist_ok=True)
+
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(TINY_KANDINSKY5_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "Kandinsky5T2IPipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen2_5_VLForConditionalGeneration"],
+                "tokenizer": ["transformers", "Qwen2VLProcessor"],
+                "text_encoder_2": ["transformers", "CLIPTextModel"],
+                "tokenizer_2": ["transformers", "CLIPTokenizer"],
+                "transformer": ["diffusers", "Kandinsky5Transformer3DModel"],
+                "vae": ["diffusers", "AutoencoderKL"],
+            }
+        )
+    )
+
+    text_config = {
+        "architectures": ["Qwen2_5_VLForConditionalGeneration"],
+        "model_type": "qwen2_5_vl",
+        "text_config": TINY_KANDINSKY5_TEXT,
+        "vision_config": {
+            "depth": 1,
+            "hidden_act": "silu",
+            "hidden_size": 32,
+            "intermediate_size": 64,
+            "num_heads": 2,
+            "in_chans": 3,
+            "out_hidden_size": 32,
+            "patch_size": 2,
+            "spatial_merge_size": 1,
+            "spatial_patch_size": 2,
+            "window_size": 4,
+            "fullatt_block_indexes": [],
+            "tokens_per_second": 2,
+            "temporal_patch_size": 2,
+        },
+        "bos_token_id": 151643,
+        "eos_token_id": 151645,
+        "vision_start_token_id": 151652,
+        "vision_end_token_id": 151653,
+        "vision_token_id": 151654,
+        "image_token_id": 151655,
+        "video_token_id": 151656,
+        "tie_word_embeddings": False,
+    }
+    qwen = Qwen25VLTextModel(text_config)
+    for parameter in qwen.parameters():
+        parameter.data.normal_(0, 0.05)
+    qwen_state = dict(qwen.state_dict())
+    # The optional reference pipeline loads the full conditional-generation model, so when
+    # transformers is installed add its tiny vision-tower weights under the published names.
+    try:
+        import transformers
+    except ModuleNotFoundError:
+        full_state = qwen_state
+    else:
+        full_config = transformers.Qwen2_5_VLConfig.from_dict(text_config)
+        full_qwen = transformers.Qwen2_5_VLForConditionalGeneration(full_config)
+        for parameter in full_qwen.parameters():
+            parameter.data.normal_(0, 0.05)
+        full_state = dict(full_qwen.state_dict())
+        full_state.update(qwen_state)
+    (root / "text_encoder").mkdir()
+    (root / "text_encoder" / "config.json").write_text(json.dumps(text_config))
+    save_safetensors(full_state, root / "text_encoder" / "model.safetensors")
+
+    clip = CLIPTextModel(TINY_KANDINSKY5_CLIP["text_config"])
+    for parameter in clip.parameters():
+        parameter.data.normal_(0, 0.05)
+    clip_state = dict(clip.state_dict())
+    clip_state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
+    (root / "text_encoder_2").mkdir()
+    (root / "text_encoder_2" / "config.json").write_text(json.dumps(TINY_KANDINSKY5_CLIP))
+    save_safetensors(clip_state, root / "text_encoder_2" / "model.safetensors")
+
+    for name, cls, config, weights in (
+        (
+            "transformer",
+            Kandinsky5Transformer3DModel,
+            TINY_KANDINSKY5_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_KANDINSKY5_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(model.state_dict(), root / name / weights)
     return root

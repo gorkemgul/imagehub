@@ -877,6 +877,24 @@
     ],
     "steps": 4
   },
+  "e2e_kandinsky5": {
+    "height": 1024,
+    "passed": true,
+    "seed": 0,
+    "steps": 4,
+    "tolerance": "exact",
+    "width": 1024
+  },
+  "e2e_kandinsky5_1024x1024_0": {
+    "passed": true,
+    "steps": 4,
+    "tolerance": "exact"
+  },
+  "e2e_kandinsky5_640x1408_7": {
+    "passed": true,
+    "steps": 4,
+    "tolerance": "exact"
+  },
   "e2e_kolors": {
     "guidance": 5.0,
     "latents": {
@@ -2778,6 +2796,32 @@
       "tensors": 1071
     }
   },
+  "header_kandinsky5": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 729
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1246
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
   "header_kolors": {
     "text_encoder": {
       "extra": [],
@@ -4012,6 +4056,30 @@
     "tolerance": 0.0
   },
   "kandinsky3_unet_step_981": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky5_clip": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky5_qwen": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky5_tokenizers": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "kandinsky5_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky5_vae_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -6203,6 +6271,14 @@
       512
     ],
     "steps": 3
+  },
+  "seed_e2e_kandinsky5": {
+    "height": 640,
+    "passed": true,
+    "seed": 7,
+    "steps": 4,
+    "tolerance": "exact",
+    "width": 1408
   },
   "seed_e2e_kolors": {
     "max_pixel_diff": 0,

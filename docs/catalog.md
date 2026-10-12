@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**31 architecture families, 71 published checkpoints.** A model is a separately published set of weights;
+**32 architecture families, 72 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -47,6 +47,7 @@ tested with the original weights. In this release every model is `full`.
 | `hunyuan-dit-v1.2-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled) | `ba991d1` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
 | `kandinsky-2.2` | `kandinsky22` | [kandinsky-community/kandinsky-2-2-decoder](https://huggingface.co/kandinsky-community/kandinsky-2-2-decoder) | `9ae140d` | author | full | Apache-2.0 | `kandinsky-2` |
 | `kandinsky-3` | `kandinsky3` | [kandinsky-community/kandinsky-3](https://huggingface.co/kandinsky-community/kandinsky-3) | `bf79e6c` | author | full | Apache-2.0 | `kandinsky-3` |
+| `kandinsky-5-t2i-lite` | `kandinsky5` | [kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers](https://huggingface.co/kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers) | `25da1e8` | author | full | MIT | `kandinsky-5` |
 | `pixart-sigma-xl-1024` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-1024-MS) | `e102b35` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
 | `pixart-alpha-xl-1024` | `pixart` | [PixArt-alpha/PixArt-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-XL-2-1024-MS) | `b89adad` | author | full | CreativeML-OpenRAIL++-M | `pixart-alpha` |
 | `pixart-alpha-xl-512` | `pixart` | [PixArt-alpha/PixArt-XL-2-512x512](https://huggingface.co/PixArt-alpha/PixArt-XL-2-512x512) | `50f7021` | author | full | CreativeML-OpenRAIL++-M | `pixart-alpha` |
@@ -94,7 +95,7 @@ snapshot subfolder. DMD2 excludes the base U-Net safetensors because its replace
 PyTorch pickle under a different name. Kandinsky 2.2 places the prior repository at revision
 `9fc51ad` in the snapshot's `prior/` subfolder while the decoder remains at the snapshot root.
 The PixArt-Sigma 256, 512 and 2K repositories publish only a transformer, so those models use
-`pixart-sigma-xl-1024` as their base and overlay its transformer files with their own.
+`pixart-sigma-xl-1024` as their base and overlay their transformer files with their own.
 Stable Cascade does the same with `stabilityai/stable-cascade-prior` at revision `7ca32c2`, and
 Würstchen v2 with `warp-ai/wuerstchen-prior` at revision `c41be63`.
 `python -m imagehub.pretrained` downloads both sources, each pinned and verified, and the snapshot
@@ -136,6 +137,9 @@ see the license.
 The `ideogram4-fp8` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN` when
 downloading with `python -m imagehub.pretrained`. The weights use the Ideogram 4 Non-Commercial
 License; see the license.
+
+Kandinsky 5 publishes bfloat16 transformer and text-encoder weights; the catalog lists them as
+released and the native loaders upcast them to float32 for parity testing.
 
 Kolors publishes float16 weights only (`*.fp16.safetensors`), so its file list uses those names. Parity is
 measured on their float32 upcast, which is also what diffusers computes with

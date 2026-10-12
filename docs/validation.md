@@ -1467,6 +1467,37 @@ default settings, guidance 1.0, a non-square size rounded up to 64 pixels with a
 empty negative prompt, two images, a prompt longer than the context and a single step) with two
 sets of random weights each, plus checks of the latents and of the cut context.
 
+## Kandinsky 5
+
+`kandinsky-5-t2i-lite` is loaded strictly from
+`kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers` at revision `25da1e82e6adefdbc83c02a71f762287c5e471a4`
+and compared with diffusers 0.40.0 `Kandinsky5T2IPipeline` on CPU in float32, on the float32 upcast
+of the published bfloat16 weights. The observed difference in every comparison is **exactly 0**: on
+CPU in float32, the local implementation produces a bit-identical result to the reference
+(identical bytes for images). The real-checkpoint tests (`tests/reference/test_ref_kandinsky5.py`)
+check the tensor headers of all components, the Qwen and CLIP tokenizers, the Qwen text-encoder
+outputs and CLIP pooled embedding the pipeline uses, one transformer step with real conditioning,
+the VAE decode, and end-to-end generation with a shortened run and a non-square seed test. The
+real-checkpoint run of 6 tests took about 27 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference |
+| --- | --- |
+| Tensor header check: Qwen text encoder (729 tensors), CLIP text encoder (197), 3D transformer (1246), VAE (244) (names and shapes) | 0 missing, extra or mismatched |
+| Qwen and CLIP tokenizer ids for the prompt | identical |
+| Qwen text-encoder last hidden state (templated prompt) | 0 |
+| CLIP pooled text embedding used by the pipeline | 0 |
+| 3D transformer single step (128×128 latent grid, real conditioning, timestep 500) | 0 |
+| VAE decode (128×128 latent grid, 16 channels) | 0 |
+| End to end: final pixels (1024×1024, 4 steps, guidance 3.5, seed 0) | 0 |
+| End to end, 640×1408, 4 steps, guidance 3.5, seed 7 (pixels) | 0 |
+
+Random-weight parity covers the Kandinsky 5 3D transformer with a tiny and with the published
+configuration at small spatial sizes. Tiny-snapshot end-to-end parity covers the default settings,
+guidance on and off, non-square sizes, two seeds and several weight seeds, using a random snapshot in
+the published diffusers layout.
+
 ## AuraFlow
 
 Validated on CPU in the same environment as above. `auraflow-v0.3` is loaded strictly from
@@ -1643,7 +1674,8 @@ first sequence of the batch only; the native module reproduces that.
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
-  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 7 passed each for `stable-cascade` and `stable-cascade-lite`, 19 passed
+  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 5 passed for   `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
+  for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 28 passed for `pixart-alpha-xl-512`,
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for

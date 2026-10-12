@@ -1916,6 +1916,53 @@ _entries.append(
     )
 )
 
+# Kandinsky 5 publishes bfloat16 transformer and text-encoder weights; the catalog lists them
+# as released and the native loaders upcast to float32 for parity testing.
+_entries.append(
+    ModelSpec(
+        id="kandinsky-5-t2i-lite",
+        task=Task.T2I,
+        family="kandinsky5",
+        source="https://huggingface.co/kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers",
+        repo_id="kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers",
+        revision="25da1e82e6adefdbc83c02a71f762287c5e471a4",
+        provenance="author",
+        catalog_id="kandinsky-5",
+        format="diffusers",
+        license="MIT",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 3.5, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00005.safetensors",
+            "text_encoder/model-00002-of-00005.safetensors",
+            "text_encoder/model-00003-of-00005.safetensors",
+            "text_encoder/model-00004-of-00005.safetensors",
+            "text_encoder/model-00005-of-00005.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "tokenizer/preprocessor_config.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 _STABLE_CASCADE_REVISION = "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16"
 _STABLE_CASCADE_PRIOR_REVISION = "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91"
 

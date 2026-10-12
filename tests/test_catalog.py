@@ -35,6 +35,7 @@ def test_catalog_contents():
             "janus-pro-7b",
             "kandinsky-2.2",
             "kandinsky-3",
+            "kandinsky-5-t2i-lite",
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
