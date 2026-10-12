@@ -8,8 +8,7 @@ fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as se
 
 **Validation levels:** `full` — tensors loaded strictly and parity with the recorded reference proven on CPU in
 fp32. `header_only` — tensor names and shapes matched, generation not tested. `experimental` — not
-tested with the original weights. Kandinsky 2.1 is `experimental` pending its real-checkpoint run;
-every other model is `full`.
+tested with the original weights. Every model is `full`.
 
 | Model id | Family | Source | Revision | Origin | Validation | Weight license | Awesome catalog |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -46,7 +45,7 @@ every other model is `full`.
 | `hunyuan-dit-v1.1-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled) | `527cf2e` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
 | `hunyuan-dit-v1.2` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers) | `5e96094` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
 | `hunyuan-dit-v1.2-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled) | `ba991d1` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
-| `kandinsky-2-1` | `kandinsky21` | [kandinsky-community/kandinsky-2-1](https://huggingface.co/kandinsky-community/kandinsky-2-1) | `04b3666` | author | experimental | Apache-2.0 | `kandinsky-2` |
+| `kandinsky-2-1` | `kandinsky21` | [kandinsky-community/kandinsky-2-1](https://huggingface.co/kandinsky-community/kandinsky-2-1) | `04b3666` | author | full | Apache-2.0 | `kandinsky-2` |
 | `kandinsky-2.2` | `kandinsky22` | [kandinsky-community/kandinsky-2-2-decoder](https://huggingface.co/kandinsky-community/kandinsky-2-2-decoder) | `9ae140d` | author | full | Apache-2.0 | `kandinsky-2` |
 | `kandinsky-3` | `kandinsky3` | [kandinsky-community/kandinsky-3](https://huggingface.co/kandinsky-community/kandinsky-3) | `bf79e6c` | author | full | Apache-2.0 | `kandinsky-3` |
 | `kandinsky-5-t2i-lite` | `kandinsky5` | [kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers](https://huggingface.co/kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers) | `25da1e8` | author | full | MIT | `kandinsky-5` |

@@ -604,18 +604,41 @@ The real-checkpoint run of the two v1.2 releases (10 real tests) took 45 minutes
 
 ## Kandinsky 2.1
 
-Validation is pending the real-checkpoint run. The snapshot is pinned to decoder revision
-`04b3666` and prior revision `b726af6`; the planned CPU float32 comparison uses diffusers 0.40.0
-`KandinskyPriorPipeline` plus `KandinskyPipeline`.
+Validated on CPU in the same environment as above. `kandinsky-2-1` was loaded strictly from the
+decoder repository `kandinsky-community/kandinsky-2-1` at revision `04b3666` and the prior
+repository `kandinsky-community/kandinsky-2-1-prior` at revision `b726af6`, and compared with
+diffusers 0.40.0 `KandinskyPriorPipeline` plus `KandinskyPipeline` on CPU in float32. All 4
+real-checkpoint tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+result to the reference. The real-checkpoint run took 10 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: prior text encoder, prior image encoder, prior, MultilingualCLIP text encoder, text-image U-Net and MoVQ (198 / 393 / 338 / 394 / 726 / 431 tensors) | 0 missing / extra / mismatched | exact |
+| XLM-RoBERTa tokenizer token ids and attention masks (4 prompts) | identical | exact |
+| MultilingualCLIP text encoder (pooled and hidden states) | 0 / 0 | 0 / 0 |
+| PriorTransformer single step (t = 500) | 0 | 0 |
+| Text-image-conditioned U-Net single step (t = 500, batch 2) | 0 | 0 |
+| MoVQ decode | 0 | 0 |
+| End to end: final pixels (512×512, 25 prior steps, 100 decoder steps, guidance 4.0, fixed prior latents) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end comparison used the prompt "a photograph of an astronaut riding a horse", fixed
+prior latents from seed 7 and a scheduler generator seeded 42; the seed comparison ran the public
+pipeline with `seed=42`. The defaults are 25 prior steps with guidance 4.0 followed by 100
+decoder steps with guidance 4.0 at 512×512.
 
 Published safetensors header fixtures cover the prior text encoder, prior image encoder,
 PriorTransformer, MultilingualCLIP text encoder, text-image-conditioned U-Net and MoVQ on the meta
-device. Random-weight reference tests currently match exactly for the XLM-RoBERTa tokenizer and
-MultilingualCLIP encoder, the text-image U-Net, the DDIM trajectory, and the tiny combined pipeline.
-The tiny end-to-end cases cover guidance on and off, an explicit negative prompt, non-square output
-and two seeds. The snapshot-gated suite records `header_kandinsky-2-1`, component comparisons,
-`e2e_kandinsky-2-1` and `seed_e2e_kandinsky-2-1`; measured real-weight values will be documented
-after that suite runs.
+device. Random-weight reference tests match exactly for the XLM-RoBERTa tokenizer and
+MultilingualCLIP encoder, the text-image U-Net, the DDIM trajectory, and the tiny combined
+pipeline. The tiny end-to-end cases cover guidance on and off, an explicit negative prompt,
+non-square output and two seeds. Records: `tensor_header_check`, `end_to_end` and
+`seed_end_to_end`, [validation.json](validation.json); `header_kandinsky-2-1`, the `kandinsky21_*`
+component comparisons, `e2e_kandinsky-2-1` and `seed_e2e_kandinsky-2-1`,
+[validation-measurements.json](validation-measurements.json).
 
 ## Kandinsky 2.2
 
@@ -1689,7 +1712,7 @@ first sequence of the batch only; the native module reproduces that.
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
-  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 5 passed for   `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
+  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
   for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 28 passed for `pixart-alpha-xl-512`,
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for

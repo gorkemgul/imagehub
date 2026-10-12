@@ -728,8 +728,9 @@ guidance 4.0 and 512×512 output. Supported options are `steps`, `guidance`, `pr
 settings raise an error before weights are loaded.
 
 **Seed compatibility.** The tiny CPU float32 pipeline is bit-identical to diffusers for guidance on
-and off, an explicit negative prompt, non-square output and two seeds. Real-checkpoint validation is
-pending ([validation](validation.md)). MPS and CUDA runs are smoke tests only.
+and off, an explicit negative prompt, non-square output and two seeds, and so is the
+real-checkpoint pipeline (all 4 real-checkpoint tests; [validation](validation.md)). MPS and CUDA
+runs are smoke tests only.
 
 **Out of scope.** Image-to-image, inpainting, interpolation, ControlNet, safety checking,
 watermarking and fp16/bfloat16 parity are not supported.
