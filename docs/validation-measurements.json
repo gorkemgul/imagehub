@@ -857,6 +857,10 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_kandinsky-2-1": {
+    "passed": true,
+    "pixels_max_abs": 0
+  },
   "e2e_kandinsky-2.2": {
     "passed": true,
     "pixels_max_abs": 0
@@ -2744,6 +2748,44 @@
     "missing": [],
     "tensors": 1018
   },
+  "header_kandinsky-2-1": {
+    "movq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 431
+    },
+    "prior/image_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 393
+    },
+    "prior/prior": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 338
+    },
+    "prior/text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 198
+    },
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 394
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 726
+    }
+  },
   "header_kandinsky-2.2": {
     "movq": {
       "extra": [],
@@ -3986,6 +4028,36 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "kandinsky21_decoder_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky21_movq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky21_multilingual_clip_hidden": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky21_multilingual_clip_pooled": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky21_prior_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "kandinsky21_tokens": {
+    "exact": true,
+    "prompts": 4,
+    "tolerance": "exact"
   },
   "kandinsky22_decoder_unet_512": {
     "max_abs": 0.0,
@@ -6256,6 +6328,10 @@
   "seed_e2e_janus-pro-7b": {
     "passed": true,
     "pixels_match": true,
+    "seed": 42
+  },
+  "seed_e2e_kandinsky-2-1": {
+    "passed": true,
     "seed": 42
   },
   "seed_e2e_kandinsky-2.2": {

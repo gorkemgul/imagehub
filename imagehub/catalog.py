@@ -1879,6 +1879,66 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="kandinsky-2-1",
+        task=Task.T2I,
+        family="kandinsky21",
+        source="https://huggingface.co/kandinsky-community/kandinsky-2-1",
+        repo_id="kandinsky-community/kandinsky-2-1",
+        revision="04b366659663bf60deacb96fd3e38f1cb39a3be4",
+        provenance="author",
+        catalog_id="kandinsky-2",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={
+            "defaults": {
+                "steps": 100,
+                "guidance": 4.0,
+                "prior_steps": 25,
+                "prior_guidance": 4.0,
+            }
+        },
+        files=(
+            "ddpm_scheduler/scheduler_config.json",
+            "model_index.json",
+            "movq/config.json",
+            "movq/diffusion_pytorch_model.safetensors",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/sentencepiece.bpe.model",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+        ),
+        subfolders={
+            "prior": SubRepo(
+                repo_id="kandinsky-community/kandinsky-2-1-prior",
+                revision="b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+                files=(
+                    "model_index.json",
+                    "image_encoder/config.json",
+                    "image_encoder/model.safetensors",
+                    "image_processor/preprocessor_config.json",
+                    "prior/config.json",
+                    "prior/diffusion_pytorch_model.safetensors",
+                    "scheduler/scheduler_config.json",
+                    "text_encoder/config.json",
+                    "text_encoder/model.safetensors",
+                    "tokenizer/merges.txt",
+                    "tokenizer/special_tokens_map.json",
+                    "tokenizer/tokenizer_config.json",
+                    "tokenizer/vocab.json",
+                ),
+            )
+        },
+    )
+)
+
 # Kandinsky 3 publishes float16 weights only; the loaders read the variant file names.
 _entries.append(
     ModelSpec(

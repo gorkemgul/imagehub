@@ -699,6 +699,46 @@ European Union, the United Kingdom and South Korea; see the license. imagehub do
 weights.
 
 
+# Kandinsky 2.1
+
+Catalog: [`kandinsky-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `kandinsky-2-1` · Task: `t2i`
+
+**Architecture.** A CLIP text model and PriorTransformer produce a CLIP-image embedding. The
+decoder separately encodes the prompt with a multilingual XLM-RoBERTa CLIP model, then combines its
+token states and pooled text embedding with the image embedding in a text-image-conditioned U-Net.
+An UnCLIP scheduler drives the prior, DDIM drives the decoder, and MoVQ decodes the latents.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained kandinsky-2-1 checkpoints/kandinsky-2-1
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="kandinsky-2-1", model="checkpoints/kandinsky-2-1", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The prior defaults to 25 steps and guidance 4.0; the decoder defaults to 100 steps,
+guidance 4.0 and 512×512 output. Supported options are `steps`, `guidance`, `prior_steps`,
+`prior_guidance`, `width`, `height`, `seed`, `negative_prompt` and prior `latents`. Unrecognized
+settings raise an error before weights are loaded.
+
+**Seed compatibility.** The tiny CPU float32 pipeline is bit-identical to diffusers for guidance on
+and off, an explicit negative prompt, non-square output and two seeds, and so is the
+real-checkpoint pipeline (all 4 real-checkpoint tests; [validation](validation.md)). MPS and CUDA
+runs are smoke tests only.
+
+**Out of scope.** Image-to-image, inpainting, interpolation, ControlNet, safety checking,
+watermarking and fp16/bfloat16 parity are not supported.
+
+**License.** The decoder and prior weights use the Apache-2.0 license. imagehub does not distribute
+weights.
+
+
 # Kandinsky 2.2
 
 Catalog: [`kandinsky-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

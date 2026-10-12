@@ -108,7 +108,13 @@ class DDIMScheduler:
     def scale_model_input(self, sample: Tensor, timestep: Tensor | int | None = None) -> Tensor:
         return sample
 
-    def step(self, model_output: Tensor, timestep: Tensor | int, sample: Tensor) -> Tensor:
+    def step(
+        self,
+        model_output: Tensor,
+        timestep: Tensor | int,
+        sample: Tensor,
+        generator: torch.Generator | None = None,
+    ) -> Tensor:
         if self.num_inference_steps == 0:
             raise RuntimeError("Call set_timesteps before step")
         cfg = self.config
