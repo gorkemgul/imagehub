@@ -501,6 +501,40 @@ class ImageProjection(nn.Module):
         return self.norm(image_embeds.reshape(batch, self.num_image_text_embeds, -1))
 
 
+class TextImageTimeEmbedding(nn.Module):
+    def __init__(self, text_dim: int, image_dim: int, time_dim: int) -> None:
+        super().__init__()
+        self.text_proj = nn.Linear(text_dim, time_dim)
+        self.text_norm = nn.LayerNorm(time_dim)
+        self.image_proj = nn.Linear(image_dim, time_dim)
+
+    def forward(self, text_embeds: Tensor, image_embeds: Tensor) -> Tensor:
+        text = self.text_norm(self.text_proj(text_embeds))
+        image = self.image_proj(image_embeds)
+        return text + image
+
+
+class TextImageProjection(nn.Module):
+    def __init__(
+        self,
+        text_dim: int,
+        image_dim: int,
+        context_dim: int,
+        num_image_text_embeds: int = 10,
+    ) -> None:
+        super().__init__()
+        self.num_image_text_embeds = num_image_text_embeds
+        self.image_embeds = nn.Linear(image_dim, num_image_text_embeds * context_dim)
+        self.text_proj = nn.Linear(text_dim, context_dim)
+
+    def forward(self, text_embeds: Tensor, image_embeds: Tensor) -> Tensor:
+        batch = text_embeds.shape[0]
+        image_text = self.image_embeds(image_embeds)
+        image_text = image_text.reshape(batch, self.num_image_text_embeds, -1)
+        text = self.text_proj(text_embeds)
+        return torch.cat([image_text, text], dim=1)
+
+
 class UNet2DConditionModel(NativeModel):
     def __init__(self, config: Mapping[str, Any]) -> None:
         unknown = sorted(
@@ -543,7 +577,7 @@ class UNet2DConditionModel(NativeModel):
                 continue
             if cfg[key] != default:
                 raise ValueError(f"Unsupported U-Net setting {key}={cfg[key]!r}")
-        if cfg["addition_embed_type"] not in (None, "text_time", "image"):
+        if cfg["addition_embed_type"] not in (None, "text_time", "text_image", "image"):
             raise ValueError(
                 f"Unsupported U-Net setting addition_embed_type={cfg['addition_embed_type']!r}"
             )
@@ -638,7 +672,7 @@ class UNet2DConditionModel(NativeModel):
                     transformer_layers=rev_transformer_layers[i],
                 )
             )
-        self.add_embedding: TimestepEmbedding | ImageTimeEmbedding
+        self.add_embedding: nn.Module
         if cfg["addition_embed_type"] == "text_time":
             if (
                 cfg["addition_time_embed_dim"] is None
@@ -649,11 +683,17 @@ class UNet2DConditionModel(NativeModel):
             self.add_embedding = TimestepEmbedding(
                 cfg["projection_class_embeddings_input_dim"], temb
             )
+        elif cfg["addition_embed_type"] == "text_image":
+            if not isinstance(cfg["cross_attention_dim"], int):
+                raise ValueError("text_image conditioning requires scalar cross_attention_dim")
+            self.add_embedding = TextImageTimeEmbedding(
+                cfg["cross_attention_dim"], cfg["cross_attention_dim"], temb
+            )
         elif cfg["addition_embed_type"] == "image":
             if cfg["encoder_hid_dim"] is None:
                 raise ValueError("image conditioning requires encoder_hid_dim")
             self.add_embedding = ImageTimeEmbedding(cfg["encoder_hid_dim"], temb)
-        self.encoder_hid_proj: ImageProjection | nn.Linear
+        self.encoder_hid_proj: nn.Module
         if cfg["encoder_hid_dim_type"] == "image_proj":
             if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
                 raise ValueError("image projection requires scalar embedding dimensions")
@@ -664,6 +704,14 @@ class UNet2DConditionModel(NativeModel):
             if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
                 raise ValueError("text projection requires scalar embedding dimensions")
             self.encoder_hid_proj = nn.Linear(cfg["encoder_hid_dim"], cfg["cross_attention_dim"])
+        elif cfg["encoder_hid_dim_type"] == "text_image_proj":
+            if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
+                raise ValueError("text_image projection requires scalar embedding dimensions")
+            self.encoder_hid_proj = TextImageProjection(
+                cfg["encoder_hid_dim"],
+                cfg["cross_attention_dim"],
+                cfg["cross_attention_dim"],
+            )
         elif cfg["encoder_hid_dim_type"] is not None:
             raise ValueError(
                 f"Unsupported U-Net setting encoder_hid_dim_type={cfg['encoder_hid_dim_type']!r}"
@@ -703,6 +751,12 @@ class UNet2DConditionModel(NativeModel):
             ).reshape(text_embeds.shape[0], -1)
             add_embeds = torch.cat([text_embeds, time_features], dim=-1).to(temb.dtype)
             temb = temb + self.add_embedding(add_embeds)
+        elif self.config["addition_embed_type"] == "text_image":
+            if text_embeds is None:
+                text_embeds = context
+            if text_embeds is None or image_embeds is None:
+                raise ValueError("text_image conditioning requires text_embeds and image_embeds")
+            temb = temb + self.add_embedding(text_embeds, image_embeds)
         elif self.config["addition_embed_type"] == "image":
             if image_embeds is None:
                 raise ValueError("image conditioning requires image_embeds")
@@ -711,6 +765,12 @@ class UNet2DConditionModel(NativeModel):
             if image_embeds is None:
                 raise ValueError("image projection requires image_embeds")
             context = self.encoder_hid_proj(image_embeds)
+        elif self.config["encoder_hid_dim_type"] == "text_image_proj":
+            if image_embeds is None:
+                raise ValueError("text_image projection requires image_embeds")
+            if context is None:
+                raise ValueError("text_image projection requires encoder_hidden_states")
+            context = self.encoder_hid_proj(context, image_embeds)
         elif self.config["encoder_hid_dim_type"] == "text_proj" and context is not None:
             context = self.encoder_hid_proj(context)
         if context is None:
