@@ -75,7 +75,7 @@ result.images[0].save("edited.png")
 | Kandinsky 5 | `kandinsky-5-t2i-lite` | `t2i` | T | CPU fp32 parity on a tiny model; real-checkpoint run pending |
 | Stable Cascade | `stable-cascade`, `stable-cascade-lite` | `t2i` | T | CPU fp32 parity |
 | Würstchen v2 | `wuerstchen-v2` | `t2i` | T | CPU fp32 parity |
-| PixArt | `pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`, `pixart-alpha-xl-1024`, `pixart-alpha-xl-512` | `t2i` | T | CPU fp32 parity |
+| PixArt | `pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`, `pixart-alpha-xl-1024`, `pixart-alpha-xl-512`, `pixart-lcm-xl-1024` | `t2i` | T | CPU fp32 parity; LCM real-checkpoint run pending |
 | Sana | `sana-1600m-1024`, `sana-600m-1024`, `sana-sprint-1.6b-1024`, `sana-1.5-4.8b-1024` | `t2i` | T | CPU fp32 parity |
 | Kolors | `kolors` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |

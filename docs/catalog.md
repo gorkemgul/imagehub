@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**33 architecture families, 73 published checkpoints.** A model is a separately published set of weights;
+**33 architecture families, 74 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -8,7 +8,7 @@ fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as se
 
 **Validation levels:** `full` — tensors loaded strictly and parity with the recorded reference proven on CPU in
 fp32. `header_only` — tensor names and shapes matched, generation not tested. `experimental` — not
-tested with the original weights. Every model is `full`.
+tested with the original weights. Models are `full` unless noted otherwise.
 
 | Model id | Family | Source | Revision | Origin | Validation | Weight license | Awesome catalog |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -55,6 +55,7 @@ tested with the original weights. Every model is `full`.
 | `pixart-sigma-xl-512` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-512-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-512-MS) | `76fb7eb` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
 | `pixart-sigma-xl-256` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-256x256](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-256x256) | `495cb1b` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
 | `pixart-sigma-xl-2k` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-2K-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-2K-MS) | `cd274f4` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
+| `pixart-lcm-xl-1024` | `pixart` | [PixArt-alpha/PixArt-LCM-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-LCM-XL-2-1024-MS) | `e153060` | author | header_only | CreativeML-OpenRAIL++-M | `pixart-delta` |
 | `sana-1600m-1024` | `sana` | [Efficient-Large-Model/Sana_1600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_1600M_1024px_diffusers) | `ac0da2f` | author | full | Apache-2.0 | `sana` |
 | `sana-600m-1024` | `sana` | [Efficient-Large-Model/Sana_600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_600M_1024px_diffusers) | `28f3af7` | author | full | Apache-2.0 | `sana` |
 | `sana-sprint-1.6b-1024` | `sana` | [Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers) | `19683c5` | author | full | Apache-2.0 | `sana` |

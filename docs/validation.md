@@ -784,6 +784,13 @@ guidance on and off, non-square sizes, several seeds).
 
 ## PixArt
 
+### PixArt-LCM
+
+`pixart-lcm-xl-1024` uses `PixArt-alpha/PixArt-LCM-XL-2-1024-MS` at revision `e153060b` with
+the published float32 transformer, VAE and four T5 shards. It reuses the PixArt Alpha components
+and the LCM scheduler, defaults to 4 steps and guidance 0.0, and passes strict fixture-header and
+tiny-snapshot parity tests. The real-checkpoint run is pending.
+
 ### Further resolutions
 
 `pixart-alpha-xl-512` (`PixArt-alpha/PixArt-XL-2-512x512`, revision `50f7021`) and the transformer-only
