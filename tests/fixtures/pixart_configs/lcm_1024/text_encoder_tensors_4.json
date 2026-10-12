@@ -1,0 +1,186 @@
+{
+"encoder.block.18.layer.1.DenseReluDense.wi_1.weight": [
+10240,
+4096
+],
+"encoder.block.18.layer.1.DenseReluDense.wo.weight": [
+4096,
+10240
+],
+"encoder.block.18.layer.1.layer_norm.weight": [
+4096
+],
+"encoder.block.19.layer.0.SelfAttention.k.weight": [
+4096,
+4096
+],
+"encoder.block.19.layer.0.SelfAttention.o.weight": [
+4096,
+4096
+],
+"encoder.block.19.layer.0.SelfAttention.q.weight": [
+4096,
+4096
+],
+"encoder.block.19.layer.0.SelfAttention.v.weight": [
+4096,
+4096
+],
+"encoder.block.19.layer.0.layer_norm.weight": [
+4096
+],
+"encoder.block.19.layer.1.DenseReluDense.wi_0.weight": [
+10240,
+4096
+],
+"encoder.block.19.layer.1.DenseReluDense.wi_1.weight": [
+10240,
+4096
+],
+"encoder.block.19.layer.1.DenseReluDense.wo.weight": [
+4096,
+10240
+],
+"encoder.block.19.layer.1.layer_norm.weight": [
+4096
+],
+"encoder.block.20.layer.0.SelfAttention.k.weight": [
+4096,
+4096
+],
+"encoder.block.20.layer.0.SelfAttention.o.weight": [
+4096,
+4096
+],
+"encoder.block.20.layer.0.SelfAttention.q.weight": [
+4096,
+4096
+],
+"encoder.block.20.layer.0.SelfAttention.v.weight": [
+4096,
+4096
+],
+"encoder.block.20.layer.0.layer_norm.weight": [
+4096
+],
+"encoder.block.20.layer.1.DenseReluDense.wi_0.weight": [
+10240,
+4096
+],
+"encoder.block.20.layer.1.DenseReluDense.wi_1.weight": [
+10240,
+4096
+],
+"encoder.block.20.layer.1.DenseReluDense.wo.weight": [
+4096,
+10240
+],
+"encoder.block.20.layer.1.layer_norm.weight": [
+4096
+],
+"encoder.block.21.layer.0.SelfAttention.k.weight": [
+4096,
+4096
+],
+"encoder.block.21.layer.0.SelfAttention.o.weight": [
+4096,
+4096
+],
+"encoder.block.21.layer.0.SelfAttention.q.weight": [
+4096,
+4096
+],
+"encoder.block.21.layer.0.SelfAttention.v.weight": [
+4096,
+4096
+],
+"encoder.block.21.layer.0.layer_norm.weight": [
+4096
+],
+"encoder.block.21.layer.1.DenseReluDense.wi_0.weight": [
+10240,
+4096
+],
+"encoder.block.21.layer.1.DenseReluDense.wi_1.weight": [
+10240,
+4096
+],
+"encoder.block.21.layer.1.DenseReluDense.wo.weight": [
+4096,
+10240
+],
+"encoder.block.21.layer.1.layer_norm.weight": [
+4096
+],
+"encoder.block.22.layer.0.SelfAttention.k.weight": [
+4096,
+4096
+],
+"encoder.block.22.layer.0.SelfAttention.o.weight": [
+4096,
+4096
+],
+"encoder.block.22.layer.0.SelfAttention.q.weight": [
+4096,
+4096
+],
+"encoder.block.22.layer.0.SelfAttention.v.weight": [
+4096,
+4096
+],
+"encoder.block.22.layer.0.layer_norm.weight": [
+4096
+],
+"encoder.block.22.layer.1.DenseReluDense.wi_0.weight": [
+10240,
+4096
+],
+"encoder.block.22.layer.1.DenseReluDense.wi_1.weight": [
+10240,
+4096
+],
+"encoder.block.22.layer.1.DenseReluDense.wo.weight": [
+4096,
+10240
+],
+"encoder.block.22.layer.1.layer_norm.weight": [
+4096
+],
+"encoder.block.23.layer.0.SelfAttention.k.weight": [
+4096,
+4096
+],
+"encoder.block.23.layer.0.SelfAttention.o.weight": [
+4096,
+4096
+],
+"encoder.block.23.layer.0.SelfAttention.q.weight": [
+4096,
+4096
+],
+"encoder.block.23.layer.0.SelfAttention.v.weight": [
+4096,
+4096
+],
+"encoder.block.23.layer.0.layer_norm.weight": [
+4096
+],
+"encoder.block.23.layer.1.DenseReluDense.wi_0.weight": [
+10240,
+4096
+],
+"encoder.block.23.layer.1.DenseReluDense.wi_1.weight": [
+10240,
+4096
+],
+"encoder.block.23.layer.1.DenseReluDense.wo.weight": [
+4096,
+10240
+],
+"encoder.block.23.layer.1.layer_norm.weight": [
+4096
+],
+"encoder.final_layer_norm.weight": [
+4096
+]
+}
