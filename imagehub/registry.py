@@ -121,6 +121,7 @@ for _task, _name, _path in (
     (Task.T2I, "janus", "imagehub.backends.janus:JanusBackend"),
     (Task.T2I, "kandinsky22", "imagehub.backends.kandinsky22:Kandinsky22Backend"),
     (Task.T2I, "kandinsky3", "imagehub.backends.kandinsky3:Kandinsky3Backend"),
+    (Task.T2I, "kandinsky5", "imagehub.backends.kandinsky5:Kandinsky5Backend"),
     (Task.T2I, "stable_cascade", "imagehub.backends.stable_cascade:StableCascadeBackend"),
     (Task.T2I, "wuerstchen", "imagehub.backends.wuerstchen:WuerstchenBackend"),
     (Task.T2I, "glm-image", "imagehub.backends.glm_image:GlmImageBackend"),
