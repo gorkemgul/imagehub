@@ -292,7 +292,7 @@ def test_end_to_end(record, tmp_path, height, width, seed):
         guidance_scale=3.5,
         generator=torch.Generator("cpu").manual_seed(seed),
         output_type="np",
-    ).images
+    ).image
     saved = tmp_path / f"e2e-{height}-{width}-{seed}.pt"
     torch.save(torch.from_numpy((expected * 255).round().astype("uint8")), saved)
     del reference, transformer, vae, expected
