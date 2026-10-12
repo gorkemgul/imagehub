@@ -193,6 +193,7 @@ def main() -> None:
             "flux1-kontext-dev": "flux1_kontext_dev",
             "hidream-i1-fast": "hidream_i1_fast",
             "kandinsky-3": "kandinsky3",
+            "kandinsky-5-t2i-lite": "kandinsky5",
         }.get(spec.id, spec.id)
         e2e = measured.get(f"e2e_{measurement_id}")
         e2e_batch2 = measured.get(f"e2e_batch2_{spec.id}")

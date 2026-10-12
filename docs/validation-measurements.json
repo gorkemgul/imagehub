@@ -877,15 +877,13 @@
     ],
     "steps": 4
   },
-  "e2e_kandinsky5_1024x1024_0": {
+  "e2e_kandinsky5": {
+    "height": 1024,
     "passed": true,
+    "seed": 0,
     "steps": 4,
-    "tolerance": "exact"
-  },
-  "e2e_kandinsky5_640x1408_7": {
-    "passed": true,
-    "steps": 4,
-    "tolerance": "exact"
+    "tolerance": "exact",
+    "width": 1024
   },
   "e2e_kolors": {
     "guidance": 5.0,
@@ -6263,6 +6261,14 @@
       512
     ],
     "steps": 3
+  },
+  "seed_e2e_kandinsky5": {
+    "height": 640,
+    "passed": true,
+    "seed": 7,
+    "steps": 4,
+    "tolerance": "exact",
+    "width": 1408
   },
   "seed_e2e_kolors": {
     "max_pixel_diff": 0,

@@ -303,5 +303,8 @@ def test_end_to_end(record, tmp_path, height, width, seed):
     expected = torch.load(saved, weights_only=True)
     pixels = torch.stack([item.tensor for item in actual.images])
     passed = torch.equal(pixels, expected)
-    record(f"e2e_kandinsky5_{height}x{width}_{seed}", passed=passed, steps=STEPS, tolerance="exact")
+    name = "e2e_kandinsky5" if seed == 0 else "seed_e2e_kandinsky5"
+    record(
+        name, passed=passed, height=height, width=width, seed=seed, steps=STEPS, tolerance="exact"
+    )
     assert passed
