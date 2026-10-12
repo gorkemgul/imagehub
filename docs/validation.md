@@ -553,6 +553,21 @@ tests, together with a DDPM trajectory using the published v1.2 scheduler config
 
 The real-checkpoint run of the two v1.2 releases (10 real tests) took 45 minutes on an M2 Max (CPU).
 
+## Kandinsky 2.1
+
+Validation is pending the real-checkpoint run. The snapshot is pinned to decoder revision
+`04b3666` and prior revision `b726af6`; the planned CPU float32 comparison uses diffusers 0.40.0
+`KandinskyPriorPipeline` plus `KandinskyPipeline`.
+
+Published safetensors header fixtures cover the prior text encoder, prior image encoder,
+PriorTransformer, MultilingualCLIP text encoder, text-image-conditioned U-Net and MoVQ on the meta
+device. Random-weight reference tests currently match exactly for the XLM-RoBERTa tokenizer and
+MultilingualCLIP encoder, the text-image U-Net, the DDIM trajectory, and the tiny combined pipeline.
+The tiny end-to-end cases cover guidance on and off, an explicit negative prompt, non-square output
+and two seeds. The snapshot-gated suite records `header_kandinsky-2-1`, component comparisons,
+`e2e_kandinsky-2-1` and `seed_e2e_kandinsky-2-1`; measured real-weight values will be documented
+after that suite runs.
+
 ## Kandinsky 2.2
 
 Validated on CPU in the same environment as above. `kandinsky-2.2` was loaded strictly from the

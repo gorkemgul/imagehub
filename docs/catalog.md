@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**30 architecture families, 68 published checkpoints.** A model is a separately published set of weights;
+**31 architecture families, 69 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -8,7 +8,8 @@ fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as se
 
 **Validation levels:** `full` — tensors loaded strictly and parity with the recorded reference proven on CPU in
 fp32. `header_only` — tensor names and shapes matched, generation not tested. `experimental` — not
-tested with the original weights. In this release every model is `full`.
+tested with the original weights. Kandinsky 2.1 is `experimental` pending its real-checkpoint run;
+every other model is `full`.
 
 | Model id | Family | Source | Revision | Origin | Validation | Weight license | Awesome catalog |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -45,6 +46,7 @@ tested with the original weights. In this release every model is `full`.
 | `hunyuan-dit-v1.1-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled) | `527cf2e` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
 | `hunyuan-dit-v1.2` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers) | `5e96094` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
 | `hunyuan-dit-v1.2-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled) | `ba991d1` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
+| `kandinsky-2-1` | `kandinsky21` | [kandinsky-community/kandinsky-2-1](https://huggingface.co/kandinsky-community/kandinsky-2-1) | `04b3666` | author | experimental | Apache-2.0 | `kandinsky-2` |
 | `kandinsky-2.2` | `kandinsky22` | [kandinsky-community/kandinsky-2-2-decoder](https://huggingface.co/kandinsky-community/kandinsky-2-2-decoder) | `9ae140d` | author | full | Apache-2.0 | `kandinsky-2` |
 | `kandinsky-3` | `kandinsky3` | [kandinsky-community/kandinsky-3](https://huggingface.co/kandinsky-community/kandinsky-3) | `bf79e6c` | author | full | Apache-2.0 | `kandinsky-3` |
 | `pixart-sigma-xl-1024` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-1024-MS) | `e102b35` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
@@ -94,8 +96,8 @@ files, so they are loaded with `weights_only=True`, containing tensors only.
 Composite checkpoints can name a base model, omit base files with `base_exclude`, and overlay their
 own files. They can also use `subfolders` to place files from a second repository in a named
 snapshot subfolder. DMD2 excludes the base U-Net safetensors because its replacement U-Net is a
-PyTorch pickle under a different name. Kandinsky 2.2 places the prior repository at revision
-`9fc51ad` in the snapshot's `prior/` subfolder while the decoder remains at the snapshot root.
+PyTorch pickle under a different name. Kandinsky 2.1 and 2.2 place their pinned prior repositories
+in the snapshot's `prior/` subfolder while each decoder remains at the snapshot root.
 The PixArt-Sigma 256, 512 and 2K repositories publish only a transformer, so those models use
 `pixart-sigma-xl-1024` as their base and overlay its transformer files with their own.
 Stable Cascade does the same with `stabilityai/stable-cascade-prior` at revision `7ca32c2`, and
