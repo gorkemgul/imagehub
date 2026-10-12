@@ -52,8 +52,10 @@ def test_catalog_contents():
             "playground-v2",
             "playground-v2.5",
             "qwen-image-2.1",
+            "sana-1.5-4.8b-1024",
             "sana-1600m-1024",
             "sana-600m-1024",
+            "sana-sprint-1.6b-1024",
             "sd-turbo",
             "sd-v1-1",
             "sd-v1-2",
@@ -804,6 +806,60 @@ def test_sana_catalog_entries(model_id, repo, revision, transformer):
     assert spec.config == {
         "defaults": {"steps": 20, "guidance": 4.5, "width": 1024, "height": 1024}
     }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.json",
+        "text_encoder/model-00001-of-00002.safetensors",
+        "text_encoder/model-00002-of-00002.safetensors",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer.model",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        *transformer,
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
+@pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "transformer", "defaults"),
+    [
+        (
+            "sana-sprint-1.6b-1024",
+            "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+            "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+            ("transformer/diffusion_pytorch_model.safetensors",),
+            {"steps": 2, "guidance": 4.5, "width": 1024, "height": 1024},
+        ),
+        (
+            "sana-1.5-4.8b-1024",
+            "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+            "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+            (
+                "transformer/diffusion_pytorch_model.safetensors.index.json",
+                "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+                "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            ),
+            {"steps": 20, "guidance": 4.5, "width": 1024, "height": 1024},
+        ),
+    ],
+)
+def test_sana_new_catalog_entries(model_id, repo, revision, transformer, defaults):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "sana"
+    assert spec.source == f"https://huggingface.co/{repo}"
+    assert spec.repo_id == repo
+    assert spec.revision == revision
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "sana"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {"defaults": defaults}
     assert spec.files == (
         "model_index.json",
         "scheduler/scheduler_config.json",
