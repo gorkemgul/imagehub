@@ -259,25 +259,38 @@ def test_text_encoder(model_id, record):
     # the attention implementation is the one the pipeline selects.
     reference = _reference_pipeline(model_id, root, transformer=None, vae=None)
     with torch.inference_mode():
-        prompt_embeds, prompt_mask, negative_embeds, negative_mask = reference.encode_prompt(
-            PROMPT,
-            do_classifier_free_guidance=True,
-            negative_prompt="",
-            device=CPU,
-            clean_caption=False,
-            max_sequence_length=MAX_SEQUENCE_LENGTH,
-            complex_human_instruction=_reference_instruction(),
-        )
+        if model_id == "sana-sprint-1.6b-1024":
+            prompt_embeds, prompt_mask = reference.encode_prompt(
+                PROMPT,
+                device=CPU,
+                clean_caption=False,
+                max_sequence_length=MAX_SEQUENCE_LENGTH,
+                complex_human_instruction=_reference_instruction(),
+            )
+        else:
+            prompt_embeds, prompt_mask, negative_embeds, negative_mask = reference.encode_prompt(
+                PROMPT,
+                do_classifier_free_guidance=True,
+                negative_prompt="",
+                device=CPU,
+                clean_caption=False,
+                max_sequence_length=MAX_SEQUENCE_LENGTH,
+                complex_human_instruction=_reference_instruction(),
+            )
     del reference
     gc.collect()
     embeds, mask = _our_conditioning(root)
-    masks_match = torch.equal(mask[1:], prompt_mask.bool()) and torch.equal(
-        mask[:1], negative_mask.bool()
-    )
+    if model_id == "sana-sprint-1.6b-1024":
+        masks_match = torch.equal(mask[1:], prompt_mask.bool())
+    else:
+        masks_match = torch.equal(mask[1:], prompt_mask.bool()) and torch.equal(
+            mask[:1], negative_mask.bool()
+        )
     record(f"sana_{model_id}_text_encoder_masks", masks_match=masks_match, tolerance="exact")
     assert masks_match
     _check(record, f"sana_{model_id}_text_encoder_prompt", embeds[1:], prompt_embeds)
-    _check(record, f"sana_{model_id}_text_encoder_negative", embeds[:1], negative_embeds)
+    if model_id != "sana-sprint-1.6b-1024":
+        _check(record, f"sana_{model_id}_text_encoder_negative", embeds[:1], negative_embeds)
 
 
 @pytest.mark.parametrize("model_id", MODEL_IDS)
@@ -368,17 +381,32 @@ def test_end_to_end(model_id, record):
         model_id, root, 0, height=size, width=size
     )
     components = SanaComponents.load(root, device=CPU, dtype=torch.float32, model_id=model_id)
-    noise = torch.randn(1, 32, 32, 32, generator=torch.Generator("cpu").manual_seed(0))
-    actual_latents = denoise(
-        components,
-        prompt=PROMPT,
-        negative_prompt="",
-        steps=steps,
-        guidance=4.5,
-        max_sequence_length=MAX_SEQUENCE_LENGTH,
-        instruction=COMPLEX_HUMAN_INSTRUCTION,
-        latents=noise,
-    )
+    if model_id == "sana-sprint-1.6b-1024":
+        generator = torch.Generator("cpu").manual_seed(0)
+        noise = torch.randn(1, 32, 32, 32, generator=generator)
+        actual_latents = denoise(
+            components,
+            prompt=PROMPT,
+            negative_prompt="",
+            steps=steps,
+            guidance=4.5,
+            max_sequence_length=MAX_SEQUENCE_LENGTH,
+            instruction=COMPLEX_HUMAN_INSTRUCTION,
+            latents=noise,
+            generator=generator,
+        )
+    else:
+        noise = torch.randn(1, 32, 32, 32, generator=torch.Generator("cpu").manual_seed(0))
+        actual_latents = denoise(
+            components,
+            prompt=PROMPT,
+            negative_prompt="",
+            steps=steps,
+            guidance=4.5,
+            max_sequence_length=MAX_SEQUENCE_LENGTH,
+            instruction=COMPLEX_HUMAN_INSTRUCTION,
+            latents=noise,
+        )
     actual_pixels = decode_latents(
         components.vae, actual_latents, output_width=size, output_height=size, resize=True
     )
