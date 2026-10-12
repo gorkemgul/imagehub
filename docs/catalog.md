@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**30 architecture families, 68 published checkpoints.** A model is a separately published set of weights;
+**31 architecture families, 71 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -61,6 +61,7 @@ tested with the original weights. In this release every model is `full`.
 | `lumina-image-2.0` | `lumina2` | [Alpha-VLLM/Lumina-Image-2.0](https://huggingface.co/Alpha-VLLM/Lumina-Image-2.0) | `53504ab` | author | full | Apache-2.0 | `lumina-image-2` |
 | `lumina-next` | `lumina-next` | [Alpha-VLLM/Lumina-Next-SFT-diffusers](https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers) | `0ee5ec9` | author | full | Apache-2.0 | `lumina-next` |
 | `omnigen-v1` | `omnigen` | [Shitao/OmniGen-v1-diffusers](https://huggingface.co/Shitao/OmniGen-v1-diffusers) | `016e2f6` | author | full | MIT | `omnigen` |
+| `chroma1-hd` | `chroma` | [lodestones/Chroma1-HD](https://huggingface.co/lodestones/Chroma1-HD) | `0e0c60e` | author | full | Apache-2.0 | `chroma1-hd` |
 | `amused-256` | `amused` | [amused/amused-256](https://huggingface.co/amused/amused-256) | `09b6259` | author | full | OpenRAIL++ | `amused` |
 | `amused-512` | `amused` | [amused/amused-512](https://huggingface.co/amused/amused-512) | `6f3f309` | author | full | OpenRAIL++ | `amused` |
 | `auraflow-v0.3` | `auraflow` | [fal/AuraFlow-v0.3](https://huggingface.co/fal/AuraFlow-v0.3) | `2cd8588` | author | full | Apache-2.0 | `auraflow` |

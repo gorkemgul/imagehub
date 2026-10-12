@@ -958,6 +958,41 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="chroma1-hd",
+        task=Task.T2I,
+        family="chroma",
+        source="https://huggingface.co/lodestones/Chroma1-HD",
+        repo_id="lodestones/Chroma1-HD",
+        revision="0e0c60ece1e82b17cb7f77342d765ba5024c40c0",
+        provenance="author",
+        catalog_id="chroma1-hd",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 35, "guidance": 5.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "text_encoder/model.safetensors.index.json",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 _HUNYUAN_DIT_FILES = (
     "model_index.json",
     "scheduler/scheduler_config.json",

@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-11",
+  "date": "2026-10-12",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -2746,6 +2746,63 @@
         "passed": true,
         "seed": 1234,
         "steps": 4
+      }
+    },
+    {
+      "model_id": "chroma1-hd",
+      "repo_id": "lodestones/Chroma1-HD",
+      "revision": "0e0c60ece1e82b17cb7f77342d765ba5024c40c0",
+      "provenance": "author",
+      "catalog_id": "chroma1-hd",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "cf83237e214327ef542d8b139cade5537fb44b8eb3aa33911ad6a5f8b4356202",
+        "scheduler/scheduler_config.json": "5420bd572b9a520774c50d79a8bb511f73bf58e691c2a38e4763435625cea197",
+        "text_encoder/config.json": "a5052c13f27780d720c78338cb51235395aabb2ed65813dbf6b305727727fb62",
+        "text_encoder/model-00001-of-00002.safetensors": "ec87bffd1923e8b2774a6d240c922a41f6143081d52cf83b8fe39e9d838c893e",
+        "text_encoder/model-00002-of-00002.safetensors": "a5640855b301fcdbceddfa90ae8066cd9414aff020552a201a255ecf2059da00",
+        "text_encoder/model.safetensors.index.json": "c5809e56de8e23807f2a901d63a55d42773419080a072458da93c250e4436eac",
+        "tokenizer/added_tokens.json": "ea5a91a3234f66ea642c8e672d67f0f493759a9bee6910ae304ea9b9492118b5",
+        "tokenizer/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
+        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer/tokenizer_config.json": "00ded71621afa8f055c4dccf1805d6f2cab12eebe5fd61a95491a009c8c13878",
+        "transformer/config.json": "ccd21d38e4f3f2e745118d1e6604c51078067e346f7eeccfc03a4e1e64f5a6d6",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "59f0b26eccaabb8301e4166e653f1bcdebd7c46a4a07b02fe33d7a2c46d78eba",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "65e6541afdabbb96568a3f8975eeef929f0a7e0eef3d2c4741b1bf911ac3a6d5",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "bc392d3de12793adafca3a1a8330097ffd3aca8d306b856dc5f71a3cbd573bd3",
+        "vae/config.json": "e423b4a9e49572574de14faf263494416bc757e1bdd62645cfade7284a912565",
+        "vae/diffusion_pytorch_model.safetensors": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 1023,
+          "vae": 244
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "max_pixel_diff": 0,
+        "passed": true,
+        "steps": 2
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 2
       }
     },
     {
@@ -9595,6 +9652,13 @@
       "tolerance": 0.0
     }
   },
+  "components_chroma": {
+    "chroma_scheduler": {
+      "exact": true,
+      "mu": 1.15,
+      "tolerance": "exact"
+    }
+  },
   "seed_end_to_end": {
     "passed": true,
     "pixels_max_abs": 0,
@@ -9617,11 +9681,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (glm-image)"
+    "reference_summary": "14 passed (chroma1-hd)"
   }
 }
