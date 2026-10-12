@@ -26,7 +26,9 @@ def test_family_and_model_aliases_are_registered():
         "hunyuan-dit-v1.2",
         "hunyuan-dit-v1.2-distilled",
     } <= set(names)
-    assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024"} <= set(names)
+    assert {"pixart", "pixart-sigma-xl-1024", "pixart-alpha-xl-1024", "pixart-lcm-xl-1024"} <= set(
+        names
+    )
     assert {"krea2", "krea2-turbo"} <= set(names)
     assert "ernie-image" in names
     assert "longcat-image" in names

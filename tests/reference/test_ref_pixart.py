@@ -16,6 +16,7 @@ from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.pixart_transformer import PixArtTransformer2DModel
 from imagehub.models.t5 import T5EncoderModel
 from imagehub.schedulers.dpmsolver_multistep import DPMSolverMultistepScheduler
+from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.tokenization_t5 import T5Tokenizer
 
 pytestmark = pytest.mark.reference
@@ -31,11 +32,13 @@ MODELS = {
     "pixart-sigma-xl-256": (300, 256),
     "pixart-sigma-xl-512": (300, 512),
     "pixart-sigma-xl-2k": (300, 2048),
+    "pixart-lcm-xl-1024": (120, 1024),
 }
 MODEL_IDS = tuple(MODELS)
 # The 2K model is checked at 1024 pixels in the single-step and decode tests to keep them short; its
 # end-to-end runs use a reduced step count.
-STEPS = {"pixart-sigma-xl-2k": 4}
+STEPS = {"pixart-sigma-xl-2k": 4, "pixart-lcm-xl-1024": 4}
+GUIDANCE = {"pixart-lcm-xl-1024": 0.0}
 PROMPT = "a photograph of an astronaut riding a horse"
 
 
@@ -200,12 +203,21 @@ def test_vae(model_id, record):
 def test_scheduler_timesteps(model_id, record):
     root = snapshot_dir(model_id)
     config = read_json(root / "scheduler" / "scheduler_config.json")
-    ours = DPMSolverMultistepScheduler(config)
-    reference = diffusers.DPMSolverMultistepScheduler.from_config(config)
-    ours.set_timesteps(20)
-    reference.set_timesteps(20)
+    scheduler_class = (
+        LCMScheduler if config["_class_name"] == "LCMScheduler" else DPMSolverMultistepScheduler
+    )
+    reference_class = (
+        diffusers.LCMScheduler
+        if config["_class_name"] == "LCMScheduler"
+        else diffusers.DPMSolverMultistepScheduler
+    )
+    ours = scheduler_class(config)
+    reference = reference_class.from_config(config)
+    steps = STEPS.get(model_id, 20)
+    ours.set_timesteps(steps)
+    reference.set_timesteps(steps)
     exact = torch.equal(ours.timesteps, reference.timesteps.cpu())
-    record(f"{model_id}_scheduler", exact=exact, steps=20, tolerance="exact")
+    record(f"{model_id}_scheduler", exact=exact, steps=steps, tolerance="exact")
     assert exact
 
 
@@ -222,7 +234,7 @@ def _reference_output(root, model_id, *, latents=None, seed=42, steps=None, size
     kwargs = {
         "prompt": PROMPT,
         "num_inference_steps": steps,
-        "guidance_scale": 4.5,
+        "guidance_scale": GUIDANCE.get(model_id, 4.5),
         "height": size,
         "width": size,
         "generator": torch.Generator("cpu").manual_seed(seed),
@@ -252,11 +264,12 @@ def test_end_to_end_fixed_latents(model_id, record):
         prompt=PROMPT,
         negative_prompt=None,
         steps=steps,
-        guidance=4.5,
+        guidance=GUIDANCE.get(model_id, 4.5),
         width=size,
         height=size,
         max_sequence_length=max_length,
         latents=noise.clone(),
+        generator=torch.Generator("cpu").manual_seed(42),
     )
     actual_pixels = decode_latents(
         components.vae,
@@ -274,7 +287,7 @@ def test_end_to_end_fixed_latents(model_id, record):
         passed=latent_diff["max_abs"] == 0 and pixel_diff == 0,
         prompt=PROMPT,
         steps=steps,
-        guidance=4.5,
+        guidance=GUIDANCE.get(model_id, 4.5),
         size=[size, size],
         noise_seed=7,
         scheduler_seed=42,
