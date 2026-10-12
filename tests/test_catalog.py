@@ -12,6 +12,7 @@ def test_catalog_contents():
             "amused-256",
             "amused-512",
             "auraflow-v0.3",
+            "chroma1-hd",
             "cogview3-plus-3b",
             "cogview4-6b",
             "dmd2-sdxl-1step",
@@ -35,6 +36,7 @@ def test_catalog_contents():
             "kandinsky-2-1",
             "kandinsky-2.2",
             "kandinsky-3",
+            "kandinsky-5-t2i-lite",
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
@@ -53,8 +55,10 @@ def test_catalog_contents():
             "playground-v2",
             "playground-v2.5",
             "qwen-image-2.1",
+            "sana-1.5-4.8b-1024",
             "sana-1600m-1024",
             "sana-600m-1024",
+            "sana-sprint-1.6b-1024",
             "sd-turbo",
             "sd-v1-1",
             "sd-v1-2",
@@ -818,6 +822,41 @@ def test_auraflow_catalog_entry():
     )
 
 
+def test_chroma_catalog_entry():
+    spec = model_info("chroma1-hd")
+    assert spec.task is Task.T2I
+    assert spec.family == "chroma"
+    assert spec.source == "https://huggingface.co/lodestones/Chroma1-HD"
+    assert spec.repo_id == "lodestones/Chroma1-HD"
+    assert spec.revision == "0e0c60ece1e82b17cb7f77342d765ba5024c40c0"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "chroma1-hd"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 35, "guidance": 5.0, "width": 1024, "height": 1024}
+    }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model-00001-of-00002.safetensors",
+        "text_encoder/model-00002-of-00002.safetensors",
+        "text_encoder/model.safetensors.index.json",
+        "tokenizer/added_tokens.json",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/spiece.model",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+        "transformer/diffusion_pytorch_model.safetensors.index.json",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
 @pytest.mark.parametrize(
     ("model_id", "repo", "revision", "transformer"),
     [
@@ -854,6 +893,60 @@ def test_sana_catalog_entries(model_id, repo, revision, transformer):
     assert spec.config == {
         "defaults": {"steps": 20, "guidance": 4.5, "width": 1024, "height": 1024}
     }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors.index.json",
+        "text_encoder/model-00001-of-00002.safetensors",
+        "text_encoder/model-00002-of-00002.safetensors",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer.model",
+        "tokenizer/tokenizer_config.json",
+        "transformer/config.json",
+        *transformer,
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+    )
+
+
+@pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "transformer", "defaults"),
+    [
+        (
+            "sana-sprint-1.6b-1024",
+            "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+            "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+            ("transformer/diffusion_pytorch_model.safetensors",),
+            {"steps": 2, "guidance": 4.5, "width": 1024, "height": 1024},
+        ),
+        (
+            "sana-1.5-4.8b-1024",
+            "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+            "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+            (
+                "transformer/diffusion_pytorch_model.safetensors.index.json",
+                "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+                "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            ),
+            {"steps": 20, "guidance": 4.5, "width": 1024, "height": 1024},
+        ),
+    ],
+)
+def test_sana_new_catalog_entries(model_id, repo, revision, transformer, defaults):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "sana"
+    assert spec.source == f"https://huggingface.co/{repo}"
+    assert spec.repo_id == repo
+    assert spec.revision == revision
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "sana"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {"defaults": defaults}
     assert spec.files == (
         "model_index.json",
         "scheduler/scheduler_config.json",

@@ -958,6 +958,41 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="chroma1-hd",
+        task=Task.T2I,
+        family="chroma",
+        source="https://huggingface.co/lodestones/Chroma1-HD",
+        repo_id="lodestones/Chroma1-HD",
+        revision="0e0c60ece1e82b17cb7f77342d765ba5024c40c0",
+        provenance="author",
+        catalog_id="chroma1-hd",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 35, "guidance": 5.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "text_encoder/model.safetensors.index.json",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 _HUNYUAN_DIT_FILES = (
     "model_index.json",
     "scheduler/scheduler_config.json",
@@ -1217,6 +1252,58 @@ for _sana_id, _sana_repo, _sana_revision, _sana_weights in _SANA_VARIANTS:
             ),
         )
     )
+
+# Sana-Sprint uses the SCM scheduler and guidance embeddings; defaults to the 2-step
+# inference schedule used by the upstream pipeline.
+_entries.append(
+    ModelSpec(
+        id="sana-sprint-1.6b-1024",
+        task=Task.T2I,
+        family="sana",
+        source="https://huggingface.co/Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+        repo_id="Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+        revision="19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+        provenance="author",
+        catalog_id="sana",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 2, "guidance": 4.5, "width": 1024, "height": 1024}},
+        files=(
+            *_SANA_COMMON,
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+# Sana 1.5 4.8B keeps the standard DPMSolverMultistep scheduler but adds qk_norm and
+# uses a 60-layer transformer split across two safetensors shards.
+_entries.append(
+    ModelSpec(
+        id="sana-1.5-4.8b-1024",
+        task=Task.T2I,
+        family="sana",
+        source="https://huggingface.co/Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+        repo_id="Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+        revision="9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+        provenance="author",
+        catalog_id="sana",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 20, "guidance": 4.5, "width": 1024, "height": 1024}},
+        files=(
+            *_SANA_COMMON,
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
 
 # Kolors publishes float16 weights only; the loaders read the variant file names.
 _entries.append(
@@ -1885,6 +1972,53 @@ _entries.append(
             "tokenizer/tokenizer_config.json",
             "unet/config.json",
             "unet/diffusion_pytorch_model.fp16.safetensors",
+        ),
+    )
+)
+
+# Kandinsky 5 publishes bfloat16 transformer and text-encoder weights; the catalog lists them
+# as released and the native loaders upcast to float32 for parity testing.
+_entries.append(
+    ModelSpec(
+        id="kandinsky-5-t2i-lite",
+        task=Task.T2I,
+        family="kandinsky5",
+        source="https://huggingface.co/kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers",
+        repo_id="kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers",
+        revision="25da1e82e6adefdbc83c02a71f762287c5e471a4",
+        provenance="author",
+        catalog_id="kandinsky-5",
+        format="diffusers",
+        license="MIT",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 3.5, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00005.safetensors",
+            "text_encoder/model-00002-of-00005.safetensors",
+            "text_encoder/model-00003-of-00005.safetensors",
+            "text_encoder/model-00004-of-00005.safetensors",
+            "text_encoder/model-00005-of-00005.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "tokenizer/preprocessor_config.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
         ),
     )
 )

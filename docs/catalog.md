@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**31 architecture families, 69 published checkpoints.** A model is a separately published set of weights;
+**33 architecture families, 73 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -49,6 +49,7 @@ every other model is `full`.
 | `kandinsky-2-1` | `kandinsky21` | [kandinsky-community/kandinsky-2-1](https://huggingface.co/kandinsky-community/kandinsky-2-1) | `04b3666` | author | experimental | Apache-2.0 | `kandinsky-2` |
 | `kandinsky-2.2` | `kandinsky22` | [kandinsky-community/kandinsky-2-2-decoder](https://huggingface.co/kandinsky-community/kandinsky-2-2-decoder) | `9ae140d` | author | full | Apache-2.0 | `kandinsky-2` |
 | `kandinsky-3` | `kandinsky3` | [kandinsky-community/kandinsky-3](https://huggingface.co/kandinsky-community/kandinsky-3) | `bf79e6c` | author | full | Apache-2.0 | `kandinsky-3` |
+| `kandinsky-5-t2i-lite` | `kandinsky5` | [kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers](https://huggingface.co/kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers) | `25da1e8` | author | full | MIT | `kandinsky-5` |
 | `pixart-sigma-xl-1024` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-1024-MS) | `e102b35` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
 | `pixart-alpha-xl-1024` | `pixart` | [PixArt-alpha/PixArt-XL-2-1024-MS](https://huggingface.co/PixArt-alpha/PixArt-XL-2-1024-MS) | `b89adad` | author | full | CreativeML-OpenRAIL++-M | `pixart-alpha` |
 | `pixart-alpha-xl-512` | `pixart` | [PixArt-alpha/PixArt-XL-2-512x512](https://huggingface.co/PixArt-alpha/PixArt-XL-2-512x512) | `50f7021` | author | full | CreativeML-OpenRAIL++-M | `pixart-alpha` |
@@ -57,13 +58,13 @@ every other model is `full`.
 | `pixart-sigma-xl-2k` | `pixart` | [PixArt-alpha/PixArt-Sigma-XL-2-2K-MS](https://huggingface.co/PixArt-alpha/PixArt-Sigma-XL-2-2K-MS) | `cd274f4` | author | full | CreativeML-OpenRAIL++-M | `pixart-sigma` |
 | `sana-1600m-1024` | `sana` | [Efficient-Large-Model/Sana_1600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_1600M_1024px_diffusers) | `ac0da2f` | author | full | Apache-2.0 | `sana` |
 | `sana-600m-1024` | `sana` | [Efficient-Large-Model/Sana_600M_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_600M_1024px_diffusers) | `28f3af7` | author | full | Apache-2.0 | `sana` |
+| `sana-sprint-1.6b-1024` | `sana` | [Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers) | `19683c5` | author | full | Apache-2.0 | `sana` |
+| `sana-1.5-4.8b-1024` | `sana` | [Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers](https://huggingface.co/Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers) | `9468102` | author | full | Apache-2.0 | `sana` |
 | `kolors` | `kolors` | [Kwai-Kolors/Kolors-diffusers](https://huggingface.co/Kwai-Kolors/Kolors-diffusers) | `7e091c7` | author | full | Apache-2.0 | `kolors` |
 | `lumina-image-2.0` | `lumina2` | [Alpha-VLLM/Lumina-Image-2.0](https://huggingface.co/Alpha-VLLM/Lumina-Image-2.0) | `53504ab` | author | full | Apache-2.0 | `lumina-image-2` |
-<<<<<<< HEAD
-| `omnigen-v1` | `omnigen` | [Shitao/OmniGen-v1-diffusers](https://huggingface.co/Shitao/OmniGen-v1-diffusers) | `016e2f6` | author | full | MIT | `omnigen` |
-=======
 | `lumina-next` | `lumina-next` | [Alpha-VLLM/Lumina-Next-SFT-diffusers](https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers) | `0ee5ec9` | author | full | Apache-2.0 | `lumina-next` |
->>>>>>> origin/main
+| `omnigen-v1` | `omnigen` | [Shitao/OmniGen-v1-diffusers](https://huggingface.co/Shitao/OmniGen-v1-diffusers) | `016e2f6` | author | full | MIT | `omnigen` |
+| `chroma1-hd` | `chroma` | [lodestones/Chroma1-HD](https://huggingface.co/lodestones/Chroma1-HD) | `0e0c60e` | author | full | Apache-2.0 | `chroma1-hd` |
 | `amused-256` | `amused` | [amused/amused-256](https://huggingface.co/amused/amused-256) | `09b6259` | author | full | OpenRAIL++ | `amused` |
 | `amused-512` | `amused` | [amused/amused-512](https://huggingface.co/amused/amused-512) | `6f3f309` | author | full | OpenRAIL++ | `amused` |
 | `auraflow-v0.3` | `auraflow` | [fal/AuraFlow-v0.3](https://huggingface.co/fal/AuraFlow-v0.3) | `2cd8588` | author | full | Apache-2.0 | `auraflow` |
@@ -83,11 +84,8 @@ every other model is `full`.
 | `stable-cascade` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
 | `stable-cascade-lite` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
 | `wuerstchen-v2` | `wuerstchen` | [warp-ai/wuerstchen](https://huggingface.co/warp-ai/wuerstchen) | `c3da414` | author | full | mit | `wuerstchen` |
-<<<<<<< HEAD
-| `glm-image` | `glm-image` | [zai-org/GLM-Image](https://huggingface.co/zai-org/GLM-Image) | `2c433cc` | author | full | MIT | `glm-image` |
-=======
 | `hidream-i1-fast` | `hidream` | [HiDream-ai/HiDream-I1-Fast](https://huggingface.co/HiDream-ai/HiDream-I1-Fast) | `4856a5d` | author | full | MIT | `hidream-i1` |
->>>>>>> origin/main
+| `glm-image` | `glm-image` | [zai-org/GLM-Image](https://huggingface.co/zai-org/GLM-Image) | `2c433cc` | author | full | MIT | `glm-image` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
 repository used is a community mirror. The v1.1–v1.3 fp32 weights are published only as `.bin`
@@ -99,7 +97,7 @@ snapshot subfolder. DMD2 excludes the base U-Net safetensors because its replace
 PyTorch pickle under a different name. Kandinsky 2.1 and 2.2 place their pinned prior repositories
 in the snapshot's `prior/` subfolder while each decoder remains at the snapshot root.
 The PixArt-Sigma 256, 512 and 2K repositories publish only a transformer, so those models use
-`pixart-sigma-xl-1024` as their base and overlay its transformer files with their own.
+`pixart-sigma-xl-1024` as their base and overlay their transformer files with their own.
 Stable Cascade does the same with `stabilityai/stable-cascade-prior` at revision `7ca32c2`, and
 Würstchen v2 with `warp-ai/wuerstchen-prior` at revision `c41be63`.
 `python -m imagehub.pretrained` downloads both sources, each pinned and verified, and the snapshot
@@ -141,6 +139,9 @@ see the license.
 The `ideogram4-fp8` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN` when
 downloading with `python -m imagehub.pretrained`. The weights use the Ideogram 4 Non-Commercial
 License; see the license.
+
+Kandinsky 5 publishes bfloat16 transformer and text-encoder weights; the catalog lists them as
+released and the native loaders upcast them to float32 for parity testing.
 
 Kolors publishes float16 weights only (`*.fp16.safetensors`), so its file list uses those names. Parity is
 measured on their float32 upcast, which is also what diffusers computes with

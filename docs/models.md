@@ -28,6 +28,7 @@ python -m imagehub.pretrained sd-v1-5 checkpoints/sd-v1-5
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
@@ -66,7 +67,10 @@ python -m imagehub.pretrained lcm-dreamshaper-v7 checkpoints/lcm-dreamshaper-v7
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="lcm-dreamshaper-v7", model="checkpoints/lcm-dreamshaper-v7", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="lcm-dreamshaper-v7", model="checkpoints/lcm-dreamshaper-v7", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -106,6 +110,7 @@ python -m imagehub.pretrained sd-v2-1 checkpoints/sd-v2-1
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sd-v2-1", model="checkpoints/sd-v2-1", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -143,6 +148,7 @@ python -m imagehub.pretrained sd-turbo checkpoints/sd-turbo
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sd-turbo", model="checkpoints/sd-turbo", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -199,7 +205,10 @@ python -m imagehub.pretrained sdxl-base-1.0 checkpoints/sdxl-base-1.0
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="sdxl-base-1.0", model="checkpoints/sdxl-base-1.0", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="sdxl-base-1.0", model="checkpoints/sdxl-base-1.0", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
 ```
@@ -212,6 +221,7 @@ python -m imagehub.pretrained hyper-sdxl-1step checkpoints/hyper-sdxl-1step
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="hyper-sdxl-1step", model="checkpoints/hyper-sdxl-1step") as pipe:
     result = pipe("a cat, oil painting", steps=1, guidance=0.0, timesteps=[800], seed=42)
     result.images[0].save("cat.png")
@@ -226,6 +236,7 @@ python -m imagehub.pretrained dmd2-sdxl-1step checkpoints/dmd2-sdxl-1step
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="dmd2-sdxl-4step", model="checkpoints/dmd2-sdxl-4step") as pipe:
     result = pipe(
         "a cat, oil painting",
@@ -281,7 +292,10 @@ python -m imagehub.pretrained sdxl-refiner-1.0 checkpoints/sdxl-refiner-1.0
 ```python
 from PIL import Image
 from imagehub import pipeline
-with pipeline("t2i", backend="sdxl-refiner-1.0", model="checkpoints/sdxl-refiner-1.0", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="sdxl-refiner-1.0", model="checkpoints/sdxl-refiner-1.0", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", image=Image.open("cat.png"), strength=0.3, seed=0)
     result.images[0].save("refined.png")
 ```
@@ -330,6 +344,7 @@ python -m imagehub.pretrained sdxl-turbo checkpoints/sdxl-turbo
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sdxl-turbo", model="checkpoints/sdxl-turbo", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -371,6 +386,7 @@ python -m imagehub.pretrained ssd-1b checkpoints/ssd-1b
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="ssd-1b", model="checkpoints/ssd-1b", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
@@ -413,6 +429,7 @@ HF_TOKEN=... python -m imagehub.pretrained sd3-medium checkpoints/sd3-medium
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sd3-medium", model="checkpoints/sd3-medium", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
@@ -455,7 +472,10 @@ HF_TOKEN=... python -m imagehub.pretrained flux1-schnell checkpoints/flux1-schne
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="flux1-schnell", model="checkpoints/flux1-schnell", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="flux1-schnell", model="checkpoints/flux1-schnell", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -483,7 +503,10 @@ FLUX.1 [dev] architecture, per its model card. Its published configs are identic
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="flux1-krea-dev", model="checkpoints/flux1-krea-dev", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="flux1-krea-dev", model="checkpoints/flux1-krea-dev", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -506,7 +529,10 @@ only the generated tokens are decoded.
 ```python
 from PIL import Image
 from imagehub import pipeline
-with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-kontext-dev", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-kontext-dev", device="mps"
+) as pipe:
     result = pipe("Add a red hat to the scene", image=Image.open("photo.png"), seed=0)
     result.images[0].save("edited.png")
 ```
@@ -535,6 +561,52 @@ with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-konte
   diffusers 0.40.0 `FluxKontextPipeline` ([validation](validation.md)).
 
 
+# Chroma
+
+Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `chroma1-hd` · Task: `t2i`
+
+**Architecture.** Chroma1-HD is a ~8.9B diffusion transformer built on the FLUX.1 latent-flow
+foundation. It reuses the FLUX.1 VAE (16 latent channels, scaling factor 0.3611, shift factor 0.1159)
+and the flow-match Euler scheduler with exponential shifting. The text encoder is T5-XXL (4.7B
+parameters, bfloat16 weights) with a native SentencePiece Unigram tokenizer. The new Chroma
+transformer replaces FLUX.1's timestep-plus-pooled-text embedding with a distilled-guidance
+approximator: a sinusoidal timestep projection is combined with a fixed modulation projection and
+fed through a small MLP to produce per-block scale, shift and gate vectors for all 19 double-stream
+and 38 single-stream blocks. Attention is joint over text and image tokens, using 3-axis RoPE and an
+attention mask that keeps the real text tokens plus one padding token (the remaining padding tokens
+are masked out). Classifier-free guidance is applied when `guidance > 1`; otherwise the negative
+pass is skipped.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained chroma1-hd checkpoints/chroma1-hd
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="chroma1-hd", model="checkpoints/chroma1-hd", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The model defaults to 35 steps, guidance 5.0 and 1024×1024; `width` and `height` must
+be multiples of 16. The other supported options are `num_images`, `seed`, `latents`,
+`negative_prompt` and `max_sequence_length` (default 512, at most 512). Unrecognized settings raise
+an error.
+
+**Seed compatibility.** Random-weight parity against diffusers 0.40.0 `ChromaPipeline` is exact on
+CPU in float32. Real-weight parity with the published bfloat16 weights will be measured when the
+local snapshot is available ([validation](validation.md)). MPS and CUDA runs are smoke tests only;
+there is no claim of exact equality on these devices.
+
+**Out of scope.** Img2img, inpainting, IP-Adapter, LoRA, single-file checkpoint loading and
+fp16/bf16 parity are not supported.
+
+**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+
+
 # FLUX.2 klein
 
 Catalog: [`flux-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -556,7 +628,10 @@ python -m imagehub.pretrained flux2-klein-4b checkpoints/flux2-klein-4b
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="flux2-klein-4b", model="checkpoints/flux2-klein-4b", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="flux2-klein-4b", model="checkpoints/flux2-klein-4b", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -597,7 +672,13 @@ python -m imagehub.pretrained hunyuan-dit-v1.1-distilled checkpoints/hunyuan-dit
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="hunyuan-dit-v1.1-distilled", model="checkpoints/hunyuan-dit-v1.1-distilled", device="mps") as pipe:
+
+with pipeline(
+    "t2i",
+    backend="hunyuan-dit-v1.1-distilled",
+    model="checkpoints/hunyuan-dit-v1.1-distilled",
+    device="mps",
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -677,7 +758,10 @@ python -m imagehub.pretrained kandinsky-2.2 checkpoints/kandinsky-2.2
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="kandinsky-2.2", model="checkpoints/kandinsky-2.2", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="kandinsky-2.2", model="checkpoints/kandinsky-2.2", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -720,6 +804,7 @@ python -m imagehub.pretrained kandinsky-3 checkpoints/kandinsky-3
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="kandinsky-3", model="checkpoints/kandinsky-3", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -753,6 +838,61 @@ supported.
 
 **License.** The repository declares the Apache-2.0 license. imagehub does not distribute weights.
 
+
+# Kandinsky 5
+
+Catalog: [`kandinsky-5`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `kandinsky-5-t2i-lite` · Task: `t2i`
+
+**Architecture.** A flow-matching text-to-image diffusion transformer. A Qwen2.5-VL text model
+encodes a templated prompt into token embeddings; a secondary CLIP ViT-L text encoder supplies a
+pooled text embedding. A 3D transformer (patch size 1×2×2 over the latent depth, height and width)
+denoises 16-channel latents with self-attention, cross-attention to the Qwen states, and 3D rotary
+position embeddings for the visual tokens. An f=8 FLUX-style autoencoder (scaling factor 0.3611,
+shift 0.1159) maps between 16-channel latents and pixels. The scheduler is flow-match Euler with a
+shift of 5.0.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained kandinsky-5-t2i-lite checkpoints/kandinsky-5-t2i-lite
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="kandinsky5", model="checkpoints/kandinsky-5-t2i-lite", device="mps"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The defaults are 50 steps, guidance 3.5 and 1024×1024. The supported options are
+`seed`, `latents`, `steps`, `guidance`, `width`, `height`, `num_images`, `negative_prompt` and
+`max_sequence_length`. Requests are snapped to one of the
+published aspect ratios (1024×1024, 640×1408, 1408×640, 768×1280, 1280×768, 896×1152, 1152×896) by
+matching aspect ratio, and the metadata holds the actual size. `steps` is at most 1000 and
+`max_sequence_length` is at most 1024. Guidance greater than 1.0 enables classifier-free guidance
+with the negative prompt, or an empty prompt when none is supplied. Unrecognized settings raise an
+error.
+
+**Weights.** The transformer and Qwen text encoder are published in bfloat16; the catalog lists the
+published files and the native loaders upcast them to float32 on load. Parity is measured on that
+upcast.
+
+**Memory.** The transformer is about 6B parameters and the Qwen text encoder about 7B parameters;
+real-checkpoint runs require substantial memory and should use shortened step counts.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` once the real-checkpoint validation is run.
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** Inpainting, image-to-image, video, other checkpoints, other schedulers,
+precomputed prompt embeddings, batches of several prompts and fp16/bf16 parity are not supported.
+
+**License.** The repository declares the MIT license. imagehub does not distribute weights.
+
 # Stable Cascade
 
 Catalog: [`wuerstchen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -779,6 +919,7 @@ python -m imagehub.pretrained stable-cascade-lite checkpoints/stable-cascade-lit
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", model="stable-cascade-lite", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -840,6 +981,7 @@ python -m imagehub.pretrained wuerstchen-v2 checkpoints/wuerstchen-v2
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", model="wuerstchen-v2", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -894,8 +1036,9 @@ python -m imagehub.pretrained glm-image checkpoints/glm-image
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", model="glm-image", device="mps") as pipe:
-    result = pipe("A neon sign that reads \"Open Late\" on a rainy street", seed=42)
+    result = pipe('A neon sign that reads "Open Late" on a rainy street', seed=42)
     result.images[0].save("sign.png")
 ```
 
@@ -949,7 +1092,10 @@ python -m imagehub.pretrained pixart-sigma-xl-1024 checkpoints/pixart-sigma-xl-1
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="pixart-sigma-xl-1024", model="checkpoints/pixart-sigma-xl-1024", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="pixart-sigma-xl-1024", model="checkpoints/pixart-sigma-xl-1024", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
 ```
@@ -998,6 +1144,7 @@ HF_TOKEN=... python -m imagehub.pretrained krea2-turbo checkpoints/krea2-turbo
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="krea2-turbo", model="checkpoints/krea2-turbo", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -1041,6 +1188,7 @@ python -m imagehub.pretrained ernie-image checkpoints/ernie-image
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="ernie-image", model="checkpoints/ernie-image", device="mps") as pipe:
     result = pipe("a poster that says 'HELLO', flat design", seed=42)
     result.images[0].save("poster.png")
@@ -1083,7 +1231,10 @@ python -m imagehub.pretrained longcat-image checkpoints/longcat-image
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="longcat-image", model="checkpoints/longcat-image", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="longcat-image", model="checkpoints/longcat-image", device="mps"
+) as pipe:
     result = pipe(
         "a cat, oil painting",
         seed=42,
@@ -1130,7 +1281,10 @@ python -m imagehub.pretrained cogview3-plus-3b checkpoints/cogview3-plus-3b
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="cogview3-plus-3b", model="checkpoints/cogview3-plus-3b", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="cogview3-plus-3b", model="checkpoints/cogview3-plus-3b", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1175,6 +1329,7 @@ python -m imagehub.pretrained cogview4-6b checkpoints/cogview4-6b
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="cogview4-6b", model="checkpoints/cogview4-6b", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -1221,7 +1376,10 @@ HF_TOKEN=... python -m imagehub.pretrained ideogram4-fp8 checkpoints/ideogram4-f
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="ideogram4-fp8", model="checkpoints/ideogram4-fp8", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="ideogram4-fp8", model="checkpoints/ideogram4-fp8", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42, preset="V4_QUALITY_48")
     result.images[0].save("cat.png")
 ```
@@ -1262,7 +1420,10 @@ python -m imagehub.pretrained qwen-image-2.1 checkpoints/qwen-image-2.1
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="qwen-image-2.1", model="checkpoints/qwen-image-2.1", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="qwen-image-2.1", model="checkpoints/qwen-image-2.1", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry", true_cfg=4.0)
     result.images[0].save("cat.png")
 ```
@@ -1303,7 +1464,10 @@ python -m imagehub.pretrained janus-pro-1b checkpoints/janus-pro-1b
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="janus-pro-1b", model="checkpoints/janus-pro-1b", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="janus-pro-1b", model="checkpoints/janus-pro-1b", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1340,7 +1504,10 @@ python -m imagehub.pretrained playground-v2 checkpoints/playground-v2
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="playground-v2", model="checkpoints/playground-v2", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="playground-v2", model="checkpoints/playground-v2", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1380,7 +1547,10 @@ python -m imagehub.pretrained playground-v2.5 checkpoints/playground-v2.5
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="playground-v2.5", model="checkpoints/playground-v2.5", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="playground-v2.5", model="checkpoints/playground-v2.5", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1419,6 +1589,7 @@ python -m imagehub.pretrained z-image-turbo checkpoints/z-image-turbo
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="z-image", model="checkpoints/z-image-turbo", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -1442,17 +1613,21 @@ img2img, LoRA and fp16/bf16 parity are not in this release.
 # Sana
 
 Catalog: [`sana`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
-`sana-1600m-1024`, `sana-600m-1024` · Task: `t2i`
+`sana-1600m-1024`, `sana-600m-1024`, `sana-sprint-1.6b-1024`, `sana-1.5-4.8b-1024` · Task: `t2i`
 
 **Architecture.** A Gemma-2 2B text model (26 layers, width 2304, soft-capped attention and
 alternating sliding-window layers) encodes the prompt, and its last hidden state conditions a linear
 diffusion transformer. The transformer applies ReLU linear attention over the image tokens,
 cross-attention to the masked text, GLUMBConv feed-forward blocks and AdaLN-single timestep
 modulation. The 1600M model has 20 blocks of width 2240 and the 600M model has 28 blocks of width
-1152. Images are decoded by the DC-AE autoencoder, which compresses 32× into 32 latent channels
-(scaling factor 0.41407). The scheduler is the order-2 midpoint DPM-Solver++ with flow sigmas and
-`flow_shift` 3.0. Before encoding, a "complex human instruction" is prepended to the prompt, and the
-first token plus the last 299 tokens of the encoder output are kept.
+1152. The 1.5 4.8B model uses 60 blocks of width 2240 with qk normalization. The Sprint 1.6B model
+keeps the 1600M width but replaces the timestep embedding with a combined timestep + guidance
+embedding and uses the single-step consistent-model (SCM) scheduler with trigflow parameterization.
+Images are decoded by the DC-AE autoencoder, which compresses 32× into 32 latent channels
+(scaling factor 0.41407). The standard models use the order-2 midpoint DPM-Solver++ with flow
+sigmas and `flow_shift` 3.0; Sprint uses the 2-step SCM schedule. Before encoding, a "complex human
+instruction" is prepended to the prompt, and the first token plus the last 299 tokens of the encoder
+output are kept.
 
 **Usage.**
 
@@ -1462,35 +1637,40 @@ python -m imagehub.pretrained sana-1600m-1024 checkpoints/sana-1600m-1024
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="sana-1600m-1024", model="checkpoints/sana-1600m-1024", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="sana-1600m-1024", model="checkpoints/sana-1600m-1024", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
 
-**Settings.** Both models default to 20 steps, guidance 4.5 and 1024×1024, with an empty negative
-prompt. The supported options are `seed`, `steps`, `guidance`, `width`, `height`,
-`negative_prompt`, `use_resolution_binning`, `max_sequence_length` (default 300) and
-`complex_human_instruction`. With `use_resolution_binning` on (the default), the requested size is
-snapped to the closest aspect-ratio bin, the image is generated at the bin size, and the decoded
-image is resized and centre-cropped back to the request; turn it off to generate at the exact size,
-which must then be a multiple of 32. `complex_human_instruction` is a list of strings; `None` selects
-the published instruction and an empty list disables it. The instruction is never added to the
-negative prompt. Guidance 1.0 or lower skips the unconditional pass. Unrecognized settings raise an
-error.
+**Settings.** All models default to guidance 4.5 and 1024×1024, with an empty negative prompt.
+`sana-1600m-1024`, `sana-600m-1024` and `sana-1.5-4.8b-1024` default to 20 steps; the standard
+options are `seed`, `steps`, `guidance`, `width`, `height`, `negative_prompt`,
+`use_resolution_binning`, `max_sequence_length` (default 300) and `complex_human_instruction`.
+`sana-sprint-1.6b-1024` defaults to 2 steps, ignores `negative_prompt` (guidance is embedded via the
+transformer) and supports the same remaining options. With `use_resolution_binning` on (the default),
+the requested size is snapped to the closest aspect-ratio bin, the image is generated at the bin
+size, and the decoded image is resized and centre-cropped back to the request; turn it off to
+generate at the exact size, which must then be a multiple of 32. `complex_human_instruction` is a
+list of strings; `None` selects the published instruction and an empty list disables it. The
+instruction is never added to the negative prompt. Guidance 1.0 or lower skips the unconditional pass
+for standard models. Unrecognized settings raise an error.
 
-**Memory.** In float32 the transformer needs about 6.4 GB (2.4 GB for the 600M model), the Gemma-2
-text model about 10.5 GB and DC-AE about 1.3 GB. The Gemma-2 weights are stored in bfloat16 and
-upcast on load.
+**Memory.** In float32 the 1600M transformer needs about 6.4 GB (2.4 GB for the 600M model), the
+Gemma-2 text model about 10.5 GB and DC-AE about 1.3 GB. The 1.5 4.8B and Sprint transformers need
+roughly 9–10 GB. The Gemma-2 weights are stored in bfloat16 and upcast on load.
 
 **Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** The 2K and 4K checkpoints, SANA 1.5, SANA-Sprint, ControlNet, PAG, fp16/bf16
-parity and caption cleaning are not supported. Caption cleaning requires external packages; parity
-is against `clean_caption=False`. Only decoding is exposed for DC-AE.
+**Out of scope.** The 2K and 4K checkpoints, ControlNet, PAG, fp16/bf16 parity and caption cleaning
+are not supported. Caption cleaning requires external packages; parity is against
+`clean_caption=False`. Only decoding is exposed for DC-AE.
 
-**License.** Both repositories declare the Apache-2.0 license. The text encoder is a Gemma-2
+**License.** All repositories declare the Apache-2.0 license. The text encoder is a Gemma-2
 checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
 distribute weights.
 
@@ -1518,6 +1698,7 @@ python -m imagehub.pretrained kolors checkpoints/kolors
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="kolors", model="checkpoints/kolors", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -1574,7 +1755,10 @@ python -m imagehub.pretrained lumina-image-2.0 checkpoints/lumina-image-2.0
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="lumina-image-2.0", model="checkpoints/lumina-image-2.0", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="lumina-image-2.0", model="checkpoints/lumina-image-2.0", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1642,6 +1826,7 @@ python -m imagehub.pretrained lumina-next checkpoints/lumina-next
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="lumina-next", model="checkpoints/lumina-next", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -1699,6 +1884,7 @@ python -m imagehub.pretrained amused-512 checkpoints/amused-512
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="amused-512", model="checkpoints/amused-512", device="mps") as pipe:
     result = pipe("a photo of an astronaut riding a horse on mars", seed=42)
     result.images[0].save("astronaut.png")
@@ -1752,7 +1938,10 @@ python -m imagehub.pretrained auraflow-v0.3 checkpoints/auraflow-v0.3
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="auraflow-v0.3", model="checkpoints/auraflow-v0.3", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="auraflow-v0.3", model="checkpoints/auraflow-v0.3", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1800,6 +1989,7 @@ python -m imagehub.pretrained llamagen-t2i-xl-256 checkpoints/llamagen-t2i-xl-25
 
 ```python
 from imagehub import pipeline
+
 with pipeline(
     "t2i", backend="llamagen-t2i-xl-256", model="checkpoints/llamagen-t2i-xl-256", device="mps"
 ) as pipe:
@@ -1875,7 +2065,10 @@ python -m imagehub.pretrained hidream-i1-fast checkpoints/hidream-i1-fast
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="hidream-i1-fast", model="checkpoints/hidream-i1-fast", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="hidream-i1-fast", model="checkpoints/hidream-i1-fast", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
