@@ -32,6 +32,7 @@ def test_catalog_contents():
             "ideogram4-fp8",
             "janus-pro-1b",
             "janus-pro-7b",
+            "kandinsky-2-1",
             "kandinsky-2.2",
             "kandinsky-3",
             "kolors",
@@ -701,6 +702,55 @@ def test_kandinsky22_catalog_entry():
         "prior": SubRepo(
             repo_id="kandinsky-community/kandinsky-2-2-prior",
             revision="9fc51ad5732afc5d031724219d22e6c42179c5a8",
+            files=(
+                "model_index.json",
+                "image_encoder/config.json",
+                "image_encoder/model.safetensors",
+                "image_processor/preprocessor_config.json",
+                "prior/config.json",
+                "prior/diffusion_pytorch_model.safetensors",
+                "scheduler/scheduler_config.json",
+                "text_encoder/config.json",
+                "text_encoder/model.safetensors",
+                "tokenizer/merges.txt",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/vocab.json",
+            ),
+        )
+    }
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "kandinsky-2"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+
+
+def test_kandinsky21_catalog_entry():
+    spec = model_info("kandinsky-2-1")
+    assert spec.task is Task.T2I
+    assert spec.family == "kandinsky21"
+    assert spec.repo_id == "kandinsky-community/kandinsky-2-1"
+    assert spec.revision == "04b366659663bf60deacb96fd3e38f1cb39a3be4"
+    assert spec.files == (
+        "ddpm_scheduler/scheduler_config.json",
+        "model_index.json",
+        "movq/config.json",
+        "movq/diffusion_pytorch_model.safetensors",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors",
+        "tokenizer/sentencepiece.bpe.model",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer_config.json",
+        "unet/config.json",
+        "unet/diffusion_pytorch_model.safetensors",
+    )
+    assert spec.subfolders == {
+        "prior": SubRepo(
+            repo_id="kandinsky-community/kandinsky-2-1-prior",
+            revision="b726af62d69111bbf62b5d71bb9d90d9867fbce4",
             files=(
                 "model_index.json",
                 "image_encoder/config.json",

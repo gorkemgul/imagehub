@@ -213,6 +213,7 @@ def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, 
 @pytest.mark.parametrize(
     ("model_id", "subfolder"),
     [
+        ("kandinsky-2-1", "prior"),
         ("kandinsky-2.2", "prior"),
         ("stable-cascade", "prior"),
         ("stable-cascade-lite", "prior"),

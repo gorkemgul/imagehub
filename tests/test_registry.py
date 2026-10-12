@@ -33,6 +33,7 @@ def test_family_and_model_aliases_are_registered():
     assert {"cogview3", "cogview3-plus-3b"} <= set(names)
     assert {"cogview4", "cogview4-6b"} <= set(names)
     assert {"ideogram4", "ideogram4-fp8"} <= set(names)
+    assert {"kandinsky21", "kandinsky-2-1"} <= set(names)
     assert {"kandinsky22", "kandinsky-2.2"} <= set(names)
     assert {"kandinsky3", "kandinsky-3"} <= set(names)
     assert "kolors" in names
