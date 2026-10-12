@@ -3702,6 +3702,144 @@
       }
     },
     {
+      "model_id": "sana-sprint-1.6b-1024",
+      "repo_id": "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+      "revision": "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+      "provenance": "author",
+      "catalog_id": "sana",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "e3294833370d55fe1d568ab6f9b24df46c4270403d24daffd594eb01927e3fca",
+        "scheduler/scheduler_config.json": "9a2c56f902710bfde73c81045c7fb99902ab3ead525fa201b58a35817995173b",
+        "text_encoder/config.json": "733f241a6692770dfba10383e2c5a56a4f88b320732d9ee8fa16118737eca84d",
+        "text_encoder/model.safetensors.index.json": "92764588f700e36874c52f9f05bba143857e5069fc69b14450f907a1cdf879ed",
+        "text_encoder/model-00001-of-00002.safetensors": "e909230aabafad02d097c7dc02f2ae062b4e6b0593477c1f07679d277e09ce71",
+        "text_encoder/model-00002-of-00002.safetensors": "48e14f6b7a917e54cabc4ff2047ac2bfe0dae663e771eed3a8acf4ea27dcac18",
+        "tokenizer/special_tokens_map.json": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+        "tokenizer/tokenizer.json": "5f7eee611703c5ce5d1eee32d9cdcfe465647b8aff0c1dfb3bed7ad7dbb05060",
+        "tokenizer/tokenizer.model": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2",
+        "tokenizer/tokenizer_config.json": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+        "transformer/config.json": "a6a7c9d96124415b7ea5e2463e2b1125ddcaea8a79d96f396448ec5b75b5ee08",
+        "transformer/diffusion_pytorch_model.safetensors": "effac51c73537487ac1505993f0e7fbd292c310b23aae96f2c3e53131e876f2d",
+        "vae/config.json": "ba6f3d3e44d75d44fdd3760097c069173b5b925e6d14604d5d3582628d09cca6",
+        "vae/diffusion_pytorch_model.safetensors": "dfd991d1b54ffabf22745c5885589d8f2a7bc59930d95d92bd741c4fc64454bb"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 288,
+          "transformer": 480,
+          "vae": 375
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 2
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          1360,
+          768
+        ]
+      }
+    },
+    {
+      "model_id": "sana-1.5-4.8b-1024",
+      "repo_id": "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+      "revision": "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+      "provenance": "author",
+      "catalog_id": "sana",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "f2c25169ee98af8964867731386345d89772f8bfb00d9e712f4398b6eb79f201",
+        "scheduler/scheduler_config.json": "f9256042828841b26561487c7e0c33fff8717e98ac0fef5c1f6d05bfdd66e908",
+        "text_encoder/config.json": "733f241a6692770dfba10383e2c5a56a4f88b320732d9ee8fa16118737eca84d",
+        "text_encoder/model.safetensors.index.json": "92764588f700e36874c52f9f05bba143857e5069fc69b14450f907a1cdf879ed",
+        "text_encoder/model-00001-of-00002.safetensors": "e909230aabafad02d097c7dc02f2ae062b4e6b0593477c1f07679d277e09ce71",
+        "text_encoder/model-00002-of-00002.safetensors": "48e14f6b7a917e54cabc4ff2047ac2bfe0dae663e771eed3a8acf4ea27dcac18",
+        "tokenizer/special_tokens_map.json": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+        "tokenizer/tokenizer.json": "5f7eee611703c5ce5d1eee32d9cdcfe465647b8aff0c1dfb3bed7ad7dbb05060",
+        "tokenizer/tokenizer.model": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2",
+        "tokenizer/tokenizer_config.json": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+        "transformer/config.json": "bec8e7b4e6272e319b25065f38b827e4c3eb1eabfaf4d9eaf56f045db9506ceb",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "0766de567dd7092ac9715562e69c2cba0fd7c32b4b01f9ca61f857f64abd1af3",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "776004ceb0d1cd491ffad91896078b6e7d804a82b81cba262084ca0475ce92a2",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "e61bd599c6574ff3b5e8cb47aaa4d099016820bc7671f2a84e907866c50cadd2",
+        "vae/config.json": "ba6f3d3e44d75d44fdd3760097c069173b5b925e6d14604d5d3582628d09cca6",
+        "vae/diffusion_pytorch_model.safetensors": "dfd991d1b54ffabf22745c5885589d8f2a7bc59930d95d92bd741c4fc64454bb"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 288,
+          "transformer": 1396,
+          "vae": 375
+        }
+      },
+      "end_to_end": {
+        "guidance": 4.5,
+        "latents": {
+          "max_abs": 0.0,
+          "max_rel": 0.0
+        },
+        "passed": true,
+        "pixels_max_abs": 0,
+        "prompt": "a photograph of an astronaut riding a horse",
+        "seed": 0,
+        "size": [
+          1024,
+          1024
+        ],
+        "steps": 20
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 1234,
+        "size": [
+          1360,
+          768
+        ]
+      }
+    },
+    {
       "model_id": "kolors",
       "repo_id": "Kwai-Kolors/Kolors-diffusers",
       "revision": "7e091c75199e910a26cd1b51ed52c28de5db3711",
@@ -8507,6 +8645,45 @@
     "sana_published_autoencoder_decode": {
       "decode_max_abs": 0.0
     },
+    "sana_sana-1.5-4.8b-1024_text_encoder_masks": {
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "sana_sana-1.5-4.8b-1024_text_encoder_negative": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-1.5-4.8b-1024_text_encoder_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-1.5-4.8b-1024_tokenizer": {
+      "cases": [
+        {
+          "ids_match": true,
+          "masks_match": true,
+          "max_length": 506
+        },
+        {
+          "ids_match": true,
+          "masks_match": true,
+          "max_length": 300
+        }
+      ],
+      "tolerance": "exact"
+    },
+    "sana_sana-1.5-4.8b-1024_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-1.5-4.8b-1024_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sana_sana-1600m-1024_text_encoder_masks": {
       "masks_match": true,
       "tolerance": "exact"
@@ -8584,6 +8761,49 @@
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
+    },
+    "sana_sana-sprint-1.6b-1024_text_encoder_masks": {
+      "masks_match": true,
+      "tolerance": "exact"
+    },
+    "sana_sana-sprint-1.6b-1024_text_encoder_prompt": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-sprint-1.6b-1024_tokenizer": {
+      "cases": [
+        {
+          "ids_match": true,
+          "masks_match": true,
+          "max_length": 506
+        },
+        {
+          "ids_match": true,
+          "masks_match": true,
+          "max_length": 300
+        }
+      ],
+      "tolerance": "exact"
+    },
+    "sana_sana-sprint-1.6b-1024_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sana-sprint-1.6b-1024_vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sana_sprint_tiny_default": {
+      "pixels_equal": true,
+      "shape": [
+        1,
+        512,
+        512,
+        3
+      ]
     },
     "sana_tiny_1024_request": {
       "latent_max_abs": 0.0,
@@ -9686,6 +9906,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "14 passed (chroma1-hd)"
+    "reference_summary": "19 passed (sana-sprint-1.6b-1024, sana-1.5-4.8b-1024)"
   }
 }
