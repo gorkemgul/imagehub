@@ -1,0 +1,1601 @@
+{
+"decoder.conv_in.bias": [
+1024
+],
+"decoder.conv_in.weight": [
+1024,
+32,
+3,
+3
+],
+"decoder.conv_out.bias": [
+3
+],
+"decoder.conv_out.weight": [
+3,
+128,
+3,
+3
+],
+"decoder.norm_out.bias": [
+128
+],
+"decoder.norm_out.weight": [
+128
+],
+"decoder.up_blocks.0.0.conv.bias": [
+128
+],
+"decoder.up_blocks.0.0.conv.weight": [
+128,
+256,
+3,
+3
+],
+"decoder.up_blocks.0.1.conv1.bias": [
+128
+],
+"decoder.up_blocks.0.1.conv1.weight": [
+128,
+128,
+3,
+3
+],
+"decoder.up_blocks.0.1.conv2.weight": [
+128,
+128,
+3,
+3
+],
+"decoder.up_blocks.0.1.norm.bias": [
+128
+],
+"decoder.up_blocks.0.1.norm.weight": [
+128
+],
+"decoder.up_blocks.0.2.conv1.bias": [
+128
+],
+"decoder.up_blocks.0.2.conv1.weight": [
+128,
+128,
+3,
+3
+],
+"decoder.up_blocks.0.2.conv2.weight": [
+128,
+128,
+3,
+3
+],
+"decoder.up_blocks.0.2.norm.bias": [
+128
+],
+"decoder.up_blocks.0.2.norm.weight": [
+128
+],
+"decoder.up_blocks.0.3.conv1.bias": [
+128
+],
+"decoder.up_blocks.0.3.conv1.weight": [
+128,
+128,
+3,
+3
+],
+"decoder.up_blocks.0.3.conv2.weight": [
+128,
+128,
+3,
+3
+],
+"decoder.up_blocks.0.3.norm.bias": [
+128
+],
+"decoder.up_blocks.0.3.norm.weight": [
+128
+],
+"decoder.up_blocks.1.0.conv.bias": [
+256
+],
+"decoder.up_blocks.1.0.conv.weight": [
+256,
+512,
+3,
+3
+],
+"decoder.up_blocks.1.1.conv1.bias": [
+256
+],
+"decoder.up_blocks.1.1.conv1.weight": [
+256,
+256,
+3,
+3
+],
+"decoder.up_blocks.1.1.conv2.weight": [
+256,
+256,
+3,
+3
+],
+"decoder.up_blocks.1.1.norm.bias": [
+256
+],
+"decoder.up_blocks.1.1.norm.weight": [
+256
+],
+"decoder.up_blocks.1.2.conv1.bias": [
+256
+],
+"decoder.up_blocks.1.2.conv1.weight": [
+256,
+256,
+3,
+3
+],
+"decoder.up_blocks.1.2.conv2.weight": [
+256,
+256,
+3,
+3
+],
+"decoder.up_blocks.1.2.norm.bias": [
+256
+],
+"decoder.up_blocks.1.2.norm.weight": [
+256
+],
+"decoder.up_blocks.1.3.conv1.bias": [
+256
+],
+"decoder.up_blocks.1.3.conv1.weight": [
+256,
+256,
+3,
+3
+],
+"decoder.up_blocks.1.3.conv2.weight": [
+256,
+256,
+3,
+3
+],
+"decoder.up_blocks.1.3.norm.bias": [
+256
+],
+"decoder.up_blocks.1.3.norm.weight": [
+256
+],
+"decoder.up_blocks.2.0.conv.bias": [
+512
+],
+"decoder.up_blocks.2.0.conv.weight": [
+512,
+512,
+3,
+3
+],
+"decoder.up_blocks.2.1.conv1.bias": [
+512
+],
+"decoder.up_blocks.2.1.conv1.weight": [
+512,
+512,
+3,
+3
+],
+"decoder.up_blocks.2.1.conv2.weight": [
+512,
+512,
+3,
+3
+],
+"decoder.up_blocks.2.1.norm.bias": [
+512
+],
+"decoder.up_blocks.2.1.norm.weight": [
+512
+],
+"decoder.up_blocks.2.2.conv1.bias": [
+512
+],
+"decoder.up_blocks.2.2.conv1.weight": [
+512,
+512,
+3,
+3
+],
+"decoder.up_blocks.2.2.conv2.weight": [
+512,
+512,
+3,
+3
+],
+"decoder.up_blocks.2.2.norm.bias": [
+512
+],
+"decoder.up_blocks.2.2.norm.weight": [
+512
+],
+"decoder.up_blocks.2.3.conv1.bias": [
+512
+],
+"decoder.up_blocks.2.3.conv1.weight": [
+512,
+512,
+3,
+3
+],
+"decoder.up_blocks.2.3.conv2.weight": [
+512,
+512,
+3,
+3
+],
+"decoder.up_blocks.2.3.norm.bias": [
+512
+],
+"decoder.up_blocks.2.3.norm.weight": [
+512
+],
+"decoder.up_blocks.3.0.conv.bias": [
+512
+],
+"decoder.up_blocks.3.0.conv.weight": [
+512,
+1024,
+3,
+3
+],
+"decoder.up_blocks.3.1.attn.norm_out.bias": [
+512
+],
+"decoder.up_blocks.3.1.attn.norm_out.weight": [
+512
+],
+"decoder.up_blocks.3.1.attn.to_k.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.1.attn.to_out.weight": [
+512,
+1024
+],
+"decoder.up_blocks.3.1.attn.to_q.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.1.attn.to_qkv_multiscale.0.proj_in.weight": [
+1536,
+1,
+5,
+5
+],
+"decoder.up_blocks.3.1.attn.to_qkv_multiscale.0.proj_out.weight": [
+1536,
+32,
+1,
+1
+],
+"decoder.up_blocks.3.1.attn.to_v.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.1.conv_out.conv_depth.bias": [
+4096
+],
+"decoder.up_blocks.3.1.conv_out.conv_depth.weight": [
+4096,
+1,
+3,
+3
+],
+"decoder.up_blocks.3.1.conv_out.conv_inverted.bias": [
+4096
+],
+"decoder.up_blocks.3.1.conv_out.conv_inverted.weight": [
+4096,
+512,
+1,
+1
+],
+"decoder.up_blocks.3.1.conv_out.conv_point.weight": [
+512,
+2048,
+1,
+1
+],
+"decoder.up_blocks.3.1.conv_out.norm.bias": [
+512
+],
+"decoder.up_blocks.3.1.conv_out.norm.weight": [
+512
+],
+"decoder.up_blocks.3.2.attn.norm_out.bias": [
+512
+],
+"decoder.up_blocks.3.2.attn.norm_out.weight": [
+512
+],
+"decoder.up_blocks.3.2.attn.to_k.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.2.attn.to_out.weight": [
+512,
+1024
+],
+"decoder.up_blocks.3.2.attn.to_q.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.2.attn.to_qkv_multiscale.0.proj_in.weight": [
+1536,
+1,
+5,
+5
+],
+"decoder.up_blocks.3.2.attn.to_qkv_multiscale.0.proj_out.weight": [
+1536,
+32,
+1,
+1
+],
+"decoder.up_blocks.3.2.attn.to_v.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.2.conv_out.conv_depth.bias": [
+4096
+],
+"decoder.up_blocks.3.2.conv_out.conv_depth.weight": [
+4096,
+1,
+3,
+3
+],
+"decoder.up_blocks.3.2.conv_out.conv_inverted.bias": [
+4096
+],
+"decoder.up_blocks.3.2.conv_out.conv_inverted.weight": [
+4096,
+512,
+1,
+1
+],
+"decoder.up_blocks.3.2.conv_out.conv_point.weight": [
+512,
+2048,
+1,
+1
+],
+"decoder.up_blocks.3.2.conv_out.norm.bias": [
+512
+],
+"decoder.up_blocks.3.2.conv_out.norm.weight": [
+512
+],
+"decoder.up_blocks.3.3.attn.norm_out.bias": [
+512
+],
+"decoder.up_blocks.3.3.attn.norm_out.weight": [
+512
+],
+"decoder.up_blocks.3.3.attn.to_k.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.3.attn.to_out.weight": [
+512,
+1024
+],
+"decoder.up_blocks.3.3.attn.to_q.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.3.attn.to_qkv_multiscale.0.proj_in.weight": [
+1536,
+1,
+5,
+5
+],
+"decoder.up_blocks.3.3.attn.to_qkv_multiscale.0.proj_out.weight": [
+1536,
+32,
+1,
+1
+],
+"decoder.up_blocks.3.3.attn.to_v.weight": [
+512,
+512
+],
+"decoder.up_blocks.3.3.conv_out.conv_depth.bias": [
+4096
+],
+"decoder.up_blocks.3.3.conv_out.conv_depth.weight": [
+4096,
+1,
+3,
+3
+],
+"decoder.up_blocks.3.3.conv_out.conv_inverted.bias": [
+4096
+],
+"decoder.up_blocks.3.3.conv_out.conv_inverted.weight": [
+4096,
+512,
+1,
+1
+],
+"decoder.up_blocks.3.3.conv_out.conv_point.weight": [
+512,
+2048,
+1,
+1
+],
+"decoder.up_blocks.3.3.conv_out.norm.bias": [
+512
+],
+"decoder.up_blocks.3.3.conv_out.norm.weight": [
+512
+],
+"decoder.up_blocks.4.0.conv.bias": [
+1024
+],
+"decoder.up_blocks.4.0.conv.weight": [
+1024,
+1024,
+3,
+3
+],
+"decoder.up_blocks.4.1.attn.norm_out.bias": [
+1024
+],
+"decoder.up_blocks.4.1.attn.norm_out.weight": [
+1024
+],
+"decoder.up_blocks.4.1.attn.to_k.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.1.attn.to_out.weight": [
+1024,
+2048
+],
+"decoder.up_blocks.4.1.attn.to_q.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.1.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"decoder.up_blocks.4.1.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"decoder.up_blocks.4.1.attn.to_v.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.1.conv_out.conv_depth.bias": [
+8192
+],
+"decoder.up_blocks.4.1.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"decoder.up_blocks.4.1.conv_out.conv_inverted.bias": [
+8192
+],
+"decoder.up_blocks.4.1.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"decoder.up_blocks.4.1.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"decoder.up_blocks.4.1.conv_out.norm.bias": [
+1024
+],
+"decoder.up_blocks.4.1.conv_out.norm.weight": [
+1024
+],
+"decoder.up_blocks.4.2.attn.norm_out.bias": [
+1024
+],
+"decoder.up_blocks.4.2.attn.norm_out.weight": [
+1024
+],
+"decoder.up_blocks.4.2.attn.to_k.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.2.attn.to_out.weight": [
+1024,
+2048
+],
+"decoder.up_blocks.4.2.attn.to_q.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.2.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"decoder.up_blocks.4.2.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"decoder.up_blocks.4.2.attn.to_v.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.2.conv_out.conv_depth.bias": [
+8192
+],
+"decoder.up_blocks.4.2.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"decoder.up_blocks.4.2.conv_out.conv_inverted.bias": [
+8192
+],
+"decoder.up_blocks.4.2.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"decoder.up_blocks.4.2.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"decoder.up_blocks.4.2.conv_out.norm.bias": [
+1024
+],
+"decoder.up_blocks.4.2.conv_out.norm.weight": [
+1024
+],
+"decoder.up_blocks.4.3.attn.norm_out.bias": [
+1024
+],
+"decoder.up_blocks.4.3.attn.norm_out.weight": [
+1024
+],
+"decoder.up_blocks.4.3.attn.to_k.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.3.attn.to_out.weight": [
+1024,
+2048
+],
+"decoder.up_blocks.4.3.attn.to_q.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.3.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"decoder.up_blocks.4.3.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"decoder.up_blocks.4.3.attn.to_v.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.4.3.conv_out.conv_depth.bias": [
+8192
+],
+"decoder.up_blocks.4.3.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"decoder.up_blocks.4.3.conv_out.conv_inverted.bias": [
+8192
+],
+"decoder.up_blocks.4.3.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"decoder.up_blocks.4.3.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"decoder.up_blocks.4.3.conv_out.norm.bias": [
+1024
+],
+"decoder.up_blocks.4.3.conv_out.norm.weight": [
+1024
+],
+"decoder.up_blocks.5.0.attn.norm_out.bias": [
+1024
+],
+"decoder.up_blocks.5.0.attn.norm_out.weight": [
+1024
+],
+"decoder.up_blocks.5.0.attn.to_k.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.0.attn.to_out.weight": [
+1024,
+2048
+],
+"decoder.up_blocks.5.0.attn.to_q.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.0.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"decoder.up_blocks.5.0.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"decoder.up_blocks.5.0.attn.to_v.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.0.conv_out.conv_depth.bias": [
+8192
+],
+"decoder.up_blocks.5.0.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"decoder.up_blocks.5.0.conv_out.conv_inverted.bias": [
+8192
+],
+"decoder.up_blocks.5.0.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"decoder.up_blocks.5.0.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"decoder.up_blocks.5.0.conv_out.norm.bias": [
+1024
+],
+"decoder.up_blocks.5.0.conv_out.norm.weight": [
+1024
+],
+"decoder.up_blocks.5.1.attn.norm_out.bias": [
+1024
+],
+"decoder.up_blocks.5.1.attn.norm_out.weight": [
+1024
+],
+"decoder.up_blocks.5.1.attn.to_k.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.1.attn.to_out.weight": [
+1024,
+2048
+],
+"decoder.up_blocks.5.1.attn.to_q.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.1.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"decoder.up_blocks.5.1.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"decoder.up_blocks.5.1.attn.to_v.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.1.conv_out.conv_depth.bias": [
+8192
+],
+"decoder.up_blocks.5.1.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"decoder.up_blocks.5.1.conv_out.conv_inverted.bias": [
+8192
+],
+"decoder.up_blocks.5.1.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"decoder.up_blocks.5.1.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"decoder.up_blocks.5.1.conv_out.norm.bias": [
+1024
+],
+"decoder.up_blocks.5.1.conv_out.norm.weight": [
+1024
+],
+"decoder.up_blocks.5.2.attn.norm_out.bias": [
+1024
+],
+"decoder.up_blocks.5.2.attn.norm_out.weight": [
+1024
+],
+"decoder.up_blocks.5.2.attn.to_k.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.2.attn.to_out.weight": [
+1024,
+2048
+],
+"decoder.up_blocks.5.2.attn.to_q.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.2.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"decoder.up_blocks.5.2.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"decoder.up_blocks.5.2.attn.to_v.weight": [
+1024,
+1024
+],
+"decoder.up_blocks.5.2.conv_out.conv_depth.bias": [
+8192
+],
+"decoder.up_blocks.5.2.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"decoder.up_blocks.5.2.conv_out.conv_inverted.bias": [
+8192
+],
+"decoder.up_blocks.5.2.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"decoder.up_blocks.5.2.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"decoder.up_blocks.5.2.conv_out.norm.bias": [
+1024
+],
+"decoder.up_blocks.5.2.conv_out.norm.weight": [
+1024
+],
+"encoder.conv_in.bias": [
+128
+],
+"encoder.conv_in.weight": [
+128,
+3,
+3,
+3
+],
+"encoder.conv_out.bias": [
+32
+],
+"encoder.conv_out.weight": [
+32,
+1024,
+3,
+3
+],
+"encoder.down_blocks.0.0.conv1.bias": [
+128
+],
+"encoder.down_blocks.0.0.conv1.weight": [
+128,
+128,
+3,
+3
+],
+"encoder.down_blocks.0.0.conv2.weight": [
+128,
+128,
+3,
+3
+],
+"encoder.down_blocks.0.0.norm.bias": [
+128
+],
+"encoder.down_blocks.0.0.norm.weight": [
+128
+],
+"encoder.down_blocks.0.1.conv1.bias": [
+128
+],
+"encoder.down_blocks.0.1.conv1.weight": [
+128,
+128,
+3,
+3
+],
+"encoder.down_blocks.0.1.conv2.weight": [
+128,
+128,
+3,
+3
+],
+"encoder.down_blocks.0.1.norm.bias": [
+128
+],
+"encoder.down_blocks.0.1.norm.weight": [
+128
+],
+"encoder.down_blocks.0.2.conv.bias": [
+256
+],
+"encoder.down_blocks.0.2.conv.weight": [
+256,
+128,
+3,
+3
+],
+"encoder.down_blocks.1.0.conv1.bias": [
+256
+],
+"encoder.down_blocks.1.0.conv1.weight": [
+256,
+256,
+3,
+3
+],
+"encoder.down_blocks.1.0.conv2.weight": [
+256,
+256,
+3,
+3
+],
+"encoder.down_blocks.1.0.norm.bias": [
+256
+],
+"encoder.down_blocks.1.0.norm.weight": [
+256
+],
+"encoder.down_blocks.1.1.conv1.bias": [
+256
+],
+"encoder.down_blocks.1.1.conv1.weight": [
+256,
+256,
+3,
+3
+],
+"encoder.down_blocks.1.1.conv2.weight": [
+256,
+256,
+3,
+3
+],
+"encoder.down_blocks.1.1.norm.bias": [
+256
+],
+"encoder.down_blocks.1.1.norm.weight": [
+256
+],
+"encoder.down_blocks.1.2.conv.bias": [
+512
+],
+"encoder.down_blocks.1.2.conv.weight": [
+512,
+256,
+3,
+3
+],
+"encoder.down_blocks.2.0.conv1.bias": [
+512
+],
+"encoder.down_blocks.2.0.conv1.weight": [
+512,
+512,
+3,
+3
+],
+"encoder.down_blocks.2.0.conv2.weight": [
+512,
+512,
+3,
+3
+],
+"encoder.down_blocks.2.0.norm.bias": [
+512
+],
+"encoder.down_blocks.2.0.norm.weight": [
+512
+],
+"encoder.down_blocks.2.1.conv1.bias": [
+512
+],
+"encoder.down_blocks.2.1.conv1.weight": [
+512,
+512,
+3,
+3
+],
+"encoder.down_blocks.2.1.conv2.weight": [
+512,
+512,
+3,
+3
+],
+"encoder.down_blocks.2.1.norm.bias": [
+512
+],
+"encoder.down_blocks.2.1.norm.weight": [
+512
+],
+"encoder.down_blocks.2.2.conv.bias": [
+512
+],
+"encoder.down_blocks.2.2.conv.weight": [
+512,
+512,
+3,
+3
+],
+"encoder.down_blocks.3.0.attn.norm_out.bias": [
+512
+],
+"encoder.down_blocks.3.0.attn.norm_out.weight": [
+512
+],
+"encoder.down_blocks.3.0.attn.to_k.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.0.attn.to_out.weight": [
+512,
+1024
+],
+"encoder.down_blocks.3.0.attn.to_q.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.0.attn.to_qkv_multiscale.0.proj_in.weight": [
+1536,
+1,
+5,
+5
+],
+"encoder.down_blocks.3.0.attn.to_qkv_multiscale.0.proj_out.weight": [
+1536,
+32,
+1,
+1
+],
+"encoder.down_blocks.3.0.attn.to_v.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.0.conv_out.conv_depth.bias": [
+4096
+],
+"encoder.down_blocks.3.0.conv_out.conv_depth.weight": [
+4096,
+1,
+3,
+3
+],
+"encoder.down_blocks.3.0.conv_out.conv_inverted.bias": [
+4096
+],
+"encoder.down_blocks.3.0.conv_out.conv_inverted.weight": [
+4096,
+512,
+1,
+1
+],
+"encoder.down_blocks.3.0.conv_out.conv_point.weight": [
+512,
+2048,
+1,
+1
+],
+"encoder.down_blocks.3.0.conv_out.norm.bias": [
+512
+],
+"encoder.down_blocks.3.0.conv_out.norm.weight": [
+512
+],
+"encoder.down_blocks.3.1.attn.norm_out.bias": [
+512
+],
+"encoder.down_blocks.3.1.attn.norm_out.weight": [
+512
+],
+"encoder.down_blocks.3.1.attn.to_k.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.1.attn.to_out.weight": [
+512,
+1024
+],
+"encoder.down_blocks.3.1.attn.to_q.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.1.attn.to_qkv_multiscale.0.proj_in.weight": [
+1536,
+1,
+5,
+5
+],
+"encoder.down_blocks.3.1.attn.to_qkv_multiscale.0.proj_out.weight": [
+1536,
+32,
+1,
+1
+],
+"encoder.down_blocks.3.1.attn.to_v.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.1.conv_out.conv_depth.bias": [
+4096
+],
+"encoder.down_blocks.3.1.conv_out.conv_depth.weight": [
+4096,
+1,
+3,
+3
+],
+"encoder.down_blocks.3.1.conv_out.conv_inverted.bias": [
+4096
+],
+"encoder.down_blocks.3.1.conv_out.conv_inverted.weight": [
+4096,
+512,
+1,
+1
+],
+"encoder.down_blocks.3.1.conv_out.conv_point.weight": [
+512,
+2048,
+1,
+1
+],
+"encoder.down_blocks.3.1.conv_out.norm.bias": [
+512
+],
+"encoder.down_blocks.3.1.conv_out.norm.weight": [
+512
+],
+"encoder.down_blocks.3.2.attn.norm_out.bias": [
+512
+],
+"encoder.down_blocks.3.2.attn.norm_out.weight": [
+512
+],
+"encoder.down_blocks.3.2.attn.to_k.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.2.attn.to_out.weight": [
+512,
+1024
+],
+"encoder.down_blocks.3.2.attn.to_q.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.2.attn.to_qkv_multiscale.0.proj_in.weight": [
+1536,
+1,
+5,
+5
+],
+"encoder.down_blocks.3.2.attn.to_qkv_multiscale.0.proj_out.weight": [
+1536,
+32,
+1,
+1
+],
+"encoder.down_blocks.3.2.attn.to_v.weight": [
+512,
+512
+],
+"encoder.down_blocks.3.2.conv_out.conv_depth.bias": [
+4096
+],
+"encoder.down_blocks.3.2.conv_out.conv_depth.weight": [
+4096,
+1,
+3,
+3
+],
+"encoder.down_blocks.3.2.conv_out.conv_inverted.bias": [
+4096
+],
+"encoder.down_blocks.3.2.conv_out.conv_inverted.weight": [
+4096,
+512,
+1,
+1
+],
+"encoder.down_blocks.3.2.conv_out.conv_point.weight": [
+512,
+2048,
+1,
+1
+],
+"encoder.down_blocks.3.2.conv_out.norm.bias": [
+512
+],
+"encoder.down_blocks.3.2.conv_out.norm.weight": [
+512
+],
+"encoder.down_blocks.3.3.conv.bias": [
+1024
+],
+"encoder.down_blocks.3.3.conv.weight": [
+1024,
+512,
+3,
+3
+],
+"encoder.down_blocks.4.0.attn.norm_out.bias": [
+1024
+],
+"encoder.down_blocks.4.0.attn.norm_out.weight": [
+1024
+],
+"encoder.down_blocks.4.0.attn.to_k.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.0.attn.to_out.weight": [
+1024,
+2048
+],
+"encoder.down_blocks.4.0.attn.to_q.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.0.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"encoder.down_blocks.4.0.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"encoder.down_blocks.4.0.attn.to_v.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.0.conv_out.conv_depth.bias": [
+8192
+],
+"encoder.down_blocks.4.0.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"encoder.down_blocks.4.0.conv_out.conv_inverted.bias": [
+8192
+],
+"encoder.down_blocks.4.0.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"encoder.down_blocks.4.0.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"encoder.down_blocks.4.0.conv_out.norm.bias": [
+1024
+],
+"encoder.down_blocks.4.0.conv_out.norm.weight": [
+1024
+],
+"encoder.down_blocks.4.1.attn.norm_out.bias": [
+1024
+],
+"encoder.down_blocks.4.1.attn.norm_out.weight": [
+1024
+],
+"encoder.down_blocks.4.1.attn.to_k.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.1.attn.to_out.weight": [
+1024,
+2048
+],
+"encoder.down_blocks.4.1.attn.to_q.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.1.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"encoder.down_blocks.4.1.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"encoder.down_blocks.4.1.attn.to_v.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.1.conv_out.conv_depth.bias": [
+8192
+],
+"encoder.down_blocks.4.1.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"encoder.down_blocks.4.1.conv_out.conv_inverted.bias": [
+8192
+],
+"encoder.down_blocks.4.1.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"encoder.down_blocks.4.1.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"encoder.down_blocks.4.1.conv_out.norm.bias": [
+1024
+],
+"encoder.down_blocks.4.1.conv_out.norm.weight": [
+1024
+],
+"encoder.down_blocks.4.2.attn.norm_out.bias": [
+1024
+],
+"encoder.down_blocks.4.2.attn.norm_out.weight": [
+1024
+],
+"encoder.down_blocks.4.2.attn.to_k.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.2.attn.to_out.weight": [
+1024,
+2048
+],
+"encoder.down_blocks.4.2.attn.to_q.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.2.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"encoder.down_blocks.4.2.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"encoder.down_blocks.4.2.attn.to_v.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.4.2.conv_out.conv_depth.bias": [
+8192
+],
+"encoder.down_blocks.4.2.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"encoder.down_blocks.4.2.conv_out.conv_inverted.bias": [
+8192
+],
+"encoder.down_blocks.4.2.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"encoder.down_blocks.4.2.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"encoder.down_blocks.4.2.conv_out.norm.bias": [
+1024
+],
+"encoder.down_blocks.4.2.conv_out.norm.weight": [
+1024
+],
+"encoder.down_blocks.4.3.conv.bias": [
+1024
+],
+"encoder.down_blocks.4.3.conv.weight": [
+1024,
+1024,
+3,
+3
+],
+"encoder.down_blocks.5.0.attn.norm_out.bias": [
+1024
+],
+"encoder.down_blocks.5.0.attn.norm_out.weight": [
+1024
+],
+"encoder.down_blocks.5.0.attn.to_k.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.0.attn.to_out.weight": [
+1024,
+2048
+],
+"encoder.down_blocks.5.0.attn.to_q.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.0.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"encoder.down_blocks.5.0.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"encoder.down_blocks.5.0.attn.to_v.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.0.conv_out.conv_depth.bias": [
+8192
+],
+"encoder.down_blocks.5.0.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"encoder.down_blocks.5.0.conv_out.conv_inverted.bias": [
+8192
+],
+"encoder.down_blocks.5.0.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"encoder.down_blocks.5.0.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"encoder.down_blocks.5.0.conv_out.norm.bias": [
+1024
+],
+"encoder.down_blocks.5.0.conv_out.norm.weight": [
+1024
+],
+"encoder.down_blocks.5.1.attn.norm_out.bias": [
+1024
+],
+"encoder.down_blocks.5.1.attn.norm_out.weight": [
+1024
+],
+"encoder.down_blocks.5.1.attn.to_k.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.1.attn.to_out.weight": [
+1024,
+2048
+],
+"encoder.down_blocks.5.1.attn.to_q.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.1.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"encoder.down_blocks.5.1.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"encoder.down_blocks.5.1.attn.to_v.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.1.conv_out.conv_depth.bias": [
+8192
+],
+"encoder.down_blocks.5.1.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"encoder.down_blocks.5.1.conv_out.conv_inverted.bias": [
+8192
+],
+"encoder.down_blocks.5.1.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"encoder.down_blocks.5.1.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"encoder.down_blocks.5.1.conv_out.norm.bias": [
+1024
+],
+"encoder.down_blocks.5.1.conv_out.norm.weight": [
+1024
+],
+"encoder.down_blocks.5.2.attn.norm_out.bias": [
+1024
+],
+"encoder.down_blocks.5.2.attn.norm_out.weight": [
+1024
+],
+"encoder.down_blocks.5.2.attn.to_k.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.2.attn.to_out.weight": [
+1024,
+2048
+],
+"encoder.down_blocks.5.2.attn.to_q.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.2.attn.to_qkv_multiscale.0.proj_in.weight": [
+3072,
+1,
+5,
+5
+],
+"encoder.down_blocks.5.2.attn.to_qkv_multiscale.0.proj_out.weight": [
+3072,
+32,
+1,
+1
+],
+"encoder.down_blocks.5.2.attn.to_v.weight": [
+1024,
+1024
+],
+"encoder.down_blocks.5.2.conv_out.conv_depth.bias": [
+8192
+],
+"encoder.down_blocks.5.2.conv_out.conv_depth.weight": [
+8192,
+1,
+3,
+3
+],
+"encoder.down_blocks.5.2.conv_out.conv_inverted.bias": [
+8192
+],
+"encoder.down_blocks.5.2.conv_out.conv_inverted.weight": [
+8192,
+1024,
+1,
+1
+],
+"encoder.down_blocks.5.2.conv_out.conv_point.weight": [
+1024,
+4096,
+1,
+1
+],
+"encoder.down_blocks.5.2.conv_out.norm.bias": [
+1024
+],
+"encoder.down_blocks.5.2.conv_out.norm.weight": [
+1024
+]
+}
