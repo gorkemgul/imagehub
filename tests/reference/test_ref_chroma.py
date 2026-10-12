@@ -610,6 +610,7 @@ def test_real_checkpoint_end_to_end(record, tmp_path):
         width=1024,
         latents=packed_noise,
         max_sequence_length=MAX_SEQUENCE_LENGTH,
+        output_type="np",
     ).images
     expected_pixels = torch.from_numpy((expected_pixels * 255).round().astype("uint8"))
     output = tmp_path / "end-to-end.pt"
@@ -670,6 +671,7 @@ def test_real_checkpoint_seed(record, tmp_path):
         width=1024,
         generator=torch.Generator("cpu").manual_seed(42),
         max_sequence_length=MAX_SEQUENCE_LENGTH,
+        output_type="np",
     ).images
     expected = torch.from_numpy((expected * 255).round().astype("uint8"))[0]
     output = tmp_path / "seed.pt"
