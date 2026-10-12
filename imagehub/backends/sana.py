@@ -29,6 +29,7 @@ from imagehub.models.autoencoder_dc import AutoencoderDC
 from imagehub.models.gemma2 import Gemma2Model
 from imagehub.models.sana_transformer import SanaTransformer2DModel
 from imagehub.schedulers.dpmsolver_multistep import DPMSolverMultistepScheduler
+from imagehub.schedulers.scm import SCMScheduler
 from imagehub.tokenization_gemma import GemmaTokenizer
 from imagehub.types import ImageResult, T2IRequest
 
@@ -111,7 +112,7 @@ class SanaComponents:
             )
         try:
             class_name = read_json(root / "model_index.json").get("_class_name")
-            if class_name != "SanaPipeline":
+            if class_name not in ("SanaPipeline", "SanaSprintPipeline"):
                 raise CheckpointError(f"Unsupported Sana pipeline class {class_name!r}")
             return cls(
                 tokenizer=GemmaTokenizer(root / "tokenizer"),
@@ -180,8 +181,63 @@ def encode_prompt(
     return torch.cat([negative_embeds, prompt_embeds]), torch.cat([negative_mask, prompt_mask])
 
 
+def _is_sprint_scheduler(config: dict[str, Any]) -> bool:
+    return config.get("_class_name") == "SCMScheduler"
+
+
 @torch.inference_mode()
-def denoise(
+def _denoise_sprint(
+    components: SanaComponents,
+    *,
+    prompt: str,
+    steps: int,
+    guidance: float,
+    max_sequence_length: int,
+    instruction: Sequence[str],
+    latents: Tensor,
+    generator: torch.Generator,
+) -> Tensor:
+    transformer = components.transformer
+    prompt_embeds, prompt_mask = encode_prompt(
+        components, prompt, "", max_sequence_length, instruction, latents.device, False
+    )
+    scheduler = SCMScheduler(components.scheduler_config)
+    intermediate = 1.3 if steps == 2 else None
+    scheduler.set_timesteps(steps, max_timesteps=1.57080, intermediate_timesteps=intermediate)
+    dtype = transformer.patch_embed.proj.weight.dtype
+    sigma_data = float(scheduler.config["sigma_data"])
+    guidance_embeds_scale = float(transformer.config.get("guidance_embeds_scale", 0.1))
+    # Match diffusers: create in float32, expand, cast to model dtype, then scale.
+    guidance_tensor = torch.full([1], guidance, device=latents.device, dtype=torch.float32)
+    guidance_tensor = guidance_tensor.expand(latents.shape[0]).to(dtype)
+    guidance_tensor = guidance_tensor * guidance_embeds_scale
+    latents = latents * sigma_data
+    for t in scheduler.timesteps[:-1]:
+        timestep = t.expand(latents.shape[0])
+        latents_model_input = latents / sigma_data
+        scm = torch.sin(timestep) / (torch.cos(timestep) + torch.sin(timestep))
+        scm_expanded = scm.view(-1, 1, 1, 1)
+        latent_model_input = latents_model_input * torch.sqrt(
+            scm_expanded**2 + (1 - scm_expanded) ** 2
+        )
+        transformer_out = transformer(
+            latent_model_input.to(dtype=dtype),
+            prompt_embeds.to(dtype=dtype),
+            scm,
+            prompt_mask,
+            guidance=guidance_tensor,
+        ).float()
+        noise_pred = (
+            (1 - 2 * scm_expanded) * latent_model_input
+            + (1 - 2 * scm_expanded + 2 * scm_expanded**2) * transformer_out
+        ) / torch.sqrt(scm_expanded**2 + (1 - scm_expanded) ** 2)
+        noise_pred = noise_pred * sigma_data
+        latents, _ = scheduler.step(noise_pred, t, latents, generator=generator)
+    return latents / sigma_data
+
+
+@torch.inference_mode()
+def _denoise_standard(
     components: SanaComponents,
     *,
     prompt: str,
@@ -225,6 +281,42 @@ def denoise(
             noise_pred = noise_pred.chunk(2, dim=1)[0]
         latents = scheduler.step(noise_pred, t, latents)
     return latents
+
+
+@torch.inference_mode()
+def denoise(
+    components: SanaComponents,
+    *,
+    prompt: str,
+    negative_prompt: str,
+    steps: int,
+    guidance: float,
+    max_sequence_length: int,
+    instruction: Sequence[str],
+    latents: Tensor,
+    generator: torch.Generator | None = None,
+) -> Tensor:
+    if _is_sprint_scheduler(components.scheduler_config):
+        return _denoise_sprint(
+            components,
+            prompt=prompt,
+            steps=steps,
+            guidance=guidance,
+            max_sequence_length=max_sequence_length,
+            instruction=instruction,
+            latents=latents,
+            generator=generator or torch.Generator("cpu"),
+        )
+    return _denoise_standard(
+        components,
+        prompt=prompt,
+        negative_prompt=negative_prompt,
+        steps=steps,
+        guidance=guidance,
+        max_sequence_length=max_sequence_length,
+        instruction=instruction,
+        latents=latents,
+    )
 
 
 @torch.inference_mode()
@@ -369,6 +461,7 @@ class SanaBackend(TextToImageBackend):
             max_sequence_length=o["max_sequence_length"],
             instruction=o["complex_human_instruction"],
             latents=latents.to(self.device),
+            generator=generator,
         )
         pixels = decode_latents(
             self.components.vae,
@@ -378,6 +471,9 @@ class SanaBackend(TextToImageBackend):
             resize=o["use_resolution_binning"],
         )
         snapshot = self.snapshot or {}
+        scheduler_name = (
+            "scm" if _is_sprint_scheduler(self.components.scheduler_config) else "dpm-solver++"
+        )
         metadata = {
             "model_id": snapshot.get("model_id"),
             "revision": snapshot.get("revision"),
@@ -387,7 +483,7 @@ class SanaBackend(TextToImageBackend):
             "width": o["output_width"],
             "height": o["output_height"],
             "negative_prompt": o["negative_prompt"],
-            "scheduler": "dpm-solver++",
+            "scheduler": scheduler_name,
             "device": str(self.device),
             "dtype": str(self.dtype).removeprefix("torch."),
         }
