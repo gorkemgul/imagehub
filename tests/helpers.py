@@ -1876,6 +1876,78 @@ def write_tiny_sana(
     return root
 
 
+TINY_SANA_SPRINT_SCHEDULER = {
+    "_class_name": "SCMScheduler",
+    "num_train_timesteps": 1000,
+    "prediction_type": "trigflow",
+    "sigma_data": 0.5,
+}
+TINY_SANA_SPRINT_TRANSFORMER = TINY_SANA_TRANSFORMER | {
+    "guidance_embeds": True,
+    "qk_norm": "rms_norm_across_heads",
+}
+
+
+def write_tiny_sana_sprint(
+    directory: str | os.PathLike[str],
+    *,
+    seed: int = 0,
+    sample_size: int = 16,
+) -> Path:
+    """A random-weight Sana-Sprint snapshot (SCM scheduler + guidance embeddings)."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_dc import AutoencoderDC
+    from imagehub.models.gemma2 import Gemma2Model
+    from imagehub.models.sana_transformer import SanaTransformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    vocab_size = len(
+        json.loads(
+            write_tiny_gemma_tokenizer(root / "tokenizer").joinpath("tokenizer.json").read_text()
+        )["model"]["vocab"]
+    )
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        json.dumps(TINY_SANA_SPRINT_SCHEDULER)
+    )
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "SanaSprintPipeline",
+                "scheduler": ["diffusers", "SCMScheduler"],
+                "text_encoder": ["transformers", "Gemma2Model"],
+                "tokenizer": ["transformers", "GemmaTokenizerFast"],
+                "transformer": ["diffusers", "SanaTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderDC"],
+            }
+        )
+    )
+    for name, cls, config, weights in (
+        (
+            "text_encoder",
+            Gemma2Model,
+            TINY_GEMMA_CONFIG | {"vocab_size": vocab_size},
+            "model.safetensors",
+        ),
+        (
+            "transformer",
+            SanaTransformer2DModel,
+            TINY_SANA_SPRINT_TRANSFORMER | {"sample_size": sample_size},
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderDC, TINY_SANA_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.1)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
 LUMINA2_FIXTURES = Path(__file__).parent / "fixtures" / "lumina2_configs"
 TINY_LUMINA2_TRANSFORMER = {
     "_class_name": "Lumina2Transformer2DModel",

@@ -266,6 +266,61 @@
     "max_abs_diff": 0.0,
     "tolerance": "exact"
   },
+  "chroma1-hd_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-hd_tokenizer": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "chroma1-hd_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-hd_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma_e2e_tiny": {
+    "guidance": 5.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "steps": 2
+  },
+  "chroma_e2e_tiny_no_guidance": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma_scheduler": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
+  "chroma_seed_e2e_tiny": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
+  },
+  "chroma_transformer_published_small": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma_transformer_tiny": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "clip_text_mask_gelu_all_ones": {
     "hidden_states": true,
     "last_hidden_state": true,
@@ -488,6 +543,17 @@
     "passed": true,
     "pixels_match": true,
     "tokens_match": true
+  },
+  "e2e_chroma1-hd": {
+    "guidance": 5.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 2
+  },
+  "e2e_chroma1-hd_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
   },
   "e2e_cogview3-plus-3b": {
     "max_pixel_diff": 0,
@@ -811,6 +877,16 @@
     ],
     "steps": 4
   },
+  "e2e_kandinsky5_1024x1024_0": {
+    "passed": true,
+    "steps": 4,
+    "tolerance": "exact"
+  },
+  "e2e_kandinsky5_640x1408_7": {
+    "passed": true,
+    "steps": 4,
+    "tolerance": "exact"
+  },
   "e2e_kolors": {
     "guidance": 5.0,
     "latents": {
@@ -1113,6 +1189,22 @@
     "steps": 8,
     "true_cfg": 1.0
   },
+  "e2e_sana-1.5-4.8b-1024": {
+    "guidance": 4.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 20
+  },
   "e2e_sana-1600m-1024": {
     "guidance": 4.5,
     "latents": {
@@ -1144,6 +1236,22 @@
       1024
     ],
     "steps": 20
+  },
+  "e2e_sana-sprint-1.6b-1024": {
+    "guidance": 4.5,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 0,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 2
   },
   "e2e_sd-turbo": {
     "guidance": 0.0,
@@ -1606,6 +1714,46 @@
   "ernie_image_vae_decode": {
     "max_pixel_diff": 0,
     "passed": true
+  },
+  "fixture_header_sana-1.5-4.8b-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1396
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 375
+    }
+  },
+  "fixture_header_sana-sprint-1.6b-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 480
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 375
+    }
   },
   "flux1_clip": {
     "max_abs": 0.0,
@@ -2136,6 +2284,46 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_chroma1-hd": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1023
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_chroma1-hd_fixtures": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1023
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
     }
   },
   "header_cogview3-plus-3b": {
@@ -3006,6 +3194,26 @@
       "tensors": 238
     }
   },
+  "header_sana-1.5-4.8b-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1396
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 375
+    }
+  },
   "header_sana-1600m-1024": {
     "text_encoder": {
       "extra": [],
@@ -3038,6 +3246,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 548
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 375
+    }
+  },
+  "header_sana-sprint-1.6b-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 288
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 480
     },
     "vae": {
       "extra": [],
@@ -4638,6 +4866,45 @@
   "sana_published_autoencoder_decode": {
     "decode_max_abs": 0.0
   },
+  "sana_sana-1.5-4.8b-1024_text_encoder_masks": {
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "sana_sana-1.5-4.8b-1024_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-1.5-4.8b-1024_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-1.5-4.8b-1024_tokenizer": {
+    "cases": [
+      {
+        "ids_match": true,
+        "masks_match": true,
+        "max_length": 506
+      },
+      {
+        "ids_match": true,
+        "masks_match": true,
+        "max_length": 300
+      }
+    ],
+    "tolerance": "exact"
+  },
+  "sana_sana-1.5-4.8b-1024_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-1.5-4.8b-1024_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sana_sana-1600m-1024_text_encoder_masks": {
     "masks_match": true,
     "tolerance": "exact"
@@ -4715,6 +4982,49 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "sana_sana-sprint-1.6b-1024_text_encoder_masks": {
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "sana_sana-sprint-1.6b-1024_text_encoder_prompt": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-sprint-1.6b-1024_tokenizer": {
+    "cases": [
+      {
+        "ids_match": true,
+        "masks_match": true,
+        "max_length": 506
+      },
+      {
+        "ids_match": true,
+        "masks_match": true,
+        "max_length": 300
+      }
+    ],
+    "tolerance": "exact"
+  },
+  "sana_sana-sprint-1.6b-1024_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sana-sprint-1.6b-1024_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sana_sprint_tiny_default": {
+    "pixels_equal": true,
+    "shape": [
+      1,
+      512,
+      512,
+      3
+    ]
   },
   "sana_tiny_1024_request": {
     "latent_max_abs": 0.0,
@@ -5792,6 +6102,12 @@
       768
     ]
   },
+  "seed_e2e_chroma1-hd": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
+  },
   "seed_e2e_cogview3-plus-3b": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -6094,6 +6410,15 @@
     "steps": 8,
     "true_cfg": 1.0
   },
+  "seed_e2e_sana-1.5-4.8b-1024": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ]
+  },
   "seed_e2e_sana-1600m-1024": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -6104,6 +6429,15 @@
     ]
   },
   "seed_e2e_sana-600m-1024": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 1234,
+    "size": [
+      1360,
+      768
+    ]
+  },
+  "seed_e2e_sana-sprint-1.6b-1024": {
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 1234,

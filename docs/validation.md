@@ -450,6 +450,55 @@ The reference and native transformers were never held in one process (the transf
 saves the reference output first, then runs the native model). The real-checkpoint run took about
 2 hours 7 minutes on an Apple M2 Max CPU.
 
+## Chroma
+
+Validated on CPU in the same environment as above, against diffusers 0.40.0 `ChromaPipeline`.
+`chroma1-hd` was loaded strictly from `lodestones/Chroma1-HD` at revision
+`0e0c60ece1e82b17cb7f77342d765ba5024c40c0`. The observed difference in every comparison is
+**exactly 0**: on CPU in float32, the local implementation produces a bit-identical result to the
+reference. The random-weight and tiny-snapshot comparisons below are exact.
+
+### Comparisons without published weights (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tiny Chroma transformer vs `ChromaTransformer2DModel` | 0 | 0 |
+| Tiny Chroma transformer with the published config at small spatial size | 0 | 0 |
+| Flow-match Euler scheduler with exponential shifting | exact | exact |
+| Tiny end to end (128×128, 2 steps, guidance 5.0): final latent / pixels | 0 / 0 | 0 / 0 |
+| Tiny end to end without guidance (guidance 1.0): final latent / pixels | 0 / 0 | 0 / 0 |
+| Tiny end to end, seed 42, non-square 128×160 (pixels) | 0 | 0 |
+
+The tiny end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
+`seed=1234`. The tests use random weights, several seeds, square and non-square latent sizes, and
+guidance on and off. They also verify the attention mask: all real text tokens plus exactly one
+padding token are unmasked, while the remaining padding tokens are masked.
+
+### Real-checkpoint validation
+
+`chroma1-hd` was compared with diffusers 0.40.0 `ChromaPipeline` on CPU in float32 in the same
+environment as above. All 14 real tests passed, and the observed difference in every recorded
+comparison is **exactly 0** (0 means exact). The real-checkpoint run took 35 minutes on an M2 Max
+(CPU).
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (`text_encoder`, `transformer`, `vae`; 219 / 1023 / 244 tensors) | 0 missing / extra / mismatched | exact |
+| SentencePiece tokenizer token ids | identical | exact |
+| T5-XXL text encoder (512 tokens) | 0 | 0 |
+| Chroma transformer single step (timestep 0.5) | 0 | 0 |
+| VAE decode | 0 | 0 |
+| Flow-match Euler scheduler with exponential shifting (mu 1.15) | exact | exact |
+| End to end: final latent / pixels (1024×1024, 2 steps, guidance 5.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with an empty negative
+prompt, `max_sequence_length` 512 and initial noise `seed=42`. Two steps are used instead of the
+35-step default only to shorten the CPU run. The reference and native transformers are loaded one
+at a time. Record: `tensor_header_check`, `end_to_end` and `seed_end_to_end`,
+[validation.json](validation.json); component comparisons under the `chroma1-hd_*` keys,
+[validation-measurements.json](validation-measurements.json).
+
 ## FLUX.2 klein
 
 Validated on CPU in the same environment as above. `flux2-klein-4b` and `flux2-klein-9b` were loaded
@@ -1212,6 +1261,42 @@ fixed-prompt and seeded fuzz tests. The scheduler is checked against diffusers w
 The reference and native components were loaded one model id at a time; the float32 reference
 needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
 
+### Sana-Sprint 1.6B and Sana 1.5 4.8B
+
+`SanaSprintPipeline` and the SCM scheduler are validated for `sana-sprint-1.6b-1024` (revision
+`19683c5`), and `SanaPipeline` with qk normalization for `sana-1.5-4.8b-1024` (revision
+`9468102`); both were loaded strictly and compared with diffusers 0.40.0 on CPU in float32. All
+19 real tests passed and the observed difference in every recorded comparison is **exactly 0**
+(0 means exact). The real-checkpoint run took 240 minutes on an M2 Max (CPU).
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check: text encoder, transformer, DC-AE (288 / 480 / 375 tensors) | `sana-sprint-1.6b-1024` | 0 missing, extra or mismatched | exact |
+| Tensor header check: text encoder, transformer, DC-AE (288 / 1396 / 375 tensors) | `sana-1.5-4.8b-1024` | 0 missing, extra or mismatched | exact |
+| Gemma tokenizer ids / attention masks (prompt with the complex human instruction, 506 tokens, and a 300-token prompt) | `sana-sprint-1.6b-1024` | identical / identical | exact / exact |
+| Gemma tokenizer ids / attention masks (prompt with the complex human instruction, 506 tokens, and a 300-token prompt) | `sana-1.5-4.8b-1024` | identical / identical | exact / exact |
+| `SanaPipeline.encode_prompt` prompt embeddings / masks | `sana-sprint-1.6b-1024` | 0 / identical | 0 / exact |
+| `SanaPipeline.encode_prompt` prompt embeddings / masks | `sana-1.5-4.8b-1024` | 0 / identical | 0 / exact |
+| `SanaPipeline.encode_prompt` negative embeddings | `sana-1.5-4.8b-1024` | 0 | 0 |
+| Transformer single step (batch 2, 32×32 latents, timesteps 800 and 300, real conditioning) | `sana-sprint-1.6b-1024` | 0 | 0 |
+| Transformer single step (batch 2, 32×32 latents, timesteps 800 and 300, real conditioning) | `sana-1.5-4.8b-1024` | 0 | 0 |
+| DC-AE decode (32×32 latents, scaled as the pipeline does) | `sana-sprint-1.6b-1024` | 0 | 0 |
+| DC-AE decode (32×32 latents, scaled as the pipeline does) | `sana-1.5-4.8b-1024` | 0 | 0 |
+| End to end: final latent / pixels (1024×1024, 2 steps, guidance 4.5, seed 0) | `sana-sprint-1.6b-1024` | 0 / 0 | 0 / 0 |
+| End to end: final latent / pixels (1024×1024, 20 steps, guidance 4.5, seed 0) | `sana-1.5-4.8b-1024` | 0 / 0 | 0 / 0 |
+| End to end, seed 1234, 1360×768 request (binning, resize and crop back; pixels) | `sana-sprint-1.6b-1024` | 0 | 0 |
+| End to end, seed 1234, 1360×768 request (binning, resize and crop back; pixels) | `sana-1.5-4.8b-1024` | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with initial noise
+`seed=0`. Sprint's default run uses 2 steps and embeds the guidance in the transformer, so it has
+no negative text-encoder branch; the 4.8B model's default run uses 20 steps. Unit tests still
+establish exact parity for the SCM scheduler and the guidance-aware transformer against diffusers
+0.40.0, a tiny Sprint snapshot matches `SanaSprintPipeline` on CPU float32, and the qk-norm
+transformer matches the reference in random-weight parity tests. The checked-in header fixtures
+for both models recorded 0 missing, extra or shape-mismatched tensors as well
+(`fixture_header_sana-sprint-1.6b-1024`, `fixture_header_sana-1.5-4.8b-1024`,
+[validation-measurements.json](validation-measurements.json)).
+
 ## Lumina-Image 2.0
 
 `lumina-image-2.0` is loaded strictly from `Alpha-VLLM/Lumina-Image-2.0` at revision `53504ab` and
@@ -1578,9 +1663,11 @@ first sequence of the batch only; the native module reproduces that.
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 28 passed for `pixart-alpha-xl-512`,
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 7 passed each for `amused-256` and
+  `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`
+  and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
-  `lcm-dreamshaper-v7`, 8 passed for `ernie-image` and 8 passed for `hidream-i1-fast`. These include structural parity with random weights, end-to-end parity with
+  `lcm-dreamshaper-v7`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
+  for `chroma1-hd`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

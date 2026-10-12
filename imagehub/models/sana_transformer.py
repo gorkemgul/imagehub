@@ -37,7 +37,7 @@ SANA_DEFAULTS: dict[str, Any] = {
 }
 # Options without an effect on the inference graph for the supported settings.
 _IGNORED = frozenset({"guidance_embeds_scale", "timestep_scale", "sample_size", "dropout"})
-_REQUIRED = {"interpolation_scale": None, "guidance_embeds": False, "qk_norm": None}
+_REQUIRED = {"interpolation_scale": None}
 
 
 def _timestep_embedding(timesteps: Tensor, embedding_dim: int) -> Tensor:
@@ -91,6 +91,29 @@ class CombinedTimestepEmbeddings(nn.Module):
     def forward(self, timestep: Tensor, hidden_dtype: torch.dtype) -> Tensor:
         projected = _timestep_embedding(timestep, 256)
         return self.timestep_embedder(projected.to(dtype=hidden_dtype))
+
+
+class GuidanceAwareTimestepEmbeddings(nn.Module):
+    """Timestep + guidance embedding used by Sana-Sprint (``guidance_embeds=True``)."""
+
+    def __init__(self, embedding_dim: int) -> None:
+        super().__init__()
+        self.timestep_embedder = TimestepEmbedding(256, embedding_dim)
+        self.guidance_embedder = TimestepEmbedding(256, embedding_dim)
+        self.silu = nn.SiLU()
+        self.linear = nn.Linear(embedding_dim, 6 * embedding_dim)
+
+    def forward(
+        self, timestep: Tensor, guidance: Tensor, hidden_dtype: torch.dtype
+    ) -> tuple[Tensor, Tensor]:
+        timestep_emb = self.timestep_embedder(
+            _timestep_embedding(timestep, 256).to(dtype=hidden_dtype)
+        )
+        guidance_emb = self.guidance_embedder(
+            _timestep_embedding(guidance, 256).to(dtype=hidden_dtype)
+        )
+        conditioning = timestep_emb + guidance_emb
+        return self.linear(self.silu(conditioning)), conditioning
 
 
 class AdaLayerNormSingle(nn.Module):
@@ -161,6 +184,7 @@ class Attention(nn.Module):
         out_bias: bool,
         cross_attention_dim: int | None,
         dropout: float,
+        qk_norm: str | None,
     ) -> None:
         super().__init__()
         inner_dim = heads * dim_head
@@ -172,6 +196,13 @@ class Attention(nn.Module):
         self.to_out = nn.ModuleList(
             [nn.Linear(inner_dim, query_dim, bias=out_bias), nn.Dropout(dropout)]
         )
+        self.norm_q = None
+        self.norm_k = None
+        if qk_norm == "rms_norm_across_heads":
+            # diffusers' Attention uses its own default eps (1e-5) for qk_norm,
+            # independent of the transformer block's layer-norm epsilon.
+            self.norm_q = RMSNorm(inner_dim, eps=1e-5)
+            self.norm_k = RMSNorm(inner_dim, eps=1e-5)
 
 
 class LinearSelfAttention(Attention):
@@ -180,6 +211,11 @@ class LinearSelfAttention(Attention):
         query = self.to_q(hidden_states)
         key = self.to_k(hidden_states)
         value = self.to_v(hidden_states)
+
+        if self.norm_q is not None:
+            query = self.norm_q(query)
+        if self.norm_k is not None:
+            key = self.norm_k(key)
 
         query = query.transpose(1, 2).unflatten(1, (self.heads, -1))
         key = key.transpose(1, 2).unflatten(1, (self.heads, -1)).transpose(2, 3)
@@ -221,6 +257,12 @@ class CrossAttention(Attention):
         query = self.to_q(hidden_states)
         key = self.to_k(encoder_hidden_states)
         value = self.to_v(encoder_hidden_states)
+
+        if self.norm_q is not None:
+            query = self.norm_q(query)
+        if self.norm_k is not None:
+            key = self.norm_k(key)
+
         head_dim = key.shape[-1] // self.heads
         query = query.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
         key = key.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
@@ -248,11 +290,19 @@ class SanaTransformerBlock(nn.Module):
         norm_elementwise_affine: bool,
         norm_eps: float,
         mlp_ratio: float,
+        qk_norm: str | None,
     ) -> None:
         super().__init__()
         self.norm1 = nn.LayerNorm(dim, elementwise_affine=False, eps=norm_eps)
         self.attn1 = LinearSelfAttention(
-            dim, num_attention_heads, attention_head_dim, attention_bias, True, None, dropout
+            dim,
+            num_attention_heads,
+            attention_head_dim,
+            attention_bias,
+            True,
+            None,
+            dropout,
+            qk_norm,
         )
         self.norm2 = nn.LayerNorm(dim, elementwise_affine=norm_elementwise_affine, eps=norm_eps)
         self.attn2 = CrossAttention(
@@ -263,6 +313,7 @@ class SanaTransformerBlock(nn.Module):
             True,
             cross_attention_dim,
             dropout,
+            qk_norm,
         )
         self.ff = GLUMBConv(dim, dim, mlp_ratio)
         self.scale_shift_table = nn.Parameter(torch.randn(6, dim) / dim**0.5)
@@ -325,11 +376,18 @@ class SanaTransformer2DModel(NativeModel):
                 raise ValueError(f"Unsupported Sana transformer setting {key}={cfg[key]!r}")
         if cfg["cross_attention_dim"] is None or cfg["num_cross_attention_heads"] is None:
             raise ValueError("Unsupported Sana transformer setting cross_attention_dim=None")
+        if cfg["qk_norm"] not in (None, "rms_norm_across_heads"):
+            raise ValueError(f"Unsupported Sana transformer setting qk_norm={cfg['qk_norm']!r}")
         out_channels = cfg["out_channels"] or cfg["in_channels"]
         inner_dim = cfg["num_attention_heads"] * cfg["attention_head_dim"]
         self.patch_size = cfg["patch_size"]
+        self.guidance_embeds = cfg["guidance_embeds"]
         self.patch_embed = PatchEmbed(cfg["patch_size"], cfg["in_channels"], inner_dim)
-        self.time_embed = AdaLayerNormSingle(inner_dim)
+        self.time_embed: GuidanceAwareTimestepEmbeddings | AdaLayerNormSingle
+        if self.guidance_embeds:
+            self.time_embed = GuidanceAwareTimestepEmbeddings(inner_dim)
+        else:
+            self.time_embed = AdaLayerNormSingle(inner_dim)
         self.caption_projection = TextProjection(cfg["caption_channels"], inner_dim)
         self.caption_norm = RMSNorm(inner_dim, eps=1e-5)
         self.transformer_blocks = nn.ModuleList(
@@ -346,6 +404,7 @@ class SanaTransformer2DModel(NativeModel):
                     cfg["norm_elementwise_affine"],
                     cfg["norm_eps"],
                     cfg["mlp_ratio"],
+                    cfg["qk_norm"],
                 )
                 for _ in range(cfg["num_layers"])
             ]
@@ -360,6 +419,7 @@ class SanaTransformer2DModel(NativeModel):
         encoder_hidden_states: Tensor,
         timestep: Tensor,
         encoder_attention_mask: Tensor | None = None,
+        guidance: Tensor | None = None,
     ) -> Tensor:
         if encoder_attention_mask is not None and encoder_attention_mask.ndim == 2:
             # (1 = keep, 0 = discard) becomes an additive bias with a singleton query dimension.
@@ -371,7 +431,14 @@ class SanaTransformer2DModel(NativeModel):
         post_patch_height, post_patch_width = height // p, width // p
 
         hidden_states = self.patch_embed(hidden_states)
-        timestep_emb, embedded_timestep = self.time_embed(timestep, hidden_states.dtype)
+        if self.guidance_embeds:
+            if guidance is None:
+                raise ValueError("guidance is required when guidance_embeds=True")
+            timestep_emb, embedded_timestep = self.time_embed(
+                timestep, guidance, hidden_states.dtype
+            )
+        else:
+            timestep_emb, embedded_timestep = self.time_embed(timestep, hidden_states.dtype)
 
         encoder_hidden_states = self.caption_projection(encoder_hidden_states)
         encoder_hidden_states = encoder_hidden_states.view(batch_size, -1, hidden_states.shape[-1])

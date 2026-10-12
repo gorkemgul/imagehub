@@ -98,6 +98,7 @@ for _task, _name, _path in (
     (Task.T2I, "qwen-image", "imagehub.backends.qwen_image:QwenImageBackend"),
     (Task.T2I, "flux2", "imagehub.backends.flux2:Flux2Backend"),
     (Task.T2I, "flux", "imagehub.backends.flux:FluxBackend"),
+    (Task.T2I, "chroma", "imagehub.backends.chroma:ChromaBackend"),
     (Task.T2I, "hunyuan-dit", "imagehub.backends.hunyuan_dit:HunyuanDiTBackend"),
     (Task.T2I, "pixart", "imagehub.backends.pixart:PixArtBackend"),
     (Task.T2I, "sana", "imagehub.backends.sana:SanaBackend"),

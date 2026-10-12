@@ -39,7 +39,13 @@ def test_family_and_model_aliases_are_registered():
     assert "kolors" in names
     assert {"hidream", "hidream-i1-fast"} <= set(names)
     assert {"auraflow", "auraflow-v0.3"} <= set(names)
-    assert {"sana", "sana-1600m-1024", "sana-600m-1024"} <= set(names)
+    assert {
+        "sana",
+        "sana-1600m-1024",
+        "sana-600m-1024",
+        "sana-sprint-1.6b-1024",
+        "sana-1.5-4.8b-1024",
+    } <= set(names)
     assert {"lumina2", "lumina-image-2.0"} <= set(names)
     assert {"amused", "amused-256", "amused-512"} <= set(names)
     assert {"llamagen", "llamagen-t2i-xl-256", "llamagen-t2i-xl-512"} <= set(names)
