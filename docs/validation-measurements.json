@@ -266,6 +266,61 @@
     "max_abs_diff": 0.0,
     "tolerance": "exact"
   },
+  "chroma1-hd_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-hd_tokenizer": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "chroma1-hd_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-hd_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma_e2e_tiny": {
+    "guidance": 5.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "steps": 2
+  },
+  "chroma_e2e_tiny_no_guidance": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma_scheduler": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
+  "chroma_seed_e2e_tiny": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
+  },
+  "chroma_transformer_published_small": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma_transformer_tiny": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "clip_text_mask_gelu_all_ones": {
     "hidden_states": true,
     "last_hidden_state": true,
@@ -488,6 +543,17 @@
     "passed": true,
     "pixels_match": true,
     "tokens_match": true
+  },
+  "e2e_chroma1-hd": {
+    "guidance": 5.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 2
+  },
+  "e2e_chroma1-hd_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
   },
   "e2e_cogview3-plus-3b": {
     "max_pixel_diff": 0,
@@ -2136,6 +2202,46 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_chroma1-hd": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1023
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_chroma1-hd_fixtures": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1023
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
     }
   },
   "header_cogview3-plus-3b": {
@@ -5741,6 +5847,12 @@
       1360,
       768
     ]
+  },
+  "seed_e2e_chroma1-hd": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
   },
   "seed_e2e_cogview3-plus-3b": {
     "max_pixel_diff": 0,
