@@ -1212,6 +1212,15 @@ fixed-prompt and seeded fuzz tests. The scheduler is checked against diffusers w
 The reference and native components were loaded one model id at a time; the float32 reference
 needs about 6.4 GB for the transformer and 10.5 GB for Gemma-2.
 
+### Sana-Sprint 1.6B and Sana 1.5 4.8B
+
+`SanaSprintPipeline` and the SCM scheduler are supported for `sana-sprint-1.6b-1024` (revision
+`19683c5`), and `SanaPipeline` with qk normalization is supported for `sana-1.5-4.8b-1024`
+(revision `9468102`). Real-checkpoint validation for both models is pending the real-checkpoint
+run. Unit tests establish exact parity for the SCM scheduler and the guidance-aware transformer
+against diffusers 0.40.0, a tiny Sprint snapshot matches `SanaSprintPipeline` on CPU float32, and
+the qk-norm transformer matches the reference in random-weight parity tests.
+
 ## Lumina-Image 2.0
 
 `lumina-image-2.0` is loaded strictly from `Alpha-VLLM/Lumina-Image-2.0` at revision `53504ab` and
