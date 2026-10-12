@@ -1382,6 +1382,22 @@ default settings, guidance 1.0, a non-square size rounded up to 64 pixels with a
 empty negative prompt, two images, a prompt longer than the context and a single step) with two
 sets of random weights each, plus checks of the latents and of the cut context.
 
+## Kandinsky 5
+
+`kandinsky-5-t2i-lite` will be loaded strictly from
+`kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers` at revision `25da1e82e6adefdbc83c02a71f762287c5e471a4`
+and compared with diffusers 0.40.0 `Kandinsky5T2IPipeline` on CPU in float32, on the float32 upcast
+of the published bfloat16 weights. The real-checkpoint tests (`tests/reference/test_ref_kandinsky5.py`)
+will check the tensor headers of all components, the Qwen and CLIP tokenizers, the Qwen text-encoder
+outputs and CLIP pooled embedding the pipeline uses, one transformer step with real conditioning,
+the VAE decode, and end-to-end generation with a shortened run and a non-square seed test. The
+real-checkpoint run is pending.
+
+Random-weight parity covers the Kandinsky 5 3D transformer with a tiny and with the published
+configuration at small spatial sizes. Tiny-snapshot end-to-end parity covers the default settings,
+guidance on and off, non-square sizes, two seeds and several weight seeds, using a random snapshot in
+the published diffusers layout.
+
 ## AuraFlow
 
 Validated on CPU in the same environment as above. `auraflow-v0.3` is loaded strictly from
