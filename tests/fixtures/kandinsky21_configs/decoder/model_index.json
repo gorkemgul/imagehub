@@ -1,0 +1,24 @@
+{
+  "_class_name": "KandinskyPipeline",
+  "_diffusers_version": "0.17.0.dev0",
+  "text_encoder": [
+    "kandinsky",
+    "MultilingualCLIP"
+  ],
+  "tokenizer": [
+    "transformers",
+    "XLMRobertaTokenizerFast"
+  ],
+  "scheduler": [
+    "diffusers",
+    "DDIMScheduler"
+  ],
+  "unet": [
+    "diffusers",
+    "UNet2DConditionModel"
+  ],
+  "movq": [
+    "diffusers",
+    "VQModel"
+  ]
+}
