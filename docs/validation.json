@@ -5030,6 +5030,176 @@
       }
     },
     {
+      "model_id": "kandinsky-2-1",
+      "repo_id": "kandinsky-community/kandinsky-2-1",
+      "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+      "provenance": "author",
+      "catalog_id": "kandinsky-2",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "ddpm_scheduler/scheduler_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "c2e680ce5d878b490df0194a609c420cfbfdcb1cfbf64edef3859e4a90ec9c97"
+        },
+        "model_index.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "10e7e38f6abf7dc1e4c1abb5975076f07b5b4e28bc0f5340a764d012ff665790"
+        },
+        "movq/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "b7448f3ea8aecf233629b20c1f606887e22244656edcee1be6a419079717a23e"
+        },
+        "movq/diffusion_pytorch_model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "667319216c14764042b3e7cae7c4d1a309a409a674d413144e9ac65b572c6ea8"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "d8d68ebc5c91ada26ee5bde84e66a3729fbc3c3412c591ef9a25d379eb7bd267"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "281d3d431424b254ad7e05696648df0dcb66e24066caf2bcc15cd32d235901d3"
+        },
+        "text_encoder/model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "6fd189d4154f9b69e0c39fc32276b9dd19fe273d865a8f5ae76bfadba69f9e6b"
+        },
+        "tokenizer/sentencepiece.bpe.model": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "06e405a36dfe4b9604f484f6a1e619af1a7f7d09e34a8555eb0b77b66318067f"
+        },
+        "tokenizer/tokenizer.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "62c24cdc13d4c9952d63718d6c9fa4c287974249e16b7ade6d5a85e7bbb75626"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "efb5c0d09722e5fe59a462cd2a9976ee216d55b037597d997cd3fe833216da15"
+        },
+        "unet/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "9f22abe8fad023c74a5058d4c59a3646b712af014a528291aa0f50126bf4b179"
+        },
+        "unet/diffusion_pytorch_model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-1",
+          "revision": "04b366659663bf60deacb96fd3e38f1cb39a3be4",
+          "sha256": "6a963e1be76a02b71fce27ad8321b42f707ba8fe9839f1696aeb4f36a48a7604"
+        },
+        "prior/model_index.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "0124e5b1289d21e5d432fc382e7a9f82577e875c387436fb97f6f5d5779850a7"
+        },
+        "prior/image_encoder/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "13d70e852a2dd9e208348116e7454285364128a4bd9e65f2a5c9dfa6d92085fc"
+        },
+        "prior/image_encoder/model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "12daabb57c3373c5623377d13acba94c424266d14102dd5fae58a59c08317a8f"
+        },
+        "prior/image_processor/preprocessor_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "0a70aaa5de2ccb5e222b0e7e3ea347a3da051c3588c763cdd23b4d80bbf96b65"
+        },
+        "prior/prior/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "4ce54192a0788aaff039765819885cb8a8c0a1c2d16078efc50ccf7b20bb77df"
+        },
+        "prior/prior/diffusion_pytorch_model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "aa32db75088505621b610571883628eebedc9d1275432e326f2fac50498808c2"
+        },
+        "prior/scheduler/scheduler_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "5ba056e705a3317f60d79a3756a3409b0a53f1129b76a6aa5097ce9f513d143e"
+        },
+        "prior/text_encoder/config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "ca24b105cd7ef9a2746d4ac8850df9bf8fe3a6036ad3a51d3bcb7fbfb4e03e26"
+        },
+        "prior/text_encoder/model.safetensors": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "2e568d33be62b67cb87bc3e9ca57502b85d33070b43ab3d7eb0e3bfd171a84f1"
+        },
+        "prior/tokenizer/merges.txt": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "prior/tokenizer/special_tokens_map.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6"
+        },
+        "prior/tokenizer/tokenizer_config.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "ab5a0b76f28b732989168b53317bd2358c3b27e9d6832fb2526c31288bfd127f"
+        },
+        "prior/tokenizer/vocab.json": {
+          "repo_id": "kandinsky-community/kandinsky-2-1-prior",
+          "revision": "b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+          "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "movq": 431,
+          "prior/image_encoder": 393,
+          "prior/prior": 338,
+          "prior/text_encoder": 198,
+          "text_encoder": 394,
+          "unet": 726
+        }
+      },
+      "end_to_end": {
+        "passed": true,
+        "pixels_max_abs": 0
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
       "model_id": "kandinsky-3",
       "repo_id": "kandinsky-community/kandinsky-3",
       "revision": "bf79e6c219da8a94abb50235fdc4567eb8fb4632",
@@ -7959,6 +8129,38 @@
       "tolerance": 0.0
     }
   },
+  "components_kandinsky21": {
+    "kandinsky21_decoder_unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky21_movq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky21_multilingual_clip_hidden": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky21_multilingual_clip_pooled": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky21_prior_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "kandinsky21_tokens": {
+      "exact": true,
+      "prompts": 4,
+      "tolerance": "exact"
+    }
+  },
   "components_kandinsky3": {
     "kandinsky3_movq_decode": {
       "max_abs": 0.0,
@@ -10004,6 +10206,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "6 passed (kandinsky-5-t2i-lite)"
+    "reference_summary": "4 passed (kandinsky-2-1)"
   }
 }
