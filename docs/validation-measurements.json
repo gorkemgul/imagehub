@@ -885,6 +885,16 @@
     "tolerance": "exact",
     "width": 1024
   },
+  "e2e_kandinsky5_1024x1024_0": {
+    "passed": true,
+    "steps": 4,
+    "tolerance": "exact"
+  },
+  "e2e_kandinsky5_640x1408_7": {
+    "passed": true,
+    "steps": 4,
+    "tolerance": "exact"
+  },
   "e2e_kolors": {
     "guidance": 5.0,
     "latents": {
