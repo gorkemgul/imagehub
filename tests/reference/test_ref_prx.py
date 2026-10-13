@@ -11,6 +11,7 @@ import pytest
 import torch
 from helpers import snapshot_dir
 
+from imagehub import pipeline
 from imagehub.backends.prx import PRXComponents, decode_latents, denoise, encode_prompt
 from imagehub.checkpoints import load_weights, read_json
 from imagehub.models.autoencoder_kl import AutoencoderKL
@@ -112,7 +113,7 @@ def test_headers(model_id, record) -> None:
         with torch.device("meta"):
             model = cls(read_json(root / component / "config.json"))
         expected = {name: tuple(value.shape) for name, value in model.state_dict().items()}
-        actual = _shapes(root / component)
+        actual = model.prepare_state_dict(_shapes(root / component))
         outcome[component] = {
             "missing": sorted(expected.keys() - actual.keys()),
             "extra": sorted(actual.keys() - expected.keys()),
@@ -201,7 +202,7 @@ def test_components_and_end_to_end(model_id, record) -> None:
     ours_embeddings, ours_mask = encode_prompt(
         components, PROMPT, "", 256, torch.device("cpu"), True, False
     )
-    embeddings_diff = float((ours_embeddings - expected_embeddings).abs().max())
+    embeddings_diff = float((ours_embeddings - expected_embeddings).abs().max().detach())
     masks_equal = torch.equal(ours_mask, expected_masks)
     record(
         f"prx_{model_id}_text_encoder",
@@ -235,6 +236,46 @@ def test_components_and_end_to_end(model_id, record) -> None:
     actual = decode_latents(components.vae, actual_latents)
     expected_pixels = torch.from_numpy(expected).mul(255).round().to(torch.uint8)
     pixels_equal = torch.equal(actual, expected_pixels)
-    record(f"e2e_{model_id}", pixels_equal=pixels_equal, tolerance="exact")
-    record(f"seed_e2e_{model_id}", seed=0, pixels_equal=pixels_equal, tolerance="exact")
+    record(f"e2e_{model_id}", passed=pixels_equal, pixels_equal=pixels_equal, tolerance="exact")
+    assert pixels_equal
+
+
+@pytest.mark.parametrize("model_id", MODELS)
+def test_seed_end_to_end(model_id, record) -> None:
+    root = snapshot_dir(model_id)
+    reference = _reference_pipeline(root)
+    size = 1024 if "1024" in model_id else 512
+    expected = reference(
+        PROMPT,
+        negative_prompt="",
+        height=size,
+        width=size,
+        num_inference_steps=2,
+        generator=torch.Generator().manual_seed(42),
+        output_type="np",
+        use_resolution_binning=False,
+    ).images
+    del reference
+    gc.collect()
+
+    result = pipeline("t2i", backend=model_id, model=root)(
+        PROMPT,
+        negative_prompt="",
+        height=size,
+        width=size,
+        steps=2,
+        guidance=4.0,
+        seed=42,
+        use_resolution_binning=False,
+    )
+    actual = torch.stack([image.tensor for image in result.images])
+    expected_pixels = torch.from_numpy(expected).mul(255).round().to(torch.uint8)
+    pixels_equal = torch.equal(actual, expected_pixels)
+    record(
+        f"seed_e2e_{model_id}",
+        passed=pixels_equal,
+        seed=42,
+        pixels_equal=pixels_equal,
+        tolerance="exact",
+    )
     assert pixels_equal
