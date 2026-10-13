@@ -1,0 +1,16 @@
+{
+  "context_in_dim": 2304,
+  "hidden_size": 1792,
+  "mlp_ratio": 3.5,
+  "num_heads": 28,
+  "depth": 16,
+  "axes_dim": [
+    32,
+    32
+  ],
+  "theta": 10000,
+  "time_factor": 1000.0,
+  "time_max_period": 10000,
+  "in_channels": 16,
+  "patch_size": 2
+}
