@@ -7,6 +7,34 @@ References are recorded per model in `validation.json` under `reference`.
 
 ## Scope
 
+## Latent Diffusion Model
+
+`ldm-text2im-large-256` was loaded strictly from `CompVis/ldm-text2im-large-256` at revision
+`30de525` and compared with diffusers 0.40.0 `LDMTextToImagePipeline` on CPU in float32. All 5
+real-checkpoint tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (`bert`, `unet`, `vqvae`; 422 / 686 / 248 tensors) | 0 missing / extra / mismatched | exact |
+| BERT tokenizer token ids (prompt at 77 tokens) | identical | exact |
+| LDM BERT text encoder | 0 | 0 |
+| U-Net single step (t = 981) | 0 | 0 |
+| VQ-VAE decode | 0 | 0 |
+| Random-weight BERT encoder (tiny configuration) | 0 | 0 |
+| End to end: final pixels (50 steps, guidance 1.0, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse"; both runs use the
+defaults of 50 steps, guidance 1.0 and 256×256. Records: `header_ldm-text2im-large-256`,
+`ldm_tokenizer`, `ldm_text_encoder`, `ldm_unet`, `ldm_vqvae_decode`, `ldm_random_bert`,
+`e2e_ldm-text2im-large-256` and `seed_e2e_ldm-text2im-large-256`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`, `end_to_end`
+and `seed_end_to_end`, [validation.json](validation.json).
+
 - **5 checkpoints, `full`:** `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`.
   The published tensors were loaded strictly. A 50-step generation from the same initial noise was
   compared against diffusers.
@@ -1750,7 +1778,7 @@ first sequence of the batch only; the native module reproduces that.
   `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
-  `lcm-dreamshaper-v7`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
+  `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
   for `chroma1-hd`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

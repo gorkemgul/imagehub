@@ -83,6 +83,7 @@ class BackendRegistry:
 
 backend_registry = BackendRegistry()
 for _task, _name, _path in (
+    (Task.T2I, "ldm", "imagehub.backends.ldm:LDMBackend"),
     (Task.T2I, "stable-diffusion", "imagehub.backends.stable_diffusion:StableDiffusionBackend"),
     (
         Task.T2I,
