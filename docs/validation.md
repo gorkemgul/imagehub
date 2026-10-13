@@ -1820,3 +1820,11 @@ The SDXL validation found three more differences:
    equivalent `generate(num_return_sequences=...)` argument is used instead.
 10. **Euler initial noise scale with trailing spacing.** With `timestep_spacing="trailing"`, the
     Euler scheduler's initial noise scale is the largest sigma itself, not `sqrt(sigma² + 1)`.
+
+## Ovis-Image
+
+`ovis-image-7b` is pinned to `ATH-MaaS/Ovis-Image-7B` revision
+`41be1c5821a92c970d63d7eb595a2fd3fe32b22e`. Offline validation checks every published Ovis
+transformer tensor name and shape and executes a tiny random-weight transformer. Real-checkpoint
+tokenizer, encoder, denoiser, VAE, default end-to-end, and separate seed end-to-end validation are
+pending the real-checkpoint run.

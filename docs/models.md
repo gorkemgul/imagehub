@@ -912,6 +912,23 @@ precomputed prompt embeddings, batches of several prompts and fp16/bf16 parity a
 
 **License.** The repository declares the MIT license. imagehub does not distribute weights.
 
+# Ovis-Image
+
+Catalog: [`ovis-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`ovis-image-7b` · Task: `t2i`
+
+Ovis-Image uses a Qwen3 text encoder and a flow-matching joint transformer, followed by a
+16-channel AutoencoderKL. It accepts text prompts and defaults to 50 steps, guidance 5.0, and
+1024×1024 pixels. `seed`, `steps`, `guidance`, `width`, `height`, `negative_prompt`,
+`num_images`, and `max_sequence_length` are supported.
+
+```bash
+python -m imagehub.pretrained ovis-image-7b checkpoints/ovis-image-7b
+```
+
+The published transformer and text encoder are float32; the VAE is bfloat16. CPU float32 parity
+and end-to-end validation are pending the real-checkpoint run.
+
 # Stable Cascade
 
 Catalog: [`wuerstchen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
