@@ -8,6 +8,7 @@ import torch
 
 from imagehub.catalog import model_info
 from imagehub.models.ovis_image_transformer import OvisImageTransformer2DModel
+from imagehub.tokenization_qwen import Qwen2Tokenizer
 
 
 def test_ovis_image_catalog_is_pinned() -> None:
@@ -28,6 +29,17 @@ def test_ovis_image_published_transformer_header() -> None:
     actual = model.state_dict()
     assert set(actual) == set(expected)
     assert {name: list(value.shape) for name, value in actual.items()} == expected
+
+
+def test_ovis_image_tokenizer_uses_byte_level_newline(tmp_path: Path) -> None:
+    fixture = Path("tests/fixtures/ovis_image_configs")
+    for destination, source in {
+        "tokenizer.json": "tokenizer_tokenizer.json",
+        "tokenizer_config.json": "tokenizer_tokenizer_config.json",
+    }.items():
+        (tmp_path / destination).hardlink_to(fixture / source)
+    tokenizer = Qwen2Tokenizer(tmp_path)
+    assert tokenizer.tokenize("line1\nline2") == [1056, 16, 198, 1056, 17]
 
 
 def test_ovis_image_tiny_transformer_forward() -> None:

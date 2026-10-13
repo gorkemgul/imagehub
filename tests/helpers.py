@@ -799,10 +799,10 @@ def write_tiny_ovis_image(directory: str | os.PathLike[str], *, seed: int = 0) -
     shutil.copyfile(source / "tokenizer_added_tokens.json", tokenizer / "added_tokens.json")
     tokenizer_config = json.loads((tokenizer / "tokenizer_config.json").read_text())
     tokenizer_config["chat_template"] = (
-        "{% for message in messages %}<|im_start|>{{ message['role'] }}\\n"
-        "{{ message['content'] }}<|im_end|>\\n{% endfor %}"
-        "{% if add_generation_prompt %}<|im_start|>assistant\\n"
-        "<think>\\n\\n</think>\\n\\n{% endif %}"
+        "{% for message in messages %}<|im_start|>{{ message['role'] }}\n"
+        "{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        "{% if add_generation_prompt %}<|im_start|>assistant\n"
+        "<think>\n\n</think>\n\n{% endif %}"
     )
     (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
     (root / "scheduler").mkdir()

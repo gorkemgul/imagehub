@@ -92,6 +92,12 @@ def test_header(root, record):
             actual = {
                 "model." + name: value for name, value in actual.items() if name != "lm_head.weight"
             }
+        actual = {
+            name: tuple(value.shape)
+            for name, value in model.prepare_state_dict(
+                {name: torch.empty(shape, device="meta") for name, shape in actual.items()}
+            ).items()
+        }
         result[component] = _entry(expected, actual)
     record(f"header_{MODEL_ID}", **result)
     assert all(
