@@ -116,6 +116,66 @@ class ModelSpec:
 
 _entries: list[ModelSpec] = []
 
+# DreamLite publishes bfloat16 safetensors only.  Both releases use the same
+# component layout; the mobile checkpoint is distilled for four CFG-free steps.
+_DREAMLITE_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "processor/added_tokens.json",
+    "processor/chat_template.jinja",
+    "processor/merges.txt",
+    "processor/preprocessor_config.json",
+    "processor/special_tokens_map.json",
+    "processor/tokenizer.json",
+    "processor/tokenizer_config.json",
+    "processor/video_preprocessor_config.json",
+    "processor/vocab.json",
+    "text_encoder/config.json",
+    "text_encoder/generation_config.json",
+    "text_encoder/model.safetensors",
+    "tokenizer/added_tokens.json",
+    "tokenizer/chat_template.jinja",
+    "tokenizer/merges.txt",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/vocab.json",
+    "unet/config.json",
+    "unet/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _id, _repo, _revision, _defaults in (
+    (
+        "dreamlite-base",
+        "carlofkl/DreamLite-base",
+        "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+        {"steps": 30, "guidance": 3.5, "image_guidance": 1.5},
+    ),
+    (
+        "dreamlite-mobile",
+        "carlofkl/DreamLite-mobile",
+        "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+        {"steps": 4, "guidance": None, "image_guidance": None},
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="dreamlite",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="dreamlite",
+            format="diffusers",
+            license="CC-BY-NC-4.0",
+            config={"defaults": _defaults, "precision": "bfloat16"},
+            files=_DREAMLITE_FILES,
+        )
+    )
+
 # Stable Diffusion 1.x: one architecture, five released weight sets. Only fp32 EMA weights
 # are fetched; fp16, non-EMA, single-file .ckpt and safety checker files are excluded.
 _SD1_COMMON = (

@@ -17,6 +17,8 @@ def test_catalog_contents():
             "cogview4-6b",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
+            "dreamlite-base",
+            "dreamlite-mobile",
             "ernie-image",
             "flux1-dev",
             "flux1-kontext-dev",
