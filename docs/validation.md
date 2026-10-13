@@ -7,6 +7,12 @@ References are recorded per model in `validation.json` under `reference`.
 
 ## Scope
 
+## Latent Diffusion Model
+
+`ldm-text2im-large-256` is pending the real-checkpoint run. The reference tests cover the BERT
+tokenizer and encoder, a U-Net step, VQ-VAE decoding, DDIM end-to-end output, and seed 0 against
+diffusers 0.40.0 on CPU float32. No parity claim is made until those measurements are recorded.
+
 - **5 checkpoints, `full`:** `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`.
   The published tensors were loaded strictly. A 50-step generation from the same initial noise was
   compared against diffusers.

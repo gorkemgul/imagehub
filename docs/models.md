@@ -10,6 +10,22 @@ image input, and passing `image` to one raises an error.
 | `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
 | `omnigen-v1` | optional | editing and subject-driven generation, referenced from the prompt | `image`, `image_guidance`, `max_input_image_size`, `use_input_image_size_as_output` |
 
+# Latent Diffusion Model
+
+Catalog: [`ldm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`ldm-text2im-large-256` · Task: `t2i`
+
+**Architecture.** A 32×32×4 latent U-Net conditioned by a 32-layer LDMBert encoder and decoded
+by an f=8 KL autoencoder. The published sampler is DDIM.
+
+**Usage.** `python -m imagehub.pretrained ldm-text2im-large-256 checkpoints/ldm`
+
+**Settings.** `steps` (50), `guidance` (1.0), `width`/`height` (256, multiples of 8),
+`negative_prompt`, `num_images`, `seed`, `latents`, and `eta` (0.0 only).
+
+**Validation.** CPU float32 parity is pending the real-checkpoint run. Safety checkers,
+watermarking, img2img, and stochastic DDIM sampling are out of scope.
+
 # Stable Diffusion 1.x
 
 Catalog: [`stable-diffusion-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
