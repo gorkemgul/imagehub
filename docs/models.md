@@ -441,9 +441,10 @@ steps and guidance 0.0. All four default to 1024×1024, and `width`/`height` mus
 16. The other supported options are `negative_prompt`, `num_images`, `seed`, `latents` and
 `max_sequence_length` (256). Unrecognized settings raise an error.
 
-**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
-`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
-runs are smoke tests only; there is no claim of exact equality on these devices.
+**Seed compatibility.** For the validated Alpha and Sigma checkpoints, CPU runs with the same seed
+and settings give the same image as diffusers with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). PixArt-LCM has exact tiny-snapshot coverage; its real-checkpoint run
+is pending. MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** There is no safety checker or invisible watermark. Img2img, other schedulers and
 fp16/bf16 parity are not in this release.
@@ -1075,7 +1076,7 @@ prior tokens, custom timesteps and fp16/bf16 parity are not implemented.
 Catalog: [`pixart-sigma`](https://github.com/gorkemgul/awesome-text-to-image-architectures),
 [`pixart-alpha`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
 `pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`,
-`pixart-alpha-xl-1024`, `pixart-alpha-xl-512` · Task: `t2i`
+`pixart-alpha-xl-1024`, `pixart-alpha-xl-512`, `pixart-lcm-xl-1024` · Task: `t2i`
 
 **Architecture.** A T5-v1.1-XXL text encoder supplies up to 300 tokens for Sigma and 120 for Alpha
 to a 0.6B diffusion transformer with 28 blocks, width 1152 and 16 attention heads of width 72. The
@@ -1083,7 +1084,8 @@ transformer uses shared `ada_norm_single` timestep modulation, caption projectio
 position embedding and learned sigma prediction. Sigma uses interpolation scale 2 and the SDXL VAE
 with scaling factor 0.13025. Alpha adds resolution and aspect-ratio embeddings and uses the SD VAE
 with scaling factor 0.18215. Both use the order-2 midpoint DPM-Solver++ multistep scheduler and bin
-requested resolutions to their supported aspect-ratio tables.
+requested resolutions to their supported aspect-ratio tables. PixArt-LCM reuses the Alpha layout with
+an LCM scheduler and its own distilled transformer.
 
 **Usage.**
 
@@ -1108,8 +1110,9 @@ encoder, tokenizer, VAE and scheduler from the Sigma 1024 repository, as the mod
 Alpha resolution and aspect-ratio embeddings exist only in the 1024 model. Resolution binning
 uses the table that matches the transformer (256, 512, 1024 or 2048).
 
-**Settings.** All models default to 20 steps and guidance 4.5, and to a square image of their native
-size (256, 512, 1024 or 2048 pixels). Sigma defaults to a maximum sequence length of 300 and Alpha to 120. The other supported options are `seed`, `latents`,
+**Settings.** PixArt-LCM defaults to 4 steps, guidance 0.0 and 1024×1024 output; all other models
+default to 20 steps and guidance 4.5, and to a square image of their native size (256, 512, 1024 or
+2048 pixels). Sigma defaults to a maximum sequence length of 300 and Alpha and LCM to 120. The other supported options are `seed`, `latents`,
 `negative_prompt`, `use_resolution_binning` and `max_sequence_length`. Unrecognized settings raise
 an error.
 
@@ -1117,7 +1120,7 @@ an error.
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** PixArt-LCM, PixArt-DMD, ControlNet,
+**Out of scope.** PixArt-DMD, ControlNet,
 fp16/bf16 parity and caption cleaning are not supported. Caption cleaning requires `bs4` and `ftfy`;
 parity is against `clean_caption=False`, which diffusers uses when those packages are unavailable.
 

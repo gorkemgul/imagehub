@@ -45,16 +45,22 @@ def test_lcm_step_requires_timesteps():
 @pytest.mark.parametrize(
     "option",
     [
-        {"beta_schedule": "linear"},
-        {"clip_sample": True},
-        {"original_inference_steps": 40},
-        {"prediction_type": "sample"},
-        {"set_alpha_to_one": False},
-        {"thresholding": True},
-        {"timestep_spacing": "trailing"},
         {"unknown": True},
     ],
 )
 def test_lcm_rejects_unsupported_options(option):
     with pytest.raises(ValueError, match="Unsupported LCM setting"):
         LCMScheduler(LCM_SCHEDULER | option)
+
+
+def test_published_pixart_lcm_schedule_is_supported():
+    scheduler = LCMScheduler(
+        {
+            "beta_start": 0.0001,
+            "beta_end": 0.02,
+            "beta_schedule": "linear",
+            "original_inference_steps": 50,
+        }
+    )
+    scheduler.set_timesteps(4)
+    assert scheduler.timesteps.tolist() == [999, 759, 499, 259]

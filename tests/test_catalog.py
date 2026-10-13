@@ -48,6 +48,7 @@ def test_catalog_contents():
             "omnigen-v1",
             "pixart-alpha-xl-1024",
             "pixart-alpha-xl-512",
+            "pixart-lcm-xl-1024",
             "pixart-sigma-xl-1024",
             "pixart-sigma-xl-256",
             "pixart-sigma-xl-2k",
@@ -537,6 +538,13 @@ def test_pixart_catalog_entries():
             120,
             alpha_512,
         ),
+        "pixart-lcm-xl-1024": (
+            "PixArt-alpha/PixArt-LCM-XL-2-1024-MS",
+            "e153060b10990994d2ed31304b3224da47fbd740",
+            "pixart-delta",
+            120,
+            alpha_512,
+        ),
     }
     for model_id, (repo, revision, catalog_id, max_length, files) in expected.items():
         spec = model_info(model_id)
@@ -549,6 +557,13 @@ def test_pixart_catalog_entries():
         assert spec.format == "diffusers"
         assert spec.license == "CreativeML-OpenRAIL++-M"
         assert not spec.gated
+        if model_id == "pixart-lcm-xl-1024":
+            assert spec.config == {
+                "defaults": {"steps": 4, "guidance": 0.0, "max_sequence_length": 120}
+            }
+            assert spec.files == files
+            assert spec.base is None
+            continue
         size = {"pixart-alpha-xl-512": {"width": 512, "height": 512}}.get(model_id, {})
         assert spec.config == {
             "defaults": {"steps": 20, "guidance": 4.5, "max_sequence_length": max_length} | size

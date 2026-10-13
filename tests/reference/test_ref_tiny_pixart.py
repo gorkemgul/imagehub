@@ -89,6 +89,24 @@ SCHEDULER_CONFIG = {
     "time_shift_type": "exponential",
     "variance_type": None,
 }
+LCM_SCHEDULER_CONFIG = {
+    "_class_name": "LCMScheduler",
+    "beta_end": 0.02,
+    "beta_schedule": "linear",
+    "beta_start": 0.0001,
+    "clip_sample": False,
+    "dynamic_thresholding_ratio": 0.995,
+    "num_train_timesteps": 1000,
+    "original_inference_steps": 50,
+    "prediction_type": "epsilon",
+    "rescale_betas_zero_snr": False,
+    "sample_max_value": 1.0,
+    "set_alpha_to_one": True,
+    "steps_offset": 0,
+    "thresholding": False,
+    "timestep_spacing": "leading",
+    "trained_betas": None,
+}
 
 
 def _write_tokenizer(directory: Path) -> None:
@@ -132,19 +150,25 @@ def _write_tokenizer(directory: Path) -> None:
 
 
 def _write_tiny_pixart(
-    directory: Path, class_name: str, transformer_overrides: dict | None = None
+    directory: Path,
+    class_name: str,
+    transformer_overrides: dict | None = None,
+    scheduler_config: dict | None = None,
 ) -> Path:
     directory.mkdir()
     _write_tokenizer(directory / "tokenizer")
     (directory / "scheduler").mkdir()
     (directory / "scheduler" / "scheduler_config.json").write_text(
-        json.dumps(SCHEDULER_CONFIG), encoding="utf-8"
+        json.dumps(scheduler_config or SCHEDULER_CONFIG), encoding="utf-8"
     )
     (directory / "model_index.json").write_text(
         json.dumps(
             {
                 "_class_name": class_name,
-                "scheduler": ["diffusers", "DPMSolverMultistepScheduler"],
+                "scheduler": [
+                    "diffusers",
+                    (scheduler_config or SCHEDULER_CONFIG)["_class_name"],
+                ],
                 "text_encoder": ["transformers", "T5EncoderModel"],
                 "tokenizer": ["transformers", "T5Tokenizer"],
                 "transformer": ["diffusers", "PixArtTransformer2DModel"],
@@ -179,6 +203,57 @@ def _write_tiny_pixart(
         (directory / name / "config.json").write_text(json.dumps(config), encoding="utf-8")
         save_safetensors(model.state_dict(), directory / name / weights)
     return directory
+
+
+def test_tiny_pixart_lcm_matches_diffusers_exactly(tmp_path):
+    root = _write_tiny_pixart(
+        tmp_path / "tiny", "PixArtAlphaPipeline", scheduler_config=LCM_SCHEDULER_CONFIG
+    )
+    reference = diffusers.PixArtAlphaPipeline.from_pretrained(root, local_files_only=True)
+    reference.set_progress_bar_config(disable=True)
+    noise = torch.randn(1, 4, 4, 4, generator=torch.Generator("cpu").manual_seed(7))
+    kwargs = {
+        "prompt": "a cat",
+        "num_inference_steps": 4,
+        "guidance_scale": 0.0,
+        "height": 32,
+        "width": 32,
+        "use_resolution_binning": False,
+        "max_sequence_length": 120,
+        "latents": noise.clone(),
+        "generator": torch.Generator("cpu").manual_seed(42),
+        "clean_caption": False,
+    }
+    expected = reference(**kwargs, output_type="np").images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
+    expected_latents = reference(
+        **(kwargs | {"generator": torch.Generator("cpu").manual_seed(42)}), output_type="latent"
+    ).images
+    components = PixArtComponents.load(root, device=torch.device("cpu"), dtype=torch.float32)
+    actual_latents = denoise(
+        components,
+        prompt="a cat",
+        negative_prompt=None,
+        steps=4,
+        guidance=0.0,
+        width=32,
+        height=32,
+        max_sequence_length=120,
+        latents=noise.clone(),
+        generator=torch.Generator("cpu").manual_seed(42),
+    )
+    torch.testing.assert_close(actual_latents, expected_latents, rtol=0, atol=0)
+    actual = pipeline("t2i", backend="pixart", model=root)(
+        "a cat",
+        steps=4,
+        guidance=0.0,
+        width=32,
+        height=32,
+        use_resolution_binning=False,
+        latents=noise,
+        seed=42,
+    )
+    assert torch.equal(torch.stack([image.tensor for image in actual.images]), expected)
 
 
 @pytest.mark.parametrize(

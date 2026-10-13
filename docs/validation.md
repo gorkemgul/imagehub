@@ -784,6 +784,35 @@ guidance on and off, non-square sizes, several seeds).
 
 ## PixArt
 
+### PixArt-LCM
+
+Validated on CPU in the same environment as above. `pixart-lcm-xl-1024` uses
+`PixArt-alpha/PixArt-LCM-XL-2-1024-MS` at revision `e153060b` with the published float32
+transformer, VAE and four T5 shards. It reuses the PixArt Alpha components and the LCM scheduler,
+defaults to 4 steps and guidance 0.0, and passes strict fixture-header and tiny-snapshot parity
+tests. All 7 real-checkpoint tests passed, and the observed difference in every recorded
+comparison is **exactly 0** (0 means exact). The real-checkpoint run took 5 minutes on an M2 Max
+(CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: text encoder, transformer, VAE (219 / 612 / 248 tensors) | 0 missing / extra / mismatched | exact |
+| T5 tokenizer ids / attention masks | identical / identical | exact / exact |
+| T5-v1.1-XXL encoder | 0 | 0 |
+| Transformer single step (1024×1024) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 / 0 |
+| LCM scheduler (4 steps) | exact | exact |
+| End to end: final latent / pixels (1024×1024, 4 steps, guidance 0.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with fixed initial noise
+`seed=7` and scheduler generator `seed=42`. The seed end-to-end check used `seed=42`. Record:
+`tensor_header_check`, `end_to_end` and `seed_end_to_end`, [validation.json](validation.json);
+the `pixart-lcm-xl-1024_*` component keys plus `e2e_pixart-lcm-xl-1024` and
+`seed_e2e_pixart-lcm-xl-1024`, [validation-measurements.json](validation-measurements.json).
+
 ### Further resolutions
 
 `pixart-alpha-xl-512` (`PixArt-alpha/PixArt-XL-2-512x512`, revision `50f7021`) and the transformer-only
@@ -1714,7 +1743,8 @@ first sequence of the batch only; the native module reproduces that.
   for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
   for `stable-cascade` and `stable-cascade-lite`, 19 passed
-  for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 28 passed for `pixart-alpha-xl-512`,
+  for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `pixart-lcm-xl-1024`,
+  28 passed for `pixart-alpha-xl-512`,
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
   `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`

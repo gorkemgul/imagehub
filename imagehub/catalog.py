@@ -1143,6 +1143,24 @@ for _id, _repo, _revision, _catalog_id, _max_length, _size, _files in (
         )
     )
 
+_entries.append(
+    ModelSpec(
+        id="pixart-lcm-xl-1024",
+        task=Task.T2I,
+        family="pixart",
+        source="https://huggingface.co/PixArt-alpha/PixArt-LCM-XL-2-1024-MS",
+        repo_id="PixArt-alpha/PixArt-LCM-XL-2-1024-MS",
+        revision="e153060b10990994d2ed31304b3224da47fbd740",
+        provenance="author",
+        catalog_id="pixart-delta",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        gated=False,
+        config={"defaults": {"steps": 4, "guidance": 0.0, "max_sequence_length": 120}},
+        files=_PIXART_ALPHA_512_FILES,
+    )
+)
+
 # The PixArt-Sigma 256, 512 and 2K repositories publish only a transformer; the text encoder,
 # tokenizer, VAE and scheduler come from the 1024 repository, as in the model cards.
 for _id, _repo, _revision, _size in (

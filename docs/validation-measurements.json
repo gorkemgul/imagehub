@@ -1073,6 +1073,23 @@
     ],
     "steps": 20
   },
+  "e2e_pixart-lcm-xl-1024": {
+    "guidance": 0.0,
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "noise_seed": 7,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "prompt": "a photograph of an astronaut riding a horse",
+    "scheduler_seed": 42,
+    "size": [
+      1024,
+      1024
+    ],
+    "steps": 4
+  },
   "e2e_pixart-sigma-xl-1024": {
     "guidance": 4.5,
     "latents": {
@@ -3086,6 +3103,26 @@
       "tensors": 248
     }
   },
+  "header_pixart-lcm-xl-1024": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 612
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
   "header_pixart-sigma-xl-1024": {
     "text_encoder": {
       "extra": [],
@@ -4782,6 +4819,36 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "pixart-lcm-xl-1024_scheduler": {
+    "exact": true,
+    "steps": 4,
+    "tolerance": "exact"
+  },
+  "pixart-lcm-xl-1024_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-lcm-xl-1024_tokenizer": {
+    "ids_match": true,
+    "masks_match": true,
+    "tolerance": "exact"
+  },
+  "pixart-lcm-xl-1024_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-lcm-xl-1024_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "pixart-lcm-xl-1024_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "pixart-sigma-xl-1024_scheduler": {
     "exact": true,
     "steps": 20,
@@ -6443,6 +6510,11 @@
     "seed": 42
   },
   "seed_e2e_pixart-alpha-xl-512": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42
+  },
+  "seed_e2e_pixart-lcm-xl-1024": {
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 42

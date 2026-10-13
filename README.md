@@ -69,13 +69,13 @@ result.images[0].save("edited.png")
 | FLUX.1 Kontext | `flux1-kontext-dev` | `t2i` | T, I | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | T | CPU fp32 parity |
 | HunyuanDiT | `hunyuan-dit-v1.1-distilled`, `hunyuan-dit-v1.2`, `hunyuan-dit-v1.2-distilled` | `t2i` | T | CPU fp32 parity |
-| Kandinsky 2.1 | `kandinsky-2-1` | `t2i` | T | CPU fp32 parity pending real-checkpoint run |
+| Kandinsky 2.1 | `kandinsky-2-1` | `t2i` | T | CPU fp32 parity |
 | Kandinsky 2.2 | `kandinsky-2.2` | `t2i` | T | CPU fp32 parity |
 | Kandinsky 3 | `kandinsky-3` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
-| Kandinsky 5 | `kandinsky-5-t2i-lite` | `t2i` | T | CPU fp32 parity on a tiny model; real-checkpoint run pending |
+| Kandinsky 5 | `kandinsky-5-t2i-lite` | `t2i` | T | CPU fp32 parity |
 | Stable Cascade | `stable-cascade`, `stable-cascade-lite` | `t2i` | T | CPU fp32 parity |
 | Würstchen v2 | `wuerstchen-v2` | `t2i` | T | CPU fp32 parity |
-| PixArt | `pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`, `pixart-alpha-xl-1024`, `pixart-alpha-xl-512` | `t2i` | T | CPU fp32 parity |
+| PixArt | `pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`, `pixart-alpha-xl-1024`, `pixart-alpha-xl-512`, `pixart-lcm-xl-1024` | `t2i` | T | CPU fp32 parity |
 | Sana | `sana-1600m-1024`, `sana-600m-1024`, `sana-sprint-1.6b-1024`, `sana-1.5-4.8b-1024` | `t2i` | T | CPU fp32 parity |
 | Kolors | `kolors` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |
@@ -83,7 +83,7 @@ result.images[0].save("edited.png")
 | OmniGen | `omnigen-v1` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 transformer |
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
-| Chroma | `chroma1-hd` | `t2i` | T | CPU fp32 parity on random weights; real-weight validation pending |
+| Chroma | `chroma1-hd` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
@@ -95,7 +95,7 @@ result.images[0].save("edited.png")
 | Qwen-Image | `qwen-image-2.1` | `t2i` | T | CPU fp32 parity |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | T | CPU fp32 parity |
-| HiDream-I1 | `hidream-i1-fast` | `t2i` | T | CPU fp32 parity on a tiny model; real-checkpoint run pending |
+| HiDream-I1 | `hidream-i1-fast` | `t2i` | T | CPU fp32 parity |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
 [Third-party notices](THIRD_PARTY_NOTICES.md)
