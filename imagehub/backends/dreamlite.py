@@ -145,6 +145,7 @@ def encode_prompt(
         device=device,
     )
     hidden = components.text_encoder(input_ids, mask)[-1]
+    hidden = components.text_encoder.norm(hidden)
     selected = [hidden[index, mask[index]][_PREFIX_TOKENS:] for index in range(len(prompts))]
     output_length = max(row.shape[0] for row in selected)
     output = hidden.new_zeros(len(prompts), output_length, hidden.shape[-1])

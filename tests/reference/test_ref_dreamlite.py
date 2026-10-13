@@ -32,6 +32,35 @@ def _checkpoint_shapes(path):
     return {name: entry["shape"] for name, entry in header.items() if name != "__metadata__"}
 
 
+def _reference_pipeline(root, mobile):
+    pipeline_class = diffusers.DreamLiteMobilePipeline if mobile else diffusers.DreamLitePipeline
+    reference = pipeline_class(
+        text_encoder=transformers.Qwen3VLForConditionalGeneration.from_pretrained(
+            root / "text_encoder",
+            local_files_only=True,
+            torch_dtype=torch.float32,
+            low_cpu_mem_usage=False,
+        ),
+        tokenizer=transformers.AutoTokenizer.from_pretrained(
+            root / "tokenizer", local_files_only=True
+        ),
+        processor=transformers.Qwen3VLProcessor.from_pretrained(
+            root / "processor", local_files_only=True
+        ),
+        vae=diffusers.AutoencoderTiny.from_pretrained(
+            root / "vae", local_files_only=True, torch_dtype=torch.float32
+        ),
+        unet=diffusers.DreamLiteUNetModel.from_pretrained(
+            root / "unet", local_files_only=True, torch_dtype=torch.float32
+        ),
+        scheduler=diffusers.FlowMatchEulerDiscreteScheduler.from_pretrained(
+            root / "scheduler", local_files_only=True
+        ),
+    ).to("cpu")
+    reference.set_progress_bar_config(disable=True)
+    return reference
+
+
 @pytest.mark.parametrize("model_id", MODEL_IDS)
 def test_published_headers(model_id, record):
     root = snapshot_dir(model_id)
@@ -144,14 +173,7 @@ def test_end_to_end(model_id, record):
     steps = 4 if mobile else 30
     guidance = None if mobile else 3.5
     noise = torch.randn(1, 4, 128, 96, generator=torch.Generator("cpu").manual_seed(1234))
-    pipeline_class = diffusers.DreamLiteMobilePipeline if mobile else diffusers.DreamLitePipeline
-    reference = pipeline_class.from_pretrained(
-        root,
-        local_files_only=True,
-        torch_dtype=torch.float32,
-        low_cpu_mem_usage=False,
-    ).to("cpu")
-    reference.set_progress_bar_config(disable=True)
+    reference = _reference_pipeline(root, mobile)
     kwargs = {
         "num_inference_steps": steps,
         "height": 1024,
@@ -201,14 +223,7 @@ def test_seed_end_to_end(model_id, record):
     mobile = model_id.endswith("mobile")
     steps = 4 if mobile else 30
     options = {} if mobile else {"guidance": 3.5}
-    pipeline_class = diffusers.DreamLiteMobilePipeline if mobile else diffusers.DreamLitePipeline
-    reference = pipeline_class.from_pretrained(
-        root,
-        local_files_only=True,
-        torch_dtype=torch.float32,
-        low_cpu_mem_usage=False,
-    ).to("cpu")
-    reference.set_progress_bar_config(disable=True)
+    reference = _reference_pipeline(root, mobile)
     kwargs = {
         "num_inference_steps": steps,
         "height": 1024,
