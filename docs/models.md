@@ -10,6 +10,33 @@ image input, and passing `image` to one raises an error.
 | `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
 | `omnigen-v1` | optional | editing and subject-driven generation, referenced from the prompt | `image`, `image_guidance`, `max_input_image_size`, `use_input_image_size_as_output` |
 
+# DreamLite
+
+Catalog: [`dreamlite`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `dreamlite-base`, `dreamlite-mobile` · Task: `t2i`
+
+**Architecture.** DreamLite combines Qwen3-VL text conditioning, a depthwise-separable U-Net with
+grouped-query cross-attention, a TinyVAE, and flow-matching Euler sampling.  The model uses a
+horizontally concatenated target/condition latent pair: a blank condition produces an image from
+text, while an input image supplies the condition for instruction-guided editing.
+
+**Checkpoints.** `dreamlite-base` defaults to 30 steps with text guidance 3.5 and image guidance
+1.5. `dreamlite-mobile` is a four-step distilled checkpoint and does not use classifier-free
+guidance. Both checkpoints publish bfloat16 safetensors only.
+
+**Support.** The native text-to-image backend implements the published Qwen3-VL prompt template,
+DreamLite U-Net, TinyVAE, dynamic flow-matching schedule, base guidance, and mobile distilled loop.
+The reference pipelines also expose image editing; that input mode is not part of this `t2i`
+backend.
+
+**Validation.** Published tensor headers match strictly, and random-weight component and tiny
+end-to-end comparisons against both diffusers pipelines are exact. Real-checkpoint parity is
+pending the real-checkpoint run. The catalog records the exact repositories, commits, component
+files, and bfloat16 precision.
+
+**License.** The weights are licensed under CC-BY-NC-4.0 and are non-commercial. Review the
+license before downloading or using them.
+
 # Stable Diffusion 1.x
 
 Catalog: [`stable-diffusion-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

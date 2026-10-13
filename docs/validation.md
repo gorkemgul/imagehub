@@ -7,6 +7,16 @@ References are recorded per model in `validation.json` under `reference`.
 
 ## Scope
 
+## DreamLite
+
+`dreamlite-base` and `dreamlite-mobile` are pending the real-checkpoint run. Their 1,075 U-Net and
+134 TinyVAE published tensor names and shapes match the native modules strictly. Random-weight
+U-Net and TinyVAE comparisons are exact, as are tiny end-to-end comparisons against both
+diffusers 0.40.0 pipelines with guidance on and off, non-square output, and two seeds. The pending
+real-checkpoint checks cover Qwen3-VL conditioning, one U-Net step, TinyVAE decode, the FlowMatch
+Euler trajectory, end-to-end output, and seeded output. The published weights are bfloat16; no CPU
+float32 real-checkpoint parity claim is made until those checks are recorded.
+
 - **5 checkpoints, `full`:** `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`.
   The published tensors were loaded strictly. A 50-step generation from the same initial noise was
   compared against diffusers.
