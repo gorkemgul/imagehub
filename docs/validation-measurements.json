@@ -939,6 +939,13 @@
       "pixels": 0
     }
   },
+  "e2e_ldm-text2im-large-256": {
+    "guidance": 1.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 50
+  },
   "e2e_llamagen-t2i-xl-256": {
     "cfg_scale": 7.5,
     "passed": true,
@@ -2941,6 +2948,26 @@
       "tensors": 248
     }
   },
+  "header_ldm-text2im-large-256": {
+    "bert": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 422
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 686
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
   "header_llamagen-t2i-xl-256": {
     "gpt": {
       "extra": [],
@@ -4325,6 +4352,30 @@
     "tolerance": 0.0
   },
   "lcm_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ldm_random_bert": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ldm_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ldm_tokenizer": {
+    "ids_match": true,
+    "tolerance": "exact"
+  },
+  "ldm_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ldm_vqvae_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -6442,6 +6493,13 @@
     "passed": true,
     "pixels_max_abs": 0,
     "seed": 42
+  },
+  "seed_e2e_ldm-text2im-large-256": {
+    "guidance": 1.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 50
   },
   "seed_e2e_llamagen-t2i-xl-256": {
     "cfg_scale": 4.0,
