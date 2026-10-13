@@ -133,9 +133,10 @@ def test_ldm_components(record):
     gc.collect()
 
 
-def test_ldm_end_to_end(record):
+@pytest.mark.parametrize("seed", [0, 42])
+def test_ldm_end_to_end(record, seed):
     root = snapshot_dir(MODEL_ID)
-    generator = torch.Generator("cpu").manual_seed(0)
+    generator = torch.Generator("cpu").manual_seed(seed)
     reference = diffusers.LDMTextToImagePipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     )
@@ -149,7 +150,10 @@ def test_ldm_end_to_end(record):
     ).images
     del reference
     gc.collect()
-    actual = pipeline("t2i", backend=MODEL_ID, model=root)(PROMPT, seed=0).images[0].tensor
+    actual = pipeline("t2i", backend=MODEL_ID, model=root)(PROMPT, seed=seed).images[0].tensor
     expected = torch.from_numpy((expected * 255).round().astype("uint8"))[0]
-    _check(record, f"e2e_{MODEL_ID}", actual, expected)
-    _check(record, f"seed_e2e_{MODEL_ID}", actual, expected)
+    passed = torch.equal(actual, expected)
+    pixel_diff = int((actual.to(torch.int16) - expected.to(torch.int16)).abs().max())
+    name = f"e2e_{MODEL_ID}" if seed == 0 else f"seed_e2e_{MODEL_ID}"
+    record(name, passed=passed, max_pixel_diff=pixel_diff, seed=seed, steps=50, guidance=1.0)
+    assert passed
