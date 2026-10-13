@@ -12,7 +12,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 
 | Model id | Family | Source | Revision | Origin | Validation | Weight license | Awesome catalog |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `ldm-text2im-large-256` | `ldm` | [CompVis/ldm-text2im-large-256](https://huggingface.co/CompVis/ldm-text2im-large-256) | `30de525` | author | experimental | Apache-2.0 | `ldm` |
+| `ldm-text2im-large-256` | `ldm` | [CompVis/ldm-text2im-large-256](https://huggingface.co/CompVis/ldm-text2im-large-256) | `30de525` | author | full | Apache-2.0 | `ldm` |
 | `sd-v1-1` | `stable-diffusion` | [CompVis/stable-diffusion-v1-1](https://huggingface.co/CompVis/stable-diffusion-v1-1) | `574555a` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `sd-v1-2` | `stable-diffusion` | [CompVis/stable-diffusion-v1-2](https://huggingface.co/CompVis/stable-diffusion-v1-2) | `f519eeb` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `sd-v1-3` | `stable-diffusion` | [CompVis/stable-diffusion-v1-3](https://huggingface.co/CompVis/stable-diffusion-v1-3) | `159f26f` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
