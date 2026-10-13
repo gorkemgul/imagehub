@@ -40,6 +40,7 @@ def test_catalog_contents():
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
+            "ldm-text2im-large-256",
             "llamagen-t2i-xl-256",
             "llamagen-t2i-xl-512",
             "longcat-image",
