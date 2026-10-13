@@ -116,6 +116,37 @@ class ModelSpec:
 
 _entries: list[ModelSpec] = []
 
+_entries.append(
+    ModelSpec(
+        id="ldm-text2im-large-256",
+        task=Task.T2I,
+        family="ldm",
+        source="https://huggingface.co/CompVis/ldm-text2im-large-256",
+        repo_id="CompVis/ldm-text2im-large-256",
+        revision="30de525ca11a880baea4962827fb6cb0bb268955",
+        provenance="author",
+        catalog_id="ldm",
+        format="diffusers",
+        license="Apache-2.0",
+        config={
+            "defaults": {"steps": 50, "guidance": 1.0, "width": 256, "height": 256, "eta": 0.0}
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "bert/config.json",
+            "bert/pytorch_model.bin",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.bin",
+            "vqvae/config.json",
+            "vqvae/diffusion_pytorch_model.bin",
+        ),
+    )
+)
+
 # Stable Diffusion 1.x: one architecture, five released weight sets. Only fp32 EMA weights
 # are fetched; fp16, non-EMA, single-file .ckpt and safety checker files are excluded.
 _SD1_COMMON = (
@@ -1142,6 +1173,24 @@ for _id, _repo, _revision, _catalog_id, _max_length, _size, _files in (
             files=_files,
         )
     )
+
+_entries.append(
+    ModelSpec(
+        id="pixart-lcm-xl-1024",
+        task=Task.T2I,
+        family="pixart",
+        source="https://huggingface.co/PixArt-alpha/PixArt-LCM-XL-2-1024-MS",
+        repo_id="PixArt-alpha/PixArt-LCM-XL-2-1024-MS",
+        revision="e153060b10990994d2ed31304b3224da47fbd740",
+        provenance="author",
+        catalog_id="pixart-delta",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        gated=False,
+        config={"defaults": {"steps": 4, "guidance": 0.0, "max_sequence_length": 120}},
+        files=_PIXART_ALPHA_512_FILES,
+    )
+)
 
 # The PixArt-Sigma 256, 512 and 2K repositories publish only a transformer; the text encoder,
 # tokenizer, VAE and scheduler come from the 1024 repository, as in the model cards.

@@ -297,6 +297,80 @@ def write_tiny_sd(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
     return root
 
 
+def write_tiny_ldm(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight LDM snapshot in the original published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.ldm_bert import LDMBertModel
+    from imagehub.models.unet_2d import UNet2DConditionModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    tokens = ("[PAD]", "[UNK]", "[CLS]", "[SEP]", "[MASK]", "a", "cat", "b")
+    (tokenizer / "vocab.txt").write_text("\n".join(tokens) + "\n", encoding="utf-8")
+    tokenizer_config = {
+        "cls_token": "[CLS]",
+        "sep_token": "[SEP]",
+        "pad_token": "[PAD]",
+        "unk_token": "[UNK]",
+        "do_lower_case": True,
+        "tokenizer_class": "BertTokenizer",
+    }
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (tokenizer / "special_tokens_map.json").write_text(json.dumps(tokenizer_config))
+    bert = {
+        "_class_name": "LDMBertModel",
+        "model_type": "ldmbert",
+        "vocab_size": len(tokens),
+        "max_position_embeddings": 77,
+        "d_model": 1280,
+        "encoder_layers": 1,
+        "encoder_ffn_dim": 32,
+        "encoder_attention_heads": 2,
+        "head_dim": 16,
+        "dropout": 0.0,
+        "attention_dropout": 0.0,
+        "activation_dropout": 0.0,
+        "activation_function": "gelu",
+    }
+    unet = TINY_UNET_FILE_CONFIG | {"cross_attention_dim": 1280, "sample_size": 8}
+    vae = TINY_VAE_FILE_CONFIG | {"sample_size": 64}
+    scheduler = {
+        "_class_name": "DDIMScheduler",
+        "beta_start": 0.00085,
+        "beta_end": 0.012,
+        "beta_schedule": "linear",
+        "num_train_timesteps": 1000,
+        "clip_sample": False,
+    }
+    index = {
+        "_class_name": "LDMTextToImagePipeline",
+        "bert": ["latent_diffusion", "LDMBertModel"],
+        "scheduler": ["diffusers", "DDIMScheduler"],
+        "tokenizer": ["transformers", "BertTokenizer"],
+        "unet": ["diffusers", "UNet2DConditionModel"],
+        "vqvae": ["diffusers", "AutoencoderKL"],
+    }
+    (root / "model_index.json").write_text(json.dumps(index))
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(scheduler))
+    for name, cls, config, weights in (
+        ("bert", LDMBertModel, bert, "model.safetensors"),
+        ("unet", UNet2DConditionModel, unet, "diffusion_pytorch_model.safetensors"),
+        ("vqvae", AutoencoderKL, vae, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.02)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
 def write_tiny_lcm(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
     """A random-weight LCM snapshot in the published diffusers layout."""
     from imagehub.checkpoints import save_safetensors

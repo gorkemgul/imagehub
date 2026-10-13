@@ -42,25 +42,26 @@ class LCMScheduler:
         if unknown:
             raise ValueError(f"Unsupported LCM setting {unknown[0]}")
         cfg = _DEFAULTS | {key: value for key, value in config.items() if not key.startswith("_")}
-        for key, expected in _DEFAULTS.items():
-            # The reference declares steps_offset but never uses it in LCM sampling.
-            if key in _IGNORED:
-                continue
-            if cfg[key] != expected:
-                raise ValueError(f"Unsupported LCM setting {key}={cfg[key]!r}")
         self.config = cfg
         count = cfg["num_train_timesteps"]
-        betas = (
-            torch.linspace(
-                cfg["beta_start"] ** 0.5,
-                cfg["beta_end"] ** 0.5,
-                count,
-                dtype=torch.float32,
+        if cfg["beta_schedule"] == "scaled_linear":
+            betas = (
+                torch.linspace(
+                    cfg["beta_start"] ** 0.5,
+                    cfg["beta_end"] ** 0.5,
+                    count,
+                    dtype=torch.float32,
+                )
+                ** 2
             )
-            ** 2
-        )
+        elif cfg["beta_schedule"] == "linear":
+            betas = torch.linspace(cfg["beta_start"], cfg["beta_end"], count, dtype=torch.float32)
+        else:
+            raise ValueError(f"Unsupported LCM setting beta_schedule={cfg['beta_schedule']!r}")
         self.alphas_cumprod = torch.cumprod(1.0 - betas, dim=0)
-        self.final_alpha_cumprod = torch.tensor(1.0)
+        self.final_alpha_cumprod = (
+            torch.tensor(1.0) if cfg["set_alpha_to_one"] else self.alphas_cumprod[0]
+        )
         self.timesteps = torch.arange(count - 1, -1, -1, dtype=torch.int64)
         self.num_inference_steps = 0
         self._step_index: int | None = None
@@ -68,11 +69,7 @@ class LCMScheduler:
     @classmethod
     def from_config(cls, config: Mapping[str, Any]) -> LCMScheduler:
         compatible = {
-            key: value
-            for key, value in config.items()
-            if key.startswith("_")
-            or key in _DEFAULTS
-            and (key in _IGNORED or value == _DEFAULTS[key])
+            key: value for key, value in config.items() if key.startswith("_") or key in _DEFAULTS
         }
         return cls(compatible)
 
@@ -162,7 +159,20 @@ class LCMScheduler:
         c_skip, c_out = self.get_scalings_for_boundary_condition_discrete(timestep)
         c_skip = c_skip.to(sample.device)
         c_out = c_out.to(sample.device)
-        predicted_original = (sample - beta_prod_t.sqrt() * model_output) / alpha_prod_t.sqrt()
+        if self.config["prediction_type"] == "epsilon":
+            predicted_original = (sample - beta_prod_t.sqrt() * model_output) / alpha_prod_t.sqrt()
+        elif self.config["prediction_type"] == "sample":
+            predicted_original = model_output
+        elif self.config["prediction_type"] == "v_prediction":
+            predicted_original = alpha_prod_t.sqrt() * sample - beta_prod_t.sqrt() * model_output
+        else:
+            raise ValueError(
+                f"Unsupported LCM setting prediction_type={self.config['prediction_type']!r}"
+            )
+        if self.config["clip_sample"]:
+            predicted_original = predicted_original.clamp(
+                -self.config["clip_sample_range"], self.config["clip_sample_range"]
+            )
         denoised = c_out * predicted_original + c_skip * sample
         if self._step_index != self.num_inference_steps - 1:
             random_device = model_output.device

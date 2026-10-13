@@ -28,6 +28,18 @@ def test_catalog_defaults_and_backend_defaults():
     assert sigma_options["use_resolution_binning"] is True
 
 
+def test_lcm_catalog_and_backend_defaults():
+    spec = model_info("pixart-lcm-xl-1024")
+    assert spec.family == "pixart"
+    assert spec.config == {"defaults": {"steps": 4, "guidance": 0.0, "max_sequence_length": 120}}
+    options = PixArtBackend(Path("missing"), model_id=spec.id).validate_options(
+        T2IRequest("a cat"), {}
+    )
+    assert options["steps"] == 4
+    assert options["guidance"] == 0.0
+    assert options["width"] == options["height"] == 1024
+
+
 @pytest.mark.parametrize(
     ("options", "error", "match"),
     [
@@ -76,6 +88,7 @@ NEW_PIXART_MODELS = {
     "pixart-sigma-xl-256": ("sigma_256", 32, False),
     "pixart-sigma-xl-512": ("sigma_512", 64, False),
     "pixart-sigma-xl-2k": ("sigma_2k", 256, False),
+    "pixart-lcm-xl-1024": ("lcm_1024", 128, False),
 }
 
 
@@ -106,17 +119,20 @@ def test_published_transformer_headers_load_strictly_on_meta(model_id):
     assert {name: tuple(value.shape) for name, value in prepared.items()} == {
         name: tuple(value.shape) for name, value in model.state_dict().items()
     }
-    assert ("caption_projection.y_embedding" in published) == (model_id == "pixart-alpha-xl-512")
-    assert model.use_additional_conditions is False
+    assert ("caption_projection.y_embedding" in published) == (
+        model_id in {"pixart-alpha-xl-512", "pixart-lcm-xl-1024"}
+    )
+    assert model.use_additional_conditions is (model_id == "pixart-lcm-xl-1024")
 
 
-def test_published_alpha_512_vae_and_text_encoder_headers_load_on_meta():
+@pytest.mark.parametrize("directory", ["alpha_512", "lcm_1024"])
+def test_published_alpha_vae_and_text_encoder_headers_load_on_meta(directory):
     import json
 
     from imagehub.models.autoencoder_kl import AutoencoderKL
     from imagehub.models.t5 import T5EncoderModel
 
-    root = FIXTURES / "alpha_512"
+    root = FIXTURES / directory
     for cls, config_name, tensors in (
         (AutoencoderKL, "vae_config.json", [root / "vae_tensors.json"]),
         (
@@ -146,6 +162,10 @@ def test_published_scheduler_and_pipeline_classes():
     assert (FIXTURES / "alpha_512" / "scheduler_scheduler_config.json").read_text() == (
         FIXTURES / "sigma_base" / "scheduler_scheduler_config.json"
     ).read_text()
+    lcm = json.loads((FIXTURES / "lcm_1024" / "model_index.json").read_text())
+    scheduler = json.loads((FIXTURES / "lcm_1024" / "scheduler_scheduler_config.json").read_text())
+    assert lcm["_class_name"] == "PixArtAlphaPipeline"
+    assert scheduler["_class_name"] == "LCMScheduler"
 
 
 @pytest.mark.parametrize(
