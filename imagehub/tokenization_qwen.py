@@ -253,7 +253,15 @@ class Qwen2Tokenizer:
         path = Path(directory)
         data = json.loads((path / "tokenizer.json").read_text(encoding="utf-8"))
         model = data["model"]
-        self.encoder: dict[str, int] = model["vocab"]
+        vocab_path = path / "vocab.json"
+        self.encoder: dict[str, int] = (
+            json.loads(vocab_path.read_text(encoding="utf-8"))
+            if vocab_path.is_file()
+            else model["vocab"]
+        )
+        # Ovis-Image's tokenizer represents line feeds as the two-character ``\\n``
+        # vocabulary entry rather than ByteLevel's usual ``Ċ`` representation.
+        self._escaped_newline = "\\n" in self.encoder
         merges = [
             tuple(merge) if isinstance(merge, list) else tuple(merge.split())
             for merge in model["merges"]
@@ -305,6 +313,8 @@ class Qwen2Tokenizer:
         ids: list[int] = []
         for piece in _pretokenize(text):
             encoded = "".join(self.byte_encoder[byte] for byte in piece.encode("utf-8"))
+            if self._escaped_newline:
+                encoded = encoded.replace(self.byte_encoder[10], "\\n")
             ids.extend(self.encoder[token] for token in self._bpe(encoded))
         return ids
 
