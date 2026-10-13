@@ -69,8 +69,8 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `amused-256` | `amused` | [amused/amused-256](https://huggingface.co/amused/amused-256) | `09b6259` | author | full | OpenRAIL++ | `amused` |
 | `amused-512` | `amused` | [amused/amused-512](https://huggingface.co/amused/amused-512) | `6f3f309` | author | full | OpenRAIL++ | `amused` |
 | `auraflow-v0.3` | `auraflow` | [fal/AuraFlow-v0.3](https://huggingface.co/fal/AuraFlow-v0.3) | `2cd8588` | author | full | Apache-2.0 | `auraflow` |
-| `prx-1024-t2i-beta` | `prx` | [Photoroom/prx-1024-t2i-beta](https://huggingface.co/Photoroom/prx-1024-t2i-beta) | `0370504` | author | experimental | Apache-2.0 | `prx` |
-| `prx-512-t2i-sft` | `prx` | [Photoroom/prx-512-t2i-sft](https://huggingface.co/Photoroom/prx-512-t2i-sft) | `2996423` | author | experimental | Apache-2.0 | `prx` |
+| `prx-1024-t2i-beta` | `prx` | [Photoroom/prx-1024-t2i-beta](https://huggingface.co/Photoroom/prx-1024-t2i-beta) | `0370504` | author | full | Apache-2.0 | `prx` |
+| `prx-512-t2i-sft` | `prx` | [Photoroom/prx-512-t2i-sft](https://huggingface.co/Photoroom/prx-512-t2i-sft) | `2996423` | author | full | Apache-2.0 | `prx` |
 | `llamagen-t2i-xl-256` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
 | `llamagen-t2i-xl-512` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
 | `krea2-turbo` | `krea2` | [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) | `98e0fe1` | author | full | Krea 2 Community License | `krea-2` |

@@ -944,7 +944,8 @@ to request dimensions that are multiples of 16 directly. Guidance 1.0 disables t
 
 **Precision and validation.** The 1024 checkpoint declares bfloat16 for its text encoder; the 512
 checkpoint declares float32. Both repositories publish float32 transformer and VAE weights. Exact
-tiny-pipeline parity is covered; published-weight validation is pending the real-checkpoint run.
+tiny-pipeline parity and published-weight parity are covered; the real-checkpoint run took 7
+minutes on an M2 Max (CPU) ([validation](validation.md)).
 
 **Out of scope.** Batches, caller-supplied latents or embeddings, callbacks, LoRA, and fp16/bf16
 parity are not supported.
