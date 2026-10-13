@@ -8,6 +8,7 @@ import pytest
 import torch
 from helpers import max_diff, snapshot_dir
 
+from imagehub import pipeline
 from imagehub.backends.dreamlite import DreamLiteComponents, decode_latents, denoise, encode_prompt
 from imagehub.models.autoencoder_tiny import AutoencoderTiny
 from imagehub.models.dreamlite import DreamLiteUNetModel
@@ -181,13 +182,55 @@ def test_end_to_end(model_id, record):
     )
     actual = decode_latents(ours.vae, actual_latents)
     pixel_diff = int((actual.int() - expected.int()).abs().max())
+    passed = torch.equal(actual, expected)
     record(
         f"e2e_{model_id}",
+        passed=passed,
         pixels_max_abs=pixel_diff,
         seed=1234,
         steps=steps,
         size=[1024, 768],
         tolerance=0,
     )
-    record(f"seed_e2e_{model_id}", seed=1234, pixels_match=pixel_diff == 0)
-    assert torch.equal(actual, expected)
+    assert passed
+
+
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_seed_end_to_end(model_id, record):
+    root = snapshot_dir(model_id)
+    mobile = model_id.endswith("mobile")
+    steps = 4 if mobile else 30
+    options = {} if mobile else {"guidance": 3.5}
+    pipeline_class = diffusers.DreamLiteMobilePipeline if mobile else diffusers.DreamLitePipeline
+    reference = pipeline_class.from_pretrained(
+        root,
+        local_files_only=True,
+        torch_dtype=torch.float32,
+        low_cpu_mem_usage=False,
+    ).to("cpu")
+    reference.set_progress_bar_config(disable=True)
+    kwargs = {
+        "num_inference_steps": steps,
+        "height": 1024,
+        "width": 768,
+        "generator": torch.Generator("cpu").manual_seed(42),
+        "output_type": "np",
+    }
+    if not mobile:
+        kwargs["guidance_scale"] = options["guidance"]
+    with torch.inference_mode():
+        expected = reference(PROMPT, **kwargs).images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))[0]
+    del reference
+    gc.collect()
+    actual = (
+        pipeline("t2i", backend=model_id, model=root)(
+            PROMPT, seed=42, steps=steps, width=768, height=1024, **options
+        )
+        .images[0]
+        .tensor
+    )
+    passed = torch.equal(actual, expected)
+    pixel_diff = int((actual.int() - expected.int()).abs().max())
+    record(f"seed_e2e_{model_id}", passed=passed, pixels_max_abs=pixel_diff, seed=42, steps=steps)
+    assert passed
