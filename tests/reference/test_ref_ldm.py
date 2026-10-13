@@ -21,12 +21,33 @@ MODEL_ID = "ldm-text2im-large-256"
 CPU = torch.device("cpu")
 PROMPT = "a photograph of an astronaut riding a horse"
 COMPONENTS = {"bert": LDMBertModel, "unet": LDMUNet, "vqvae": AutoencoderKL}
+WEIGHT_FILES = (
+    "model.safetensors",
+    "diffusion_pytorch_model.safetensors",
+    "pytorch_model.bin",
+    "diffusion_pytorch_model.bin",
+)
 
 
 def _check(record, name, actual, expected):
     result = max_diff(actual, expected)
     record(name, **result, tolerance=0.0)
     assert torch.equal(actual, expected)
+
+
+def _checkpoint_shapes(directory):
+    path = next((directory / name for name in WEIGHT_FILES if (directory / name).is_file()), None)
+    assert path is not None, f"no weights in {directory}"
+    if path.suffix == ".safetensors":
+        with path.open("rb") as source:
+            (length,) = struct.unpack("<Q", source.read(8))
+            header = json.loads(source.read(length))
+        return {
+            name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"
+        }
+    state = torch.load(path, map_location="meta", weights_only=True)
+    assert all(tensor.device.type == "meta" for tensor in state.values())
+    return {name: tuple(tensor.shape) for name, tensor in state.items()}
 
 
 def test_random_ldm_bert(record):
@@ -55,13 +76,7 @@ def test_ldm_header(record):
     for component, cls in COMPONENTS.items():
         with torch.device("meta"):
             model = cls(read_json(root / component / "config.json"))
-        path = next((root / component).glob("*.safetensors"))
-        with path.open("rb") as source:
-            (length,) = struct.unpack("<Q", source.read(8))
-            header = json.loads(source.read(length))
-        shapes = {
-            name: tuple(entry["shape"]) for name, entry in header.items() if name != "__metadata__"
-        }
+        shapes = _checkpoint_shapes(root / component)
         prepared = model.prepare_state_dict(
             {name: torch.empty(shape, device="meta") for name, shape in shapes.items()}
         )
@@ -93,26 +108,27 @@ def test_ldm_components(record):
     ).input_ids
     record("ldm_tokenizer", ids_match=torch.equal(ids, expected_ids), tolerance="exact")
     assert torch.equal(ids, expected_ids)
-    _check(
-        record,
-        "ldm_text_encoder",
-        encode_prompt(ours, PROMPT, CPU),
-        reference.bert(expected_ids)[0],
-    )
-    latents = torch.randn(1, 4, 32, 32, generator=torch.Generator().manual_seed(1))
-    context = encode_prompt(ours, PROMPT, CPU)
-    _check(
-        record,
-        "ldm_unet",
-        ours.unet(latents, torch.tensor(981), context),
-        reference.unet(latents, torch.tensor(981), encoder_hidden_states=context).sample,
-    )
-    _check(
-        record,
-        "ldm_vqvae_decode",
-        ours.vqvae.decode(latents),
-        reference.vqvae.decode(latents).sample,
-    )
+    with torch.inference_mode():
+        _check(
+            record,
+            "ldm_text_encoder",
+            encode_prompt(ours, PROMPT, CPU),
+            reference.bert(expected_ids)[0],
+        )
+        latents = torch.randn(1, 4, 32, 32, generator=torch.Generator().manual_seed(1))
+        context = encode_prompt(ours, PROMPT, CPU)
+        _check(
+            record,
+            "ldm_unet",
+            ours.unet(latents, torch.tensor(981), context),
+            reference.unet(latents, torch.tensor(981), encoder_hidden_states=context).sample,
+        )
+        _check(
+            record,
+            "ldm_vqvae_decode",
+            ours.vqvae.decode(latents),
+            reference.vqvae.decode(latents).sample,
+        )
     del ours, reference
     gc.collect()
 

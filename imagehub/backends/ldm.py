@@ -99,7 +99,7 @@ def denoise(
 
 @torch.inference_mode()
 def decode_latents(components: LDMComponents, latents: Tensor) -> Tensor:
-    image = components.vqvae.decode(latents / components.vqvae.scaling_factor)
+    image = components.vqvae.decode((1 / components.vqvae.scaling_factor) * latents)
     image = (image / 2 + 0.5).clamp(0, 1).permute(0, 2, 3, 1).float().cpu()
     return (image * 255).round().to(torch.uint8)
 

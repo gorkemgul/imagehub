@@ -30,7 +30,7 @@ _REQUIRED = {"thresholding": False, "trained_betas": None, "rescale_betas_zero_s
 _PREDICTION_TYPES = ("epsilon", "sample", "v_prediction")
 _SPACINGS = ("leading", "linspace", "trailing")
 # Keys that older releases write but the sampler never reads.
-_LEGACY_KEYS = {"skip_prk_steps"}
+_LEGACY_KEYS = {"skip_prk_steps", "timestep_values"}
 
 
 def _linspace(stop: int, num: int) -> list[float]:
