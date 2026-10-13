@@ -1727,6 +1727,13 @@ first sequence of the batch only; the native module reproduces that.
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
 - MPS smoke test: 1 passed.
 
+## PRX
+
+The native PRX transformer, T5Gemma encoder, Gemma tokenizer behavior, flow-match loop, and FLUX VAE
+path have exact random-weight and tiny end-to-end parity tests against diffusers 0.40.0 and
+transformers 5.18.0. Tensor-header, tokenizer, component, end-to-end, and seed tests cover both
+published checkpoints. Measurements are pending the real-checkpoint run.
+
 ## Differences found and fixed during validation
 
 The first run with real checkpoints exposed two tokenizer differences that tests with random weights

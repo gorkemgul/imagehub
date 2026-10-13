@@ -385,6 +385,9 @@ def main() -> None:
         "components_auraflow": {
             key: value for key, value in measured.items() if key.startswith("auraflow_")
         },
+        "components_prx": {
+            key: value for key, value in measured.items() if key.startswith(("prx_", "t5gemma_"))
+        },
         "components_wuerstchen": {
             key: value
             for key, value in measured.items()
