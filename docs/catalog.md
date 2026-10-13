@@ -78,7 +78,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `cogview4-6b` | `cogview4` | [zai-org/CogView4-6B](https://huggingface.co/zai-org/CogView4-6B) | `63a52b7` | author | full | Apache-2.0 | `cogview4` |
 | `ideogram4-fp8` | `ideogram4` | [ideogram-ai/ideogram-4-fp8](https://huggingface.co/ideogram-ai/ideogram-4-fp8) | `ee79a72` | author | full | Ideogram 4 Non-Commercial License | `ideogram-4` |
 | `qwen-image-2.1` | `qwen-image` | [Qwen/Qwen-Image-2.1](https://huggingface.co/Qwen/Qwen-Image-2.1) | `d26bb61` | author | full | Qwen Research License (research use; see the license) | `qwen-image-2` |
-| `ovis-image-7b` | `ovis-image` | [ATH-MaaS/Ovis-Image-7B](https://huggingface.co/ATH-MaaS/Ovis-Image-7B) | `41be1c5` | author | header_only | Apache-2.0 | `ovis-image` |
+| `ovis-image-7b` | `ovis-image` | [ATH-MaaS/Ovis-Image-7B](https://huggingface.co/ATH-MaaS/Ovis-Image-7B) | `41be1c5` | author | full | Apache-2.0 | `ovis-image` |
 | `z-image` | `z-image` | [Tongyi-MAI/Z-Image](https://huggingface.co/Tongyi-MAI/Z-Image) | `04cc4ab` | author | full | Apache-2.0 | `z-image` |
 | `z-image-turbo` | `z-image` | [Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) | `f332072` | author | full | Apache-2.0 | `z-image` |
 | `janus-pro-1b` | `janus` | [deepseek-community/Janus-Pro-1B](https://huggingface.co/deepseek-community/Janus-Pro-1B) | `1655280` | community conversion | full | DeepSeek Model License | `janus-pro` |

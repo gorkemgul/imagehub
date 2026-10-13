@@ -1779,7 +1779,7 @@ first sequence of the batch only; the native module reproduces that.
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
-  for `chroma1-hd`. These include structural parity with random weights, end-to-end parity with
+  for `chroma1-hd`, and 7 passed for `ovis-image-7b`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
@@ -1823,8 +1823,32 @@ The SDXL validation found three more differences:
 
 ## Ovis-Image
 
-`ovis-image-7b` is pinned to `ATH-MaaS/Ovis-Image-7B` revision
-`41be1c5821a92c970d63d7eb595a2fd3fe32b22e`. Offline validation checks every published Ovis
-transformer tensor name and shape and executes a tiny random-weight transformer. Real-checkpoint
-tokenizer, encoder, denoiser, VAE, default end-to-end, and separate seed end-to-end validation are
-pending the real-checkpoint run.
+Validated on CPU in the same environment as above. `ovis-image-7b` is pinned to
+`ATH-MaaS/Ovis-Image-7B` revision `41be1c5821a92c970d63d7eb595a2fd3fe32b22e` and compared with
+diffusers 0.40.0 `OvisImagePipeline` and transformers 5.18.0 on CPU in float32. The published
+transformer and text encoder are float32; the published VAE is bfloat16 and is upcast to float32
+on both sides. Offline validation checks every published Ovis transformer tensor name and shape
+and executes a tiny random-weight transformer. All 7 real-checkpoint tests passed, and the
+observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one diffusers produces.
+The real-checkpoint run took 12 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: `text_encoder`, `transformer`, `vae` (310 / 583 / 244 tensors) | 0 missing / extra / mismatched | exact |
+| Qwen tokenizer token ids (4 prompts: empty, ASCII, accented and CJK, newline and box-drawing characters) | identical | exact |
+| Qwen3 text encoder last hidden state (prompt at 64 tokens) | 0 | 0 |
+| Transformer single step (t = 0.5, 8×8 image grid, 32 text tokens) | 0 | 0 |
+| VAE decode (16×16×16 latents) | 0 | 0 |
+| End to end: uint8 image (1024×1024, 2 steps, guidance 5.0, seed 0) | 0 | 0 |
+| End to end, seed 42, different prompt (uint8 image) | 0 | 0 |
+
+The end-to-end runs keep every pipeline default (guidance 5.0, 1024×1024) and use 2 steps instead
+of the 50-step default only to shorten the CPU run. Records: `header_ovis-image-7b`,
+`ovis_image_tokenizer`, `ovis_image_text_encoder`, `ovis_image_transformer_step`,
+`ovis_image_vae_decode`, `e2e_ovis-image-7b` and `seed_e2e_ovis-image-7b`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`,
+`end_to_end` and `seed_end_to_end` under `ovis-image-7b` and `tests.reference_summary`,
+[validation.json](validation.json).

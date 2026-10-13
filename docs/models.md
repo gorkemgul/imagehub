@@ -927,7 +927,8 @@ python -m imagehub.pretrained ovis-image-7b checkpoints/ovis-image-7b
 ```
 
 The published transformer and text encoder are float32; the VAE is bfloat16. CPU float32 parity
-and end-to-end validation are pending the real-checkpoint run.
+and end-to-end validation are covered; the real-checkpoint run took 12 minutes on an M2 Max (CPU)
+([validation](validation.md)).
 
 # Stable Cascade
 
