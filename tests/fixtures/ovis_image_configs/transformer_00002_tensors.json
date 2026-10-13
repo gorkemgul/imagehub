@@ -1,0 +1,661 @@
+{
+"norm_out.linear.bias": [
+6144
+],
+"norm_out.linear.weight": [
+6144,
+3072
+],
+"proj_out.bias": [
+64
+],
+"proj_out.weight": [
+64,
+3072
+],
+"single_transformer_blocks.13.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.13.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.13.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.13.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.13.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.13.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.14.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.14.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.14.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.14.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.14.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.14.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.14.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.14.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.14.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.14.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.14.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.14.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.14.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.14.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.15.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.15.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.15.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.15.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.15.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.15.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.15.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.15.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.15.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.15.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.15.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.15.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.15.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.15.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.16.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.16.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.16.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.16.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.16.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.16.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.16.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.16.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.16.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.16.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.16.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.16.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.16.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.16.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.17.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.17.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.17.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.17.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.17.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.17.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.17.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.17.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.17.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.17.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.17.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.17.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.17.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.17.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.18.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.18.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.18.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.18.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.18.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.18.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.18.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.18.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.18.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.18.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.18.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.18.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.18.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.18.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.19.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.19.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.19.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.19.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.19.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.19.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.19.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.19.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.19.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.19.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.19.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.19.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.19.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.19.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.20.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.20.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.20.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.20.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.20.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.20.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.20.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.20.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.20.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.20.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.20.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.20.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.20.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.20.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.21.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.21.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.21.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.21.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.21.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.21.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.21.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.21.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.21.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.21.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.21.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.21.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.21.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.21.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.22.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.22.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.22.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.22.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.22.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.22.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.22.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.22.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.22.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.22.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.22.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.22.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.22.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.22.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.23.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.23.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.23.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.23.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.23.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.23.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.23.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.23.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.23.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.23.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.23.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.23.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.23.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.23.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.24.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.24.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.24.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.24.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.24.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.24.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.24.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.24.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.24.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.24.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.24.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.24.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.24.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.24.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.25.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.25.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.25.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.25.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.25.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.25.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.25.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.25.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.25.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.25.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.25.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.25.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.25.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.25.proj_out.weight": [
+3072,
+15360
+],
+"single_transformer_blocks.26.attn.norm_k.weight": [
+128
+],
+"single_transformer_blocks.26.attn.norm_q.weight": [
+128
+],
+"single_transformer_blocks.26.attn.to_k.bias": [
+3072
+],
+"single_transformer_blocks.26.attn.to_k.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.26.attn.to_q.bias": [
+3072
+],
+"single_transformer_blocks.26.attn.to_q.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.26.attn.to_v.bias": [
+3072
+],
+"single_transformer_blocks.26.attn.to_v.weight": [
+3072,
+3072
+],
+"single_transformer_blocks.26.norm.linear.bias": [
+9216
+],
+"single_transformer_blocks.26.norm.linear.weight": [
+9216,
+3072
+],
+"single_transformer_blocks.26.proj_mlp.bias": [
+24576
+],
+"single_transformer_blocks.26.proj_mlp.weight": [
+24576,
+3072
+],
+"single_transformer_blocks.26.proj_out.bias": [
+3072
+],
+"single_transformer_blocks.26.proj_out.weight": [
+3072,
+15360
+]
+}
