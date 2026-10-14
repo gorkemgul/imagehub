@@ -47,6 +47,7 @@ def test_catalog_contents():
             "lumina-image-2.0",
             "lumina-next",
             "omnigen-v1",
+            "ovis-image-7b",
             "pixart-alpha-xl-1024",
             "pixart-alpha-xl-512",
             "pixart-lcm-xl-1024",

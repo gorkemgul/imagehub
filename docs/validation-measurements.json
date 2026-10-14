@@ -1046,6 +1046,12 @@
     ],
     "steps": 4
   },
+  "e2e_ovis-image-7b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 2
+  },
   "e2e_pixart-alpha-xl-1024": {
     "guidance": 4.5,
     "latents": {
@@ -3094,6 +3100,26 @@
       "tensors": 248
     }
   },
+  "header_ovis-image-7b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 310
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 583
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
   "header_pixart-alpha-xl-1024": {
     "text_encoder": {
       "extra": [],
@@ -4816,6 +4842,25 @@
     "tolerance": 0.0
   },
   "omnigen_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ovis_image_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ovis_image_tokenizer": {
+    "identical": true,
+    "prompts": 4
+  },
+  "ovis_image_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "ovis_image_vae_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -7856,6 +7901,12 @@
       1360,
       768
     ],
+    "steps": 2
+  },
+  "seed_e2e_ovis-image-7b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
     "steps": 2
   },
   "seed_e2e_pixart-alpha-xl-1024": {

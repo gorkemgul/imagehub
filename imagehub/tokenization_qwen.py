@@ -253,7 +253,12 @@ class Qwen2Tokenizer:
         path = Path(directory)
         data = json.loads((path / "tokenizer.json").read_text(encoding="utf-8"))
         model = data["model"]
-        self.encoder: dict[str, int] = model["vocab"]
+        vocab_path = path / "vocab.json"
+        self.encoder: dict[str, int] = (
+            json.loads(vocab_path.read_text(encoding="utf-8"))
+            if vocab_path.is_file()
+            else model["vocab"]
+        )
         merges = [
             tuple(merge) if isinstance(merge, list) else tuple(merge.split())
             for merge in model["merges"]

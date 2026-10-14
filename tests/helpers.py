@@ -747,6 +747,100 @@ def write_tiny_z_image(directory: str | os.PathLike[str], *, seed: int = 0) -> P
     return root
 
 
+TINY_OVIS_IMAGE_TEXT = TINY_Z_IMAGE_TEXT | {"vocab_size": 151936, "max_position_embeddings": 256}
+TINY_OVIS_IMAGE_TRANSFORMER = {
+    "_class_name": "OvisImageTransformer2DModel",
+    "patch_size": 1,
+    "in_channels": 64,
+    "out_channels": None,
+    "num_layers": 1,
+    "num_single_layers": 1,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "joint_attention_dim": 32,
+    "axes_dims_rope": [2, 2, 4],
+}
+TINY_OVIS_IMAGE_VAE = TINY_Z_IMAGE_VAE | {"sample_size": 32}
+TINY_OVIS_IMAGE_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "num_train_timesteps": 1000,
+    "use_dynamic_shifting": True,
+    "base_image_seq_len": 1,
+    "max_image_seq_len": 16,
+    "base_shift": 0.5,
+    "max_shift": 0.9,
+    "shift": 3.0,
+}
+
+
+def write_tiny_ovis_image(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """Write a random tiny Ovis-Image snapshot in the published layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.ovis_image_transformer import OvisImageTransformer2DModel
+    from imagehub.models.qwen3 import Qwen3Model
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    source = FIXTURES / "ovis_image_configs"
+    for name in (
+        "vocab.json",
+        "merges.txt",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "special_tokens_map.json",
+    ):
+        shutil.copyfile(source / f"tokenizer_{name}", tokenizer / name)
+    shutil.copyfile(source / "tokenizer_added_tokens.json", tokenizer / "added_tokens.json")
+    tokenizer_config = json.loads((tokenizer / "tokenizer_config.json").read_text())
+    tokenizer_config["chat_template"] = (
+        "{% for message in messages %}<|im_start|>{{ message['role'] }}\n"
+        "{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        "{% if add_generation_prompt %}<|im_start|>assistant\n"
+        "<think>\n\n</think>\n\n{% endif %}"
+    )
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(TINY_OVIS_IMAGE_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "OvisImagePipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen3Model"],
+                "tokenizer": ["transformers", "Qwen2TokenizerFast"],
+                "transformer": ["diffusers", "OvisImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKL"],
+            }
+        )
+    )
+    for name, cls, config, weights in (
+        ("text_encoder", Qwen3Model, TINY_OVIS_IMAGE_TEXT, "model.safetensors"),
+        (
+            "transformer",
+            OvisImageTransformer2DModel,
+            TINY_OVIS_IMAGE_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_OVIS_IMAGE_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state = {key.removeprefix("model."): value for key, value in state.items()}
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
 TINY_FLUX2_TEXT = TINY_Z_IMAGE_TEXT | {
     "vocab_size": 36,
     "hidden_size": 8,
