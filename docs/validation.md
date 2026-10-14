@@ -1527,6 +1527,15 @@ the latents. The Euler scheduler ignores the configuration keys that diffusers' 
 not read (`thresholding`, `dynamic_thresholding_ratio`, `clip_sample_range`), which this release's
 configuration contains.
 
+## DeepFloyd IF
+
+`deepfloyd-if-i-xl` combines the pinned IF-I-XL and IF-II-L repositories with diffusers 0.40.0
+`IFPipeline` and `IFSuperResolutionPipeline`. Unit and opt-in reference coverage exercises the
+IF U-Net additions, dynamic thresholding, image noising, guidance on and off, and the combined
+256×256 path. Real-checkpoint validation is pending the gated snapshot run; its records include
+`e2e_deepfloyd-if-i-xl` and a separate seed-42 `seed_e2e_deepfloyd-if-i-xl` run through the public
+pipeline API. Stage III, safety checking and watermarking are excluded.
+
 ## Kandinsky 3
 
 `kandinsky-3` is loaded strictly from `kandinsky-community/kandinsky-3` at revision `bf79e6c` and

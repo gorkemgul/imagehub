@@ -70,6 +70,7 @@ result.images[0].save("edited.png")
 | FLUX.1 Kontext | `flux1-kontext-dev` | `t2i` | T, I | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | T | CPU fp32 parity |
 | HunyuanDiT | `hunyuan-dit-v1.1-distilled`, `hunyuan-dit-v1.2`, `hunyuan-dit-v1.2-distilled` | `t2i` | T | CPU fp32 parity |
+| DeepFloyd IF | `deepfloyd-if-i-xl` | `t2i` | T | Real-checkpoint validation pending |
 | Kandinsky 2.1 | `kandinsky-2-1` | `t2i` | T | CPU fp32 parity |
 | Kandinsky 2.2 | `kandinsky-2.2` | `t2i` | T | CPU fp32 parity |
 | Kandinsky 3 | `kandinsky-3` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
