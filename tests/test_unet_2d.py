@@ -152,13 +152,10 @@ def test_timestep_conditioning_shape_and_requirement():
 @pytest.mark.parametrize(
     "option",
     [
-        {"class_embed_type": "timestep"},
         {"num_class_embeds": 10},
-        {"addition_embed_type": "text"},
         {"only_cross_attention": True},
         {"upcast_attention": "yes"},
         {"center_input_sample": True},
-        {"act_fn": "gelu"},
         {"conv_in_kernel": 5},
         {"resnet_time_scale_shift": "ada_group"},
         {"attention_mask": True},
@@ -168,6 +165,25 @@ def test_timestep_conditioning_shape_and_requirement():
 def test_rejects_unsupported_options(option):
     with pytest.raises(ValueError, match="Unsupported U-Net setting"):
         UNet2DConditionModel(option)
+
+
+def test_accepts_deepfloyd_if_options():
+    config = TINY_UNET_CONFIG | {
+        "act_fn": "gelu",
+        "addition_embed_type": "text",
+        "addition_embed_type_num_heads": 4,
+        "class_embed_type": "timestep",
+        "cross_attention_norm": "group_norm",
+        "encoder_hid_dim": 32,
+        "encoder_hid_dim_type": "text_proj",
+        "mid_block_scale_factor": 1.4142271248762552,
+        "resnet_out_scale_factor": 1.4142271248762552,
+        "resnet_skip_time_act": True,
+        "resnet_time_scale_shift": "scale_shift",
+        "time_embedding_act_fn": "gelu",
+        "time_embedding_dim": 128,
+    }
+    UNet2DConditionModel(config)
 
 
 def test_explicit_num_attention_heads_override_historical_name():
