@@ -56,6 +56,8 @@ def test_catalog_contents():
             "pixart-sigma-xl-512",
             "playground-v2",
             "playground-v2.5",
+            "prx-1024-t2i-beta",
+            "prx-512-t2i-sft",
             "qwen-image-2.1",
             "sana-1.5-4.8b-1024",
             "sana-1600m-1024",

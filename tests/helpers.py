@@ -1897,6 +1897,91 @@ def write_tiny_gemma_tokenizer(directory: str | os.PathLike[str]) -> Path:
     return path
 
 
+def write_tiny_prx(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight PRX snapshot in the published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.prx_transformer import PRXTransformer2DModel
+    from imagehub.models.t5gemma import T5GemmaEncoder
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = write_tiny_gemma_tokenizer(root / "tokenizer")
+    vocab_size = len(json.loads((tokenizer / "tokenizer.json").read_text())["model"]["vocab"])
+    text_config = {
+        "vocab_size": vocab_size,
+        "hidden_size": 32,
+        "intermediate_size": 48,
+        "num_hidden_layers": 2,
+        "num_attention_heads": 4,
+        "num_key_value_heads": 2,
+        "head_dim": 8,
+        "max_position_embeddings": 64,
+        "rms_norm_eps": 1e-6,
+        "rope_parameters": {"rope_theta": 10000.0, "rope_type": "default"},
+        "attention_bias": False,
+        "attention_dropout": 0.0,
+        "attn_logit_softcapping": 50.0,
+        "query_pre_attn_scalar": 8,
+        "sliding_window": 8,
+        "layer_types": ["sliding_attention", "full_attention"],
+        "hidden_activation": "gelu_pytorch_tanh",
+        "dropout_rate": 0.0,
+        "pad_token_id": 0,
+    }
+    transformer_config = {
+        "in_channels": 4,
+        "patch_size": 2,
+        "context_in_dim": 32,
+        "hidden_size": 32,
+        "mlp_ratio": 2.0,
+        "num_heads": 4,
+        "depth": 2,
+        "axes_dim": [4, 4],
+        "theta": 10000,
+        "time_factor": 1000.0,
+        "time_max_period": 10000,
+    }
+    vae_config = TINY_VAE_FILE_CONFIG | {
+        "scaling_factor": 0.3611,
+        "shift_factor": 0.1159,
+        "force_upcast": True,
+        "sample_size": 64,
+        "latent_channels": 4,
+    }
+    for name, cls, config, weights in (
+        ("text_encoder", T5GemmaEncoder, text_config, "model.safetensors"),
+        (
+            "transformer",
+            PRXTransformer2DModel,
+            transformer_config,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, vae_config, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "FlowMatchEulerDiscreteScheduler",
+                "num_train_timesteps": 1000,
+                "shift": 3.0,
+            }
+        )
+    )
+    (root / "model_index.json").write_text(
+        json.dumps({"_class_name": "PRXPipeline", "default_sample_size": 64})
+    )
+    return root
+
+
 def write_tiny_sana(
     directory: str | os.PathLike[str],
     *,

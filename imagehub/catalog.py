@@ -2418,6 +2418,54 @@ _entries.append(
     )
 )
 
+_PRX_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00003.safetensors",
+    "text_encoder/model-00002-of-00003.safetensors",
+    "text_encoder/model-00003-of-00003.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer.model",
+    "tokenizer/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _id, _repo, _revision, _size in (
+    (
+        "prx-1024-t2i-beta",
+        "Photoroom/prx-1024-t2i-beta",
+        "0370504b9a433fbdff814b8fcba9da03bf72a7a3",
+        1024,
+    ),
+    (
+        "prx-512-t2i-sft",
+        "Photoroom/prx-512-t2i-sft",
+        "2996423bc26e8eaca48774fac1797484214dfea0",
+        512,
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="prx",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="prx",
+            format="diffusers",
+            license="Apache-2.0",
+            config={"defaults": {"width": _size, "height": _size}},
+            files=_PRX_FILES,
+        )
+    )
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")
