@@ -224,7 +224,7 @@ class DreamLiteBackend(TextToImageBackend):
         super().__init__()
         self.source = Path(model)
         self.device = resolve_device(device)
-        self.dtype = dtype or torch.bfloat16
+        self.dtype = dtype or torch.float32
         if self.dtype not in _DTYPES:
             raise ValueError("dtype must be torch.float32, torch.float16 or torch.bfloat16")
         self.model_id = model_id
