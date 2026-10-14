@@ -1,0 +1,26 @@
+{
+  "_class_name": "PRXPipeline",
+  "_diffusers_version": "0.31.0.dev0",
+  "_name_or_path": "prx-1024-t2i",
+  "default_sample_size": 1024,
+  "scheduler": [
+    "diffusers",
+    "FlowMatchEulerDiscreteScheduler"
+  ],
+  "text_encoder": [
+    "prx",
+    "T5GemmaEncoder"
+  ],
+  "tokenizer": [
+    "transformers",
+    "GemmaTokenizerFast"
+  ],
+  "transformer": [
+    "diffusers",
+    "PRXTransformer2DModel"
+  ],
+  "vae": [
+    "diffusers",
+    "AutoencoderKL"
+  ]
+}

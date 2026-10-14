@@ -179,6 +179,8 @@ def test_downloads_transformer_only_pixart_sigma_on_top_of_the_1024_snapshot(
         "amused-256",
         "amused-512",
         "auraflow-v0.3",
+        "prx-1024-t2i-beta",
+        "prx-512-t2i-sft",
         "omnigen-v1",
     ],
 )

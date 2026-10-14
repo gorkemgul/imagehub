@@ -930,6 +930,46 @@ The published transformer and text encoder are float32; the VAE is bfloat16. CPU
 and end-to-end validation are covered; the real-checkpoint run took 12 minutes on an M2 Max (CPU)
 ([validation](validation.md)).
 
+# PRX
+
+Catalog: [`prx`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`prx-1024-t2i-beta`, `prx-512-t2i-sft` · Task: `t2i`
+
+**Architecture.** PRX uses the 26-layer, width-2304 T5Gemma encoder with alternating bidirectional
+sliding-window and full attention. A 16-layer transformer consumes 2×2 patches of the 16-channel
+latent, attends to the text states, and uses two-axis rotary positions. A FLUX-style 8× VAE decodes
+the result. Flow-match Euler sampling uses a static shift of 3.0.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained prx-512-t2i-sft checkpoints/prx-512-t2i-sft
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="prx-512-t2i-sft", model="checkpoints/prx-512-t2i-sft") as pipe:
+    result = pipe("a product photograph of a ceramic lamp", seed=42)
+    result.images[0].save("lamp.png")
+```
+
+**Settings.** Both checkpoints default to 28 steps and guidance 4.0. Their native sizes are
+1024×1024 and 512×512 respectively. The supported options are `seed`, `steps`, `guidance`, `width`,
+`height`, `negative_prompt`, `max_sequence_length` (default 256), and `skip_text_cleaning`. Width and
+height are mapped to the reference aspect-ratio bins by default; disable `use_resolution_binning`
+to request dimensions that are multiples of 16 directly. Guidance 1.0 disables the unconditional pass.
+
+**Precision and validation.** The 1024 checkpoint declares bfloat16 for its text encoder; the 512
+checkpoint declares float32. Both repositories publish float32 transformer and VAE weights. Exact
+tiny-pipeline parity and published-weight parity are covered; the real-checkpoint run took 7
+minutes on an M2 Max (CPU) ([validation](validation.md)).
+
+**Out of scope.** Batches, caller-supplied latents or embeddings, callbacks, LoRA, and fp16/bf16
+parity are not supported.
+
+**License.** Both repositories declare Apache-2.0. imagehub does not distribute weights.
+
 # Stable Cascade
 
 Catalog: [`wuerstchen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
