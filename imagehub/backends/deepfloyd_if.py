@@ -243,6 +243,9 @@ class DeepFloydIFBackend(TextToImageBackend):
             guidance=sr_guidance,
             device=self.device,
         ).to(self.dtype)
+        # Stage II prepares its initial image before drawing the upscaled-image noise.
+        # Keep this order because both draws continue stage I's generator stream.
+        stage_ii_initial = _noise((1, 3, 256, 256), generator, self.dtype, self.device)
         upscaled = F.interpolate(stage_i, size=(256, 256), mode="bilinear", align_corners=True)
         noiser = DDPMScheduler(self.components.image_noising_scheduler)
         upscaled = noiser.add_noise(
@@ -254,7 +257,7 @@ class DeepFloydIFBackend(TextToImageBackend):
             self.components.stage_ii,
             self.components.stage_ii_scheduler,
             sr_context,
-            _noise((1, 3, 256, 256), generator, self.dtype, self.device),
+            stage_ii_initial,
             steps=o["superresolution_steps"],
             guidance=sr_guidance,
             generator=generator,
