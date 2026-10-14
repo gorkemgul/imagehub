@@ -261,6 +261,9 @@ def main() -> None:
             if key
             in ("tokenizer", "text_encoder", "unet", "vae_decode", "vae_encode", "seed_noise")
         },
+        "components_dreamlite": {
+            key: value for key, value in measured.items() if key.startswith("components_dreamlite-")
+        },
         "components_sdxl": {
             key: value
             for key, value in measured.items()

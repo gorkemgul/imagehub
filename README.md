@@ -66,6 +66,7 @@ result.images[0].save("edited.png")
 | Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step`, `sdxl-turbo`, `ssd-1b`, `playground-v2`, `playground-v2.5` | `t2i` | T | CPU fp32 parity |
 | Stable Diffusion XL refiner | `sdxl-refiner-1.0` | `t2i` | T, I | CPU fp32 parity |
 | Stable Diffusion 3 and 3.5 | `sd3-medium`, `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | T | CPU fp32 parity |
+| DreamLite | `dreamlite-base`, `dreamlite-mobile` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 weights |
 | FLUX.1 | `flux1-schnell`, `flux1-dev`, `flux1-krea-dev` | `t2i` | T | CPU fp32 parity |
 | FLUX.1 Kontext | `flux1-kontext-dev` | `t2i` | T, I | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | T | CPU fp32 parity |

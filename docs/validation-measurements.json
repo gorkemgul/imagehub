@@ -431,6 +431,44 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "components_dreamlite-base": {
+    "scheduler": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0,
+    "unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "vae": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    }
+  },
+  "components_dreamlite-mobile": {
+    "scheduler": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0,
+    "unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "vae": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    }
+  },
   "ddpm_wuerstchen_timesteps_12": {
     "exact": true,
     "tolerance": "exact"
@@ -615,6 +653,28 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "e2e_dreamlite-base": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 1234,
+    "size": [
+      1024,
+      768
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "e2e_dreamlite-mobile": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 1234,
+    "size": [
+      1024,
+      768
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "e2e_ernie_image": {
     "max_pixel_diff": 0,
@@ -2429,6 +2489,34 @@
     "mismatch": [],
     "missing": [],
     "tensors": 1680
+  },
+  "header_dreamlite-base": {
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1075
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 134
+    }
+  },
+  "header_dreamlite-mobile": {
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1075
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 134
+    }
   },
   "header_ernie_image": {
     "text_encoder": {
@@ -7689,6 +7777,18 @@
       499,
       249
     ]
+  },
+  "seed_e2e_dreamlite-base": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "steps": 4
+  },
+  "seed_e2e_dreamlite-mobile": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "steps": 4
   },
   "seed_e2e_ernie_image": {
     "max_pixel_diff": 0,
