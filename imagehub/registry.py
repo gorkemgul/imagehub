@@ -125,6 +125,7 @@ for _task, _name, _path in (
     (Task.T2I, "kandinsky21", "imagehub.backends.kandinsky21:Kandinsky21Backend"),
     (Task.T2I, "kandinsky3", "imagehub.backends.kandinsky3:Kandinsky3Backend"),
     (Task.T2I, "kandinsky5", "imagehub.backends.kandinsky5:Kandinsky5Backend"),
+    (Task.T2I, "deepfloyd-if", "imagehub.backends.deepfloyd_if:DeepFloydIFBackend"),
     (Task.T2I, "stable_cascade", "imagehub.backends.stable_cascade:StableCascadeBackend"),
     (Task.T2I, "wuerstchen", "imagehub.backends.wuerstchen:WuerstchenBackend"),
     (Task.T2I, "glm-image", "imagehub.backends.glm_image:GlmImageBackend"),

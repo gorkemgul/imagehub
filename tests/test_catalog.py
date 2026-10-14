@@ -15,6 +15,7 @@ def test_catalog_contents():
             "chroma1-hd",
             "cogview3-plus-3b",
             "cogview4-6b",
+            "deepfloyd-if-i-xl",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
             "ernie-image",
