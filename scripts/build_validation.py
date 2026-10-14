@@ -346,6 +346,9 @@ def main() -> None:
         "components_kandinsky21": {
             key: value for key, value in measured.items() if "kandinsky21" in key
         },
+        "components_deepfloyd_if": {
+            key: value for key, value in measured.items() if key.startswith("deepfloyd_if_")
+        },
         "components_kandinsky3": {
             key: value for key, value in measured.items() if key.startswith("kandinsky3_")
         },

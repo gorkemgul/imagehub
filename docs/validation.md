@@ -1532,9 +1532,11 @@ configuration contains.
 `deepfloyd-if-i-xl` combines the pinned IF-I-XL and IF-II-L repositories with diffusers 0.40.0
 `IFPipeline` and `IFSuperResolutionPipeline`. Unit and opt-in reference coverage exercises the
 IF U-Net additions, dynamic thresholding, image noising, guidance on and off, and the combined
-256×256 path. Real-checkpoint validation is pending the gated snapshot run; its records include
-`e2e_deepfloyd-if-i-xl` and a separate seed-42 `seed_e2e_deepfloyd-if-i-xl` run through the public
-pipeline API. Stage III, safety checking and watermarking are excluded.
+256×256 path. The gated real-checkpoint reference test compares tokenization, the shared T5
+encoder, and one U-Net step for each stage exactly. Its end-to-end comparison uses four denoising
+steps per stage with seed 0; a separate seed-42 run exercises the public pipeline API. The records
+are `e2e_deepfloyd-if-i-xl` and `seed_e2e_deepfloyd-if-i-xl`. Stage III, safety checking and
+watermarking are excluded.
 
 ## Kandinsky 3
 
