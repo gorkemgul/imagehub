@@ -7,6 +7,34 @@ References are recorded per model in `validation.json` under `reference`.
 
 ## Scope
 
+## Latent Diffusion Model
+
+`ldm-text2im-large-256` was loaded strictly from `CompVis/ldm-text2im-large-256` at revision
+`30de525` and compared with diffusers 0.40.0 `LDMTextToImagePipeline` on CPU in float32. All 5
+real-checkpoint tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (`bert`, `unet`, `vqvae`; 422 / 686 / 248 tensors) | 0 missing / extra / mismatched | exact |
+| BERT tokenizer token ids (prompt at 77 tokens) | identical | exact |
+| LDM BERT text encoder | 0 | 0 |
+| U-Net single step (t = 981) | 0 | 0 |
+| VQ-VAE decode | 0 | 0 |
+| Random-weight BERT encoder (tiny configuration) | 0 | 0 |
+| End to end: final pixels (50 steps, guidance 1.0, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse"; both runs use the
+defaults of 50 steps, guidance 1.0 and 256×256. Records: `header_ldm-text2im-large-256`,
+`ldm_tokenizer`, `ldm_text_encoder`, `ldm_unet`, `ldm_vqvae_decode`, `ldm_random_bert`,
+`e2e_ldm-text2im-large-256` and `seed_e2e_ldm-text2im-large-256`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`, `end_to_end`
+and `seed_end_to_end`, [validation.json](validation.json).
+
 ## DreamLite
 
 `dreamlite-base` and `dreamlite-mobile` are pending the real-checkpoint run. Their 1,075 U-Net and
@@ -1760,12 +1788,50 @@ first sequence of the batch only; the native module reproduces that.
   `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
-  `lcm-dreamshaper-v7`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
-  for `chroma1-hd`. These include structural parity with random weights, end-to-end parity with
+  `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
+  for `chroma1-hd`, 7 passed for `ovis-image-7b`, and 8 passed for `prx-1024-t2i-beta` and `prx-512-t2i-sft`
+  together. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
 - MPS smoke test: 1 passed.
+
+## PRX
+
+Validated on CPU in the same environment as above. `prx-1024-t2i-beta` and `prx-512-t2i-sft` were
+loaded strictly from `Photoroom/prx-1024-t2i-beta` at revision `0370504` and
+`Photoroom/prx-512-t2i-sft` at revision `2996423` and compared with diffusers 0.40.0
+`PRXPipeline` and transformers 5.18.0 on CPU in float32. The 1024 checkpoint's published bfloat16
+text-encoder weights are upcast to float32 on both sides; the other published weights are
+float32. All 8 real tests passed, and the observed difference in every
+recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation
+produces a bit-identical image to the one diffusers produces. The real-checkpoint run took 7
+minutes on an M2 Max (CPU).
+
+The native PRX transformer, T5Gemma encoder, Gemma tokenizer behavior, flow-match loop, and FLUX VAE
+path have exact random-weight and tiny end-to-end parity tests against diffusers 0.40.0 and
+transformers 5.18.0.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check: text encoder, transformer, VAE (288 / 188 / 244 tensors) | both | 0 missing / extra / mismatched | exact |
+| Gemma tokenizer token ids / attention masks (5 fixed prompts and 600 seeded fuzz strings, 256 tokens) | both | identical / identical | exact / exact |
+| T5Gemma text encoder embeddings / masks (prompt and negative) | both | 0 / identical | 0 / exact |
+| Transformer single step (16×16 latent grid, timesteps 0.8 and 0.3, real conditioning) | both | 0 | 0 |
+| VAE decode | both | 0 | 0 |
+| End to end: final pixels (native size, 2 steps, guidance 4.0, initial noise from seed 0) | both | 0 | 0 |
+| End to end, seed 42 through the public pipeline (pixels) | both | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with an empty negative
+prompt, `max_sequence_length` 256 and resolution binning disabled. The runs use the native
+1024×1024 and 512×512 sizes and 2 steps instead of the 28-step default only to shorten the CPU
+run. Records: `header_prx-1024-t2i-beta` and `header_prx-512-t2i-sft`, the
+`prx_prx-1024-t2i-beta_*` and `prx_prx-512-t2i-sft_*` component keys, `e2e_prx-1024-t2i-beta`,
+`e2e_prx-512-t2i-sft`, `seed_e2e_prx-1024-t2i-beta` and `seed_e2e_prx-512-t2i-sft`,
+[validation-measurements.json](validation-measurements.json); `components_prx`,
+[validation.json](validation.json).
 
 ## Differences found and fixed during validation
 
@@ -1802,3 +1868,35 @@ The SDXL validation found three more differences:
    equivalent `generate(num_return_sequences=...)` argument is used instead.
 10. **Euler initial noise scale with trailing spacing.** With `timestep_spacing="trailing"`, the
     Euler scheduler's initial noise scale is the largest sigma itself, not `sqrt(sigma² + 1)`.
+
+## Ovis-Image
+
+Validated on CPU in the same environment as above. `ovis-image-7b` is pinned to
+`ATH-MaaS/Ovis-Image-7B` revision `41be1c5821a92c970d63d7eb595a2fd3fe32b22e` and compared with
+diffusers 0.40.0 `OvisImagePipeline` and transformers 5.18.0 on CPU in float32. The published
+transformer and text encoder are float32; the published VAE is bfloat16 and is upcast to float32
+on both sides. Offline validation checks every published Ovis transformer tensor name and shape
+and executes a tiny random-weight transformer. All 7 real-checkpoint tests passed, and the
+observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one diffusers produces.
+The real-checkpoint run took 12 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: `text_encoder`, `transformer`, `vae` (310 / 583 / 244 tensors) | 0 missing / extra / mismatched | exact |
+| Qwen tokenizer token ids (4 prompts: empty, ASCII, accented and CJK, newline and box-drawing characters) | identical | exact |
+| Qwen3 text encoder last hidden state (prompt at 64 tokens) | 0 | 0 |
+| Transformer single step (t = 0.5, 8×8 image grid, 32 text tokens) | 0 | 0 |
+| VAE decode (16×16×16 latents) | 0 | 0 |
+| End to end: uint8 image (1024×1024, 2 steps, guidance 5.0, seed 0) | 0 | 0 |
+| End to end, seed 42, different prompt (uint8 image) | 0 | 0 |
+
+The end-to-end runs keep every pipeline default (guidance 5.0, 1024×1024) and use 2 steps instead
+of the 50-step default only to shorten the CPU run. Records: `header_ovis-image-7b`,
+`ovis_image_tokenizer`, `ovis_image_text_encoder`, `ovis_image_transformer_step`,
+`ovis_image_vae_decode`, `e2e_ovis-image-7b` and `seed_e2e_ovis-image-7b`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`,
+`end_to_end` and `seed_end_to_end` under `ovis-image-7b` and `tests.reference_summary`,
+[validation.json](validation.json).

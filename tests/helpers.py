@@ -297,6 +297,80 @@ def write_tiny_sd(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
     return root
 
 
+def write_tiny_ldm(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight LDM snapshot in the original published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.ldm_bert import LDMBertModel
+    from imagehub.models.unet_2d import UNet2DConditionModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    tokens = ("[PAD]", "[UNK]", "[CLS]", "[SEP]", "[MASK]", "a", "cat", "b")
+    (tokenizer / "vocab.txt").write_text("\n".join(tokens) + "\n", encoding="utf-8")
+    tokenizer_config = {
+        "cls_token": "[CLS]",
+        "sep_token": "[SEP]",
+        "pad_token": "[PAD]",
+        "unk_token": "[UNK]",
+        "do_lower_case": True,
+        "tokenizer_class": "BertTokenizer",
+    }
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (tokenizer / "special_tokens_map.json").write_text(json.dumps(tokenizer_config))
+    bert = {
+        "_class_name": "LDMBertModel",
+        "model_type": "ldmbert",
+        "vocab_size": len(tokens),
+        "max_position_embeddings": 77,
+        "d_model": 1280,
+        "encoder_layers": 1,
+        "encoder_ffn_dim": 32,
+        "encoder_attention_heads": 2,
+        "head_dim": 16,
+        "dropout": 0.0,
+        "attention_dropout": 0.0,
+        "activation_dropout": 0.0,
+        "activation_function": "gelu",
+    }
+    unet = TINY_UNET_FILE_CONFIG | {"cross_attention_dim": 1280, "sample_size": 8}
+    vae = TINY_VAE_FILE_CONFIG | {"sample_size": 64}
+    scheduler = {
+        "_class_name": "DDIMScheduler",
+        "beta_start": 0.00085,
+        "beta_end": 0.012,
+        "beta_schedule": "linear",
+        "num_train_timesteps": 1000,
+        "clip_sample": False,
+    }
+    index = {
+        "_class_name": "LDMTextToImagePipeline",
+        "bert": ["latent_diffusion", "LDMBertModel"],
+        "scheduler": ["diffusers", "DDIMScheduler"],
+        "tokenizer": ["transformers", "BertTokenizer"],
+        "unet": ["diffusers", "UNet2DConditionModel"],
+        "vqvae": ["diffusers", "AutoencoderKL"],
+    }
+    (root / "model_index.json").write_text(json.dumps(index))
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(scheduler))
+    for name, cls, config, weights in (
+        ("bert", LDMBertModel, bert, "model.safetensors"),
+        ("unet", UNet2DConditionModel, unet, "diffusion_pytorch_model.safetensors"),
+        ("vqvae", AutoencoderKL, vae, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.02)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
 def write_tiny_lcm(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
     """A random-weight LCM snapshot in the published diffusers layout."""
     from imagehub.checkpoints import save_safetensors
@@ -660,6 +734,100 @@ def write_tiny_z_image(directory: str | os.PathLike[str], *, seed: int = 0) -> P
             "diffusion_pytorch_model.safetensors",
         ),
         ("vae", AutoencoderKL, TINY_Z_IMAGE_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state = {key.removeprefix("model."): value for key, value in state.items()}
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
+TINY_OVIS_IMAGE_TEXT = TINY_Z_IMAGE_TEXT | {"vocab_size": 151936, "max_position_embeddings": 256}
+TINY_OVIS_IMAGE_TRANSFORMER = {
+    "_class_name": "OvisImageTransformer2DModel",
+    "patch_size": 1,
+    "in_channels": 64,
+    "out_channels": None,
+    "num_layers": 1,
+    "num_single_layers": 1,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "joint_attention_dim": 32,
+    "axes_dims_rope": [2, 2, 4],
+}
+TINY_OVIS_IMAGE_VAE = TINY_Z_IMAGE_VAE | {"sample_size": 32}
+TINY_OVIS_IMAGE_SCHEDULER = {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "num_train_timesteps": 1000,
+    "use_dynamic_shifting": True,
+    "base_image_seq_len": 1,
+    "max_image_seq_len": 16,
+    "base_shift": 0.5,
+    "max_shift": 0.9,
+    "shift": 3.0,
+}
+
+
+def write_tiny_ovis_image(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """Write a random tiny Ovis-Image snapshot in the published layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.ovis_image_transformer import OvisImageTransformer2DModel
+    from imagehub.models.qwen3 import Qwen3Model
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    source = FIXTURES / "ovis_image_configs"
+    for name in (
+        "vocab.json",
+        "merges.txt",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "special_tokens_map.json",
+    ):
+        shutil.copyfile(source / f"tokenizer_{name}", tokenizer / name)
+    shutil.copyfile(source / "tokenizer_added_tokens.json", tokenizer / "added_tokens.json")
+    tokenizer_config = json.loads((tokenizer / "tokenizer_config.json").read_text())
+    tokenizer_config["chat_template"] = (
+        "{% for message in messages %}<|im_start|>{{ message['role'] }}\n"
+        "{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        "{% if add_generation_prompt %}<|im_start|>assistant\n"
+        "<think>\n\n</think>\n\n{% endif %}"
+    )
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(TINY_OVIS_IMAGE_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "OvisImagePipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen3Model"],
+                "tokenizer": ["transformers", "Qwen2TokenizerFast"],
+                "transformer": ["diffusers", "OvisImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKL"],
+            }
+        )
+    )
+    for name, cls, config, weights in (
+        ("text_encoder", Qwen3Model, TINY_OVIS_IMAGE_TEXT, "model.safetensors"),
+        (
+            "transformer",
+            OvisImageTransformer2DModel,
+            TINY_OVIS_IMAGE_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, TINY_OVIS_IMAGE_VAE, "diffusion_pytorch_model.safetensors"),
     ):
         model = cls(config)
         for parameter in model.parameters():
@@ -1821,6 +1989,91 @@ def write_tiny_gemma_tokenizer(directory: str | os.PathLike[str]) -> Path:
     }
     (path / "special_tokens_map.json").write_text(json.dumps(special), encoding="utf-8")
     return path
+
+
+def write_tiny_prx(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight PRX snapshot in the published diffusers layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.prx_transformer import PRXTransformer2DModel
+    from imagehub.models.t5gemma import T5GemmaEncoder
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    tokenizer = write_tiny_gemma_tokenizer(root / "tokenizer")
+    vocab_size = len(json.loads((tokenizer / "tokenizer.json").read_text())["model"]["vocab"])
+    text_config = {
+        "vocab_size": vocab_size,
+        "hidden_size": 32,
+        "intermediate_size": 48,
+        "num_hidden_layers": 2,
+        "num_attention_heads": 4,
+        "num_key_value_heads": 2,
+        "head_dim": 8,
+        "max_position_embeddings": 64,
+        "rms_norm_eps": 1e-6,
+        "rope_parameters": {"rope_theta": 10000.0, "rope_type": "default"},
+        "attention_bias": False,
+        "attention_dropout": 0.0,
+        "attn_logit_softcapping": 50.0,
+        "query_pre_attn_scalar": 8,
+        "sliding_window": 8,
+        "layer_types": ["sliding_attention", "full_attention"],
+        "hidden_activation": "gelu_pytorch_tanh",
+        "dropout_rate": 0.0,
+        "pad_token_id": 0,
+    }
+    transformer_config = {
+        "in_channels": 4,
+        "patch_size": 2,
+        "context_in_dim": 32,
+        "hidden_size": 32,
+        "mlp_ratio": 2.0,
+        "num_heads": 4,
+        "depth": 2,
+        "axes_dim": [4, 4],
+        "theta": 10000,
+        "time_factor": 1000.0,
+        "time_max_period": 10000,
+    }
+    vae_config = TINY_VAE_FILE_CONFIG | {
+        "scaling_factor": 0.3611,
+        "shift_factor": 0.1159,
+        "force_upcast": True,
+        "sample_size": 64,
+        "latent_channels": 4,
+    }
+    for name, cls, config, weights in (
+        ("text_encoder", T5GemmaEncoder, text_config, "model.safetensors"),
+        (
+            "transformer",
+            PRXTransformer2DModel,
+            transformer_config,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, vae_config, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "FlowMatchEulerDiscreteScheduler",
+                "num_train_timesteps": 1000,
+                "shift": 3.0,
+            }
+        )
+    )
+    (root / "model_index.json").write_text(
+        json.dumps({"_class_name": "PRXPipeline", "default_sample_size": 64})
+    )
+    return root
 
 
 def write_tiny_sana(

@@ -61,6 +61,7 @@ result.images[0].save("edited.png")
 
 | Family | Checkpoints | Task | Input | Validation |
 | --- | --- | --- | --- | --- |
+| Latent Diffusion Model | `ldm-text2im-large-256` | `t2i` | T | CPU fp32 parity |
 | Stable Diffusion | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`, `sd-v2-1`, `sd-turbo`, `lcm-dreamshaper-v7` | `t2i` | T | CPU fp32 parity |
 | Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step`, `sdxl-turbo`, `ssd-1b`, `playground-v2`, `playground-v2.5` | `t2i` | T | CPU fp32 parity |
 | Stable Diffusion XL refiner | `sdxl-refiner-1.0` | `t2i` | T, I | CPU fp32 parity |
@@ -82,8 +83,10 @@ result.images[0].save("edited.png")
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |
 | Lumina-Next | `lumina-next` | `t2i` | T | CPU fp32 parity |
 | OmniGen | `omnigen-v1` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 transformer |
+| Ovis-Image | `ovis-image-7b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 VAE weights |
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
+| PRX | `prx-1024-t2i-beta`, `prx-512-t2i-sft` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
 | Chroma | `chroma1-hd` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |

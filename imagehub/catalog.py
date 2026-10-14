@@ -116,6 +116,37 @@ class ModelSpec:
 
 _entries: list[ModelSpec] = []
 
+_entries.append(
+    ModelSpec(
+        id="ldm-text2im-large-256",
+        task=Task.T2I,
+        family="ldm",
+        source="https://huggingface.co/CompVis/ldm-text2im-large-256",
+        repo_id="CompVis/ldm-text2im-large-256",
+        revision="30de525ca11a880baea4962827fb6cb0bb268955",
+        provenance="author",
+        catalog_id="ldm",
+        format="diffusers",
+        license="Apache-2.0",
+        config={
+            "defaults": {"steps": 50, "guidance": 1.0, "width": 256, "height": 256, "eta": 0.0}
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "bert/config.json",
+            "bert/pytorch_model.bin",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.bin",
+            "vqvae/config.json",
+            "vqvae/diffusion_pytorch_model.bin",
+        ),
+    )
+)
+
 # DreamLite publishes bfloat16 safetensors only.  Both releases use the same
 # component layout; the mobile checkpoint is distilled for four CFG-free steps.
 _DREAMLITE_FILES = (
@@ -2446,6 +2477,92 @@ _entries.append(
         ),
     )
 )
+
+_entries.append(
+    ModelSpec(
+        id="ovis-image-7b",
+        task=Task.T2I,
+        family="ovis-image",
+        source="https://huggingface.co/ATH-MaaS/Ovis-Image-7B",
+        repo_id="ATH-MaaS/Ovis-Image-7B",
+        revision="41be1c5821a92c970d63d7eb595a2fd3fe32b22e",
+        provenance="author",
+        catalog_id="ovis-image",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/chat_template.jinja",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_PRX_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00003.safetensors",
+    "text_encoder/model-00002-of-00003.safetensors",
+    "text_encoder/model-00003-of-00003.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer.model",
+    "tokenizer/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _id, _repo, _revision, _size in (
+    (
+        "prx-1024-t2i-beta",
+        "Photoroom/prx-1024-t2i-beta",
+        "0370504b9a433fbdff814b8fcba9da03bf72a7a3",
+        1024,
+    ),
+    (
+        "prx-512-t2i-sft",
+        "Photoroom/prx-512-t2i-sft",
+        "2996423bc26e8eaca48774fac1797484214dfea0",
+        512,
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="prx",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="prx",
+            format="diffusers",
+            license="Apache-2.0",
+            config={"defaults": {"width": _size, "height": _size}},
+            files=_PRX_FILES,
+        )
+    )
 
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):

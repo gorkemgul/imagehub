@@ -11,6 +11,7 @@ measurements are grouped in flat
 ``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
 ``components_kandinsky21``, ``components_kandinsky22``,
 ``components_kandinsky3``,
+``components_ldm``,
 ``components_kandinsky5``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
 ``components_lumina2``, ``components_lumina_next``, ``components_amused``, ``components_auraflow``,
@@ -141,6 +142,7 @@ SD3_COMPONENT_KEYS = (
     "sd3_vae_encode",
     "sd3_scheduler",
 )
+LDM_COMPONENT_KEYS = ("ldm_tokenizer", "ldm_text_encoder", "ldm_unet", "ldm_vqvae_decode")
 
 
 def header_check(header: dict | None) -> dict | None:
@@ -285,6 +287,9 @@ def main() -> None:
         "components_lcm": {
             key: value for key, value in measured.items() if key in LCM_COMPONENT_KEYS
         },
+        "components_ldm": {
+            key: value for key, value in measured.items() if key in LDM_COMPONENT_KEYS
+        },
         "components_z_image": {
             key: value
             for key, value in measured.items()
@@ -387,6 +392,9 @@ def main() -> None:
         },
         "components_auraflow": {
             key: value for key, value in measured.items() if key.startswith("auraflow_")
+        },
+        "components_prx": {
+            key: value for key, value in measured.items() if key.startswith(("prx_", "t5gemma_"))
         },
         "components_wuerstchen": {
             key: value
