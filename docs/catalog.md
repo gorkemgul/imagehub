@@ -21,8 +21,8 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `sd-v2-1` | `stable-diffusion` | [sd2-community/stable-diffusion-2-1](https://huggingface.co/sd2-community/stable-diffusion-2-1) | `bb21548` | community mirror | full | CreativeML-OpenRAIL++-M | `stable-diffusion-2` |
 | `sd-turbo` | `stable-diffusion` | [stabilityai/sd-turbo](https://huggingface.co/stabilityai/sd-turbo) | `b261bac` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` (SD Turbo) |
 | `lcm-dreamshaper-v7` | `stable-diffusion` | [SimianLuo/LCM_Dreamshaper_v7](https://huggingface.co/SimianLuo/LCM_Dreamshaper_v7) | `a85df6a` | author | full | MIT | `lcm` |
-| `dreamlite-base` | `dreamlite` | [carlofkl/DreamLite-base](https://huggingface.co/carlofkl/DreamLite-base) | `a9a0f15` | author | experimental | CC-BY-NC-4.0 (non-commercial) | `dreamlite` |
-| `dreamlite-mobile` | `dreamlite` | [carlofkl/DreamLite-mobile](https://huggingface.co/carlofkl/DreamLite-mobile) | `a48c656` | author | experimental | CC-BY-NC-4.0 (non-commercial) | `dreamlite` |
+| `dreamlite-base` | `dreamlite` | [carlofkl/DreamLite-base](https://huggingface.co/carlofkl/DreamLite-base) | `a9a0f15` | author | full | CC-BY-NC-4.0 (non-commercial) | `dreamlite` |
+| `dreamlite-mobile` | `dreamlite` | [carlofkl/DreamLite-mobile](https://huggingface.co/carlofkl/DreamLite-mobile) | `a48c656` | author | full | CC-BY-NC-4.0 (non-commercial) | `dreamlite` |
 | `sdxl-base-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) | `4621659` | author | full | CreativeML Open RAIL++-M | `sdxl` |
 | `sdxl-refiner-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-refiner-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0) | `5d4cfe8` | author | full | CreativeML Open RAIL++-M | `sdxl` |
 | `sdxl-lightning-2step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |

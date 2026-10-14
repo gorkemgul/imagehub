@@ -37,13 +37,39 @@ and `seed_end_to_end`, [validation.json](validation.json).
 
 ## DreamLite
 
-`dreamlite-base` and `dreamlite-mobile` are pending the real-checkpoint run. Their 1,075 U-Net and
-134 TinyVAE published tensor names and shapes match the native modules strictly. Random-weight
-U-Net and TinyVAE comparisons are exact, as are tiny end-to-end comparisons against both
-diffusers 0.40.0 pipelines with guidance on and off, non-square output, and two seeds. The pending
-real-checkpoint checks cover Qwen3-VL conditioning, one U-Net step, TinyVAE decode, the FlowMatch
-Euler trajectory, end-to-end output, and seeded output. The published weights are bfloat16; no CPU
-float32 real-checkpoint parity claim is made until those checks are recorded.
+Validated on CPU in the same environment as above. `dreamlite-base` and `dreamlite-mobile` were
+loaded strictly from `carlofkl/DreamLite-base` at revision `a9a0f15` and
+`carlofkl/DreamLite-mobile` at revision `a48c656` and compared with diffusers 0.40.0
+`DreamLitePipeline` and `DreamLiteMobilePipeline` and transformers 5.18.0 on CPU in float32. Both
+checkpoints publish bfloat16 weights, which are upcast to float32 on both sides. Their 1,075 U-Net
+and 134 TinyVAE published tensor names and shapes match the native modules strictly. Random-weight
+U-Net and TinyVAE comparisons are exact, as are tiny end-to-end comparisons against both diffusers
+pipelines with guidance on and off, non-square output, and two seeds. All 8 real-checkpoint tests
+passed, and the observed difference in every recorded comparison is **exactly 0** (0 means exact):
+on CPU in float32, the local implementation produces a bit-identical image to the one diffusers
+produces. The real-checkpoint run took 2 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check (`unet`, `vae`; 1,075 / 134 tensors) | both | 0 missing / extra / mismatched | exact |
+| Qwen3-VL text encoder through the published prompt template | both | 0 | 0 |
+| U-Net single step (t = 500, 8×12 latent grid) | both | 0 | 0 |
+| TinyVAE decode (4×6 latents) | both | 0 | 0 |
+| FlowMatch Euler timesteps (4 steps, `mu` for 1024×768) | both | 0 | 0 |
+| End to end: final pixels (1024×768, 4 steps, initial noise from seed 1234, guidance 3.5 for `dreamlite-base`) | both | 0 | 0 |
+| End to end, seed 42 (pixels) | both | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse". Both runs use 4 steps
+instead of `dreamlite-base`'s 30-step default only to shorten the CPU run; `dreamlite-mobile` is
+the four-step distilled checkpoint and does not use classifier-free guidance. Records:
+`header_dreamlite-base`, `header_dreamlite-mobile`, `components_dreamlite-base`,
+`components_dreamlite-mobile`, `e2e_dreamlite-base`, `e2e_dreamlite-mobile`,
+`seed_e2e_dreamlite-base` and `seed_e2e_dreamlite-mobile`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`,
+`end_to_end` and `seed_end_to_end` under `dreamlite-base` and `dreamlite-mobile`, and
+`components_dreamlite`, [validation.json](validation.json).
 
 - **5 checkpoints, `full`:** `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`.
   The published tensors were loaded strictly. A 50-step generation from the same initial noise was
@@ -1789,8 +1815,9 @@ first sequence of the batch only; the native module reproduces that.
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
-  for `chroma1-hd`, 7 passed for `ovis-image-7b`, and 8 passed for `prx-1024-t2i-beta` and `prx-512-t2i-sft`
-  together. These include structural parity with random weights, end-to-end parity with
+  for `chroma1-hd`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
+  `prx-512-t2i-sft` together, and 8 passed for `dreamlite-base` and `dreamlite-mobile` together.
+  These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

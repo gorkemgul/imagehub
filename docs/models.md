@@ -48,8 +48,9 @@ backend.
 
 **Validation.** Published tensor headers match strictly, and random-weight component and tiny
 end-to-end comparisons against both diffusers pipelines are exact. Real-checkpoint parity is
-pending the real-checkpoint run. The catalog records the exact repositories, commits, component
-files, and bfloat16 precision.
+covered: all 8 real-checkpoint tests passed with exactly 0 difference in every recorded
+comparison, and the run took 2 minutes on an M2 Max (CPU) ([validation](validation.md)). The
+catalog records the exact repositories, commits, component files, and bfloat16 precision.
 
 **License.** The weights are licensed under CC-BY-NC-4.0 and are non-commercial. Review the
 license before downloading or using them.
