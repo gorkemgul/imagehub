@@ -85,6 +85,7 @@ backend_registry = BackendRegistry()
 for _task, _name, _path in (
     (Task.T2I, "ldm", "imagehub.backends.ldm:LDMBackend"),
     (Task.T2I, "stable-diffusion", "imagehub.backends.stable_diffusion:StableDiffusionBackend"),
+    (Task.T2I, "dreamlite", "imagehub.backends.dreamlite:DreamLiteBackend"),
     (
         Task.T2I,
         "stable-diffusion-xl",
@@ -130,6 +131,8 @@ for _task, _name, _path in (
     (Task.T2I, "wuerstchen", "imagehub.backends.wuerstchen:WuerstchenBackend"),
     (Task.T2I, "glm-image", "imagehub.backends.glm_image:GlmImageBackend"),
     (Task.T2I, "omnigen", "imagehub.backends.omnigen:OmniGenBackend"),
+    (Task.T2I, "ovis-image", "imagehub.backends.ovis_image:OvisImageBackend"),
+    (Task.T2I, "prx", "imagehub.backends.prx:PRXBackend"),
 ):
     backend_registry.register(_task, _name, _path)
 

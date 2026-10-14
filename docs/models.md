@@ -27,6 +27,34 @@ by an f=8 KL autoencoder. The published sampler is DDIM.
 tests passed with exactly 0 difference. Safety checkers,
 watermarking, img2img, and stochastic DDIM sampling are out of scope.
 
+# DreamLite
+
+Catalog: [`dreamlite`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `dreamlite-base`, `dreamlite-mobile` · Task: `t2i`
+
+**Architecture.** DreamLite combines Qwen3-VL text conditioning, a depthwise-separable U-Net with
+grouped-query cross-attention, a TinyVAE, and flow-matching Euler sampling.  The model uses a
+horizontally concatenated target/condition latent pair: a blank condition produces an image from
+text, while an input image supplies the condition for instruction-guided editing.
+
+**Checkpoints.** `dreamlite-base` defaults to 30 steps with text guidance 3.5 and image guidance
+1.5. `dreamlite-mobile` is a four-step distilled checkpoint and does not use classifier-free
+guidance. Both checkpoints publish bfloat16 safetensors only.
+
+**Support.** The native text-to-image backend implements the published Qwen3-VL prompt template,
+DreamLite U-Net, TinyVAE, dynamic flow-matching schedule, base guidance, and mobile distilled loop.
+The reference pipelines also expose image editing; that input mode is not part of this `t2i`
+backend.
+
+**Validation.** Published tensor headers match strictly, and random-weight component and tiny
+end-to-end comparisons against both diffusers pipelines are exact. Real-checkpoint parity is
+covered: all 8 real-checkpoint tests passed with exactly 0 difference in every recorded
+comparison, and the run took 2 minutes on an M2 Max (CPU) ([validation](validation.md)). The
+catalog records the exact repositories, commits, component files, and bfloat16 precision.
+
+**License.** The weights are licensed under CC-BY-NC-4.0 and are non-commercial. Review the
+license before downloading or using them.
+
 # Stable Diffusion 1.x
 
 Catalog: [`stable-diffusion-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -942,6 +970,64 @@ MPS and CUDA runs are smoke tests only; there is no claim of exact equality on t
 precomputed prompt embeddings, batches of several prompts and fp16/bf16 parity are not supported.
 
 **License.** The repository declares the MIT license. imagehub does not distribute weights.
+
+# Ovis-Image
+
+Catalog: [`ovis-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`ovis-image-7b` · Task: `t2i`
+
+Ovis-Image uses a Qwen3 text encoder and a flow-matching joint transformer, followed by a
+16-channel AutoencoderKL. It accepts text prompts and defaults to 50 steps, guidance 5.0, and
+1024×1024 pixels. `seed`, `steps`, `guidance`, `width`, `height`, `negative_prompt`,
+`num_images`, and `max_sequence_length` are supported.
+
+```bash
+python -m imagehub.pretrained ovis-image-7b checkpoints/ovis-image-7b
+```
+
+The published transformer and text encoder are float32; the VAE is bfloat16. CPU float32 parity
+and end-to-end validation are covered; the real-checkpoint run took 12 minutes on an M2 Max (CPU)
+([validation](validation.md)).
+
+# PRX
+
+Catalog: [`prx`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`prx-1024-t2i-beta`, `prx-512-t2i-sft` · Task: `t2i`
+
+**Architecture.** PRX uses the 26-layer, width-2304 T5Gemma encoder with alternating bidirectional
+sliding-window and full attention. A 16-layer transformer consumes 2×2 patches of the 16-channel
+latent, attends to the text states, and uses two-axis rotary positions. A FLUX-style 8× VAE decodes
+the result. Flow-match Euler sampling uses a static shift of 3.0.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained prx-512-t2i-sft checkpoints/prx-512-t2i-sft
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="prx-512-t2i-sft", model="checkpoints/prx-512-t2i-sft") as pipe:
+    result = pipe("a product photograph of a ceramic lamp", seed=42)
+    result.images[0].save("lamp.png")
+```
+
+**Settings.** Both checkpoints default to 28 steps and guidance 4.0. Their native sizes are
+1024×1024 and 512×512 respectively. The supported options are `seed`, `steps`, `guidance`, `width`,
+`height`, `negative_prompt`, `max_sequence_length` (default 256), and `skip_text_cleaning`. Width and
+height are mapped to the reference aspect-ratio bins by default; disable `use_resolution_binning`
+to request dimensions that are multiples of 16 directly. Guidance 1.0 disables the unconditional pass.
+
+**Precision and validation.** The 1024 checkpoint declares bfloat16 for its text encoder; the 512
+checkpoint declares float32. Both repositories publish float32 transformer and VAE weights. Exact
+tiny-pipeline parity and published-weight parity are covered; the real-checkpoint run took 7
+minutes on an M2 Max (CPU) ([validation](validation.md)).
+
+**Out of scope.** Batches, caller-supplied latents or embeddings, callbacks, LoRA, and fp16/bf16
+parity are not supported.
+
+**License.** Both repositories declare Apache-2.0. imagehub does not distribute weights.
 
 # Stable Cascade
 

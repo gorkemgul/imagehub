@@ -200,6 +200,66 @@ _entries.append(
     )
 )
 
+# DreamLite publishes bfloat16 safetensors only.  Both releases use the same
+# component layout; the mobile checkpoint is distilled for four CFG-free steps.
+_DREAMLITE_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "processor/added_tokens.json",
+    "processor/chat_template.jinja",
+    "processor/merges.txt",
+    "processor/preprocessor_config.json",
+    "processor/special_tokens_map.json",
+    "processor/tokenizer.json",
+    "processor/tokenizer_config.json",
+    "processor/video_preprocessor_config.json",
+    "processor/vocab.json",
+    "text_encoder/config.json",
+    "text_encoder/generation_config.json",
+    "text_encoder/model.safetensors",
+    "tokenizer/added_tokens.json",
+    "tokenizer/chat_template.jinja",
+    "tokenizer/merges.txt",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/vocab.json",
+    "unet/config.json",
+    "unet/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _id, _repo, _revision, _defaults in (
+    (
+        "dreamlite-base",
+        "carlofkl/DreamLite-base",
+        "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+        {"steps": 30, "guidance": 3.5, "image_guidance": 1.5},
+    ),
+    (
+        "dreamlite-mobile",
+        "carlofkl/DreamLite-mobile",
+        "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+        {"steps": 4, "guidance": None, "image_guidance": None},
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="dreamlite",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="dreamlite",
+            format="diffusers",
+            license="CC-BY-NC-4.0",
+            config={"defaults": _defaults, "precision": "bfloat16"},
+            files=_DREAMLITE_FILES,
+        )
+    )
+
 # Stable Diffusion 1.x: one architecture, five released weight sets. Only fp32 EMA weights
 # are fetched; fp16, non-EMA, single-file .ckpt and safety checker files are excluded.
 _SD1_COMMON = (
@@ -2470,6 +2530,92 @@ _entries.append(
         ),
     )
 )
+
+_entries.append(
+    ModelSpec(
+        id="ovis-image-7b",
+        task=Task.T2I,
+        family="ovis-image",
+        source="https://huggingface.co/ATH-MaaS/Ovis-Image-7B",
+        repo_id="ATH-MaaS/Ovis-Image-7B",
+        revision="41be1c5821a92c970d63d7eb595a2fd3fe32b22e",
+        provenance="author",
+        catalog_id="ovis-image",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/chat_template.jinja",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_PRX_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00003.safetensors",
+    "text_encoder/model-00002-of-00003.safetensors",
+    "text_encoder/model-00003-of-00003.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer.model",
+    "tokenizer/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _id, _repo, _revision, _size in (
+    (
+        "prx-1024-t2i-beta",
+        "Photoroom/prx-1024-t2i-beta",
+        "0370504b9a433fbdff814b8fcba9da03bf72a7a3",
+        1024,
+    ),
+    (
+        "prx-512-t2i-sft",
+        "Photoroom/prx-512-t2i-sft",
+        "2996423bc26e8eaca48774fac1797484214dfea0",
+        512,
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="prx",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="prx",
+            format="diffusers",
+            license="Apache-2.0",
+            config={"defaults": {"width": _size, "height": _size}},
+            files=_PRX_FILES,
+        )
+    )
 
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
