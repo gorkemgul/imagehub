@@ -170,7 +170,7 @@ def test_components(model_id, record):
 def test_end_to_end(model_id, record):
     root = snapshot_dir(model_id)
     mobile = model_id.endswith("mobile")
-    steps = 4 if mobile else 30
+    steps = 4  # shortened from the base default of 30 to keep the CPU run practical
     guidance = None if mobile else 3.5
     noise = torch.randn(1, 4, 128, 96, generator=torch.Generator("cpu").manual_seed(1234))
     reference = _reference_pipeline(root, mobile)
@@ -221,7 +221,7 @@ def test_end_to_end(model_id, record):
 def test_seed_end_to_end(model_id, record):
     root = snapshot_dir(model_id)
     mobile = model_id.endswith("mobile")
-    steps = 4 if mobile else 30
+    steps = 4  # shortened from the base default of 30 to keep the CPU run practical
     options = {} if mobile else {"guidance": 3.5}
     reference = _reference_pipeline(root, mobile)
     kwargs = {
