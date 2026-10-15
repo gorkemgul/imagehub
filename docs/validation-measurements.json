@@ -823,7 +823,19 @@
       "pixels": 0
     }
   },
+  "e2e_hidream_i1_dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
+  },
   "e2e_hidream_i1_fast": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
+  },
+  "e2e_hidream_i1_full": {
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 0,
@@ -2742,7 +2754,83 @@
       "tensors": 1011
     }
   },
+  "header_hidream-i1-dev": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder_3": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "text_encoder_4": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1615
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
   "header_hidream-i1-fast": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder_3": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "text_encoder_4": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1615
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_hidream-i1-full": {
     "text_encoder": {
       "extra": [],
       "mismatch": [],
@@ -7875,10 +7963,22 @@
     "size": 512,
     "steps": 2
   },
+  "seed_e2e_hidream_i1_dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 4
+  },
   "seed_e2e_hidream_i1_fast": {
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 1234,
+    "steps": 4
+  },
+  "seed_e2e_hidream_i1_full": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
     "steps": 4
   },
   "seed_e2e_hunyuan-dit-v1.1-distilled": {
@@ -8535,7 +8635,15 @@
     "prompts": 14,
     "tolerance": "exact"
   },
+  "tokenizers_hidream-i1-dev": {
+    "identical": true,
+    "prompts": 6
+  },
   "tokenizers_hidream-i1-fast": {
+    "identical": true,
+    "prompts": 6
+  },
+  "tokenizers_hidream-i1-full": {
     "identical": true,
     "prompts": 6
   },

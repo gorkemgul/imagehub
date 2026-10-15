@@ -195,6 +195,8 @@ def main() -> None:
             "longcat-image": "longcat_image",
             "flux1-kontext-dev": "flux1_kontext_dev",
             "hidream-i1-fast": "hidream_i1_fast",
+            "hidream-i1-dev": "hidream_i1_dev",
+            "hidream-i1-full": "hidream_i1_full",
             "kandinsky-3": "kandinsky3",
             "kandinsky-5-t2i-lite": "kandinsky5",
         }.get(spec.id, spec.id)
