@@ -478,6 +478,14 @@ Each test ran the reference first, saved its outputs, freed it, then ran the nat
 component and seed tests took 11 minutes and its fixed-latent end-to-end test took 13 minutes. The
 full dev run took 25 minutes. The Krea [dev] real-checkpoint run took about 30 minutes on an M2 Max (CPU).
 
+## JoyAI-Image
+
+`joyai-image-edit` and `joyai-image-edit-plus` use the pinned Apache-2.0 checkpoints from
+jdopensource. The repositories publish bfloat16 safetensors only. Header checks, Qwen3-VL prompt
+conditioning, transformer and VAE component comparisons, and fixed-input end-to-end records
+(`e2e_joyai-image-edit`, `seed_e2e_joyai-image-edit`, `e2e_joyai-image-edit-plus`, and
+`seed_e2e_joyai-image-edit-plus`) are pending the real-checkpoint run.
+
 ## FLUX.1 Kontext
 
 Validated on CPU in the same environment as above, against diffusers 0.40.0 `FluxKontextPipeline`.

@@ -428,6 +428,14 @@ def main() -> None:
         "components_chroma": {
             key: value for key, value in measured.items() if key in CHROMA_COMPONENT_KEYS
         },
+        "components_joyai_image": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(
+                ("tokenizer_vision_joyai-", "conditioning_joyai-", "transformer_joyai-", "vae_")
+            )
+            and "joyai-image" in key
+        },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},
         "limits": LIMITS,
