@@ -1729,17 +1729,19 @@ The prompt is lower-cased and stripped before tokenization; the reference's defa
 cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the script's
 `use_text_preprocessing=False` behavior.
 
-## HiDream-I1 Fast
+## HiDream-I1
 
-`hidream-i1-fast` is the HiDream-I1 Fast repository at revision `4856a5d` plus
+`hidream-i1-fast`, `hidream-i1-dev` (revision `0fad2ea`) and `hidream-i1-full` (revision `8ccbbfb`) are the HiDream-I1 repositories plus
 `meta-llama/Llama-3.1-8B-Instruct` at revision `0e9e39f`. The real-checkpoint tests
 (`tests/reference/test_ref_hidream.py`) compare against diffusers 0.40.0 and transformers 5.18.0 on
 CPU in float32 and require exactly 0 everywhere: the tensor headers of all six components, the
 tokenizers (CLIP, T5, Llama), the pooled CLIP, T5 and Llama layer outputs the pipeline uses, one
 transformer step with real conditioning, the VAE decode, the scheduler, and end to end with a
-shortened run (4 steps, seed 0) and a non-square seed test. All 8 real-checkpoint tests passed with
+shortened run (4 steps, seed 0) and a non-square seed-42 test. All 8 real-checkpoint tests passed with
 exactly 0 difference in every comparison (see the table), and the run took 21 minutes on an M2 Max
 (CPU).
+
+The Dev and Full real-checkpoint validation runs are pending. Their reference cases cover the same component checks and each adds shortened `e2e_<id>` and seed-42 `seed_e2e_<id>` pipeline runs.
 
 ### Comparisons (CPU, float32)
 
@@ -1754,7 +1756,7 @@ exactly 0 difference in every comparison (see the table), and the run took 21 mi
 | VAE decode | 0 | 0 |
 | Flow-match LCM scheduler timesteps / sigmas (16 steps) | 0 / 0 | 0 / 0 |
 | End to end: final latent / pixels (4 steps, seed 0) | 0 / 0 | 0 / 0 |
-| End to end, seed 1234, non-square request (pixels) | 0 | 0 |
+| End to end, seed 42, non-square request (pixels) | 0 | 0 |
 
 What has been checked with random weights: the Llama text encoder against transformers (grouped
 key/value heads, `llama3` rotary scaling, padding), the Llama 3 tokenizer against the reference

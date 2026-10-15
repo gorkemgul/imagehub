@@ -92,6 +92,8 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `stable-cascade-lite` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | stable-cascade-nc-community (non-commercial) | `wuerstchen` |
 | `wuerstchen-v2` | `wuerstchen` | [warp-ai/wuerstchen](https://huggingface.co/warp-ai/wuerstchen) | `c3da414` | author | full | mit | `wuerstchen` |
 | `hidream-i1-fast` | `hidream` | [HiDream-ai/HiDream-I1-Fast](https://huggingface.co/HiDream-ai/HiDream-I1-Fast) | `4856a5d` | author | full | MIT | `hidream-i1` |
+| `hidream-i1-dev` | `hidream` | [HiDream-ai/HiDream-I1-Dev](https://huggingface.co/HiDream-ai/HiDream-I1-Dev) | `0fad2ea` | author | full | MIT | `hidream-i1` |
+| `hidream-i1-full` | `hidream` | [HiDream-ai/HiDream-I1-Full](https://huggingface.co/HiDream-ai/HiDream-I1-Full) | `8ccbbfb` | author | full | MIT | `hidream-i1` |
 | `glm-image` | `glm-image` | [zai-org/GLM-Image](https://huggingface.co/zai-org/GLM-Image) | `2c433cc` | author | full | MIT | `glm-image` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
@@ -157,8 +159,8 @@ Kolors publishes float16 weights only (`*.fp16.safetensors`), so its file list u
 measured on their float32 upcast, which is also what diffusers computes with
 `from_pretrained(..., variant="fp16", torch_dtype=torch.float32)`.
 
-The `hidream-i1-fast` entry combines two repositories: the HiDream-I1 Fast repository at revision
-`4856a5d` (MIT) and `meta-llama/Llama-3.1-8B-Instruct` at revision `0e9e39f`, which is placed in the
+The `hidream-i1-fast`, `hidream-i1-dev` and `hidream-i1-full` entries combine their respective
+HiDream-I1 repositories (MIT) with `meta-llama/Llama-3.1-8B-Instruct` at revision `0e9e39f`, placed in the
 snapshot's `text_encoder_4/` subfolder together with its tokenizer. The Llama repository is gated:
 accept its terms (Llama 3.1 Community License) on Hugging Face, then set `HF_TOKEN` when downloading
 with `python -m imagehub.pretrained`. The HiDream repository does not ship that encoder, and the

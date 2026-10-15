@@ -33,6 +33,7 @@ from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
 from imagehub.models.llama_text import LlamaTextModel
 from imagehub.models.t5 import T5EncoderModel
 from imagehub.schedulers.flow_match_lcm import FlowMatchLCMScheduler
+from imagehub.schedulers.unipc import UniPCMultistepScheduler
 from imagehub.tokenization import CLIPTokenizer
 from imagehub.tokenization_llama3 import Llama3Tokenizer
 from imagehub.tokenization_t5 import T5Tokenizer
@@ -215,7 +216,16 @@ def denoise(
         t5_embeds = torch.cat([t5_embeds[count:], t5_embeds[:count]])
         llama_embeds = torch.cat([llama_embeds[:, count:], llama_embeds[:, :count]], dim=1)
 
-    scheduler = FlowMatchLCMScheduler(components.scheduler_config)
+    scheduler_class = components.scheduler_config.get("_class_name", "FlowMatchLCMScheduler")
+    scheduler: FlowMatchLCMScheduler | UniPCMultistepScheduler
+    if scheduler_class == "FlowMatchLCMScheduler":
+        scheduler = FlowMatchLCMScheduler(components.scheduler_config)
+        scheduler_name = "flow_match_lcm"
+    elif scheduler_class == "UniPCMultistepScheduler":
+        scheduler = UniPCMultistepScheduler(components.scheduler_config)
+        scheduler_name = "unipc"
+    else:
+        raise ValueError(f"Unsupported HiDream scheduler {scheduler_class}")
     # The pipeline passes a resolution-dependent ``mu``; the configured static shift ignores it.
     scheduler.set_timesteps(steps)
     transformer = components._from_pretrained(HiDreamImageTransformer2DModel, "transformer")
@@ -232,7 +242,10 @@ def denoise(
         if use_cfg:
             noise_unconditional, noise_text = noise.chunk(2)
             noise = noise_unconditional + guidance * (noise_text - noise_unconditional)
-        latents = scheduler.step(noise, timestep, latents, generator=noise_generator)
+        if scheduler_name == "flow_match_lcm":
+            latents = scheduler.step(noise, timestep, latents, generator=noise_generator)
+        else:
+            latents = scheduler.step(noise, timestep, latents)
     del transformer
     _release()
     return latents
@@ -384,7 +397,12 @@ class HiDreamBackend(TextToImageBackend):
             "width": o["width"],
             "height": o["height"],
             "negative_prompt": o["negative_prompt"],
-            "scheduler": "flow_match_lcm",
+            "scheduler": (
+                "flow_match_lcm"
+                if self.components.scheduler_config.get("_class_name", "FlowMatchLCMScheduler")
+                == "FlowMatchLCMScheduler"
+                else "unipc"
+            ),
             "device": str(self.device),
             "dtype": str(self.dtype).removeprefix("torch."),
         }

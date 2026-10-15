@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 import torch
 from helpers import write_tiny_hidream
@@ -6,6 +9,42 @@ from imagehub import pipeline
 from imagehub.backends.hidream import HiDreamBackend, effective_size
 from imagehub.catalog import model_info
 from imagehub.exceptions import CheckpointError
+from imagehub.models.autoencoder_kl import AutoencoderKL
+from imagehub.models.clip_text import CLIPTextModelWithProjection
+from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
+from imagehub.models.t5 import T5EncoderModel
+
+FIXTURES = Path(__file__).parent / "fixtures/hidream_configs"
+
+
+@pytest.mark.parametrize("variant", ["dev", "full"])
+def test_published_variant_headers_match_model_layouts(variant):
+    directory = FIXTURES / variant
+    for component, cls in {
+        "text_encoder": CLIPTextModelWithProjection,
+        "text_encoder_2": CLIPTextModelWithProjection,
+        "text_encoder_3": T5EncoderModel,
+        "transformer": HiDreamImageTransformer2DModel,
+        "vae": AutoencoderKL,
+    }.items():
+        config = json.loads((directory / f"{component}_config.json").read_text(encoding="utf-8"))
+        # Headers are stored with component-prefixed file names; their tensor keys are disjoint.
+        stem = "model" if component.startswith("text_encoder") else "diffusion_pytorch_model"
+        files = list(directory.glob(f"{component}_{stem}*.safetensors.json"))
+        shapes = {}
+        for path in files:
+            header = json.loads(path.read_text(encoding="utf-8"))
+            shapes |= {
+                name: tuple(shape) for name, shape in header.items() if name != "__metadata__"
+            }
+        with torch.device("meta"):
+            model = cls(config)
+        prepared = model.prepare_state_dict(
+            {name: torch.empty(shape, device="meta") for name, shape in shapes.items()}
+        )
+        assert {name: tuple(value.shape) for name, value in prepared.items()} == {
+            name: tuple(value.shape) for name, value in model.state_dict().items()
+        }
 
 
 @pytest.fixture(scope="module")
