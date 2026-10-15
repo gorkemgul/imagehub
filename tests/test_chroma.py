@@ -40,7 +40,6 @@ def _tiny_config() -> dict[str, Any]:
     ("model_id", "revision", "defaults"),
     (
         ("chroma1-hd", "0e0c60ece1e82b17cb7f77342d765ba5024c40c0", (35, 5.0)),
-        ("chroma1-base", "50ebe125b67794f4ed8e4985d26a4414ca62aed3", (40, 3.0)),
         ("chroma1-flash", "093c4f63b60507234aa53a073f1f9f565b3f4336", (4, 1.0)),
     ),
 )
@@ -56,7 +55,6 @@ def test_catalog_entry_exists(model_id, revision, defaults):
 def test_backend_registered():
     assert "chroma" in backend_registry.names("t2i")
     assert "chroma1-hd" in backend_registry.names("t2i")
-    assert "chroma1-base" in backend_registry.names("t2i")
     assert "chroma1-flash" in backend_registry.names("t2i")
 
 

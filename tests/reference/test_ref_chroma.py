@@ -28,7 +28,7 @@ np = pytest.importorskip("numpy")
 
 CPU = torch.device("cpu")
 MODEL_ID = "chroma1-hd"
-MODEL_IDS = ("chroma1-hd", "chroma1-base", "chroma1-flash")
+MODEL_IDS = ("chroma1-hd", "chroma1-flash")
 PROMPT = "a photograph of an astronaut riding a horse"
 MAX_SEQUENCE_LENGTH = 512
 
@@ -86,7 +86,6 @@ def _tiny_transformer_config() -> dict[str, Any]:
     ("model_id", "fixture_name"),
     (
         ("chroma1-hd", "chroma_configs"),
-        ("chroma1-base", "chroma_base_configs"),
         ("chroma1-flash", "chroma_flash_configs"),
     ),
 )
@@ -192,7 +191,6 @@ def test_transformer_published_config_small_size(record):
     ("model_id", "fixture_name"),
     (
         ("chroma1-hd", "chroma_configs"),
-        ("chroma1-base", "chroma_base_configs"),
         ("chroma1-flash", "chroma_flash_configs"),
     ),
 )

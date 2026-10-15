@@ -191,21 +191,6 @@ _CHROMA_FILES = (
 _entries.extend(
     (
         ModelSpec(
-            id="chroma1-base",
-            task=Task.T2I,
-            family="chroma",
-            source="https://huggingface.co/lodestones/Chroma1-Base",
-            repo_id="lodestones/Chroma1-Base",
-            revision="50ebe125b67794f4ed8e4985d26a4414ca62aed3",
-            provenance="author",
-            catalog_id="chroma1-base",
-            format="diffusers",
-            license="Apache-2.0",
-            gated=False,
-            config={"defaults": {"steps": 40, "guidance": 3.0, "width": 1024, "height": 1024}},
-            files=_CHROMA_FILES,
-        ),
-        ModelSpec(
             id="chroma1-flash",
             task=Task.T2I,
             family="chroma",
