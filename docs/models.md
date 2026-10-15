@@ -2179,7 +2179,7 @@ imagehub does not distribute weights.
 # HiDream-I1
 
 Catalog: [`hidream-i1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
-`hidream-i1-fast` · Task: `t2i`
+`hidream-i1-dev`, `hidream-i1-fast`, `hidream-i1-full` · Task: `t2i`
 
 **Architecture.** Four text encoders condition a 17B-parameter sparse flow-matching transformer.
 Two CLIP text encoders with projection (CLIP-L and CLIP-G, 128 tokens) give a pooled vector of width
@@ -2219,7 +2219,7 @@ The pipeline reads the tokenizer and the model from this folder; no chat templat
 prompt is tokenized as plain text with a leading begin-of-text token and padded with the end-of-turn
 token.
 
-**Settings.** The Fast model defaults to 16 steps, guidance 0.0 and 1024×1024. The supported options
+**Settings.** Fast defaults to 16 steps and guidance 0.0; Dev to 30 and 0.0; Full to 50 and 5.0 (classifier-free guidance), all at 1024×1024. The supported options
 are `seed`, `latents`, `steps`, `guidance`, `width`, `height`, `num_images`, `negative_prompt` and
 `max_sequence_length` (default 128 for every encoder, at most 512). All four encoders see the same
 prompt. Guidance above 1.0 runs the unconditional pass with the negative prompt (default empty) and
@@ -2247,8 +2247,8 @@ halves every figure.
 generator and global seed described above ([validation](validation.md)). MPS and CUDA runs are smoke
 tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** The Full and Dev variants, separate prompts for the individual encoders,
-precomputed prompt embeddings, other schedulers, LoRA and fp16/bf16 parity are not supported.
+**Schedulers.** Fast and Dev use flow-match LCM (Dev uses its published shift of 6.0); Full uses its published UniPC flow-prediction scheduler. Separate prompts for the individual encoders,
+precomputed prompt embeddings, LoRA and fp16/bf16 parity are not supported.
 
 **License.** The HiDream repository declares the MIT license. The text encoders carry their own
 terms: Llama 3.1 Community License and Apache-2.0 for T5; the VAE comes from FLUX.1 [schnell].

@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-14",
+  "date": "2026-10-15",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -6691,6 +6691,524 @@
       }
     },
     {
+      "model_id": "hidream-i1-dev",
+      "repo_id": "HiDream-ai/HiDream-I1-Dev",
+      "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+      "provenance": "author",
+      "catalog_id": "hidream-i1",
+      "license": "MIT",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "6dcf42120d2aeb2b2219dca2ed7ced3e11e8e7d06b2a316075140df3d0d03067"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "78f07e7ee89d542bdbc4ef7dea5a7acee7ca5138a7256895e0ad1b251cb995ac"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "65295d66c6ec90847bfb701c99bcb5c888d709ef3a400c49633e691690c93904"
+        },
+        "text_encoder/model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "b70c11ad5d7e9abf6109348908f599ea382f8019e1f36910bbc8ebecde936633"
+        },
+        "text_encoder_2/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "c0efd277569d6f63b752b632b208ed5eddb00cb3ec69a615dcd76e967f5078ea"
+        },
+        "text_encoder_2/model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "4d6effa7a5e600cabf7528ed7234146a13ead1b2c151211d706b293a060b112a"
+        },
+        "text_encoder_3/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "eb1bbf7f5b360baf88505d979fc02b47f7e82603639eb1835cdd2447b784cfb3"
+        },
+        "text_encoder_3/model.safetensors.index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a"
+        },
+        "text_encoder_3/model-00001-of-00002.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "ec87bffd1923e8b2774a6d240c922a41f6143081d52cf83b8fe39e9d838c893e"
+        },
+        "text_encoder_3/model-00002-of-00002.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "a5640855b301fcdbceddfa90ae8066cd9414aff020552a201a255ecf2059da00"
+        },
+        "tokenizer/merges.txt": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563"
+        },
+        "tokenizer/vocab.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+        },
+        "tokenizer_2/merges.txt": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "tokenizer_2/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6"
+        },
+        "tokenizer_2/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf"
+        },
+        "tokenizer_2/vocab.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+        },
+        "tokenizer_3/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2"
+        },
+        "tokenizer_3/spiece.model": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "tokenizer_3/tokenizer.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "f5dfec163765e18e270537fe896c49f5fad74db1525641d9b255a3008b999596"
+        },
+        "tokenizer_3/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "1a3d2db64215ed77854dd4208aac5f8361c1b5471cabd19c0ef1472d1a895eb0"
+        },
+        "transformer/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "7daa489bf0eaa4b0123ded64c2068544fc622f8c67603d1511815e2c1ffc1d61"
+        },
+        "transformer/diffusion_pytorch_model.safetensors.index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "4bc6f02f4725201cfbb22e98772974e549cd8249df74aba0e95645aa47917f0b"
+        },
+        "transformer/diffusion_pytorch_model-00001-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "87cf273f458d31969431fc27f451720685d27bd9d29d0be24df170c2bc852dba"
+        },
+        "transformer/diffusion_pytorch_model-00002-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "5b6b9a40b24d6762bcd9db1bfbe6beeb87ae37ad4bacc3c3616d45066e30928d"
+        },
+        "transformer/diffusion_pytorch_model-00003-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "a4ea8ea9b6e5ebad27309094ffbcdd88cd61a01311f844e8b359f2f3851e44b2"
+        },
+        "transformer/diffusion_pytorch_model-00004-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "5b3c353351d0188ade06504f0ab06d5a387acdb9bee6a3d15402b947173523a7"
+        },
+        "transformer/diffusion_pytorch_model-00005-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "af460aaa1157ce9f3cbbea2ae4feb77d6addfb40a9792b0d062eb95a353c3d53"
+        },
+        "transformer/diffusion_pytorch_model-00006-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "1b72c766eea605d73e07697b960ca08e59a20a6df20b8a53f4273296cd41845c"
+        },
+        "transformer/diffusion_pytorch_model-00007-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "a10ebe9d7920079a91c761eb77531a0a07d18d5fb91d64793c3bed68d31343a2"
+        },
+        "vae/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "ad6f0acb584ceb3d136d1e32b684dec65db24bffe9223df2bac0b45539d4e6b5"
+        },
+        "vae/diffusion_pytorch_model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Dev",
+          "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+          "sha256": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
+        },
+        "text_encoder_4/config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "29e4c210b0d6ac178b16b2a255a568bdb23b581e50ca1ef6a6d071dd85704e6e"
+        },
+        "text_encoder_4/generation_config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "189fb0c0d7fd8a527db217c0a60a0e013f0394cd8800f9697a666a9e75e5f7fd"
+        },
+        "text_encoder_4/model.safetensors.index.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "146776fce3f6db1103aa6f249e65ee5544c5923ce6f971b092eee79aa6e5d37b"
+        },
+        "text_encoder_4/model-00001-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "2b1879f356aed350030bb40eb45ad362c89d9891096f79a3ab323d3ba5607668"
+        },
+        "text_encoder_4/model-00002-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "09d433f650646834a83c580877bd60c6d1f88f7755305c12576b5c7058f9af15"
+        },
+        "text_encoder_4/model-00003-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "fc1cdddd6bfa91128d6e94ee73d0ce62bfcdb7af29e978ddcab30c66ae9ea7fa"
+        },
+        "text_encoder_4/model-00004-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "92ecfe1a2414458b4821ac8c13cf8cb70aed66b5eea8dc5ad9eeb4ff309d6d7b"
+        },
+        "text_encoder_4/special_tokens_map.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec"
+        },
+        "text_encoder_4/tokenizer.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4"
+        },
+        "text_encoder_4/tokenizer_config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 197,
+          "text_encoder_2": 517,
+          "text_encoder_3": 219,
+          "text_encoder_4": 291,
+          "transformer": 1615,
+          "vae": 244
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 4
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 4
+      }
+    },
+    {
+      "model_id": "hidream-i1-full",
+      "repo_id": "HiDream-ai/HiDream-I1-Full",
+      "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+      "provenance": "author",
+      "catalog_id": "hidream-i1",
+      "license": "MIT",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "17cc70f9342a20adb25c4a48db64ec0cd5991ca4c92ba71200a294b39ae04748"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "8508d023ce65787971c928e400b37ed70144aaf88fe07cb2771e7cce49bdaa9c"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "65295d66c6ec90847bfb701c99bcb5c888d709ef3a400c49633e691690c93904"
+        },
+        "text_encoder/model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "b70c11ad5d7e9abf6109348908f599ea382f8019e1f36910bbc8ebecde936633"
+        },
+        "text_encoder_2/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "c0efd277569d6f63b752b632b208ed5eddb00cb3ec69a615dcd76e967f5078ea"
+        },
+        "text_encoder_2/model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "4d6effa7a5e600cabf7528ed7234146a13ead1b2c151211d706b293a060b112a"
+        },
+        "text_encoder_3/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "eb1bbf7f5b360baf88505d979fc02b47f7e82603639eb1835cdd2447b784cfb3"
+        },
+        "text_encoder_3/model.safetensors.index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a"
+        },
+        "text_encoder_3/model-00001-of-00002.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "ec87bffd1923e8b2774a6d240c922a41f6143081d52cf83b8fe39e9d838c893e"
+        },
+        "text_encoder_3/model-00002-of-00002.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "a5640855b301fcdbceddfa90ae8066cd9414aff020552a201a255ecf2059da00"
+        },
+        "tokenizer/merges.txt": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563"
+        },
+        "tokenizer/vocab.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+        },
+        "tokenizer_2/merges.txt": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        "tokenizer_2/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6"
+        },
+        "tokenizer_2/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf"
+        },
+        "tokenizer_2/vocab.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+        },
+        "tokenizer_3/special_tokens_map.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2"
+        },
+        "tokenizer_3/spiece.model": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "tokenizer_3/tokenizer.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "f5dfec163765e18e270537fe896c49f5fad74db1525641d9b255a3008b999596"
+        },
+        "tokenizer_3/tokenizer_config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "1a3d2db64215ed77854dd4208aac5f8361c1b5471cabd19c0ef1472d1a895eb0"
+        },
+        "transformer/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "7daa489bf0eaa4b0123ded64c2068544fc622f8c67603d1511815e2c1ffc1d61"
+        },
+        "transformer/diffusion_pytorch_model.safetensors.index.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "4bc6f02f4725201cfbb22e98772974e549cd8249df74aba0e95645aa47917f0b"
+        },
+        "transformer/diffusion_pytorch_model-00001-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "3cb3f6d77a3fce19b90fa7f66da0cbe997b0785a38a788b559290d3062f6fd26"
+        },
+        "transformer/diffusion_pytorch_model-00002-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "6f192e75dc90dd92b4784a6e54cdd4ee46ed6db83afcbabd2b54e0214311c7fc"
+        },
+        "transformer/diffusion_pytorch_model-00003-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "474e02b3119876680dec43975b050c956e11f094e96c729877f9604021c50e4e"
+        },
+        "transformer/diffusion_pytorch_model-00004-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "1ff9be19f7474cbc52ed3c7b2cb50efea111924cc590b79f3136629ec4405e3a"
+        },
+        "transformer/diffusion_pytorch_model-00005-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "0c896b23d2ca6b98144c504df9c9ff3a353868a3f55a3f14264578a749c832d7"
+        },
+        "transformer/diffusion_pytorch_model-00006-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "a313e3be734749a6d425096a9aa2d5368aaf359784f9ea44d012eec263df8941"
+        },
+        "transformer/diffusion_pytorch_model-00007-of-00007.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "bcc365028564be0e53537c6cd98cbbf85c2d1164bc5f4c19dfe1bc5bcc000118"
+        },
+        "vae/config.json": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "ad6f0acb584ceb3d136d1e32b684dec65db24bffe9223df2bac0b45539d4e6b5"
+        },
+        "vae/diffusion_pytorch_model.safetensors": {
+          "repo_id": "HiDream-ai/HiDream-I1-Full",
+          "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+          "sha256": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
+        },
+        "text_encoder_4/config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "29e4c210b0d6ac178b16b2a255a568bdb23b581e50ca1ef6a6d071dd85704e6e"
+        },
+        "text_encoder_4/generation_config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "189fb0c0d7fd8a527db217c0a60a0e013f0394cd8800f9697a666a9e75e5f7fd"
+        },
+        "text_encoder_4/model.safetensors.index.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "146776fce3f6db1103aa6f249e65ee5544c5923ce6f971b092eee79aa6e5d37b"
+        },
+        "text_encoder_4/model-00001-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "2b1879f356aed350030bb40eb45ad362c89d9891096f79a3ab323d3ba5607668"
+        },
+        "text_encoder_4/model-00002-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "09d433f650646834a83c580877bd60c6d1f88f7755305c12576b5c7058f9af15"
+        },
+        "text_encoder_4/model-00003-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "fc1cdddd6bfa91128d6e94ee73d0ce62bfcdb7af29e978ddcab30c66ae9ea7fa"
+        },
+        "text_encoder_4/model-00004-of-00004.safetensors": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "92ecfe1a2414458b4821ac8c13cf8cb70aed66b5eea8dc5ad9eeb4ff309d6d7b"
+        },
+        "text_encoder_4/special_tokens_map.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec"
+        },
+        "text_encoder_4/tokenizer.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4"
+        },
+        "text_encoder_4/tokenizer_config.json": {
+          "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "sha256": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 197,
+          "text_encoder_2": 517,
+          "text_encoder_3": 219,
+          "text_encoder_4": 291,
+          "transformer": 1615,
+          "vae": 244
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 4
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 4
+      }
+    },
+    {
       "model_id": "omnigen-v1",
       "repo_id": "Shitao/OmniGen-v1-diffusers",
       "revision": "016e2f61d12a98303f6bbdf122687694d7984268",
@@ -12148,6 +12666,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "7 passed (deepfloyd-if-i-xl)"
+    "reference_summary": "16 passed (hidream-i1-dev, hidream-i1-full)"
   }
 }

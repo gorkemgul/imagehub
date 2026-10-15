@@ -18,6 +18,7 @@ from helpers import max_diff, snapshot_dir
 from imagehub import pipeline
 from imagehub.backends import hidream as hidream_backend
 from imagehub.backends.hidream import HiDreamComponents, decode_latents, encode_prompts
+from imagehub.catalog import model_info
 from imagehub.checkpoints import read_json
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModelWithProjection
@@ -25,6 +26,7 @@ from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
 from imagehub.models.llama_text import LlamaTextModel
 from imagehub.models.t5 import T5EncoderModel
 from imagehub.schedulers.flow_match_lcm import FlowMatchLCMScheduler
+from imagehub.schedulers.unipc import UniPCMultistepScheduler
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
@@ -32,7 +34,7 @@ transformers = pytest.importorskip("transformers")
 pytest.importorskip("numpy")
 
 CPU = torch.device("cpu")
-MODEL_ID = "hidream-i1-fast"
+MODEL_IDS = ("hidream-i1-fast", "hidream-i1-dev", "hidream-i1-full")
 PROMPT = 'A cat holding a sign that says "Hi-Dreams.ai".'
 SEED_PROMPT = "a photograph of an astronaut riding a horse on the moon, 35mm film"
 MAX_LENGTH = 128
@@ -119,12 +121,17 @@ def _reference_embeddings(root, prompt, tmp_path_factory):
     return torch.load(_EMBEDDINGS[prompt], weights_only=True)
 
 
+@pytest.fixture(scope="module", params=MODEL_IDS)
+def model_id(request):
+    return request.param
+
+
 @pytest.fixture(scope="module")
-def root():
-    return snapshot_dir(MODEL_ID)
+def root(model_id):
+    return snapshot_dir(model_id)
 
 
-def test_header(root, record):
+def test_header(root, model_id, record):
     result = {}
     for component, cls in {
         "text_encoder": CLIPTextModelWithProjection,
@@ -150,13 +157,13 @@ def test_header(root, record):
             ),
             "tensors": len(shapes),
         }
-    record(f"header_{MODEL_ID}", **result)
+    record(f"header_{model_id}", **result)
     assert all(
         not entry[key] for entry in result.values() for key in ("missing", "extra", "mismatch")
     )
 
 
-def test_tokenizers(root, record):
+def test_tokenizers(root, model_id, record):
     components = HiDreamComponents.load(root, device=CPU, dtype=torch.float32)
     llama_reference = transformers.AutoTokenizer.from_pretrained(root / "text_encoder_4")
     llama_reference.pad_token = llama_reference.eos_token
@@ -187,7 +194,7 @@ def test_tokenizers(root, record):
                 ids, mask = ours([prompt], limit)
                 assert torch.equal(mask, expected.attention_mask.bool()), (name, prompt)
             assert torch.equal(ids, expected.input_ids), (name, prompt)
-    record(f"tokenizers_{MODEL_ID}", prompts=len(TOKENIZER_PROMPTS), identical=True)
+    record(f"tokenizers_{model_id}", prompts=len(TOKENIZER_PROMPTS), identical=True)
 
 
 def test_text_encoders(root, record, tmp_path_factory):
@@ -263,20 +270,30 @@ def test_vae_decode(root, record):
     assert torch.equal(pixels, expected_pixels.to(torch.uint8))
 
 
-def test_scheduler(root, record):
+def test_scheduler(root, model_id, record):
     config = read_json(root / "scheduler" / "scheduler_config.json")
-    reference = diffusers.FlowMatchLCMScheduler.from_config(config)
-    ours = FlowMatchLCMScheduler(config)
-    mu = 0.5 + (4096 - 256) * (1.15 - 0.5) / (4096 - 256)
-    reference.set_timesteps(16, mu=mu)
-    ours.set_timesteps(16, mu=mu)
+    if config["_class_name"] == "FlowMatchLCMScheduler":
+        reference, ours = (
+            diffusers.FlowMatchLCMScheduler.from_config(config),
+            FlowMatchLCMScheduler(config),
+        )
+        reference.set_timesteps(16, mu=1.15)
+        ours.set_timesteps(16, mu=1.15)
+    else:
+        reference, ours = (
+            diffusers.UniPCMultistepScheduler.from_config(config),
+            UniPCMultistepScheduler(config),
+        )
+        reference.set_timesteps(16)
+        ours.set_timesteps(16)
     _check(record, "hidream_scheduler_timesteps", ours.timesteps, reference.timesteps)
     _check(record, "hidream_scheduler_sigmas", ours.sigmas, reference.sigmas)
 
 
-def _reference_run(root, prompt, tmp_path_factory, **kwargs):
+def _reference_run(root, prompt, tmp_path_factory, *, guidance, **kwargs):
     """Run the reference pipeline from its own prompt embeddings; return latents and pixels."""
     embeddings = _reference_embeddings(root, prompt, tmp_path_factory)
+    negative = _reference_embeddings(root, "", tmp_path_factory) if guidance > 1 else None
     reference = diffusers.HiDreamImagePipeline.from_pretrained(
         root,
         text_encoder=None,
@@ -301,7 +318,10 @@ def _reference_run(root, prompt, tmp_path_factory, **kwargs):
         prompt_embeds_t5=embeddings["t5"],
         prompt_embeds_llama3=embeddings["llama"],
         pooled_prompt_embeds=embeddings["pooled"],
-        guidance_scale=0.0,
+        negative_prompt_embeds_t5=None if negative is None else negative["t5"],
+        negative_prompt_embeds_llama3=None if negative is None else negative["llama"],
+        negative_pooled_prompt_embeds=None if negative is None else negative["pooled"],
+        guidance_scale=guidance,
         generator=torch.Generator("cpu").manual_seed(seed),
         callback_on_step_end=capture,
         callback_on_step_end_tensor_inputs=["latents"],
@@ -314,7 +334,7 @@ def _reference_run(root, prompt, tmp_path_factory, **kwargs):
     return {"latents": captured["latents"], "pixels": pixels}
 
 
-def _our_run(root, monkeypatch, prompt, **options):
+def _our_run(root, model_id, monkeypatch, prompt, **options):
     captured = {}
     original = hidream_backend.denoise
 
@@ -324,7 +344,7 @@ def _our_run(root, monkeypatch, prompt, **options):
 
     monkeypatch.setattr(hidream_backend, "denoise", capture)
     state = torch.get_rng_state()
-    result = pipeline("t2i", backend=MODEL_ID, model=root)(prompt, **options)
+    result = pipeline("t2i", backend=model_id, model=root)(prompt, **options)
     assert torch.equal(torch.get_rng_state(), state), "global random state was touched"
     monkeypatch.setattr(hidream_backend, "denoise", original)
     gc.collect()
@@ -334,21 +354,22 @@ def _our_run(root, monkeypatch, prompt, **options):
     }
 
 
-def test_end_to_end(root, record, tmp_path, tmp_path_factory, monkeypatch):
+def test_end_to_end(root, model_id, record, tmp_path, tmp_path_factory, monkeypatch):
+    guidance = model_info(model_id).config["defaults"]["guidance"]
     expected = _reference_run(
-        root, PROMPT, tmp_path_factory, seed=0, num_inference_steps=REDUCED_STEPS
+        root, PROMPT, tmp_path_factory, guidance=guidance, seed=0, num_inference_steps=REDUCED_STEPS
     )
     output = tmp_path / "end-to-end.pt"
     torch.save(expected, output)
     del expected
     gc.collect()
 
-    actual = _our_run(root, monkeypatch, PROMPT, steps=REDUCED_STEPS, seed=0)
+    actual = _our_run(root, model_id, monkeypatch, PROMPT, steps=REDUCED_STEPS, seed=0)
     expected = torch.load(output, weights_only=True)
     _check(record, "hidream_e2e_latents", actual["latents"], expected["latents"])
     _check_pixels(
         record,
-        "e2e_hidream_i1_fast",
+        f"e2e_{model_id.replace('-', '_')}",
         actual["pixels"],
         expected["pixels"],
         steps=REDUCED_STEPS,
@@ -356,14 +377,16 @@ def test_end_to_end(root, record, tmp_path, tmp_path_factory, monkeypatch):
     )
 
 
-def test_seed_end_to_end(root, record, tmp_path, tmp_path_factory, monkeypatch):
+def test_seed_end_to_end(root, model_id, record, tmp_path, tmp_path_factory, monkeypatch):
+    guidance = model_info(model_id).config["defaults"]["guidance"]
     # A non-square request: the pipeline rescales it to about one megapixel (1248 x 832 here).
     size = dict(height=1024, width=1536)
     expected = _reference_run(
         root,
         SEED_PROMPT,
         tmp_path_factory,
-        seed=1234,
+        guidance=guidance,
+        seed=42,
         num_inference_steps=REDUCED_STEPS,
         **size,
     )["pixels"]
@@ -372,11 +395,16 @@ def test_seed_end_to_end(root, record, tmp_path, tmp_path_factory, monkeypatch):
     del expected
     gc.collect()
 
-    actual = _our_run(root, monkeypatch, SEED_PROMPT, steps=REDUCED_STEPS, seed=1234, **size)[
-        "pixels"
-    ]
+    actual = _our_run(
+        root, model_id, monkeypatch, SEED_PROMPT, steps=REDUCED_STEPS, seed=42, **size
+    )["pixels"]
     expected = torch.load(output, weights_only=True)
     assert tuple(actual.shape[1:3]) == (832, 1248)
     _check_pixels(
-        record, "seed_e2e_hidream_i1_fast", actual, expected, steps=REDUCED_STEPS, seed=1234
+        record,
+        f"seed_e2e_{model_id.replace('-', '_')}",
+        actual,
+        expected,
+        steps=REDUCED_STEPS,
+        seed=42,
     )
