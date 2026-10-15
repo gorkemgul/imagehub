@@ -14,7 +14,8 @@ The release is not layout-compatible with Qwen-Image 2.1. It uses the Qwen2.5-VL
 text model (28 layers, 3584 hidden size), a 60-layer dual-stream
 `QwenImageTransformer2DModel` with 64-channel patch-2 input and 16-channel output,
 and the original 16-channel causal Qwen VAE. The tokenizer lives in `tokenizer/`,
-not the 2.1 `processor/` directory. Dynamic-shift FlowMatch Euler sampling is shared.
+not the 2.1 `processor/` directory, and uses the slow Qwen2 layout with separate
+`vocab.json` and `merges.txt` files. Dynamic-shift FlowMatch Euler sampling is shared.
 
 ## Pipeline and validation
 
