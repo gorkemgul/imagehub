@@ -522,6 +522,10 @@ Validated on CPU in the same environment as above, against diffusers 0.40.0 `Chr
 **exactly 0**: on CPU in float32, the local implementation produces a bit-identical result to the
 reference. The random-weight and tiny-snapshot comparisons below are exact.
 
+`chroma1-flash` was loaded strictly from `lodestones/Chroma1-Flash` at revision
+`093c4f63b60507234aa53a073f1f9f565b3f4336`; its published bfloat16 weights are upcast to float32
+on both sides.
+
 ### Comparisons without published weights (CPU, float32)
 
 | Comparison | Largest observed difference | Tolerance |
@@ -562,6 +566,20 @@ prompt, `max_sequence_length` 512 and initial noise `seed=42`. Two steps are use
 at a time. Record: `tensor_header_check`, `end_to_end` and `seed_end_to_end`,
 [validation.json](validation.json); component comparisons under the `chroma1-hd_*` keys,
 [validation-measurements.json](validation-measurements.json).
+
+`chroma1-flash` was compared with diffusers 0.40.0 `ChromaPipeline` on CPU in float32 in the same
+environment. All 16 real tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The recorded comparisons are the tensor header check
+(`text_encoder`, `transformer`, `vae`; 219 / 1023 / 244 tensors), the SentencePiece tokenizer token
+ids, the T5-XXL text encoder, one transformer step, the VAE decode, the flow-match Euler scheduler
+with exponential shifting (mu 1.15), and both end-to-end runs (2 steps, guidance 5.0, and seed 42).
+The real-checkpoint run took 24 minutes on an M2 Max (CPU). Records: `header_chroma1-flash`,
+`chroma1-flash_text_encoder`, `chroma1-flash_tokenizer`, `chroma1-flash_transformer`,
+`chroma1-flash_vae_decode`, `chroma1-flash_scheduler`, `e2e_chroma1-flash`,
+`e2e_chroma1-flash_latents` and `seed_e2e_chroma1-flash`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`, `end_to_end`
+and `seed_end_to_end`, [validation.json](validation.json).
 
 ## FLUX.2 klein
 
@@ -1871,7 +1889,7 @@ first sequence of the batch only; the native module reproduces that.
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast`, 8 passed each
   for `hidream-i1-dev` and `hidream-i1-full`, and 14 passed
-  for `chroma1-hd`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
+  for `chroma1-hd`, 16 passed for `chroma1-flash`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together, and
   7 passed for `deepfloyd-if-i-xl`. These include structural parity with random weights,
   end-to-end parity with a small model, real-checkpoint parity and tokenizer fuzz tests.
