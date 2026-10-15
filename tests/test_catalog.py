@@ -36,6 +36,8 @@ def test_catalog_contents():
             "ideogram4-fp8",
             "janus-pro-1b",
             "janus-pro-7b",
+            "joyai-image-edit",
+            "joyai-image-edit-plus",
             "kandinsky-2-1",
             "kandinsky-2.2",
             "kandinsky-3",
@@ -1196,6 +1198,8 @@ def test_image_input_field():
     with_image = {spec.id: spec.image_input for spec in MODEL_CATALOG.values() if spec.image_input}
     assert with_image == {
         "flux1-kontext-dev": "optional",
+        "joyai-image-edit": "optional",
+        "joyai-image-edit-plus": "required",
         "sdxl-refiner-1.0": "required",
         "omnigen-v1": "optional",
     }
