@@ -1,0 +1,786 @@
+{
+"transformer_blocks.36.img_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.36.img_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.36.txt_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.36.txt_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.36.txt_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.36.txt_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.36.txt_mod.1.bias": [
+18432
+],
+"transformer_blocks.36.txt_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.37.attn.add_k_proj.bias": [
+3072
+],
+"transformer_blocks.37.attn.add_k_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.37.attn.add_q_proj.bias": [
+3072
+],
+"transformer_blocks.37.attn.add_q_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.37.attn.add_v_proj.bias": [
+3072
+],
+"transformer_blocks.37.attn.add_v_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.37.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.37.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.37.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.37.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.37.attn.to_add_out.bias": [
+3072
+],
+"transformer_blocks.37.attn.to_add_out.weight": [
+3072,
+3072
+],
+"transformer_blocks.37.attn.to_k.bias": [
+3072
+],
+"transformer_blocks.37.attn.to_k.weight": [
+3072,
+3072
+],
+"transformer_blocks.37.attn.to_out.0.bias": [
+3072
+],
+"transformer_blocks.37.attn.to_out.0.weight": [
+3072,
+3072
+],
+"transformer_blocks.37.attn.to_q.bias": [
+3072
+],
+"transformer_blocks.37.attn.to_q.weight": [
+3072,
+3072
+],
+"transformer_blocks.37.attn.to_v.bias": [
+3072
+],
+"transformer_blocks.37.attn.to_v.weight": [
+3072,
+3072
+],
+"transformer_blocks.37.img_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.37.img_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.37.img_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.37.img_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.37.img_mod.1.bias": [
+18432
+],
+"transformer_blocks.37.img_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.37.txt_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.37.txt_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.37.txt_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.37.txt_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.37.txt_mod.1.bias": [
+18432
+],
+"transformer_blocks.37.txt_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.38.attn.add_k_proj.bias": [
+3072
+],
+"transformer_blocks.38.attn.add_k_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.38.attn.add_q_proj.bias": [
+3072
+],
+"transformer_blocks.38.attn.add_q_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.38.attn.add_v_proj.bias": [
+3072
+],
+"transformer_blocks.38.attn.add_v_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.38.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.38.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.38.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.38.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.38.attn.to_add_out.bias": [
+3072
+],
+"transformer_blocks.38.attn.to_add_out.weight": [
+3072,
+3072
+],
+"transformer_blocks.38.attn.to_k.bias": [
+3072
+],
+"transformer_blocks.38.attn.to_k.weight": [
+3072,
+3072
+],
+"transformer_blocks.38.attn.to_out.0.bias": [
+3072
+],
+"transformer_blocks.38.attn.to_out.0.weight": [
+3072,
+3072
+],
+"transformer_blocks.38.attn.to_q.bias": [
+3072
+],
+"transformer_blocks.38.attn.to_q.weight": [
+3072,
+3072
+],
+"transformer_blocks.38.attn.to_v.bias": [
+3072
+],
+"transformer_blocks.38.attn.to_v.weight": [
+3072,
+3072
+],
+"transformer_blocks.38.img_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.38.img_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.38.img_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.38.img_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.38.img_mod.1.bias": [
+18432
+],
+"transformer_blocks.38.img_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.38.txt_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.38.txt_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.38.txt_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.38.txt_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.38.txt_mod.1.bias": [
+18432
+],
+"transformer_blocks.38.txt_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.39.attn.add_k_proj.bias": [
+3072
+],
+"transformer_blocks.39.attn.add_k_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.39.attn.add_q_proj.bias": [
+3072
+],
+"transformer_blocks.39.attn.add_q_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.39.attn.add_v_proj.bias": [
+3072
+],
+"transformer_blocks.39.attn.add_v_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.39.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.39.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.39.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.39.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.39.attn.to_add_out.bias": [
+3072
+],
+"transformer_blocks.39.attn.to_add_out.weight": [
+3072,
+3072
+],
+"transformer_blocks.39.attn.to_k.bias": [
+3072
+],
+"transformer_blocks.39.attn.to_k.weight": [
+3072,
+3072
+],
+"transformer_blocks.39.attn.to_out.0.bias": [
+3072
+],
+"transformer_blocks.39.attn.to_out.0.weight": [
+3072,
+3072
+],
+"transformer_blocks.39.attn.to_q.bias": [
+3072
+],
+"transformer_blocks.39.attn.to_q.weight": [
+3072,
+3072
+],
+"transformer_blocks.39.attn.to_v.bias": [
+3072
+],
+"transformer_blocks.39.attn.to_v.weight": [
+3072,
+3072
+],
+"transformer_blocks.39.img_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.39.img_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.39.img_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.39.img_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.39.img_mod.1.bias": [
+18432
+],
+"transformer_blocks.39.img_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.39.txt_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.39.txt_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.39.txt_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.39.txt_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.39.txt_mod.1.bias": [
+18432
+],
+"transformer_blocks.39.txt_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.40.attn.add_k_proj.bias": [
+3072
+],
+"transformer_blocks.40.attn.add_k_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.40.attn.add_q_proj.bias": [
+3072
+],
+"transformer_blocks.40.attn.add_q_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.40.attn.add_v_proj.bias": [
+3072
+],
+"transformer_blocks.40.attn.add_v_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.40.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.40.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.40.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.40.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.40.attn.to_add_out.bias": [
+3072
+],
+"transformer_blocks.40.attn.to_add_out.weight": [
+3072,
+3072
+],
+"transformer_blocks.40.attn.to_k.bias": [
+3072
+],
+"transformer_blocks.40.attn.to_k.weight": [
+3072,
+3072
+],
+"transformer_blocks.40.attn.to_out.0.bias": [
+3072
+],
+"transformer_blocks.40.attn.to_out.0.weight": [
+3072,
+3072
+],
+"transformer_blocks.40.attn.to_q.bias": [
+3072
+],
+"transformer_blocks.40.attn.to_q.weight": [
+3072,
+3072
+],
+"transformer_blocks.40.attn.to_v.bias": [
+3072
+],
+"transformer_blocks.40.attn.to_v.weight": [
+3072,
+3072
+],
+"transformer_blocks.40.img_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.40.img_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.40.img_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.40.img_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.40.img_mod.1.bias": [
+18432
+],
+"transformer_blocks.40.img_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.40.txt_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.40.txt_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.40.txt_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.40.txt_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.40.txt_mod.1.bias": [
+18432
+],
+"transformer_blocks.40.txt_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.41.attn.add_k_proj.bias": [
+3072
+],
+"transformer_blocks.41.attn.add_k_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.41.attn.add_q_proj.bias": [
+3072
+],
+"transformer_blocks.41.attn.add_q_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.41.attn.add_v_proj.bias": [
+3072
+],
+"transformer_blocks.41.attn.add_v_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.41.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.41.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.41.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.41.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.41.attn.to_add_out.bias": [
+3072
+],
+"transformer_blocks.41.attn.to_add_out.weight": [
+3072,
+3072
+],
+"transformer_blocks.41.attn.to_k.bias": [
+3072
+],
+"transformer_blocks.41.attn.to_k.weight": [
+3072,
+3072
+],
+"transformer_blocks.41.attn.to_out.0.bias": [
+3072
+],
+"transformer_blocks.41.attn.to_out.0.weight": [
+3072,
+3072
+],
+"transformer_blocks.41.attn.to_q.bias": [
+3072
+],
+"transformer_blocks.41.attn.to_q.weight": [
+3072,
+3072
+],
+"transformer_blocks.41.attn.to_v.bias": [
+3072
+],
+"transformer_blocks.41.attn.to_v.weight": [
+3072,
+3072
+],
+"transformer_blocks.41.img_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.41.img_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.41.img_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.41.img_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.41.img_mod.1.bias": [
+18432
+],
+"transformer_blocks.41.img_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.41.txt_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.41.txt_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.41.txt_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.41.txt_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.41.txt_mod.1.bias": [
+18432
+],
+"transformer_blocks.41.txt_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.42.attn.add_k_proj.bias": [
+3072
+],
+"transformer_blocks.42.attn.add_k_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.42.attn.add_q_proj.bias": [
+3072
+],
+"transformer_blocks.42.attn.add_q_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.42.attn.add_v_proj.bias": [
+3072
+],
+"transformer_blocks.42.attn.add_v_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.42.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.42.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.42.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.42.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.42.attn.to_add_out.bias": [
+3072
+],
+"transformer_blocks.42.attn.to_add_out.weight": [
+3072,
+3072
+],
+"transformer_blocks.42.attn.to_k.bias": [
+3072
+],
+"transformer_blocks.42.attn.to_k.weight": [
+3072,
+3072
+],
+"transformer_blocks.42.attn.to_out.0.bias": [
+3072
+],
+"transformer_blocks.42.attn.to_out.0.weight": [
+3072,
+3072
+],
+"transformer_blocks.42.attn.to_q.bias": [
+3072
+],
+"transformer_blocks.42.attn.to_q.weight": [
+3072,
+3072
+],
+"transformer_blocks.42.attn.to_v.bias": [
+3072
+],
+"transformer_blocks.42.attn.to_v.weight": [
+3072,
+3072
+],
+"transformer_blocks.42.img_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.42.img_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.42.img_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.42.img_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.42.img_mod.1.bias": [
+18432
+],
+"transformer_blocks.42.img_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.42.txt_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.42.txt_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.42.txt_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.42.txt_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.42.txt_mod.1.bias": [
+18432
+],
+"transformer_blocks.42.txt_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.43.attn.add_k_proj.bias": [
+3072
+],
+"transformer_blocks.43.attn.add_k_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.43.attn.add_q_proj.bias": [
+3072
+],
+"transformer_blocks.43.attn.add_q_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.43.attn.add_v_proj.bias": [
+3072
+],
+"transformer_blocks.43.attn.add_v_proj.weight": [
+3072,
+3072
+],
+"transformer_blocks.43.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.43.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.43.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.43.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.43.attn.to_add_out.bias": [
+3072
+],
+"transformer_blocks.43.attn.to_add_out.weight": [
+3072,
+3072
+],
+"transformer_blocks.43.attn.to_k.bias": [
+3072
+],
+"transformer_blocks.43.attn.to_k.weight": [
+3072,
+3072
+],
+"transformer_blocks.43.attn.to_out.0.bias": [
+3072
+],
+"transformer_blocks.43.attn.to_out.0.weight": [
+3072,
+3072
+],
+"transformer_blocks.43.attn.to_q.bias": [
+3072
+],
+"transformer_blocks.43.attn.to_q.weight": [
+3072,
+3072
+],
+"transformer_blocks.43.attn.to_v.bias": [
+3072
+],
+"transformer_blocks.43.attn.to_v.weight": [
+3072,
+3072
+],
+"transformer_blocks.43.img_mlp.net.0.proj.bias": [
+12288
+],
+"transformer_blocks.43.img_mlp.net.0.proj.weight": [
+12288,
+3072
+],
+"transformer_blocks.43.img_mlp.net.2.bias": [
+3072
+],
+"transformer_blocks.43.img_mlp.net.2.weight": [
+3072,
+12288
+],
+"transformer_blocks.43.img_mod.1.bias": [
+18432
+],
+"transformer_blocks.43.img_mod.1.weight": [
+18432,
+3072
+],
+"transformer_blocks.43.txt_mod.1.bias": [
+18432
+],
+"transformer_blocks.43.txt_mod.1.weight": [
+18432,
+3072
+]
+}
