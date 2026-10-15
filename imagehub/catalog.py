@@ -1847,6 +1847,43 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="hidream-o1-image",
+        task=Task.T2I,
+        family="hidream-o1",
+        source="https://huggingface.co/HiDream-ai/HiDream-O1-Image",
+        repo_id="HiDream-ai/HiDream-O1-Image",
+        revision="0b0901d99f200389e138c61946af1185f5f49a13",
+        provenance="author",
+        catalog_id="hidream-o1-image",
+        format="transformers",
+        license="MIT",
+        reference={
+            "hidream-o1": {
+                "repository": "HiDream-ai/HiDream-O1-Image",
+                "git_commit": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4",
+            }
+        },
+        config={"defaults": {"steps": 50, "guidance": 5.0, "shift": 3.0}},
+        files=(
+            "config.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00008.safetensors",
+            "model-00002-of-00008.safetensors",
+            "model-00003-of-00008.safetensors",
+            "model-00004-of-00008.safetensors",
+            "model-00005-of-00008.safetensors",
+            "model-00006-of-00008.safetensors",
+            "model-00007-of-00008.safetensors",
+            "model-00008-of-00008.safetensors",
+        ),
+        image_input=None,
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-turbo",
         task=Task.T2I,
         family="stable-diffusion-xl",
