@@ -217,14 +217,19 @@ class Qwen3VLTextModel(NativeModel):
 
     def forward(
         self,
-        input_ids: Tensor,
+        input_ids: Tensor | None,
         attention_mask: Tensor,
         *,
+        inputs_embeds: Tensor | None = None,
         position_ids: Tensor | None = None,
+        visual_pos_masks: Tensor | None = None,
+        deepstack_visual_embeds: list[Tensor] | None = None,
         output_hidden_states: bool = True,
     ) -> tuple[Tensor, ...]:
         """Return decoder hidden states, ending with the pre-norm state used by the pipeline."""
-        hidden_states = self.embed_tokens(input_ids)
+        if (input_ids is None) == (inputs_embeds is None):
+            raise ValueError("provide exactly one of input_ids or inputs_embeds")
+        hidden_states = self.embed_tokens(input_ids) if inputs_embeds is None else inputs_embeds
         positions = torch.arange(hidden_states.shape[1], device=hidden_states.device)
         if position_ids is None:
             position_ids = positions.view(1, 1, -1).expand(3, hidden_states.shape[0], -1)
@@ -236,8 +241,15 @@ class Qwen3VLTextModel(NativeModel):
             causal_mask = causal_mask[None, None] & attention_mask[:, None, None, :].bool()
 
         all_hidden_states = [hidden_states] if output_hidden_states else []
-        for layer in self.layers:
+        for index, layer in enumerate(self.layers):
             hidden_states = layer(hidden_states, position_embeddings, causal_mask)
+            if deepstack_visual_embeds is not None and index < len(deepstack_visual_embeds):
+                assert visual_pos_masks is not None
+                visual = deepstack_visual_embeds[index].to(
+                    hidden_states.device, hidden_states.dtype
+                )
+                local = hidden_states[visual_pos_masks, :] + visual
+                hidden_states[visual_pos_masks, :] = local
             if output_hidden_states:
                 all_hidden_states.append(hidden_states)
         return tuple(all_hidden_states) if output_hidden_states else (hidden_states,)
