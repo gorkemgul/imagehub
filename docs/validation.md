@@ -1763,6 +1763,27 @@ mirror with fuzzed text), and the whole backend on a tiny snapshot in the publis
 (default settings, guidance with a negative prompt, non-square sizes, two images, two weight seeds):
 identical latents and identical bytes.
 
+## HiDream-O1
+
+`hidream-o1-image` is pinned to `HiDream-ai/HiDream-O1-Image` revision `0b0901d`; the
+reference is the official implementation at commit `2c2d29f`. Real-checkpoint validation is
+pending, so the catalog status remains `experimental` and this section reports no measured
+real-weight results.
+
+Offline tests already check the published 759 tensor names and shapes and compare the new pixel
+projection, timestep embedding, mixed causal/generation decoder, fixed-point rotary positions and
+Flow-UniPC scheduler against the pinned source. A tiny full sampling test runs the official sampling
+code in CPU float32 with classifier-free guidance on and off, two seeds and both 32×64 orientations;
+the resulting uint8 images are exactly equal. The real-checkpoint suite
+(`tests/reference/test_ref_hidream_o1.py`) skips unless
+`IMAGEHUB_SNAPSHOT_HIDREAM_O1_IMAGE` points to a local snapshot. It is prepared to record the
+header, tokenizer/position, denoiser-step, `e2e_hidream-o1-image` and separate seed-42
+`seed_e2e_hidream-o1-image` comparisons. The official result is saved and freed before the native
+model is loaded, and the end-to-end runs use two steps and 32×64 output to keep the 8B checkpoint
+run bounded.
+
+Reference-image conditioning is not implemented or validated yet.
+
 ## OmniGen
 
 `omnigen-v1` is loaded strictly from `Shitao/OmniGen-v1-diffusers` at revision `016e2f6` and is compared
