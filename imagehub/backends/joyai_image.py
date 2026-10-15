@@ -168,8 +168,8 @@ def _vision_pixels(image: Any, patch: int = 16, merge: int = 2) -> tuple[Tensor,
         .reshape(h, w, 3)
         .permute(2, 0, 1)
         .float()
+        .sub(127.5)
         .div(127.5)
-        .sub(1)
     )
     gh, gw = h // patch, w // patch
     patches = pixels.reshape(3, gh // merge, merge, patch, gw // merge, merge, patch)

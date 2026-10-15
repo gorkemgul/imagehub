@@ -553,7 +553,7 @@ def test_real_text_and_vision_conditioning(model_id, record, tmp_path):
 
 
 @pytest.mark.parametrize("model_id", MODEL_IDS)
-def test_real_transformer_step(model_id, record, tmp_path):
+def test_real_transformer_step(model_id, record, tmp_path, monkeypatch):
     diffusers = pytest.importorskip("diffusers")
     root = snapshot_dir(model_id)
     config = read_json(root / "transformer" / "config.json")
@@ -570,6 +570,7 @@ def test_real_transformer_step(model_id, record, tmp_path):
         hidden = torch.randn(1, 2, config["in_channels"], 1, 4, 4, generator=generator)
         cls = diffusers.JoyImageEditTransformer3DModel
         kwargs = {}
+    monkeypatch.setattr(cls, "_keep_in_fp32_modules", None)
     reference = cls.from_pretrained(
         root / "transformer", local_files_only=True, torch_dtype=torch.float32
     )
@@ -621,7 +622,7 @@ def test_real_vae(model_id, record, tmp_path):
 
 @pytest.mark.parametrize("model_id", MODEL_IDS)
 @pytest.mark.parametrize("seed", (0, 42))
-def test_real_end_to_end(model_id, seed, record):
+def test_real_end_to_end(model_id, seed, record, monkeypatch):
     diffusers = pytest.importorskip("diffusers")
     root = snapshot_dir(model_id)
     image = _image().resize((512, 512))
@@ -630,6 +631,12 @@ def test_real_end_to_end(model_id, seed, record):
         if model_id.endswith("plus")
         else diffusers.JoyImageEditPipeline
     )
+    transformer_cls = (
+        diffusers.JoyImageEditPlusTransformer3DModel
+        if model_id.endswith("plus")
+        else diffusers.JoyImageEditTransformer3DModel
+    )
+    monkeypatch.setattr(transformer_cls, "_keep_in_fp32_modules", None)
     reference = cls.from_pretrained(root, local_files_only=True, torch_dtype=torch.float32)
     torch.manual_seed(seed)
     kwargs = {"images": [image]} if model_id.endswith("plus") else {"image": image}
