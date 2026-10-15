@@ -493,6 +493,26 @@
     "steps": 12,
     "tolerance": "exact"
   },
+  "deepfloyd_if_stage_i_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "deepfloyd_if_stage_ii_unet": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "deepfloyd_if_t5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "deepfloyd_if_tokenizer": {
+    "exact": true,
+    "prompts": 1,
+    "tolerance": "exact"
+  },
   "deepseek_tokenizer_exhaustive_janus-pro-7b": {
     "mismatches": 0,
     "prompts": 3336096,
@@ -602,6 +622,10 @@
     "max_pixel_diff": 0,
     "passed": true,
     "steps": 8
+  },
+  "e2e_deepfloyd-if-i-xl": {
+    "max_pixel_diff": 0,
+    "passed": true
   },
   "e2e_dmd2-sdxl-1step": {
     "guidance": 0.0,
@@ -2477,6 +2501,16 @@
       "missing": [],
       "tensors": 288
     }
+  },
+  "header_deepfloyd_if_stage_i": {
+    "extra": 0,
+    "mismatch": 0,
+    "missing": 0
+  },
+  "header_deepfloyd_if_stage_ii": {
+    "extra": 0,
+    "mismatch": 0,
+    "missing": 0
   },
   "header_dmd2-sdxl-1step": {
     "extra": [],
@@ -7746,6 +7780,10 @@
     "passed": true,
     "seed": 42,
     "steps": 8
+  },
+  "seed_e2e_deepfloyd-if-i-xl": {
+    "passed": true,
+    "seed": 42
   },
   "seed_e2e_dmd2-sdxl-1step": {
     "guidance": 0.0,

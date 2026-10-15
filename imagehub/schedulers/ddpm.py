@@ -26,7 +26,7 @@ DDPM_DEFAULTS: dict[str, Any] = {
     "steps_offset": 0,
     "rescale_betas_zero_snr": False,
 }
-_IGNORED = frozenset({"set_alpha_to_one", "skip_prk_steps"})
+_IGNORED = frozenset({"set_alpha_to_one", "skip_prk_steps", "lambda_min_clipped"})
 
 
 def _cosine_betas(count: int, max_beta: float = 0.999) -> Tensor:
@@ -63,8 +63,6 @@ class DDPMScheduler:
             raise ValueError(f"Unsupported DDPM setting beta_schedule={cfg['beta_schedule']!r}")
         if cfg["variance_type"] not in ("fixed_small", "learned_range"):
             raise ValueError(f"Unsupported DDPM setting variance_type={cfg['variance_type']!r}")
-        if cfg["thresholding"]:
-            raise ValueError("Unsupported DDPM setting thresholding=True")
         if cfg["rescale_betas_zero_snr"]:
             raise ValueError("Unsupported DDPM setting rescale_betas_zero_snr=True")
         if cfg["timestep_spacing"] != "leading":
@@ -99,6 +97,24 @@ class DDPMScheduler:
 
     def scale_model_input(self, sample: Tensor, timestep: Tensor | int | None = None) -> Tensor:
         return sample
+
+    def add_noise(self, original_samples: Tensor, noise: Tensor, timesteps: Tensor) -> Tensor:
+        alphas = self.alphas_cumprod.to(
+            device=original_samples.device, dtype=original_samples.dtype
+        )
+        while timesteps.ndim < original_samples.ndim:
+            timesteps = timesteps.unsqueeze(-1)
+        sqrt_alpha = alphas[timesteps] ** 0.5
+        sqrt_one_minus_alpha = (1 - alphas[timesteps]) ** 0.5
+        return sqrt_alpha * original_samples + sqrt_one_minus_alpha * noise
+
+    def _threshold_sample(self, sample: Tensor) -> Tensor:
+        dtype = sample.dtype
+        batch, channels = sample.shape[:2]
+        flat = sample.float().reshape(batch, channels * math.prod(sample.shape[2:]))
+        threshold = torch.quantile(flat.abs(), self.config["dynamic_thresholding_ratio"], dim=1)
+        threshold = threshold.clamp(min=1, max=self.config["sample_max_value"]).unsqueeze(1)
+        return (flat.clamp(-threshold, threshold) / threshold).reshape_as(sample).to(dtype)
 
     def set_timesteps(self, num_inference_steps: int) -> None:
         count = self.config["num_train_timesteps"]
@@ -177,7 +193,9 @@ class DDPMScheduler:
         else:
             pred_original_sample = alpha_prod_t**0.5 * sample - beta_prod_t**0.5 * model_output
 
-        if self.config["clip_sample"]:
+        if self.config["thresholding"]:
+            pred_original_sample = self._threshold_sample(pred_original_sample)
+        elif self.config["clip_sample"]:
             limit = self.config["clip_sample_range"]
             pred_original_sample = pred_original_sample.clamp(-limit, limit)
 

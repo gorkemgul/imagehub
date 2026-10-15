@@ -1563,6 +1563,38 @@ the latents. The Euler scheduler ignores the configuration keys that diffusers' 
 not read (`thresholding`, `dynamic_thresholding_ratio`, `clip_sample_range`), which this release's
 configuration contains.
 
+## DeepFloyd IF
+
+Validated on CPU in the same environment as above. `deepfloyd-if-i-xl` combines the pinned gated
+IF-I-XL and IF-II-L repositories with diffusers 0.40.0 `IFPipeline` and `IFSuperResolutionPipeline`
+on CPU in float32. The published weights are float32. Unit and opt-in reference coverage exercises
+the IF U-Net additions, dynamic thresholding, image noising, guidance on and off, and the combined
+256×256 path. All 7 real-checkpoint tests passed, and the observed difference in every recorded
+comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation produces
+a bit-identical image to the one diffusers produces. The real-checkpoint run took 4 minutes on an
+M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: stage I U-Net (775 tensors), stage II U-Net (939) (names and shapes) | 0 missing, extra or mismatched | exact |
+| T5 tokenizer token ids / attention masks (1 prompt at 77 tokens) | identical / identical | exact |
+| Shared T5 text encoder last hidden state (the same encoder conditions both stages) | 0 | 0 |
+| Stage I U-Net single step (64×64, real conditioning, timestep 999) | 0 | 0 |
+| Stage II U-Net single step (256×256, real conditioning, noise level 250, timestep 999) | 0 | 0 |
+| End to end: final pixels (256×256, 4 steps per stage, guidance 7.0 and 4.0, seed 0) | 0 | 0 |
+| End to end, seed 42 through the public pipeline | passed | exact |
+
+The end-to-end prompt was "a quiet landscape". Both runs use 4 steps per stage instead of the
+50-step defaults only to shorten the CPU run; guidance stays at the pipeline defaults 7.0 and 4.0
+with `noise_level` 250. Stage III, safety checking and watermarking are excluded. Records:
+`header_deepfloyd_if_stage_i`, `header_deepfloyd_if_stage_ii`,
+`deepfloyd_if_tokenizer`, `deepfloyd_if_t5`, `deepfloyd_if_stage_i_unet`,
+`deepfloyd_if_stage_ii_unet`, `e2e_deepfloyd-if-i-xl` and `seed_e2e_deepfloyd-if-i-xl`,
+[validation-measurements.json](validation-measurements.json); `components_deepfloyd_if`,
+[validation.json](validation.json).
+
 ## Kandinsky 3
 
 `kandinsky-3` is loaded strictly from `kandinsky-community/kandinsky-3` at revision `bf79e6c` and
@@ -1816,9 +1848,9 @@ first sequence of the batch only; the native module reproduces that.
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
   for `chroma1-hd`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
-  `prx-512-t2i-sft` together, and 8 passed for `dreamlite-base` and `dreamlite-mobile` together.
-  These include structural parity with random weights, end-to-end parity with
-  a small model, real-checkpoint parity and tokenizer fuzz tests.
+  `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together, and
+  7 passed for `deepfloyd-if-i-xl`. These include structural parity with random weights,
+  end-to-end parity with a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
 - MPS smoke test: 1 passed.

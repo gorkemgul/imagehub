@@ -745,6 +745,37 @@ European Union, the United Kingdom and South Korea; see the license. imagehub do
 weights.
 
 
+# DeepFloyd IF
+
+Catalog: [`deepfloyd-if`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `deepfloyd-if-i-xl` · Task: `t2i`
+
+**Architecture.** A T5-XXL encoder conditions stage I pixel diffusion at 64×64. Stage II receives
+the same prompt context and the noisy bilinearly-upscaled stage-I image, then produces a 256×256
+image. Both stages use learned-range DDPM variance and dynamic thresholding.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained deepfloyd-if-i-xl checkpoints/deepfloyd-if-i-xl
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="deepfloyd-if-i-xl", model="checkpoints/deepfloyd-if-i-xl") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+result.images[0].save("cat.png")
+```
+
+**Settings.** Output is fixed at 256×256. `steps` and `superresolution_steps` default to 50;
+`guidance` and `superresolution_guidance` default to 7.0 and 4.0. `noise_level` defaults to 250.
+`negative_prompt`, `seed`, and stage-I `latents` are also supported. Stage III, caption cleaning,
+safety checking, watermarking and fp16/bfloat16 parity are out of scope.
+
+**License.** The gated weights use the non-commercial DeepFloyd IF License. imagehub does not
+distribute weights.
+
 # Kandinsky 2.1
 
 Catalog: [`kandinsky-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

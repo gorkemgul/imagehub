@@ -118,6 +118,59 @@ _entries: list[ModelSpec] = []
 
 _entries.append(
     ModelSpec(
+        id="deepfloyd-if-i-xl",
+        task=Task.T2I,
+        family="deepfloyd-if",
+        source="https://huggingface.co/DeepFloyd/IF-I-XL-v1.0",
+        repo_id="DeepFloyd/IF-I-XL-v1.0",
+        revision="c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+        provenance="author",
+        catalog_id="deepfloyd-if",
+        format="diffusers",
+        license="DeepFloyd IF License (non-commercial)",
+        gated=True,
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 7.0,
+                "superresolution_steps": 50,
+                "superresolution_guidance": 4.0,
+                "noise_level": 250,
+                "width": 256,
+                "height": 256,
+            }
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/spiece.model",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+        ),
+        subfolders={
+            "stage_ii": SubRepo(
+                repo_id="DeepFloyd/IF-II-L-v1.0",
+                revision="609476ce702b2d94aff7d1f944dcc54d4f972901",
+                files=(
+                    "model_index.json",
+                    "image_noising_scheduler/scheduler_config.json",
+                    "scheduler/scheduler_config.json",
+                    "unet/config.json",
+                    "unet/diffusion_pytorch_model.safetensors",
+                ),
+            )
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="ldm-text2im-large-256",
         task=Task.T2I,
         family="ldm",

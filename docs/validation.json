@@ -12,6 +12,114 @@
   },
   "models": [
     {
+      "model_id": "deepfloyd-if-i-xl",
+      "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+      "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+      "provenance": "author",
+      "catalog_id": "deepfloyd-if",
+      "license": "DeepFloyd IF License (non-commercial)",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "3b3d7ab2097d8cc5cd40199791767d26f8a0d9fd8efcaabedf94a8c166eac311"
+        },
+        "scheduler/scheduler_config.json": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "6ef5b93940abe405c53edf04e3911a851e0bd537f1b60bf741432b559032ace7"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "050a6e43f666689b9a181d5eb783f4100f5bcbfec8e3f666f3a310611a8640b3"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "fb4665a1a122b7e5270f0e4494c653839c11a5a978e03b0df6dfa714258716e6"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "5dfaaab934ff0359d88bda7e732f95e810ab711cf9df86d97856580564a6d3bf"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "41d72c7ea3f3a0026f529f71af16b7e562f1266d5e1dbc09fa3c6413c9a7122e"
+        },
+        "tokenizer/spiece.model": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "6f2931f5230f47e378ab4909127afb7b77eda653b36049c50e5c78598575965f"
+        },
+        "unet/config.json": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "792d7bae34edaedca69c3385731d99282881563216e1b04b444cfe1a6561b2b5"
+        },
+        "unet/diffusion_pytorch_model.safetensors": {
+          "repo_id": "DeepFloyd/IF-I-XL-v1.0",
+          "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+          "sha256": "d478fe3f64e368cd58201e8a6dd5c94264cfe85249125196a2f3b43d90a8d706"
+        },
+        "stage_ii/model_index.json": {
+          "repo_id": "DeepFloyd/IF-II-L-v1.0",
+          "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+          "sha256": "7f0f30283fe0a10da687cb029e0d45a46f20a69050ae75557a9755018548a5d2"
+        },
+        "stage_ii/image_noising_scheduler/scheduler_config.json": {
+          "repo_id": "DeepFloyd/IF-II-L-v1.0",
+          "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+          "sha256": "41de4d5d9dc96a5d2edc6663b227cb5c5508cc5e11a316897ea23a6329423339"
+        },
+        "stage_ii/scheduler/scheduler_config.json": {
+          "repo_id": "DeepFloyd/IF-II-L-v1.0",
+          "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+          "sha256": "8783103170e5698bd88b6db651eaff74448b298e17a87e30302d485b36e86ba7"
+        },
+        "stage_ii/unet/config.json": {
+          "repo_id": "DeepFloyd/IF-II-L-v1.0",
+          "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+          "sha256": "a79412a2756dc8f962b1e5167f50ecf6997f8dd77eb6d935f0dbae98e5892f86"
+        },
+        "stage_ii/unet/diffusion_pytorch_model.safetensors": {
+          "repo_id": "DeepFloyd/IF-II-L-v1.0",
+          "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+          "sha256": "75f94cc6e1eb09a438d9e09f50e89752f5953e6c03a13b8d0f5135ab80e9a0a4"
+        }
+      },
+      "tensor_header_check": null,
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "seed": 42
+      }
+    },
+    {
       "model_id": "ldm-text2im-large-256",
       "repo_id": "CompVis/ldm-text2im-large-256",
       "revision": "30de525ca11a880baea4962827fb6cb0bb268955",
@@ -8653,6 +8761,28 @@
       "tolerance": "exact"
     }
   },
+  "components_deepfloyd_if": {
+    "deepfloyd_if_stage_i_unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "deepfloyd_if_stage_ii_unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "deepfloyd_if_t5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "deepfloyd_if_tokenizer": {
+      "exact": true,
+      "prompts": 1,
+      "tolerance": "exact"
+    }
+  },
   "components_kandinsky3": {
     "kandinsky3_movq_decode": {
       "max_abs": 0.0,
@@ -12018,6 +12148,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (dreamlite-base, dreamlite-mobile)"
+    "reference_summary": "7 passed (deepfloyd-if-i-xl)"
   }
 }
