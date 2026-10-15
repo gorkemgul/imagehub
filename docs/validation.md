@@ -522,6 +522,9 @@ Validated on CPU in the same environment as above, against diffusers 0.40.0 `Chr
 **exactly 0**: on CPU in float32, the local implementation produces a bit-identical result to the
 reference. The random-weight and tiny-snapshot comparisons below are exact.
 
+Chroma1-Base and Chroma1-Flash have matching published configuration and tensor-header fixtures;
+real-checkpoint validation is pending.
+
 ### Comparisons without published weights (CPU, float32)
 
 | Comparison | Largest observed difference | Tolerance |

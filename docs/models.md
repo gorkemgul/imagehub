@@ -609,8 +609,8 @@ with pipeline(
 
 # Chroma
 
-Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `chroma1-hd` · Task: `t2i`
+Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures), [`chroma1-base`](https://github.com/gorkemgul/awesome-text-to-image-architectures), [`chroma1-flash`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `chroma1-hd`, `chroma1-base`, `chroma1-flash` · Task: `t2i`
 
 **Architecture.** Chroma1-HD is a ~8.9B diffusion transformer built on the FLUX.1 latent-flow
 foundation. It reuses the FLUX.1 VAE (16 latent channels, scaling factor 0.3611, shift factor 0.1159)
@@ -637,8 +637,9 @@ with pipeline("t2i", backend="chroma1-hd", model="checkpoints/chroma1-hd", devic
     result.images[0].save("cat.png")
 ```
 
-**Settings.** The model defaults to 35 steps, guidance 5.0 and 1024×1024; `width` and `height` must
-be multiples of 16. The other supported options are `num_images`, `seed`, `latents`,
+**Settings.** Chroma1-HD defaults to 35 steps and guidance 5.0; Chroma1-Base defaults to 40 steps
+and guidance 3.0; Chroma1-Flash defaults to 4 steps and guidance 1.0. All default to 1024×1024;
+`width` and `height` must be multiples of 16. The other supported options are `num_images`, `seed`, `latents`,
 `negative_prompt` and `max_sequence_length` (default 512, at most 512). Unrecognized settings raise
 an error.
 

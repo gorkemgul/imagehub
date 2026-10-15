@@ -169,6 +169,60 @@ _entries.append(
     )
 )
 
+_CHROMA_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model-00001-of-00002.safetensors",
+    "text_encoder/model-00002-of-00002.safetensors",
+    "text_encoder/model.safetensors.index.json",
+    "tokenizer/added_tokens.json",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/spiece.model",
+    "tokenizer/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+    "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+    "transformer/diffusion_pytorch_model.safetensors.index.json",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+
+_entries.extend(
+    (
+        ModelSpec(
+            id="chroma1-base",
+            task=Task.T2I,
+            family="chroma",
+            source="https://huggingface.co/lodestones/Chroma1-Base",
+            repo_id="lodestones/Chroma1-Base",
+            revision="50ebe125b67794f4ed8e4985d26a4414ca62aed3",
+            provenance="author",
+            catalog_id="chroma1-base",
+            format="diffusers",
+            license="Apache-2.0",
+            gated=False,
+            config={"defaults": {"steps": 40, "guidance": 3.0, "width": 1024, "height": 1024}},
+            files=_CHROMA_FILES,
+        ),
+        ModelSpec(
+            id="chroma1-flash",
+            task=Task.T2I,
+            family="chroma",
+            source="https://huggingface.co/lodestones/Chroma1-Flash",
+            repo_id="lodestones/Chroma1-Flash",
+            revision="093c4f63b60507234aa53a073f1f9f565b3f4336",
+            provenance="author",
+            catalog_id="chroma1-flash",
+            format="diffusers",
+            license="Apache-2.0",
+            gated=False,
+            config={"defaults": {"steps": 4, "guidance": 1.0, "width": 1024, "height": 1024}},
+            files=_CHROMA_FILES,
+        ),
+    )
+)
+
 _entries.append(
     ModelSpec(
         id="ldm-text2im-large-256",

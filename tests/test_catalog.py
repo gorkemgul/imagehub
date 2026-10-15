@@ -12,6 +12,8 @@ def test_catalog_contents():
             "amused-256",
             "amused-512",
             "auraflow-v0.3",
+            "chroma1-base",
+            "chroma1-flash",
             "chroma1-hd",
             "cogview3-plus-3b",
             "cogview4-6b",
@@ -877,6 +879,39 @@ def test_chroma_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+
+
+@pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "defaults"),
+    (
+        (
+            "chroma1-base",
+            "lodestones/Chroma1-Base",
+            "50ebe125b67794f4ed8e4985d26a4414ca62aed3",
+            {"steps": 40, "guidance": 3.0, "width": 1024, "height": 1024},
+        ),
+        (
+            "chroma1-flash",
+            "lodestones/Chroma1-Flash",
+            "093c4f63b60507234aa53a073f1f9f565b3f4336",
+            {"steps": 4, "guidance": 1.0, "width": 1024, "height": 1024},
+        ),
+    ),
+)
+def test_chroma_variant_catalog_entries(model_id, repo, revision, defaults):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "chroma"
+    assert spec.source == f"https://huggingface.co/{repo}"
+    assert spec.repo_id == repo
+    assert spec.revision == revision
+    assert spec.provenance == "author"
+    assert spec.catalog_id == model_id
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {"defaults": defaults}
+    assert spec.files == MODEL_CATALOG["chroma1-hd"].files
 
 
 @pytest.mark.parametrize(

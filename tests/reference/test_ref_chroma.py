@@ -28,6 +28,7 @@ np = pytest.importorskip("numpy")
 
 CPU = torch.device("cpu")
 MODEL_ID = "chroma1-hd"
+MODEL_IDS = ("chroma1-hd", "chroma1-base", "chroma1-flash")
 PROMPT = "a photograph of an astronaut riding a horse"
 MAX_SEQUENCE_LENGTH = 512
 
@@ -81,8 +82,16 @@ def _tiny_transformer_config() -> dict[str, Any]:
     }
 
 
-def test_headers(record):
-    root = FIXTURES / "chroma_configs"
+@pytest.mark.parametrize(
+    ("model_id", "fixture_name"),
+    (
+        ("chroma1-hd", "chroma_configs"),
+        ("chroma1-base", "chroma_base_configs"),
+        ("chroma1-flash", "chroma_flash_configs"),
+    ),
+)
+def test_headers(record, model_id, fixture_name):
+    root = FIXTURES / fixture_name
     result = {}
     for component, cls in {
         "text_encoder": T5EncoderModel,
@@ -105,7 +114,7 @@ def test_headers(record):
             ),
             "tensors": len(shapes),
         }
-    record(f"header_{MODEL_ID}_fixtures", **result)
+    record(f"header_{model_id}_fixtures", **result)
     assert all(
         not entry[key] for entry in result.values() for key in ("missing", "extra", "mismatch")
     )
@@ -179,23 +188,33 @@ def test_transformer_published_config_small_size(record):
     gc.collect()
 
 
-def test_scheduler(record):
-    root = FIXTURES / "chroma_configs"
+@pytest.mark.parametrize(
+    ("model_id", "fixture_name"),
+    (
+        ("chroma1-hd", "chroma_configs"),
+        ("chroma1-base", "chroma_base_configs"),
+        ("chroma1-flash", "chroma_flash_configs"),
+    ),
+)
+def test_scheduler(record, model_id, fixture_name):
+    root = FIXTURES / fixture_name
     config = read_json(root / "scheduler" / "scheduler_config.json")
     sigmas = [1.0, 0.75, 0.5, 0.25]
     mu = calculate_shift(4096, config)
-    reference = diffusers.FlowMatchEulerDiscreteScheduler.from_config(config)
+    scheduler_config = dict(config)
+    scheduler_config["use_beta_sigmas"] = False
+    reference = diffusers.FlowMatchEulerDiscreteScheduler.from_config(scheduler_config)
     reference.set_timesteps(sigmas=sigmas, mu=mu)
     expected_sigmas = reference.sigmas.cpu()
     expected_timesteps = reference.timesteps.cpu()
     del reference
     gc.collect()
-    ours = FlowMatchEulerDiscreteScheduler(config)
+    ours = FlowMatchEulerDiscreteScheduler(scheduler_config)
     ours.set_timesteps(4, sigmas=sigmas, mu=mu)
     exact = torch.equal(ours.sigmas, expected_sigmas) and torch.equal(
         ours.timesteps, expected_timesteps
     )
-    record("chroma_scheduler", mu=mu, exact=exact, tolerance="exact")
+    record(f"{model_id}_scheduler", mu=mu, exact=exact, tolerance="exact")
     assert exact
 
 
@@ -432,7 +451,13 @@ def test_seed_end_to_end_tiny(record, tmp_path):
 # Real-checkpoint tests: skip cleanly when the snapshot is not present.
 
 
-def test_real_checkpoint_headers(record):
+@pytest.fixture(params=MODEL_IDS)
+def model_id(request):
+    return request.param
+
+
+def test_real_checkpoint_headers(record, model_id):
+    MODEL_ID = model_id
     root = snapshot_dir(MODEL_ID)
     result = {}
     for component, cls in {
@@ -462,7 +487,8 @@ def test_real_checkpoint_headers(record):
     )
 
 
-def test_real_checkpoint_tokenizer(record):
+def test_real_checkpoint_tokenizer(record, model_id):
+    MODEL_ID = model_id
     root = snapshot_dir(MODEL_ID)
     reference_tokenizer = transformers.T5TokenizerFast.from_pretrained(
         root / "tokenizer", local_files_only=True
@@ -481,7 +507,8 @@ def test_real_checkpoint_tokenizer(record):
     assert tokens_match
 
 
-def test_real_checkpoint_text_encoder(record):
+def test_real_checkpoint_text_encoder(record, model_id):
+    MODEL_ID = model_id
     root = snapshot_dir(MODEL_ID)
     reference_tokenizer = transformers.T5TokenizerFast.from_pretrained(
         root / "tokenizer", local_files_only=True
@@ -517,7 +544,8 @@ def test_real_checkpoint_text_encoder(record):
     gc.collect()
 
 
-def test_real_checkpoint_transformer(record, tmp_path):
+def test_real_checkpoint_transformer(record, tmp_path, model_id):
+    MODEL_ID = model_id
     root = snapshot_dir(MODEL_ID)
     config = read_json(root / "transformer" / "config.json")
     generator = torch.Generator("cpu").manual_seed(0)
@@ -559,7 +587,8 @@ def test_real_checkpoint_transformer(record, tmp_path):
     gc.collect()
 
 
-def test_real_checkpoint_vae_decode(record, tmp_path):
+def test_real_checkpoint_vae_decode(record, tmp_path, model_id):
+    MODEL_ID = model_id
     root = snapshot_dir(MODEL_ID)
     generator = torch.Generator("cpu").manual_seed(1)
     latents = torch.randn(1, 16, 128, 128, generator=generator)
@@ -582,7 +611,8 @@ def test_real_checkpoint_vae_decode(record, tmp_path):
     gc.collect()
 
 
-def test_real_checkpoint_end_to_end(record, tmp_path):
+def test_real_checkpoint_end_to_end(record, tmp_path, model_id):
+    MODEL_ID = model_id
     root = snapshot_dir(MODEL_ID)
     noise = torch.randn(1, 16, 128, 128, generator=torch.Generator("cpu").manual_seed(42))
     reference = diffusers.ChromaPipeline.from_pretrained(
@@ -656,7 +686,8 @@ def test_real_checkpoint_end_to_end(record, tmp_path):
     assert passed
 
 
-def test_real_checkpoint_seed(record, tmp_path):
+def test_real_checkpoint_seed(record, tmp_path, model_id):
+    MODEL_ID = model_id
     root = snapshot_dir(MODEL_ID)
     reference = diffusers.ChromaPipeline.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32

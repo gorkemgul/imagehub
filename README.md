@@ -88,7 +88,7 @@ result.images[0].save("edited.png")
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
 | PRX | `prx-1024-t2i-beta`, `prx-512-t2i-sft` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
-| Chroma | `chroma1-hd` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
+| Chroma | `chroma1-hd`, `chroma1-base`, `chroma1-flash` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |

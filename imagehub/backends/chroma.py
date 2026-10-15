@@ -243,7 +243,10 @@ def denoise(
             negative_attention_mask, batch_size, image_seq_len
         )
 
-    scheduler = FlowMatchEulerDiscreteScheduler(components.scheduler_config)
+    scheduler_config = dict(components.scheduler_config)
+    # ChromaPipeline supplies custom sigmas, which take precedence over this Base-only setting.
+    scheduler_config["use_beta_sigmas"] = False
+    scheduler = FlowMatchEulerDiscreteScheduler(scheduler_config)
     scheduler.set_timesteps(
         steps,
         sigmas=_sigmas(steps),

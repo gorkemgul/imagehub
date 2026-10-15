@@ -36,17 +36,28 @@ def _tiny_config() -> dict[str, Any]:
     }
 
 
-def test_catalog_entry_exists():
-    spec = MODEL_CATALOG["chroma1-hd"]
+@pytest.mark.parametrize(
+    ("model_id", "revision", "defaults"),
+    (
+        ("chroma1-hd", "0e0c60ece1e82b17cb7f77342d765ba5024c40c0", (35, 5.0)),
+        ("chroma1-base", "50ebe125b67794f4ed8e4985d26a4414ca62aed3", (40, 3.0)),
+        ("chroma1-flash", "093c4f63b60507234aa53a073f1f9f565b3f4336", (4, 1.0)),
+    ),
+)
+def test_catalog_entry_exists(model_id, revision, defaults):
+    spec = MODEL_CATALOG[model_id]
     assert spec.family == "chroma"
-    assert spec.revision == "0e0c60ece1e82b17cb7f77342d765ba5024c40c0"
+    assert spec.revision == revision
     assert spec.license == "Apache-2.0"
     assert "transformer/diffusion_pytorch_model.safetensors.index.json" in spec.files
+    assert (spec.config["defaults"]["steps"], spec.config["defaults"]["guidance"]) == defaults
 
 
 def test_backend_registered():
     assert "chroma" in backend_registry.names("t2i")
     assert "chroma1-hd" in backend_registry.names("t2i")
+    assert "chroma1-base" in backend_registry.names("t2i")
+    assert "chroma1-flash" in backend_registry.names("t2i")
 
 
 def test_transformer_meta_construction():
