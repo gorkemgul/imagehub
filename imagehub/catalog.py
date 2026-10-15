@@ -118,6 +118,61 @@ _entries: list[ModelSpec] = []
 
 _entries.append(
     ModelSpec(
+        id="qwen-image",
+        task=Task.T2I,
+        family="qwen-image",
+        source="https://huggingface.co/Qwen/Qwen-Image",
+        repo_id="Qwen/Qwen-Image",
+        revision="75e0b4be04f60ec59a75f475837eced720f823b6",
+        provenance="author",
+        catalog_id="qwen-image-2",
+        format="diffusers",
+        license="Apache-2.0",
+        reference={"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
+        config={
+            "defaults": {
+                "steps": 50,
+                "true_cfg": 4.0,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        files=(
+            "model_index.json",
+            "LICENSE",
+            "scheduler/scheduler_config.json",
+            "tokenizer/added_tokens.json",
+            "tokenizer/chat_template.jinja",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00004-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00005-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00006-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00007-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00008-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00009-of-00009.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="deepfloyd-if-i-xl",
         task=Task.T2I,
         family="deepfloyd-if",

@@ -2,19 +2,43 @@ import json
 
 import pytest
 import torch
-from helpers import write_tiny_qwen_image21
+from helpers import write_tiny_qwen_image, write_tiny_qwen_image21
 
 from imagehub import pipeline
 from imagehub.backends.qwen_image import QwenImageBackend, QwenImageComponents, encode_prompt
 from imagehub.catalog import model_info
 from imagehub.checkpoints import SNAPSHOT_FILE, load_weights, save_safetensors
 from imagehub.exceptions import CheckpointError
+from imagehub.types import T2IRequest
 
 
 @pytest.fixture(scope="module")
 def tiny_qwen_image(tmp_path_factory):
     pytest.importorskip("transformers")  # builds the tiny text encoder
     return write_tiny_qwen_image21(tmp_path_factory.mktemp("tiny-qwen-image"))
+
+
+@pytest.fixture(scope="module")
+def tiny_original_qwen_image(tmp_path_factory):
+    pytest.importorskip("transformers")
+    return write_tiny_qwen_image(tmp_path_factory.mktemp("tiny-original-qwen-image"))
+
+
+def test_original_release_generates_repeatably(tiny_original_qwen_image):
+    pipe = pipeline("t2i", backend="qwen-image", model=tiny_original_qwen_image)
+    first = pipe("a cat", seed=9, steps=2, true_cfg=1.0, width=32, height=48)
+    second = pipe("a cat", seed=9, steps=2, true_cfg=1.0, width=32, height=48)
+    assert torch.equal(first.images[0].tensor, second.images[0].tensor)
+    assert (first.images[0].width, first.images[0].height) == (32, 48)
+    assert first.metadata["seed"] == 9
+
+
+def test_original_defaults_and_snapshot_dispatch(tiny_original_qwen_image):
+    backend = QwenImageBackend(tiny_original_qwen_image)
+    selected = backend.validate_options(T2IRequest("a cat"), {})
+    assert selected["steps"] == 50
+    assert selected["true_cfg"] == 4.0
+    assert backend.original_release
 
 
 def test_generates_images_with_metadata(tiny_qwen_image):
@@ -62,6 +86,11 @@ def test_invalid_options_fail_before_loading(tmp_path, options, error, match):
 
 
 def test_catalog_entry_and_snapshot_hint(tmp_path):
+    original = model_info("qwen-image")
+    assert original.repo_id == "Qwen/Qwen-Image"
+    assert original.revision == "75e0b4be04f60ec59a75f475837eced720f823b6"
+    assert original.license == "Apache-2.0"
+    assert len(original.files) == 29
     spec = model_info("qwen-image-2.1")
     assert spec.family == "qwen-image" and spec.catalog_id == "qwen-image-2"
     assert spec.repo_id == "Qwen/Qwen-Image-2.1"
