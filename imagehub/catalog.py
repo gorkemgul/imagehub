@@ -2533,6 +2533,46 @@ _entries.append(
     )
 )
 
+# Dev and Full publish the same component layout as Fast.  The Llama encoder remains a
+# separately licensed, gated subrepository for all three variants.
+for _id, _repo, _revision, _steps, _guidance in (
+    (
+        "hidream-i1-dev",
+        "HiDream-ai/HiDream-I1-Dev",
+        "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+        30,
+        0.0,
+    ),
+    (
+        "hidream-i1-full",
+        "HiDream-ai/HiDream-I1-Full",
+        "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+        50,
+        5.0,
+    ),
+):
+    _fast = _entries[-1]
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="hidream",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="hidream-i1",
+            format="diffusers",
+            license="MIT",
+            gated=True,
+            config={
+                "defaults": {"steps": _steps, "guidance": _guidance, "width": 1024, "height": 1024}
+            },
+            files=_fast.files,
+            subfolders=_fast.subfolders,
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="omnigen-v1",

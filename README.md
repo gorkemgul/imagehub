@@ -100,7 +100,7 @@ result.images[0].save("edited.png")
 | Qwen-Image | `qwen-image-2.1` | `t2i` | T | CPU fp32 parity |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | T | CPU fp32 parity |
-| HiDream-I1 | `hidream-i1-fast` | `t2i` | T | CPU fp32 parity |
+| HiDream-I1 | `hidream-i1-dev`, `hidream-i1-fast`, `hidream-i1-full` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 and float16 weights |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
 [Third-party notices](THIRD_PARTY_NOTICES.md)
