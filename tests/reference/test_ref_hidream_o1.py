@@ -60,6 +60,54 @@ def _load_reference_model_module():
 
 
 def _load_reference_pipeline_module():
+    einops = types.ModuleType("einops")
+
+    def rearrange(tensor, pattern, **axes):
+        patch_height = axes["p1"]
+        patch_width = axes["p2"]
+        if pattern.startswith("B C"):
+            batch, channels, height, width = tensor.shape
+            return (
+                tensor.reshape(
+                    batch,
+                    channels,
+                    height // patch_height,
+                    patch_height,
+                    width // patch_width,
+                    patch_width,
+                )
+                .permute(0, 2, 4, 1, 3, 5)
+                .reshape(batch, -1, channels * patch_height * patch_width)
+            )
+        if pattern.startswith("B (H W)"):
+            batch, _, channels = tensor.shape
+            height = axes["H"]
+            width = axes["W"]
+            return (
+                tensor.reshape(batch, height, width, -1, patch_height, patch_width)
+                .permute(0, 3, 1, 4, 2, 5)
+                .reshape(
+                    batch,
+                    channels // (patch_height * patch_width),
+                    height * patch_height,
+                    width * patch_width,
+                )
+            )
+        channels, height, width = tensor.shape
+        return (
+            tensor.reshape(
+                channels,
+                height // patch_height,
+                patch_height,
+                width // patch_width,
+                patch_width,
+            )
+            .permute(1, 3, 0, 2, 4)
+            .reshape(-1, channels * patch_height * patch_width)
+        )
+
+    einops.rearrange = rearrange
+    sys.modules["einops"] = einops
     transforms = types.ModuleType("torchvision.transforms.v2")
     transforms.__spec__ = ModuleSpec(transforms.__name__, loader=None)
     transforms.Compose = lambda values: values
@@ -87,6 +135,10 @@ def _load_reference(root):
     model = module.Qwen3VLForConditionalGeneration.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     ).eval()
+    for child in model.modules():
+        original = getattr(child, "original_inv_freq", None)
+        if original is not None and original.device.type == "meta":
+            child.original_inv_freq = child.inv_freq
     original = model.forward
 
     def without_flash(**kwargs):

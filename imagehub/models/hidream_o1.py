@@ -143,6 +143,8 @@ class HiDreamO1Core(nn.Module):
 class HiDreamO1Model(NativeModel):
     """Qwen3-VL backbone extended with direct pixel prediction."""
 
+    clone_shards = False
+
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(config)
         self.model = HiDreamO1Core(config)
