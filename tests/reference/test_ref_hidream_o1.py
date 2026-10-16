@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 import torch
-from helpers import max_diff, snapshot_dir
+from helpers import max_diff, reference_in_subprocess, snapshot_dir
 
 from imagehub import pipeline
 from imagehub.backends.hidream_o1 import build_text_sample
@@ -285,7 +285,11 @@ def _reference_image(root, seed, output):
 def _end_to_end(record, tmp_path, seed, name):
     root = snapshot_dir(MODEL_ID)
     output = tmp_path / f"expected-{seed}.pt"
-    _reference_image(root, seed, output)
+    expected = reference_in_subprocess(
+        "reference.test_ref_hidream_o1._reference_image",
+        {"root": root, "seed": seed},
+        output,
+    )
     actual = (
         pipeline("t2i", backend=MODEL_ID, model=root, dtype=torch.float32)(
             PROMPT,
@@ -299,7 +303,6 @@ def _end_to_end(record, tmp_path, seed, name):
         .images[0]
         .tensor
     )
-    expected = torch.load(output, weights_only=True)
     difference = int((actual.to(torch.int16) - expected.to(torch.int16)).abs().max())
     passed = torch.equal(actual, expected)
     record(

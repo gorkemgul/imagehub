@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -63,6 +65,53 @@ def max_diff(actual: torch.Tensor, expected: torch.Tensor) -> dict[str, float]:
         "max_abs": float(d.max()),
         "max_rel": float((d / e.abs().clamp_min(1e-12)).max()),
     }
+
+
+def reference_in_subprocess(
+    function_path: str, kwargs: dict[str, object], out_path: str | os.PathLike[str]
+) -> object:
+    """Run a module-level reference function in a fresh interpreter and load its saved result.
+
+    The function must accept the supplied keyword arguments plus ``output`` and save a tensor or
+    tensor-only container there with ``torch.save``. Keeping the reference process separate lets
+    large checkpoint tests load the native implementation only after the reference model exits.
+    """
+    output = Path(out_path)
+    arguments = output.with_suffix(output.suffix + ".kwargs.pt")
+    repository = Path(__file__).resolve().parent.parent
+    tests = repository / "tests"
+    environment = os.environ.copy()
+    existing_pythonpath = environment.get("PYTHONPATH")
+    environment["PYTHONPATH"] = (
+        str(tests) if not existing_pythonpath else str(tests) + os.pathsep + existing_pythonpath
+    )
+    program = (
+        "import importlib, sys, torch; "
+        "module_name, function_name = sys.argv[1].rsplit('.', 1); "
+        "torch.set_num_threads(int(sys.argv[2])); "
+        "function = getattr(importlib.import_module(module_name), function_name); "
+        "kwargs = torch.load(sys.argv[3], weights_only=False); "
+        "function(**kwargs, output=sys.argv[4])"
+    )
+    torch.save(kwargs, arguments)
+    try:
+        subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                program,
+                function_path,
+                str(torch.get_num_threads()),
+                str(arguments),
+                str(output),
+            ],
+            check=True,
+            cwd=repository,
+            env=environment,
+        )
+    finally:
+        arguments.unlink(missing_ok=True)
+    return torch.load(output, weights_only=True)
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
