@@ -1540,16 +1540,15 @@ parity are not supported. Magic prompt and safety moderation call external paid 
 not distribute weights.
 
 
-# Qwen-Image 2.1
+# Qwen-Image
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `qwen-image-2.1` · Task: `t2i`
+Models: `qwen-image`, `qwen-image-2.1` · Task: `t2i`
 
-**Architecture.** A Qwen3-VL-8B text encoder renders the prompt through the pipeline's prompt
-template and supplies the last decoder-layer output before the final norm. A 7B transformer uses
-block-causal joint attention and reuses a text KV cache across sampling steps. A causal 3D VAE has
-64 latent channels. The flow-match Euler scheduler uses dynamic shifting. The native image size is
-1024×1024.
+**Architecture.** The original release uses Qwen2.5-VL, a 60-layer patch-2 dual-stream transformer
+and a 16-channel causal Qwen VAE. Qwen-Image 2.1 uses Qwen3-VL-8B, a single-stream transformer with
+block-causal joint attention and a text KV cache, and a 64-channel causal VAE. Both releases use
+dynamic-shift flow-match Euler sampling and have a native image size of 1024×1024.
 
 **Usage.**
 
@@ -1567,9 +1566,10 @@ with pipeline(
     result.images[0].save("cat.png")
 ```
 
-**Settings.** `steps` defaults to 40, `true_cfg` defaults to 1.0 and `width`/`height` default to
-1024 and must be multiples of 32. The other supported options are `negative_prompt`, `num_images`,
-`seed` and `latents`. Unrecognized settings raise an error.
+Use `qwen-image` in both commands for the original release. Its `steps` and `true_cfg` defaults are
+50 and 4.0, and dimensions must be multiples of 16. For Qwen-Image 2.1, `steps` defaults to 40,
+`true_cfg` defaults to 1.0, and dimensions must be multiples of 32. Both accept `negative_prompt`,
+`num_images`, `seed` and `latents`; unrecognized settings raise an error.
 
 **Seed compatibility.** On CPU, the same seed and settings give the same image as the pinned
 diffusers reference with `generator=torch.Generator("cpu").manual_seed(seed)`
@@ -1579,8 +1579,13 @@ equality on these devices.
 **Out of scope.** Image editing, condition images, the Qwen3-VL vision encoder and fp16/bf16 parity
 are not supported.
 
-**License.** The weights use the Qwen Research License and are for research use; see the license.
-imagehub does not distribute weights.
+The original release's published bfloat16 weights are upcast for CPU float32 validation. Its
+real-checkpoint run took 30 minutes on an M2 Max (CPU) and every recorded comparison is exactly 0
+([validation](validation.md)).
+
+**License.** Original Qwen-Image weights use Apache-2.0. Qwen-Image 2.1 weights use the Qwen
+Research License and are for research use; see each repository's license. imagehub does not
+distribute weights.
 
 
 # Janus-Pro

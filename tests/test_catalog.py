@@ -65,6 +65,7 @@ def test_catalog_contents():
             "playground-v2.5",
             "prx-1024-t2i-beta",
             "prx-512-t2i-sft",
+            "qwen-image",
             "qwen-image-2.1",
             "sana-1.5-4.8b-1024",
             "sana-1600m-1024",
@@ -279,11 +280,12 @@ def test_catalog_contents():
         "fp16" in name or name.endswith((".onnx", ".ckpt")) for name in z_image_base.files
     )
 
-    qwen_image = model_info("qwen-image-2.1")
+    qwen_image = model_info("qwen-image")
     assert qwen_image.family == "qwen-image"
     assert qwen_image.catalog_id == "qwen-image-2"
-    assert qwen_image.license == "Qwen Research License"
-    assert len(set(qwen_image.files)) == len(qwen_image.files) == 25
+    assert qwen_image.license == "Apache-2.0"
+    assert model_info("qwen-image-2.1").license == "Qwen Research License"
+    assert len(set(qwen_image.files)) == len(qwen_image.files) == 29
 
     janus = model_info("janus-pro-1b")
     assert janus.task is Task.T2I
