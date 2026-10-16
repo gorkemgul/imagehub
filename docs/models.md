@@ -1580,7 +1580,8 @@ equality on these devices.
 are not supported.
 
 The original release's published bfloat16 weights are upcast for CPU float32 validation. Its
-real-checkpoint validation is pending.
+real-checkpoint run took 30 minutes on an M2 Max (CPU) and every recorded comparison is exactly 0
+([validation](validation.md)).
 
 **License.** Original Qwen-Image weights use Apache-2.0. Qwen-Image 2.1 weights use the Qwen
 Research License and are for research use; see each repository's license. imagehub does not

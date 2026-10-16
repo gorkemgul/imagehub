@@ -1239,6 +1239,34 @@ The official reference therefore ran in a child process with the same thread cou
 outputs and exited before the native outputs were compared. The real-checkpoint run took about two
 hours.
 
+## Qwen-Image
+
+`qwen-image` was loaded strictly from `Qwen/Qwen-Image` at revision
+`75e0b4be04f60ec59a75f475837eced720f823b6` and compared with diffusers 0.40.0 `QwenImagePipeline`
+and transformers 5.18.0 `Qwen2_5_VLForConditionalGeneration` on CPU in float32, on the float32
+upcast of the published bfloat16 weights. All 6 real-checkpoint tests passed, and the observed
+difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the
+local implementation produces a bit-identical image to the one diffusers produces. The
+real-checkpoint run took 30 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (`text_encoder`, `transformer`, `vae`; 729 / 1933 / 194 tensors) | 0 missing / extra / mismatched | exact |
+| Qwen2 tokenizer ids for the templated prompt | identical | exact |
+| Qwen2.5-VL text encoder (last hidden state) | 0 | 0 |
+| Qwen-Image transformer single step (1×4×64 latents, 1×8×3584 context, timestep 0.75, one call) | 0 | 0 |
+| VAE decode (16-channel latents) | 0 | 0 |
+| End to end: final latent / pixels (32×32, 2 steps, `true_cfg` 4.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (32×32, 2 steps, `true_cfg` 4.0; pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with the negative prompt
+"blurry, low quality". Two steps at 32×32 only shorten the CPU run; the backend defaults are 50
+steps at 1024×1024. Records: `header_qwen-image`, `qwen_image_tokenizer`, `qwen_image_text_encoder`,
+`qwen_image_transformer`, `qwen_image_vae`, `e2e_qwen-image` and `seed_e2e_qwen-image`,
+[validation-measurements.json](validation-measurements.json).
+
 ## Qwen-Image 2.1
 
 The reference is the implementation the Qwen team contributed to diffusers. No released diffusers
@@ -1876,9 +1904,8 @@ first sequence of the batch only; the native module reproduces that.
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
-  6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, and
-  `qwen-image` is pending the real-checkpoint run, 7 passed
-  for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
+  6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed
+  for `qwen-image`, 7 passed for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
   for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `pixart-lcm-xl-1024`,
