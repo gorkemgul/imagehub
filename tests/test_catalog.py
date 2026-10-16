@@ -12,6 +12,7 @@ def test_catalog_contents():
             "amused-256",
             "amused-512",
             "auraflow-v0.3",
+            "chroma1-flash",
             "chroma1-hd",
             "cogview3-plus-3b",
             "cogview4-6b",
@@ -28,7 +29,9 @@ def test_catalog_contents():
             "flux2-klein-4b",
             "flux2-klein-9b",
             "glm-image",
+            "hidream-i1-dev",
             "hidream-i1-fast",
+            "hidream-i1-full",
             "hunyuan-dit-v1.1-distilled",
             "hunyuan-dit-v1.2",
             "hunyuan-dit-v1.2-distilled",
@@ -882,6 +885,33 @@ def test_chroma_catalog_entry():
 
 
 @pytest.mark.parametrize(
+    ("model_id", "repo", "revision", "defaults"),
+    (
+        (
+            "chroma1-flash",
+            "lodestones/Chroma1-Flash",
+            "093c4f63b60507234aa53a073f1f9f565b3f4336",
+            {"steps": 4, "guidance": 1.0, "width": 1024, "height": 1024},
+        ),
+    ),
+)
+def test_chroma_variant_catalog_entries(model_id, repo, revision, defaults):
+    spec = model_info(model_id)
+    assert spec.task is Task.T2I
+    assert spec.family == "chroma"
+    assert spec.source == f"https://huggingface.co/{repo}"
+    assert spec.repo_id == repo
+    assert spec.revision == revision
+    assert spec.provenance == "author"
+    assert spec.catalog_id == model_id
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {"defaults": defaults}
+    assert spec.files == MODEL_CATALOG["chroma1-hd"].files
+
+
+@pytest.mark.parametrize(
     ("model_id", "repo", "revision", "transformer"),
     [
         (
@@ -1071,6 +1101,35 @@ def test_hidream_catalog_entry():
             ),
         )
     }
+
+
+@pytest.mark.parametrize(
+    ("model_id", "repo_id", "revision", "defaults"),
+    [
+        (
+            "hidream-i1-dev",
+            "HiDream-ai/HiDream-I1-Dev",
+            "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+            {"steps": 30, "guidance": 0.0, "width": 1024, "height": 1024},
+        ),
+        (
+            "hidream-i1-full",
+            "HiDream-ai/HiDream-I1-Full",
+            "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+            {"steps": 50, "guidance": 5.0, "width": 1024, "height": 1024},
+        ),
+    ],
+)
+def test_hidream_variant_catalog_entries(model_id, repo_id, revision, defaults):
+    spec = model_info(model_id)
+    assert (spec.family, spec.repo_id, spec.revision, spec.config["defaults"]) == (
+        "hidream",
+        repo_id,
+        revision,
+        defaults,
+    )
+    assert spec.files == model_info("hidream-i1-fast").files
+    assert spec.subfolders == model_info("hidream-i1-fast").subfolders
 
 
 @pytest.mark.parametrize(

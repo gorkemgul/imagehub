@@ -266,6 +266,35 @@
     "max_abs_diff": 0.0,
     "tolerance": "exact"
   },
+  "chroma1-flash_scheduler": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
+  "chroma1-flash_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-flash_tokenizer": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "chroma1-flash_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-flash_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-hd_scheduler": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
   "chroma1-hd_text_encoder": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -602,6 +631,17 @@
     "pixels_match": true,
     "tokens_match": true
   },
+  "e2e_chroma1-flash": {
+    "guidance": 5.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 2
+  },
+  "e2e_chroma1-flash_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "e2e_chroma1-hd": {
     "guidance": 5.0,
     "max_pixel_diff": 0,
@@ -823,7 +863,19 @@
       "pixels": 0
     }
   },
+  "e2e_hidream_i1_dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
+  },
   "e2e_hidream_i1_fast": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 4
+  },
+  "e2e_hidream_i1_full": {
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 0,
@@ -1306,6 +1358,24 @@
     "passed": true,
     "pixels_equal": true,
     "tolerance": "exact"
+  },
+  "e2e_qwen-image": {
+    "latents": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "passed": true,
+    "pixels_max_abs": 0,
+    "reference": {
+      "diffusers_version": "0.40.0"
+    },
+    "revision": "75e0b4be04f60ec59a75f475837eced720f823b6",
+    "size": [
+      32,
+      32
+    ],
+    "steps": 2,
+    "true_cfg": 4.0
   },
   "e2e_qwen-image-2.1": {
     "latents": {
@@ -2422,6 +2492,46 @@
       "tensors": 248
     }
   },
+  "header_chroma1-flash": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1023
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_chroma1-flash_fixtures": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1023
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
   "header_chroma1-hd": {
     "text_encoder": {
       "extra": [],
@@ -2742,7 +2852,83 @@
       "tensors": 1011
     }
   },
+  "header_hidream-i1-dev": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder_3": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "text_encoder_4": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1615
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
   "header_hidream-i1-fast": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 197
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "text_encoder_3": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "text_encoder_4": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1615
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_hidream-i1-full": {
     "text_encoder": {
       "extra": [],
       "mismatch": [],
@@ -3484,6 +3670,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 244
+    }
+  },
+  "header_qwen-image": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 729
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1933
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 194
     }
   },
   "header_qwen-image-2.1": {
@@ -6498,9 +6704,17 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "qwen_image_tokenizer": {
+    "ids_match": true,
+    "tolerance": "exact"
+  },
   "qwen_image_transformer": {
-    "calls": 2,
-    "kv_cache": true,
+    "calls": 1,
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_vae": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -7763,6 +7977,12 @@
       768
     ]
   },
+  "seed_e2e_chroma1-flash": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
+  },
   "seed_e2e_chroma1-hd": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -7875,10 +8095,22 @@
     "size": 512,
     "steps": 2
   },
+  "seed_e2e_hidream_i1_dev": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 4
+  },
   "seed_e2e_hidream_i1_fast": {
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 1234,
+    "steps": 4
+  },
+  "seed_e2e_hidream_i1_full": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
     "steps": 4
   },
   "seed_e2e_hunyuan-dit-v1.1-distilled": {
@@ -8117,6 +8349,17 @@
     "pixels_equal": true,
     "seed": 42,
     "tolerance": "exact"
+  },
+  "seed_e2e_qwen-image": {
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      32,
+      32
+    ],
+    "steps": 2,
+    "true_cfg": 4.0
   },
   "seed_e2e_qwen-image-2.1": {
     "passed": true,
@@ -8535,7 +8778,15 @@
     "prompts": 14,
     "tolerance": "exact"
   },
+  "tokenizers_hidream-i1-dev": {
+    "identical": true,
+    "prompts": 6
+  },
   "tokenizers_hidream-i1-fast": {
+    "identical": true,
+    "prompts": 6
+  },
+  "tokenizers_hidream-i1-full": {
     "identical": true,
     "prompts": 6
   },

@@ -88,7 +88,7 @@ result.images[0].save("edited.png")
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
 | PRX | `prx-1024-t2i-beta`, `prx-512-t2i-sft` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
-| Chroma | `chroma1-hd` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
+| Chroma | `chroma1-hd`, `chroma1-flash` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
@@ -100,7 +100,7 @@ result.images[0].save("edited.png")
 | Qwen-Image | `qwen-image`, `qwen-image-2.1` | `t2i` | T | CPU fp32 parity for 2.1; original pending validation |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | T | CPU fp32 parity |
-| HiDream-I1 | `hidream-i1-fast` | `t2i` | T | CPU fp32 parity |
+| HiDream-I1 | `hidream-i1-dev`, `hidream-i1-fast`, `hidream-i1-full` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 and float16 weights |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
 [Third-party notices](THIRD_PARTY_NOTICES.md)
