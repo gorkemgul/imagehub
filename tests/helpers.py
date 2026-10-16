@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import os
+import pickle
+import subprocess
+import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 import torch
@@ -13,6 +18,37 @@ from imagehub.tokenization import BOS, EOS, bytes_to_unicode
 
 TINY_MERGES = (("h", "i</w>"), ("c", "a"), ("ca", "t</w>"))
 TINY_VOCAB_SIZE = 517
+
+
+def reference_in_subprocess(
+    function_path: str, kwargs: dict[str, object], out_path: str | os.PathLike[str]
+) -> Any:
+    """Run a reference function in a new interpreter and load its saved result.
+
+    The function must be importable by ``function_path`` and accept ``out_path`` as a keyword
+    argument. It is responsible for saving its result with ``torch.save``.
+    """
+    output = str(out_path)
+    payload = base64.b64encode(
+        pickle.dumps(
+            (function_path, kwargs, output, sys.path, torch.get_num_threads()),
+            protocol=pickle.HIGHEST_PROTOCOL,
+        )
+    ).decode("ascii")
+    code = "\n".join(
+        (
+            "import base64, importlib, pickle, sys, torch",
+            "payload = pickle.loads(base64.b64decode(sys.argv[1]))",
+            "function_path, kwargs, output, paths, threads = payload",
+            "sys.path[:0] = paths",
+            "torch.set_num_threads(threads)",
+            "module_path, function_name = function_path.rsplit('.', 1)",
+            "function = getattr(importlib.import_module(module_path), function_name)",
+            "function(**kwargs, out_path=output)",
+        )
+    )
+    subprocess.run([sys.executable, "-c", code, payload], check=True, env=os.environ.copy())
+    return torch.load(output, weights_only=True)
 
 
 def write_tiny_tokenizer(directory: str | os.PathLike[str], *, pad_token: str = EOS) -> Path:

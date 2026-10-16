@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 import pytest
 import torch
-from helpers import max_diff, snapshot_dir
+from helpers import max_diff, reference_in_subprocess, snapshot_dir
 
 from imagehub import pipeline
 from imagehub.backends.joyai_image import (
@@ -620,11 +620,10 @@ def test_real_vae(model_id, record, tmp_path):
     _check(record, f"vae_decode_{model_id}", actual, expected)
 
 
-@pytest.mark.parametrize("model_id", MODEL_IDS)
-@pytest.mark.parametrize("seed", (0, 42))
-def test_real_end_to_end(model_id, seed, record, monkeypatch):
-    diffusers = pytest.importorskip("diffusers")
-    root = snapshot_dir(model_id)
+def _reference_end_to_end(model_id, root, seed, out_path):
+    import diffusers
+
+    root = Path(root)
     image = _image().resize((512, 512))
     cls = (
         diffusers.JoyImageEditPlusPipeline
@@ -636,7 +635,7 @@ def test_real_end_to_end(model_id, seed, record, monkeypatch):
         if model_id.endswith("plus")
         else diffusers.JoyImageEditTransformer3DModel
     )
-    monkeypatch.setattr(transformer_cls, "_keep_in_fp32_modules", None)
+    transformer_cls._keep_in_fp32_modules = None
     reference = cls.from_pretrained(root, local_files_only=True, torch_dtype=torch.float32)
     torch.manual_seed(seed)
     kwargs = {"images": [image]} if model_id.endswith("plus") else {"image": image}
@@ -652,8 +651,21 @@ def test_real_end_to_end(model_id, seed, record, monkeypatch):
     expected = torch.frombuffer(bytearray(expected.tobytes()), dtype=torch.uint8).reshape(
         expected.height, expected.width, 3
     )
-    del reference
+    torch.save(expected, out_path)
+    del reference, expected
     gc.collect()
+
+
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+@pytest.mark.parametrize("seed", (0, 42))
+def test_real_end_to_end(model_id, seed, record, tmp_path):
+    root = snapshot_dir(model_id)
+    image = _image().resize((512, 512))
+    expected = reference_in_subprocess(
+        "test_ref_joyai_image._reference_end_to_end",
+        {"model_id": model_id, "root": str(root), "seed": seed},
+        tmp_path / "expected.pt",
+    )
     torch.manual_seed(seed)
     actual = (
         pipeline("t2i", backend=model_id, model=root)(
