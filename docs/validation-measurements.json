@@ -863,6 +863,20 @@
       "pixels": 0
     }
   },
+  "e2e_hidream-o1-image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "reference": {
+      "git_commit": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4"
+    },
+    "revision": "0b0901d99f200389e138c61946af1185f5f49a13",
+    "seed": 0,
+    "size": [
+      32,
+      64
+    ],
+    "steps": 2
+  },
   "e2e_hidream_i1_dev": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -2966,6 +2980,12 @@
       "tensors": 244
     }
   },
+  "header_hidream-o1-image": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 759
+  },
   "header_hunyuan-dit-v1.2": {
     "text_encoder": {
       "extra": [],
@@ -4309,6 +4329,16 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "hidream_o1_denoiser_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hidream_o1_tokenizer_positions": {
+    "exact": true,
+    "prompts": 3,
+    "sequence": 24
   },
   "hidream_pooled_clip": {
     "max_abs": 0.0,
@@ -6709,7 +6739,8 @@
     "tolerance": "exact"
   },
   "qwen_image_transformer": {
-    "calls": 1,
+    "calls": 2,
+    "kv_cache": true,
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -8093,6 +8124,20 @@
     "pixels_max_abs": 0,
     "seed": 1,
     "size": 512,
+    "steps": 2
+  },
+  "seed_e2e_hidream-o1-image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "reference": {
+      "git_commit": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4"
+    },
+    "revision": "0b0901d99f200389e138c61946af1185f5f49a13",
+    "seed": 42,
+    "size": [
+      32,
+      64
+    ],
     "steps": 2
   },
   "seed_e2e_hidream_i1_dev": {

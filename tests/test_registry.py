@@ -41,6 +41,7 @@ def test_family_and_model_aliases_are_registered():
     assert {"kandinsky5", "kandinsky-5-t2i-lite"} <= set(names)
     assert "kolors" in names
     assert {"hidream", "hidream-i1-fast"} <= set(names)
+    assert {"hidream-o1", "hidream-o1-image"} <= set(names)
     assert {"auraflow", "auraflow-v0.3"} <= set(names)
     assert {"prx", "prx-1024-t2i-beta", "prx-512-t2i-sft"} <= set(names)
     assert {

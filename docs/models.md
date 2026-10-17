@@ -2260,6 +2260,62 @@ precomputed prompt embeddings, LoRA and fp16/bf16 parity are not supported.
 terms: Llama 3.1 Community License and Apache-2.0 for T5; the VAE comes from FLUX.1 [schnell].
 imagehub does not distribute weights.
 
+# HiDream-O1
+
+Catalog: [`hidream-o1-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `hidream-o1-image` · Task: `t2i`
+
+**Architecture.** HiDream-O1 uses a Qwen3-VL-8B decoder with 36 layers, width 4096 and grouped
+query attention. It appends noisy RGB image patches directly to the chat-formatted text sequence.
+Each patch contains one 32×32 RGB region; a two-stage linear projection maps it to the decoder
+width, and a linear output head predicts the clean pixels. Text tokens retain causal attention,
+while the timestep token and generated image tokens attend to the complete sequence. There is no
+VAE: the final patch sequence is rearranged directly into an RGB image.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained hidream-o1-image checkpoints/hidream-o1-image
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="hidream-o1-image", model="checkpoints/hidream-o1-image"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The checkpoint defaults to 50 Flow-UniPC steps, classifier-free guidance 5.0,
+schedule shift 3.0 and 2560×1440 output. `width` and `height` must be multiples of 32. The supported
+options are `seed`, caller-supplied `noise`, `steps`, `timesteps`, `guidance`, `shift`, `width`,
+`height` and `num_images`. Noise is drawn on CPU with `seed + 1` and multiplied by 8.0, matching the
+published sampler. Unknown options are rejected before checkpoint loading.
+
+**Prompt and positions.** A single user message is rendered with the checkpoint's Qwen chat
+template and followed by `<|boi_token|><|tms_token|>`. Generated patches use the checkpoint's
+fixed-point multimodal rotary positions beginning at 4096. Guidance above 1.0 adds an unconditional
+branch whose prompt is one space.
+
+**Image input.** Not supported yet. Although the published checkpoint contains the Qwen3-VL vision
+encoder and the official implementation can condition on reference images, this backend currently
+implements text-to-image only. The catalog therefore declares no image input.
+
+**Memory and validation.** The eight float32 shards total about 32.8 GiB. The published 759-tensor
+layout, new pixel modules, tokenizer and positions, Flow-UniPC trajectory, guided and unguided
+sampling, two seeds and non-square output have offline exact-parity tests. All 5 real-checkpoint
+tests passed with every recorded comparison exactly 0; the run took 1 minute on an M2 Max (CPU)
+([validation](validation.md)).
+
+**Out of scope.** Reference-image, subject, layout and skeleton conditioning, the prompt-refiner
+agent, distributed inference, flash attention, Dev checkpoints and reduced-precision parity are
+not supported.
+
+**License.** The author repository declares the model weights and official code MIT. imagehub does
+not distribute weights.
+
 # OmniGen
 
 Catalog: [`omnigen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
