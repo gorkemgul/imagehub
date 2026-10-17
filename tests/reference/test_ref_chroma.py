@@ -1,4 +1,4 @@
-"""Chroma1-HD parity against a local published snapshot on CPU float32."""
+"""Chroma checkpoint parity against local published snapshots on CPU float32."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ np = pytest.importorskip("numpy")
 
 CPU = torch.device("cpu")
 MODEL_ID = "chroma1-hd"
-MODEL_IDS = ("chroma1-hd", "chroma1-flash")
+MODEL_IDS = ("chroma1-hd", "chroma1-flash", "chroma1-base")
 PROMPT = "a photograph of an astronaut riding a horse"
 MAX_SEQUENCE_LENGTH = 512
 
@@ -87,6 +87,7 @@ def _tiny_transformer_config() -> dict[str, Any]:
     (
         ("chroma1-hd", "chroma_configs"),
         ("chroma1-flash", "chroma_flash_configs"),
+        ("chroma1-base", "chroma_configs"),
     ),
 )
 def test_headers(record, model_id, fixture_name):
@@ -192,6 +193,7 @@ def test_transformer_published_config_small_size(record):
     (
         ("chroma1-hd", "chroma_configs"),
         ("chroma1-flash", "chroma_flash_configs"),
+        ("chroma1-base", "chroma_base_configs"),
     ),
 )
 def test_scheduler(record, model_id, fixture_name):
@@ -199,15 +201,13 @@ def test_scheduler(record, model_id, fixture_name):
     config = read_json(root / "scheduler" / "scheduler_config.json")
     sigmas = [1.0, 0.75, 0.5, 0.25]
     mu = calculate_shift(4096, config)
-    scheduler_config = dict(config)
-    scheduler_config["use_beta_sigmas"] = False
-    reference = diffusers.FlowMatchEulerDiscreteScheduler.from_config(scheduler_config)
+    reference = diffusers.FlowMatchEulerDiscreteScheduler.from_config(config)
     reference.set_timesteps(sigmas=sigmas, mu=mu)
     expected_sigmas = reference.sigmas.cpu()
     expected_timesteps = reference.timesteps.cpu()
     del reference
     gc.collect()
-    ours = FlowMatchEulerDiscreteScheduler(scheduler_config)
+    ours = FlowMatchEulerDiscreteScheduler(config)
     ours.set_timesteps(4, sigmas=sigmas, mu=mu)
     exact = torch.equal(ours.sigmas, expected_sigmas) and torch.equal(
         ours.timesteps, expected_timesteps

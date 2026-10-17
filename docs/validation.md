@@ -526,6 +526,11 @@ reference. The random-weight and tiny-snapshot comparisons below are exact.
 `093c4f63b60507234aa53a073f1f9f565b3f4336`; its published bfloat16 weights are upcast to float32
 on both sides.
 
+`chroma1-base` is loaded strictly from `lodestones/Chroma1-Base` at revision
+`50ebe125b67794f4ed8e4985d26a4414ca62aed3`; its published bfloat16 weights are upcast to float32
+on both sides. Its flow-match Euler scheduler uses the published Beta(0.6, 0.6) sigma schedule;
+the float64 quantiles and resulting float32 sigmas match SciPy and diffusers exactly.
+
 ### Comparisons without published weights (CPU, float32)
 
 | Comparison | Largest observed difference | Tolerance |
@@ -580,6 +585,11 @@ The real-checkpoint run took 24 minutes on an M2 Max (CPU). Records: `header_chr
 `e2e_chroma1-flash_latents` and `seed_e2e_chroma1-flash`,
 [validation-measurements.json](validation-measurements.json); `tensor_header_check`, `end_to_end`
 and `seed_end_to_end`, [validation.json](validation.json).
+
+`chroma1-base` uses the same real-checkpoint comparisons, including strict tensor headers, tokenizer,
+text encoder, transformer, VAE decode, beta scheduler, two-step end-to-end latent and pixel equality,
+and a separate seed-42 image run. Records use the `header_chroma1-base`, `chroma1-base_*`,
+`e2e_chroma1-base`, `e2e_chroma1-base_latents` and `seed_e2e_chroma1-base` keys.
 
 ## FLUX.2 klein
 

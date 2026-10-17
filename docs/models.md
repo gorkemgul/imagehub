@@ -609,8 +609,8 @@ with pipeline(
 
 # Chroma
 
-Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures), [`chroma1-flash`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `chroma1-hd`, `chroma1-flash` · Task: `t2i`
+Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures), [`chroma1-flash`](https://github.com/gorkemgul/awesome-text-to-image-architectures), [`chroma1-base`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `chroma1-hd`, `chroma1-flash`, `chroma1-base` · Task: `t2i`
 
 **Architecture.** Chroma1-HD is a ~8.9B diffusion transformer built on the FLUX.1 latent-flow
 foundation. It reuses the FLUX.1 VAE (16 latent channels, scaling factor 0.3611, shift factor 0.1159)
@@ -638,14 +638,15 @@ with pipeline("t2i", backend="chroma1-hd", model="checkpoints/chroma1-hd", devic
 ```
 
 **Settings.** Chroma1-HD defaults to 35 steps and guidance 5.0; Chroma1-Flash defaults to 4 steps
-and guidance 1.0. All default to 1024×1024;
+and guidance 1.0; Chroma1-Base defaults to 40 steps and guidance 3.0 and uses the checkpoint's
+Beta(0.6, 0.6) flow-match sigma schedule. All default to 1024×1024;
 `width` and `height` must be multiples of 16. The other supported options are `num_images`, `seed`, `latents`,
 `negative_prompt` and `max_sequence_length` (default 512, at most 512). Unrecognized settings raise
 an error.
 
 **Seed compatibility.** Random-weight parity against diffusers 0.40.0 `ChromaPipeline` is exact on
-CPU in float32. Real-weight parity with the published bfloat16 weights will be measured when the
-local snapshot is available ([validation](validation.md)). MPS and CUDA runs are smoke tests only;
+CPU in float32. The published bfloat16 checkpoints are loaded as float32 and reproduce the recorded
+reference outputs exactly ([validation](validation.md)). MPS and CUDA runs are smoke tests only;
 there is no claim of exact equality on these devices.
 
 **Out of scope.** Img2img, inpainting, IP-Adapter, LoRA, single-file checkpoint loading and

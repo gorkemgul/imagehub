@@ -21,6 +21,7 @@ reference = [
   "torchvision",
   "sentencepiece",
   "protobuf",
+  "scipy",
 ]
 dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.9", "mypy>=1.13", "build>=1.2"]
 
