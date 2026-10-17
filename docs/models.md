@@ -7,8 +7,27 @@ image input, and passing `image` to one raises an error.
 | Model | Image input | Use | Options |
 | --- | --- | --- | --- |
 | `flux1-kontext-dev` | optional | instruction editing | `image` |
+| `joyai-image-edit` | optional | instruction editing | `image` |
+| `joyai-image-edit-plus` | required | multi-image instruction editing | `image` |
 | `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
 | `omnigen-v1` | optional | editing and subject-driven generation, referenced from the prompt | `image`, `image_guidance`, `max_input_image_size`, `use_input_image_size_as_output` |
+
+# JoyAI-Image
+
+Catalog: [`joyai-image-edit`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `joyai-image-edit`, `joyai-image-edit-plus` · Task: `t2i`
+
+**Architecture.** JoyAI-Image combines Qwen3-VL conditioning, a WAN causal VAE, a dual-stream
+3D transformer, and flow-match Euler sampling. Published weights are bfloat16 safetensors.
+
+**Settings.** `steps` (40 for Edit, 30 for Edit Plus), `guidance` (4.0), `width`/`height`, `seed`,
+and `image`. The base checkpoint also permits text-only generation; Plus requires an input image.
+
+**Validation.** Published-header and exact random-weight tests cover the native Qwen3-VL vision
+conditioning and both transformer paths. Real-checkpoint parity is covered: all 23 real tests
+passed with exactly 0 difference in every recorded comparison, and the run took 123 minutes on an
+M2 Max (CPU) ([validation](validation.md)). The catalog records the exact repositories, commits,
+component files, and bfloat16 precision.
 
 # Latent Diffusion Model
 

@@ -50,7 +50,10 @@ def test_catalog_entry():
     assert len(set(spec.files)) == len(spec.files) == 12
     assert not any(name.startswith(("text_encoder/", "tokenizer/")) for name in spec.files)
     assert not any("fp16" in name or name.startswith("vae_1_0/") for name in spec.files)
-    assert [m for m, s in MODEL_CATALOG.items() if s.image_input == "required"] == [REFINER]
+    assert [m for m, s in MODEL_CATALOG.items() if s.image_input == "required"] == [
+        "joyai-image-edit-plus",
+        REFINER,
+    ]
 
 
 def test_published_configs_match_the_published_tensor_layout():

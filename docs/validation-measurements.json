@@ -498,6 +498,16 @@
       "max_rel": 0.0
     }
   },
+  "conditioning_joyai-image-edit": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "conditioning_joyai-image-edit-plus": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "ddpm_wuerstchen_timesteps_12": {
     "exact": true,
     "tolerance": "exact"
@@ -1006,6 +1016,18 @@
     "passed": true,
     "pixels_match": true,
     "tokens_match": true
+  },
+  "e2e_joyai-image-edit": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 2
+  },
+  "e2e_joyai-image-edit-plus": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 2
   },
   "e2e_kandinsky-2-1": {
     "passed": true,
@@ -3115,6 +3137,46 @@
     "mismatch": [],
     "missing": [],
     "tensors": 1018
+  },
+  "header_joyai-image-edit": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 750
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 894
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 194
+    }
+  },
+  "header_joyai-image-edit-plus": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 750
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 894
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 194
+    }
   },
   "header_kandinsky-2-1": {
     "movq": {
@@ -8204,6 +8266,18 @@
     "pixels_match": true,
     "seed": 42
   },
+  "seed_e2e_joyai-image-edit": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
+  },
+  "seed_e2e_joyai-image-edit-plus": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
+  },
   "seed_e2e_kandinsky-2-1": {
     "passed": true,
     "seed": 42
@@ -8823,6 +8897,14 @@
     "prompts": 14,
     "tolerance": "exact"
   },
+  "tokenizer_vision_joyai-image-edit": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "tokenizer_vision_joyai-image-edit-plus": {
+    "passed": true,
+    "tolerance": "exact"
+  },
   "tokenizers_hidream-i1-dev": {
     "identical": true,
     "prompts": 6
@@ -8834,6 +8916,16 @@
   "tokenizers_hidream-i1-full": {
     "identical": true,
     "prompts": 6
+  },
+  "transformer_joyai-image-edit": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "transformer_joyai-image-edit-plus": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
   },
   "umt5_random": {
     "length": 48,
@@ -8855,7 +8947,27 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "vae_decode_joyai-image-edit": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "vae_decode_joyai-image-edit-plus": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "vae_encode_joyai-image-edit": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "vae_encode_joyai-image-edit-plus": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0

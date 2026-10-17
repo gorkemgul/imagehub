@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import os
+import pickle
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 import torch
@@ -15,6 +18,39 @@ from imagehub.tokenization import BOS, EOS, bytes_to_unicode
 
 TINY_MERGES = (("h", "i</w>"), ("c", "a"), ("ca", "t</w>"))
 TINY_VOCAB_SIZE = 517
+
+
+def reference_in_subprocess(
+    function_path: str, kwargs: dict[str, object], out_path: str | os.PathLike[str]
+) -> Any:
+    """Run a reference function in a new interpreter and load its saved result.
+
+    The function must be importable by ``function_path`` and accept ``out_path`` as a keyword
+    argument. It is responsible for saving its result with ``torch.save``.
+    """
+    output = str(out_path)
+    payload = base64.b64encode(
+        pickle.dumps(
+            (function_path, kwargs, output, sys.path, torch.get_num_threads()),
+            protocol=pickle.HIGHEST_PROTOCOL,
+        )
+    ).decode("ascii")
+    code = "\n".join(
+        (
+            "import base64, importlib, pickle, sys, torch",
+            "payload = pickle.loads(base64.b64decode(sys.argv[1]))",
+            "function_path, kwargs, output, paths, threads = payload",
+            "sys.path[:0] = paths",
+            "torch.set_num_threads(threads)",
+            "module_path, function_name = function_path.rsplit('.', 1)",
+            "function = getattr(importlib.import_module(module_path), function_name)",
+            "parameters = __import__('inspect').signature(function).parameters",
+            "output_name = 'out_path' if 'out_path' in parameters else 'output'",
+            "function(**kwargs, **{output_name: output})",
+        )
+    )
+    subprocess.run([sys.executable, "-c", code, payload], check=True, env=os.environ.copy())
+    return torch.load(output, weights_only=True)
 
 
 def write_tiny_tokenizer(directory: str | os.PathLike[str], *, pad_token: str = EOS) -> Path:
@@ -65,53 +101,6 @@ def max_diff(actual: torch.Tensor, expected: torch.Tensor) -> dict[str, float]:
         "max_abs": float(d.max()),
         "max_rel": float((d / e.abs().clamp_min(1e-12)).max()),
     }
-
-
-def reference_in_subprocess(
-    function_path: str, kwargs: dict[str, object], out_path: str | os.PathLike[str]
-) -> object:
-    """Run a module-level reference function in a fresh interpreter and load its saved result.
-
-    The function must accept the supplied keyword arguments plus ``output`` and save a tensor or
-    tensor-only container there with ``torch.save``. Keeping the reference process separate lets
-    large checkpoint tests load the native implementation only after the reference model exits.
-    """
-    output = Path(out_path)
-    arguments = output.with_suffix(output.suffix + ".kwargs.pt")
-    repository = Path(__file__).resolve().parent.parent
-    tests = repository / "tests"
-    environment = os.environ.copy()
-    existing_pythonpath = environment.get("PYTHONPATH")
-    environment["PYTHONPATH"] = (
-        str(tests) if not existing_pythonpath else str(tests) + os.pathsep + existing_pythonpath
-    )
-    program = (
-        "import importlib, sys, torch; "
-        "module_name, function_name = sys.argv[1].rsplit('.', 1); "
-        "torch.set_num_threads(int(sys.argv[2])); "
-        "function = getattr(importlib.import_module(module_name), function_name); "
-        "kwargs = torch.load(sys.argv[3], weights_only=False); "
-        "function(**kwargs, output=sys.argv[4])"
-    )
-    torch.save(kwargs, arguments)
-    try:
-        subprocess.run(
-            [
-                sys.executable,
-                "-c",
-                program,
-                function_path,
-                str(torch.get_num_threads()),
-                str(arguments),
-                str(output),
-            ],
-            check=True,
-            cwd=repository,
-            env=environment,
-        )
-    finally:
-        arguments.unlink(missing_ok=True)
-    return torch.load(output, weights_only=True)
 
 
 FIXTURES = Path(__file__).parent / "fixtures"

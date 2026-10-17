@@ -153,6 +153,8 @@ def test_catalog_entry():
     assert MODEL_CATALOG[KONTEXT].image_input == "optional"
     assert {m for m, s in MODEL_CATALOG.items() if s.image_input} == {
         KONTEXT,
+        "joyai-image-edit",
+        "joyai-image-edit-plus",
         "sdxl-refiner-1.0",
         "omnigen-v1",
     }

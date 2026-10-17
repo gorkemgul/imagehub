@@ -98,6 +98,7 @@ for _task, _name, _path in (
     ),
     (Task.T2I, "z-image", "imagehub.backends.z_image:ZImageBackend"),
     (Task.T2I, "qwen-image", "imagehub.backends.qwen_image:QwenImageBackend"),
+    (Task.T2I, "joyai-image", "imagehub.backends.joyai_image:JoyAIImageBackend"),
     (Task.T2I, "flux2", "imagehub.backends.flux2:Flux2Backend"),
     (Task.T2I, "flux", "imagehub.backends.flux:FluxBackend"),
     (Task.T2I, "chroma", "imagehub.backends.chroma:ChromaBackend"),

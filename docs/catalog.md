@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**39 architecture families, 86 published checkpoints.** A model is a separately published set of weights;
+**40 architecture families, 88 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -43,6 +43,8 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `flux1-dev` | `flux` | [black-forest-labs/FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) | `3de623f` | author | full | FLUX.1-dev Non-Commercial License | `flux-1` |
 | `flux1-krea-dev` | `flux` | [black-forest-labs/FLUX.1-Krea-dev](https://huggingface.co/black-forest-labs/FLUX.1-Krea-dev) | `8162a9c` | author | full | FLUX.1-dev Non-Commercial License | `flux-1` |
 | `flux1-kontext-dev` | `flux` | [black-forest-labs/FLUX.1-Kontext-dev](https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev) | `24e9ded` | author | full | FLUX.1-dev Non-Commercial License | `flux-1-kontext` |
+| `joyai-image-edit` | `joyai-image` | [jdopensource/JoyAI-Image-Edit-Diffusers](https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers) | `4b41fb2` | author | full | Apache-2.0 | `joyai-image` |
+| `joyai-image-edit-plus` | `joyai-image` | [jdopensource/JoyAI-Image-Edit-Plus-Diffusers](https://huggingface.co/jdopensource/JoyAI-Image-Edit-Plus-Diffusers) | `c268646` | author | full | Apache-2.0 | `joyai-image` |
 | `flux2-klein-4b` | `flux2` | [black-forest-labs/FLUX.2-klein-4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B) | `e7b7dc2` | author | full | Apache-2.0 | `flux-2` |
 | `flux2-klein-9b` | `flux2` | [black-forest-labs/FLUX.2-klein-9B](https://huggingface.co/black-forest-labs/FLUX.2-klein-9B) | `92196c8` | author | full | FLUX Non-Commercial License | `flux-2` |
 | `hunyuan-dit-v1.1-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled) | `527cf2e` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
