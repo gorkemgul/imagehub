@@ -24,8 +24,10 @@ Models: `joyai-image-edit`, `joyai-image-edit-plus` · Task: `t2i`
 and `image`. The base checkpoint also permits text-only generation; Plus requires an input image.
 
 **Validation.** Published-header and exact random-weight tests cover the native Qwen3-VL vision
-conditioning and both transformer paths. Snapshot-gated component and end-to-end validation is
-pending the real-checkpoint run.
+conditioning and both transformer paths. Real-checkpoint parity is covered: all 23 real tests
+passed with exactly 0 difference in every recorded comparison, and the run took 123 minutes on an
+M2 Max (CPU) ([validation](validation.md)). The catalog records the exact repositories, commits,
+component files, and bfloat16 precision.
 
 # Latent Diffusion Model
 

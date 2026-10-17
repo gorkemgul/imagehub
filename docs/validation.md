@@ -481,10 +481,40 @@ full dev run took 25 minutes. The Krea [dev] real-checkpoint run took about 30 m
 ## JoyAI-Image
 
 `joyai-image-edit` and `joyai-image-edit-plus` use the pinned Apache-2.0 checkpoints from
-jdopensource. The repositories publish bfloat16 safetensors only. Header checks, Qwen3-VL prompt
-conditioning, transformer and VAE component comparisons, and fixed-input end-to-end records
-(`e2e_joyai-image-edit`, `seed_e2e_joyai-image-edit`, `e2e_joyai-image-edit-plus`, and
-`seed_e2e_joyai-image-edit-plus`) are pending the real-checkpoint run.
+jdopensource at revisions `4b41fb25d961f37668750178ccbb380da326201c` and
+`c2686460c7b64d8aa11bc4d0da423fb316b33f9e` and were compared with diffusers 0.40.0
+`JoyImageEditPipeline` and `JoyImageEditPlusPipeline` and transformers 5.18.0 on CPU in float32
+in the same environment as above. The repositories publish bfloat16 safetensors only; the weights
+are upcast to float32 on both sides. All 23 real tests passed, and the observed difference in
+every recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the local
+implementation produces a bit-identical image to the one diffusers produces. The real-checkpoint
+run took 123 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32, upcast bfloat16 weights)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (`text_encoder`, `transformer`, `vae`; 750 / 894 / 194 tensors, both checkpoints) | 0 missing / extra / mismatched | exact |
+| Qwen3-VL tokenizer and vision preprocessing: token ids, image grid and pixels (both checkpoints) | identical | exact |
+| Qwen3-VL text and vision conditioning, last hidden state (both checkpoints) | 0 | 0 |
+| `joyai-image-edit` transformer single step (timestep 500) | 0 | 0 |
+| `joyai-image-edit-plus` transformer single step (timestep 500, image-token mask and shape list) | 0 | 0 |
+| VAE encode / decode (64×80 input, both checkpoints) | 0 / 0 | 0 / 0 |
+| End to end with the input image: final pixels (512×512, 2 steps, guidance 4.0, seed 0, both checkpoints) | 0 | 0 |
+| End to end, seed 42 (pixels, both checkpoints) | 0 | 0 |
+
+The end-to-end prompt was "Turn the square blue." with a fixed synthetic input image resized to
+512×512. Two steps are used instead of the 40-step (Edit) and 30-step (Edit Plus) defaults only to
+shorten the CPU run. The reference pipelines and the native models are loaded one at a time, and
+each reference end-to-end run executes in a subprocess before the native model runs. Random-weight
+parity for the Qwen3-VL vision encoder, both transformer paths, the WAN VAE and the tiny pipeline
+is unchanged and exact.
+
+Records: `header_joyai-image-edit`, `tokenizer_vision_joyai-image-edit`,
+`conditioning_joyai-image-edit`, `transformer_joyai-image-edit`, `vae_encode_joyai-image-edit`,
+`vae_decode_joyai-image-edit`, `e2e_joyai-image-edit` and `seed_e2e_joyai-image-edit`, and the
+same eight keys under the `joyai-image-edit-plus` id,
+[validation-measurements.json](validation-measurements.json).
 
 ## FLUX.1 Kontext
 
@@ -1967,7 +1997,8 @@ first sequence of the batch only; the native module reproduces that.
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast`, 8 passed each
   for `hidream-i1-dev` and `hidream-i1-full`, 5 passed for `hidream-o1-image`, and 14 passed
   for `chroma1-hd`, 16 passed for `chroma1-flash`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
-  `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together, and
+  `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together,
+  23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, and
   7 passed for `deepfloyd-if-i-xl`. These include structural parity with random weights,
   end-to-end parity with a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
