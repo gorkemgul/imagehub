@@ -2580,6 +2580,79 @@ def write_tiny_amused(
     return root
 
 
+TINY_MEISSONIC_TRANSFORMER = {
+    "_class_name": "Transformer2DModel",
+    "patch_size": 1,
+    "in_channels": 8,
+    "num_layers": 1,
+    "num_single_layers": 2,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "joint_attention_dim": 32,
+    "pooled_projection_dim": 16,
+    "guidance_embeds": False,
+    "axes_dims_rope": [2, 2, 4],
+    "vocab_size": 24,
+    "codebook_size": 20,
+    "downsample": False,
+    "upsample": False,
+}
+
+
+def write_tiny_meissonic(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """Write a random tiny Meissonic snapshot in the published layout."""
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.clip_text import CLIPTextModelWithProjection
+    from imagehub.models.meissonic_transformer import MeissonicTransformer2DModel
+    from imagehub.models.vq_model import VQModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_tokenizer(root / "tokenizer", pad_token="!")
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        json.dumps({"_class_name": "Scheduler", "mask_token_id": 23, "masking_schedule": "cosine"})
+    )
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "Pipeline",
+                "scheduler": ["scheduler", "Scheduler"],
+                "text_encoder": ["transformers", "CLIPTextModelWithProjection"],
+                "tokenizer": ["transformers", "CLIPTokenizer"],
+                "transformer": ["transformer", "Transformer2DModel"],
+                "vqvae": ["diffusers", "VQModel"],
+            }
+        )
+    )
+    text = TINY_TEXT_FILE_CONFIG | {
+        "architectures": ["CLIPTextModelWithProjection"],
+        "projection_dim": 16,
+    }
+    for name, cls, config, weights, std in (
+        ("text_encoder", CLIPTextModelWithProjection, text, "model.safetensors", 0.1),
+        (
+            "transformer",
+            MeissonicTransformer2DModel,
+            TINY_MEISSONIC_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+            0.2,
+        ),
+        ("vqvae", VQModel, TINY_AMUSED_VQVAE, "diffusion_pytorch_model.safetensors", 0.1),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, std)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
 AURAFLOW_FIXTURES = Path(__file__).parent / "fixtures" / "auraflow_configs"
 TINY_AURAFLOW_MERGES = (
     ("▁", "a"),

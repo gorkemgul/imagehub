@@ -178,6 +178,7 @@ def test_downloads_transformer_only_pixart_sigma_on_top_of_the_1024_snapshot(
         "lumina-image-2.0",
         "amused-256",
         "amused-512",
+        "meissonic",
         "auraflow-v0.3",
         "prx-1024-t2i-beta",
         "prx-512-t2i-sft",

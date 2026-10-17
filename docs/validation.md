@@ -1765,6 +1765,21 @@ configuration at small spatial sizes. Tiny-snapshot end-to-end parity covers the
 guidance on and off, non-square sizes, two seeds and several weight seeds, using a random snapshot in
 the published diffusers layout.
 
+## Meissonic
+
+`meissonic` is pinned to `MeissonFlow/Meissonic` revision `7ee5068` and compared on CPU in
+float32 with the official `viiika/Meissonic` `src.pipeline.Pipeline` at commit `a9de06c`.
+Offline fixtures cover 389 text-encoder tensors, 867 transformer tensors, and 277 VQ-VAE tensors
+with no missing, extra, or mismatched names or shapes. Random-weight tests compare the transformer
+and scheduler exactly, and tiny whole-pipeline tests compare guidance off and on, a non-square
+image, multiple seeds, final tokens, and uint8 pixels exactly.
+
+The opt-in real-checkpoint suite is in `tests/reference/test_ref_meissonic.py`. It checks the
+tokenizer, projected and penultimate CLIP states, one transformer step, VQ decode, and separate
+public-pipeline runs at seeds 0 and 42. Those measurements are pending the real-checkpoint run.
+Both end-to-end cases use 2 steps at 1024×32 instead of the 48-step 1024×1024 default to keep the
+CPU validation short while exercising the published transformer's compression path.
+
 ## AuraFlow
 
 Validated on CPU in the same environment as above. `auraflow-v0.3` is loaded strictly from
