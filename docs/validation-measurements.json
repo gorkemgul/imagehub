@@ -266,6 +266,30 @@
     "max_abs_diff": 0.0,
     "tolerance": "exact"
   },
+  "chroma1-base_scheduler": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
+  "chroma1-base_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-base_tokenizer": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "chroma1-base_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "chroma1-base_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "chroma1-flash_scheduler": {
     "exact": true,
     "mu": 1.15,
@@ -640,6 +664,17 @@
     "passed": true,
     "pixels_match": true,
     "tokens_match": true
+  },
+  "e2e_chroma1-base": {
+    "guidance": 5.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "steps": 2
+  },
+  "e2e_chroma1-base_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
   },
   "e2e_chroma1-flash": {
     "guidance": 5.0,
@@ -2526,6 +2561,46 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_chroma1-base": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1023
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
+    }
+  },
+  "header_chroma1-base_fixtures": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1023
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
     }
   },
   "header_chroma1-flash": {
@@ -8069,6 +8144,12 @@
       1360,
       768
     ]
+  },
+  "seed_e2e_chroma1-base": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
   },
   "seed_e2e_chroma1-flash": {
     "max_pixel_diff": 0,

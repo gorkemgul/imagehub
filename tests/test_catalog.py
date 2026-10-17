@@ -12,6 +12,7 @@ def test_catalog_contents():
             "amused-256",
             "amused-512",
             "auraflow-v0.3",
+            "chroma1-base",
             "chroma1-flash",
             "chroma1-hd",
             "cogview3-plus-3b",
@@ -911,6 +912,12 @@ def test_chroma_catalog_entry():
 @pytest.mark.parametrize(
     ("model_id", "repo", "revision", "defaults"),
     (
+        (
+            "chroma1-base",
+            "lodestones/Chroma1-Base",
+            "50ebe125b67794f4ed8e4985d26a4414ca62aed3",
+            {"steps": 40, "guidance": 3.0, "width": 1024, "height": 1024},
+        ),
         (
             "chroma1-flash",
             "lodestones/Chroma1-Flash",

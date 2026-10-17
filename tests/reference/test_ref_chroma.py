@@ -1,4 +1,4 @@
-"""Chroma1-HD parity against a local published snapshot on CPU float32."""
+"""Chroma checkpoint parity against local published snapshots on CPU float32."""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ import gc
 import json
 import struct
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -18,7 +19,7 @@ from imagehub.checkpoints import read_json, save_safetensors
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.chroma_transformer import ChromaTransformer2DModel
 from imagehub.models.t5 import T5EncoderModel
-from imagehub.schedulers.flow_match_euler import FlowMatchEulerDiscreteScheduler
+from imagehub.schedulers.flow_match_euler import FlowMatchEulerDiscreteScheduler, _beta_ppf
 from imagehub.tokenization_t5 import T5Tokenizer
 
 pytestmark = pytest.mark.reference
@@ -28,9 +29,21 @@ np = pytest.importorskip("numpy")
 
 CPU = torch.device("cpu")
 MODEL_ID = "chroma1-hd"
-MODEL_IDS = ("chroma1-hd", "chroma1-flash")
+MODEL_IDS = ("chroma1-hd", "chroma1-flash", "chroma1-base")
 PROMPT = "a photograph of an astronaut riding a horse"
 MAX_SEQUENCE_LENGTH = 512
+
+
+@pytest.fixture(autouse=True)
+def _reference_beta_sigmas_without_scipy(monkeypatch):
+    """Let Diffusers exercise beta schedules in the dependency-minimal test environment."""
+    scheduler_module = diffusers.schedulers.scheduling_flow_match_euler_discrete
+    if scheduler_module.is_scipy_available():
+        return
+    beta = SimpleNamespace(ppf=lambda probability, _alpha, _beta: _beta_ppf(float(probability)))
+    scipy = SimpleNamespace(stats=SimpleNamespace(beta=beta))
+    monkeypatch.setattr(scheduler_module, "scipy", scipy, raising=False)
+    monkeypatch.setattr(scheduler_module, "is_scipy_available", lambda: True)
 
 
 def _checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
@@ -87,6 +100,7 @@ def _tiny_transformer_config() -> dict[str, Any]:
     (
         ("chroma1-hd", "chroma_configs"),
         ("chroma1-flash", "chroma_flash_configs"),
+        ("chroma1-base", "chroma_configs"),
     ),
 )
 def test_headers(record, model_id, fixture_name):
@@ -192,6 +206,7 @@ def test_transformer_published_config_small_size(record):
     (
         ("chroma1-hd", "chroma_configs"),
         ("chroma1-flash", "chroma_flash_configs"),
+        ("chroma1-base", "chroma_base_configs"),
     ),
 )
 def test_scheduler(record, model_id, fixture_name):
@@ -199,15 +214,13 @@ def test_scheduler(record, model_id, fixture_name):
     config = read_json(root / "scheduler" / "scheduler_config.json")
     sigmas = [1.0, 0.75, 0.5, 0.25]
     mu = calculate_shift(4096, config)
-    scheduler_config = dict(config)
-    scheduler_config["use_beta_sigmas"] = False
-    reference = diffusers.FlowMatchEulerDiscreteScheduler.from_config(scheduler_config)
+    reference = diffusers.FlowMatchEulerDiscreteScheduler.from_config(config)
     reference.set_timesteps(sigmas=sigmas, mu=mu)
     expected_sigmas = reference.sigmas.cpu()
     expected_timesteps = reference.timesteps.cpu()
     del reference
     gc.collect()
-    ours = FlowMatchEulerDiscreteScheduler(scheduler_config)
+    ours = FlowMatchEulerDiscreteScheduler(config)
     ours.set_timesteps(4, sigmas=sigmas, mu=mu)
     exact = torch.equal(ours.sigmas, expected_sigmas) and torch.equal(
         ours.timesteps, expected_timesteps

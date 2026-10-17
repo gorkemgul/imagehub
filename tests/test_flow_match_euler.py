@@ -6,6 +6,7 @@ import torch
 
 from imagehub.schedulers.flow_match_euler import (
     FlowMatchEulerDiscreteScheduler,
+    _beta_ppf,
     qwen_image_mu,
     z_image_sigmas,
 )
@@ -54,12 +55,31 @@ def test_dynamic_shifting_requires_mu_and_stretches_to_terminal():
     assert scheduler.sigmas[-2].item() == pytest.approx(0.02, abs=1e-6)
 
 
+def test_beta_ppf_matches_scipy_float64():
+    np = pytest.importorskip("numpy")
+    scipy = pytest.importorskip("scipy.stats")
+    probabilities = 1 - np.linspace(0, 1, 40)
+    expected = scipy.beta.ppf(probabilities, 0.6, 0.6).tolist()
+    assert [_beta_ppf(float(value)) for value in probabilities] == expected
+
+
+def test_beta_sigma_schedule():
+    scheduler = FlowMatchEulerDiscreteScheduler(
+        {"num_train_timesteps": 1000, "use_beta_sigmas": True}
+    )
+    scheduler.set_timesteps(4)
+    assert scheduler.sigmas.tolist() == pytest.approx(
+        [1.0, 0.7248620986938477, 0.2761378884315491, 0.0010000000474974513, 0.0],
+        abs=0,
+        rel=0,
+    )
+
+
 @pytest.mark.parametrize(
     ("key", "value"),
     [
         ("use_karras_sigmas", True),
         ("use_exponential_sigmas", True),
-        ("use_beta_sigmas", True),
         ("stochastic_sampling", True),
         ("time_shift_type", "cosine"),
         ("invert_sigmas", True),

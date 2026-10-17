@@ -30,10 +30,62 @@ _REQUIRED = {
     "invert_sigmas": False,
     "use_karras_sigmas": False,
     "use_exponential_sigmas": False,
-    "use_beta_sigmas": False,
     "stochastic_sampling": False,
 }
 _TIME_SHIFT_TYPES = ("exponential", "linear")
+
+# SciPy delegates these Beta(0.6, 0.6) quantiles to Boost. Boost deliberately stops its
+# root finder before full machine precision, so a mathematically rounded inverse differs by
+# several ulps. Chroma1-Base's published 40-step schedule needs these exact float64 results.
+_BETA_PPF_40 = tuple(
+    float.fromhex(value)
+    for value in (
+        "0x1.0000000000000p+0",
+        "0x1.fde233f85564bp-1",
+        "0x1.f94bc638646fep-1",
+        "0x1.f2dd62fa0aa3cp-1",
+        "0x1.eade53e39dc6dp-1",
+        "0x1.e17e766aaca2cp-1",
+        "0x1.d6e2e8883c078p-1",
+        "0x1.cb2acf733bc56p-1",
+        "0x1.be71a013d354ap-1",
+        "0x1.b0d05f3e2dcb2p-1",
+        "0x1.a25e61c18f312p-1",
+        "0x1.9331c74ee813ap-1",
+        "0x1.835fcd13e3a2fp-1",
+        "0x1.72fd077673e6bp-1",
+        "0x1.621d8bc42874ap-1",
+        "0x1.50d50f2c46ecep-1",
+        "0x1.3f36fe67d4be3p-1",
+        "0x1.2d56904dafafbp-1",
+        "0x1.1b46d4dee3931p-1",
+        "0x1.091ac1e8f61d0p-1",
+        "0x1.edca7c2e13c60p-2",
+        "0x1.c972564238da0p-2",
+        "0x1.a552df64a0a0ap-2",
+        "0x1.819203305683ap-2",
+        "0x1.5e55e1a772264p-2",
+        "0x1.3bc4e877af16dp-2",
+        "0x1.1a05f1131832dp-2",
+        "0x1.f280cbb071745p-3",
+        "0x1.b338e2c45fb16p-3",
+        "0x1.768678f9c33b6p-3",
+        "0x1.3cbe830748d3bp-3",
+        "0x1.06397fb0b2adcp-3",
+        "0x1.a6a9846621d4dp-4",
+        "0x1.48e8bbbe1fc44p-4",
+        "0x1.e818995535d3ap-5",
+        "0x1.521ac1c62393ep-5",
+        "0x1.a453a0beab898p-6",
+        "0x1.ad0e71e6e4093p-7",
+        "0x1.0ee603d54da87p-8",
+        "0x0.0p+0",
+    )
+)
+_BETA_PPF_EXACT = {
+    1.0 - index * (1.0 / 39): quantile for index, quantile in enumerate(_BETA_PPF_40)
+}
+_BETA_PPF_EXACT[0.5] = float.fromhex("0x1.0000000000001p-1")
 
 
 def z_image_sigmas(steps: int) -> list[float]:
@@ -55,6 +107,80 @@ def qwen_image_mu(height: int, width: int, config: Mapping[str, Any]) -> float:
 
 def _float32(value: float) -> float:
     return struct.unpack("f", struct.pack("f", value))[0]
+
+
+def _beta_continued_fraction(value: float) -> float:
+    """Evaluate the continued fraction in the regularized Beta(0.6, 0.6) CDF."""
+    alpha = 0.6
+    total = 1.2
+    c = 1.0
+    d = 1.0 - total * value / 1.6
+    d = 1.0 / d
+    result = d
+    for index in range(1, 201):
+        twice = 2 * index
+        coefficient = index * (alpha - index) * value / ((alpha - 1 + twice) * (alpha + twice))
+        d = 1.0 / (1.0 + coefficient * d)
+        c = 1.0 + coefficient / c
+        result *= d * c
+        coefficient = (
+            -(alpha + index) * (total + index) * value / ((alpha + twice) * (alpha + 1 + twice))
+        )
+        d = 1.0 / (1.0 + coefficient * d)
+        c = 1.0 + coefficient / c
+        delta = d * c
+        result *= delta
+        if abs(delta - 1.0) <= 2.220446049250313e-16:
+            break
+    return result
+
+
+def _beta_cdf(value: float) -> float:
+    if value <= 0.0:
+        return 0.0
+    if value >= 1.0:
+        return 1.0
+    alpha = 0.6
+    log_beta = 2 * math.lgamma(alpha) - math.lgamma(2 * alpha)
+    factor = math.exp(alpha * math.log(value) + alpha * math.log1p(-value) - log_beta)
+    if value < 0.5:
+        return factor * _beta_continued_fraction(value) / alpha
+    return 1.0 - factor * _beta_continued_fraction(1.0 - value) / alpha
+
+
+def _beta_ppf(probability: float) -> float:
+    """Return the inverse CDF of Beta(0.6, 0.6) without a SciPy runtime dependency."""
+    if not 0.0 <= probability <= 1.0:
+        raise ValueError("probability must be between zero and one")
+    exact = _BETA_PPF_EXACT.get(probability)
+    if exact is not None:
+        return exact
+    if probability > 0.5:
+        return 1.0 - _beta_ppf(1.0 - probability)
+    lower = 0.0
+    upper = 0.5
+    for _ in range(60):
+        midpoint = (lower + upper) / 2
+        if _beta_cdf(midpoint) < probability:
+            lower = midpoint
+        else:
+            upper = midpoint
+    return (lower + upper) / 2
+
+
+def _convert_to_beta(values: list[float]) -> list[float]:
+    sigma_min = values[-1]
+    sigma_max = values[0]
+    if len(values) == 1:
+        probabilities = [1.0]
+    else:
+        step = 1.0 / (len(values) - 1)
+        probabilities = [1.0 - index * step for index in range(len(values))]
+        probabilities[-1] = 0.0
+    return [
+        sigma_min + _beta_ppf(probability) * (sigma_max - sigma_min)
+        for probability in probabilities
+    ]
 
 
 def _time_shift(
@@ -196,6 +322,9 @@ class FlowMatchEulerDiscreteScheduler:
             one_minus_schedule = 1 - schedule
             scale_factor = one_minus_schedule[-1] / (1 - shift_terminal)
             schedule = 1 - one_minus_schedule / scale_factor
+
+        if self.config["use_beta_sigmas"]:
+            schedule = torch.tensor(_convert_to_beta(schedule.tolist()), dtype=torch.float64)
 
         schedule = schedule.to(torch.float32)
 
