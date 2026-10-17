@@ -624,10 +624,20 @@ The real-checkpoint run took 24 minutes on an M2 Max (CPU). Records: `header_chr
 [validation-measurements.json](validation-measurements.json); `tensor_header_check`, `end_to_end`
 and `seed_end_to_end`, [validation.json](validation.json).
 
-`chroma1-base` uses the same real-checkpoint comparisons, including strict tensor headers, tokenizer,
-text encoder, transformer, VAE decode, beta scheduler, two-step end-to-end latent and pixel equality,
-and a separate seed-42 image run. Records use the `header_chroma1-base`, `chroma1-base_*`,
-`e2e_chroma1-base`, `e2e_chroma1-base_latents` and `seed_e2e_chroma1-base` keys.
+`chroma1-base` was compared with diffusers 0.40.0 `ChromaPipeline` on CPU in float32 in the same
+environment. All 18 real tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The recorded comparisons are the tensor header check
+(`text_encoder`, `transformer`, `vae`; 219 / 1023 / 244 tensors, with no missing, extra or
+shape-mismatched tensors), the SentencePiece tokenizer token ids, the T5-XXL text encoder, one
+transformer step, the VAE decode, the flow-match Euler scheduler with the published Beta(0.6, 0.6)
+sigma schedule (recorded `mu` 1.15), and both end-to-end runs (2 steps, guidance 5.0, and seed 42).
+The real-checkpoint run took 22 minutes on an M2 Max (CPU). Records: `header_chroma1-base`,
+`header_chroma1-base_fixtures`, `chroma1-base_text_encoder`, `chroma1-base_tokenizer`,
+`chroma1-base_transformer`, `chroma1-base_vae_decode`, `chroma1-base_scheduler`,
+`e2e_chroma1-base`, `e2e_chroma1-base_latents` and `seed_e2e_chroma1-base`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`, `end_to_end`
+and `seed_end_to_end`, [validation.json](validation.json).
 
 ## FLUX.2 klein
 
@@ -2006,7 +2016,7 @@ first sequence of the batch only; the native module reproduces that.
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast`, 8 passed each
   for `hidream-i1-dev` and `hidream-i1-full`, 5 passed for `hidream-o1-image`, and 14 passed
-  for `chroma1-hd`, 16 passed for `chroma1-flash`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
+  for `chroma1-hd`, 16 passed for `chroma1-flash`, 18 passed for `chroma1-base`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together,
   23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, and
   7 passed for `deepfloyd-if-i-xl`. These include structural parity with random weights,
