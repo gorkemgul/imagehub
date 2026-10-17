@@ -626,8 +626,8 @@ with pipeline(
 
 # Chroma
 
-Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `chroma1-hd` · Task: `t2i`
+Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures), [`chroma1-flash`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `chroma1-hd`, `chroma1-flash` · Task: `t2i`
 
 **Architecture.** Chroma1-HD is a ~8.9B diffusion transformer built on the FLUX.1 latent-flow
 foundation. It reuses the FLUX.1 VAE (16 latent channels, scaling factor 0.3611, shift factor 0.1159)
@@ -654,8 +654,9 @@ with pipeline("t2i", backend="chroma1-hd", model="checkpoints/chroma1-hd", devic
     result.images[0].save("cat.png")
 ```
 
-**Settings.** The model defaults to 35 steps, guidance 5.0 and 1024×1024; `width` and `height` must
-be multiples of 16. The other supported options are `num_images`, `seed`, `latents`,
+**Settings.** Chroma1-HD defaults to 35 steps and guidance 5.0; Chroma1-Flash defaults to 4 steps
+and guidance 1.0. All default to 1024×1024;
+`width` and `height` must be multiples of 16. The other supported options are `num_images`, `seed`, `latents`,
 `negative_prompt` and `max_sequence_length` (default 512, at most 512). Unrecognized settings raise
 an error.
 
@@ -1556,16 +1557,15 @@ parity are not supported. Magic prompt and safety moderation call external paid 
 not distribute weights.
 
 
-# Qwen-Image 2.1
+# Qwen-Image
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `qwen-image-2.1` · Task: `t2i`
+Models: `qwen-image`, `qwen-image-2.1` · Task: `t2i`
 
-**Architecture.** A Qwen3-VL-8B text encoder renders the prompt through the pipeline's prompt
-template and supplies the last decoder-layer output before the final norm. A 7B transformer uses
-block-causal joint attention and reuses a text KV cache across sampling steps. A causal 3D VAE has
-64 latent channels. The flow-match Euler scheduler uses dynamic shifting. The native image size is
-1024×1024.
+**Architecture.** The original release uses Qwen2.5-VL, a 60-layer patch-2 dual-stream transformer
+and a 16-channel causal Qwen VAE. Qwen-Image 2.1 uses Qwen3-VL-8B, a single-stream transformer with
+block-causal joint attention and a text KV cache, and a 64-channel causal VAE. Both releases use
+dynamic-shift flow-match Euler sampling and have a native image size of 1024×1024.
 
 **Usage.**
 
@@ -1583,9 +1583,10 @@ with pipeline(
     result.images[0].save("cat.png")
 ```
 
-**Settings.** `steps` defaults to 40, `true_cfg` defaults to 1.0 and `width`/`height` default to
-1024 and must be multiples of 32. The other supported options are `negative_prompt`, `num_images`,
-`seed` and `latents`. Unrecognized settings raise an error.
+Use `qwen-image` in both commands for the original release. Its `steps` and `true_cfg` defaults are
+50 and 4.0, and dimensions must be multiples of 16. For Qwen-Image 2.1, `steps` defaults to 40,
+`true_cfg` defaults to 1.0, and dimensions must be multiples of 32. Both accept `negative_prompt`,
+`num_images`, `seed` and `latents`; unrecognized settings raise an error.
 
 **Seed compatibility.** On CPU, the same seed and settings give the same image as the pinned
 diffusers reference with `generator=torch.Generator("cpu").manual_seed(seed)`
@@ -1595,8 +1596,13 @@ equality on these devices.
 **Out of scope.** Image editing, condition images, the Qwen3-VL vision encoder and fp16/bf16 parity
 are not supported.
 
-**License.** The weights use the Qwen Research License and are for research use; see the license.
-imagehub does not distribute weights.
+The original release's published bfloat16 weights are upcast for CPU float32 validation. Its
+real-checkpoint run took 30 minutes on an M2 Max (CPU) and every recorded comparison is exactly 0
+([validation](validation.md)).
+
+**License.** Original Qwen-Image weights use Apache-2.0. Qwen-Image 2.1 weights use the Qwen
+Research License and are for research use; see each repository's license. imagehub does not
+distribute weights.
 
 
 # Janus-Pro
@@ -2196,7 +2202,7 @@ imagehub does not distribute weights.
 # HiDream-I1
 
 Catalog: [`hidream-i1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
-`hidream-i1-fast` · Task: `t2i`
+`hidream-i1-dev`, `hidream-i1-fast`, `hidream-i1-full` · Task: `t2i`
 
 **Architecture.** Four text encoders condition a 17B-parameter sparse flow-matching transformer.
 Two CLIP text encoders with projection (CLIP-L and CLIP-G, 128 tokens) give a pooled vector of width
@@ -2236,7 +2242,7 @@ The pipeline reads the tokenizer and the model from this folder; no chat templat
 prompt is tokenized as plain text with a leading begin-of-text token and padded with the end-of-turn
 token.
 
-**Settings.** The Fast model defaults to 16 steps, guidance 0.0 and 1024×1024. The supported options
+**Settings.** Fast defaults to 16 steps and guidance 0.0; Dev to 30 and 0.0; Full to 50 and 5.0 (classifier-free guidance), all at 1024×1024. The supported options
 are `seed`, `latents`, `steps`, `guidance`, `width`, `height`, `num_images`, `negative_prompt` and
 `max_sequence_length` (default 128 for every encoder, at most 512). All four encoders see the same
 prompt. Guidance above 1.0 runs the unconditional pass with the negative prompt (default empty) and
@@ -2264,12 +2270,68 @@ halves every figure.
 generator and global seed described above ([validation](validation.md)). MPS and CUDA runs are smoke
 tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** The Full and Dev variants, separate prompts for the individual encoders,
-precomputed prompt embeddings, other schedulers, LoRA and fp16/bf16 parity are not supported.
+**Schedulers.** Fast and Dev use flow-match LCM (Dev uses its published shift of 6.0); Full uses its published UniPC flow-prediction scheduler. Separate prompts for the individual encoders,
+precomputed prompt embeddings, LoRA and fp16/bf16 parity are not supported.
 
 **License.** The HiDream repository declares the MIT license. The text encoders carry their own
 terms: Llama 3.1 Community License and Apache-2.0 for T5; the VAE comes from FLUX.1 [schnell].
 imagehub does not distribute weights.
+
+# HiDream-O1
+
+Catalog: [`hidream-o1-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `hidream-o1-image` · Task: `t2i`
+
+**Architecture.** HiDream-O1 uses a Qwen3-VL-8B decoder with 36 layers, width 4096 and grouped
+query attention. It appends noisy RGB image patches directly to the chat-formatted text sequence.
+Each patch contains one 32×32 RGB region; a two-stage linear projection maps it to the decoder
+width, and a linear output head predicts the clean pixels. Text tokens retain causal attention,
+while the timestep token and generated image tokens attend to the complete sequence. There is no
+VAE: the final patch sequence is rearranged directly into an RGB image.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained hidream-o1-image checkpoints/hidream-o1-image
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="hidream-o1-image", model="checkpoints/hidream-o1-image"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The checkpoint defaults to 50 Flow-UniPC steps, classifier-free guidance 5.0,
+schedule shift 3.0 and 2560×1440 output. `width` and `height` must be multiples of 32. The supported
+options are `seed`, caller-supplied `noise`, `steps`, `timesteps`, `guidance`, `shift`, `width`,
+`height` and `num_images`. Noise is drawn on CPU with `seed + 1` and multiplied by 8.0, matching the
+published sampler. Unknown options are rejected before checkpoint loading.
+
+**Prompt and positions.** A single user message is rendered with the checkpoint's Qwen chat
+template and followed by `<|boi_token|><|tms_token|>`. Generated patches use the checkpoint's
+fixed-point multimodal rotary positions beginning at 4096. Guidance above 1.0 adds an unconditional
+branch whose prompt is one space.
+
+**Image input.** Not supported yet. Although the published checkpoint contains the Qwen3-VL vision
+encoder and the official implementation can condition on reference images, this backend currently
+implements text-to-image only. The catalog therefore declares no image input.
+
+**Memory and validation.** The eight float32 shards total about 32.8 GiB. The published 759-tensor
+layout, new pixel modules, tokenizer and positions, Flow-UniPC trajectory, guided and unguided
+sampling, two seeds and non-square output have offline exact-parity tests. All 5 real-checkpoint
+tests passed with every recorded comparison exactly 0; the run took 1 minute on an M2 Max (CPU)
+([validation](validation.md)).
+
+**Out of scope.** Reference-image, subject, layout and skeleton conditioning, the prompt-refiner
+agent, distributed inference, flash attention, Dev checkpoints and reduced-precision parity are
+not supported.
+
+**License.** The author repository declares the model weights and official code MIT. imagehub does
+not distribute weights.
 
 # OmniGen
 

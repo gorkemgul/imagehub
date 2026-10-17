@@ -18,8 +18,8 @@ measurements are grouped in flat
 ``components_llamagen``, ``components_wuerstchen``, ``components_glm_image``,
 ``components_longcat_image``,
 ``components_cogview3_plus``,
-``components_cogview4``, ``components_ideogram4``, ``components_hidream`` and
-``components_omnigen`` mappings: the base
+``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
+``components_hidream_o1`` and ``components_omnigen`` mappings: the base
 model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
 entry may also contain its
 own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
@@ -195,6 +195,8 @@ def main() -> None:
             "longcat-image": "longcat_image",
             "flux1-kontext-dev": "flux1_kontext_dev",
             "hidream-i1-fast": "hidream_i1_fast",
+            "hidream-i1-dev": "hidream_i1_dev",
+            "hidream-i1-full": "hidream_i1_full",
             "kandinsky-3": "kandinsky3",
             "kandinsky-5-t2i-lite": "kandinsky5",
         }.get(spec.id, spec.id)
@@ -420,7 +422,12 @@ def main() -> None:
             key: value for key, value in measured.items() if key.startswith("ideogram4_")
         },
         "components_hidream": {
-            key: value for key, value in measured.items() if key.startswith("hidream_")
+            key: value
+            for key, value in measured.items()
+            if key.startswith("hidream_") and not key.startswith("hidream_o1_")
+        },
+        "components_hidream_o1": {
+            key: value for key, value in measured.items() if key.startswith("hidream_o1_")
         },
         "components_omnigen": {
             key: value for key, value in measured.items() if key.startswith("omnigen_")

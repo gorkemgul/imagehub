@@ -44,7 +44,9 @@ def reference_in_subprocess(
             "torch.set_num_threads(threads)",
             "module_path, function_name = function_path.rsplit('.', 1)",
             "function = getattr(importlib.import_module(module_path), function_name)",
-            "function(**kwargs, out_path=output)",
+            "parameters = __import__('inspect').signature(function).parameters",
+            "output_name = 'out_path' if 'out_path' in parameters else 'output'",
+            "function(**kwargs, **{output_name: output})",
         )
     )
     subprocess.run([sys.executable, "-c", code, payload], check=True, env=os.environ.copy())
@@ -1203,6 +1205,168 @@ def write_tiny_qwen_image21(directory: str | os.PathLike[str], *, seed: int = 0)
                 "text_encoder": ["transformers", "Qwen3VLForConditionalGeneration"],
                 "transformer": ["diffusers", "QwenImage21Transformer2DModel"],
                 "vae": ["diffusers", "AutoencoderKLQwenImage21"],
+            }
+        )
+    )
+    return root
+
+
+TINY_QWEN_IMAGE_TEXT = {
+    "vocab_size": 262,
+    "hidden_size": 16,
+    "intermediate_size": 32,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 2,
+    "num_key_value_heads": 1,
+    "max_position_embeddings": 256,
+    "rms_norm_eps": 1e-6,
+    "rope_theta": 1_000_000.0,
+    "rope_scaling": {"type": "default", "mrope_section": [2, 1, 1]},
+    "attention_bias": True,
+    "attention_dropout": 0.0,
+    "hidden_act": "silu",
+    "use_sliding_window": False,
+    "tie_word_embeddings": False,
+}
+TINY_QWEN_IMAGE_TRANSFORMER = {
+    "_class_name": "QwenImageTransformer2DModel",
+    "patch_size": 2,
+    "in_channels": 64,
+    "out_channels": 16,
+    "num_layers": 2,
+    "attention_head_dim": 8,
+    "num_attention_heads": 2,
+    "joint_attention_dim": 16,
+    "guidance_embeds": False,
+    "axes_dims_rope": [2, 2, 4],
+}
+TINY_QWEN_IMAGE_VAE = {
+    "_class_name": "AutoencoderKLQwenImage",
+    "base_dim": 4,
+    "z_dim": 16,
+    "dim_mult": [1, 2, 2, 2],
+    "num_res_blocks": 1,
+    "attn_scales": [],
+    "temperal_downsample": [False, True, True],
+    "dropout": 0.0,
+    "input_channels": 3,
+    "latents_mean": [0.0] * 16,
+    "latents_std": [1.0] * 16,
+}
+TINY_QWEN_IMAGE_SCHEDULER = TINY_QWEN_IMAGE21_SCHEDULER | {"shift_terminal": None}
+
+
+def write_tiny_qwen_image(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """Write a random tiny original Qwen-Image snapshot in the published layout."""
+    import shutil
+
+    import transformers
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl_qwen_image import AutoencoderKLQwenImage
+    from imagehub.models.qwen2_5_vl_text import Qwen25VLTextModel
+    from imagehub.models.qwen_image_transformer import QwenImageTransformer2DModel
+    from imagehub.tokenization_qwen import bytes_to_unicode as qwen_bytes_to_unicode
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    tokenizer_data = json.loads((FIXTURES / "qwen_tokenizer/tokenizer.json").read_text())
+    vocab = {character: index for index, character in enumerate(qwen_bytes_to_unicode().values())}
+    special_tokens = ("<|endoftext|>", "<|im_start|>", "<|im_end|>", "<|image_pad|>")
+    for token in special_tokens:
+        vocab[token] = len(vocab)
+    tokenizer_data["model"]["vocab"] = vocab
+    tokenizer_data["model"]["merges"] = []
+    tokenizer_data["added_tokens"] = [
+        {
+            "id": vocab[token],
+            "content": token,
+            "single_word": False,
+            "lstrip": False,
+            "rstrip": False,
+            "normalized": False,
+            "special": True,
+        }
+        for token in special_tokens
+    ]
+    (tokenizer / "tokenizer.json").write_text(json.dumps(tokenizer_data))
+    shutil.copyfile(FIXTURES / "qwen_tokenizer/merges.txt", tokenizer / "merges.txt")
+    (tokenizer / "vocab.json").write_text(json.dumps(vocab))
+    tokenizer_config = {
+        "tokenizer_class": "Qwen2Tokenizer",
+        "model_max_length": 1058,
+        "eos_token": "<|im_end|>",
+        "pad_token": "<|endoftext|>",
+        "additional_special_tokens": list(special_tokens[1:]),
+    }
+    (tokenizer / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (tokenizer / "special_tokens_map.json").write_text(json.dumps(tokenizer_config))
+
+    text_config = {
+        "architectures": ["Qwen2_5_VLForConditionalGeneration"],
+        "model_type": "qwen2_5_vl",
+        "text_config": TINY_QWEN_IMAGE_TEXT,
+        "vision_config": {
+            "depth": 1,
+            "hidden_act": "silu",
+            "hidden_size": 16,
+            "intermediate_size": 32,
+            "num_heads": 2,
+            "in_chans": 3,
+            "out_hidden_size": 16,
+            "patch_size": 2,
+            "spatial_merge_size": 1,
+            "spatial_patch_size": 2,
+            "window_size": 4,
+            "fullatt_block_indexes": [],
+            "tokens_per_second": 2,
+            "temporal_patch_size": 2,
+        },
+        "bos_token_id": vocab["<|endoftext|>"],
+        "eos_token_id": vocab["<|im_end|>"],
+        "vision_start_token_id": vocab["<|im_start|>"],
+        "vision_end_token_id": vocab["<|im_end|>"],
+        "vision_token_id": vocab["<|image_pad|>"],
+        "image_token_id": vocab["<|image_pad|>"],
+        "video_token_id": vocab["<|image_pad|>"],
+        "tie_word_embeddings": False,
+    }
+    torch.manual_seed(seed)
+    native_text = Qwen25VLTextModel(text_config)
+    full_text = transformers.Qwen2_5_VLForConditionalGeneration(
+        transformers.Qwen2_5_VLConfig.from_dict(text_config)
+    )
+    for parameter in full_text.parameters():
+        parameter.data.normal_(0, 0.05)
+    text_state = dict(full_text.state_dict())
+    text_state.update(native_text.state_dict())
+    (root / "text_encoder").mkdir()
+    (root / "text_encoder/config.json").write_text(json.dumps(text_config))
+    save_safetensors(text_state, root / "text_encoder/model.safetensors")
+
+    for name, cls, config in (
+        ("transformer", QwenImageTransformer2DModel, TINY_QWEN_IMAGE_TRANSFORMER),
+        ("vae", AutoencoderKLQwenImage, TINY_QWEN_IMAGE_VAE),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(model.state_dict(), root / name / "diffusion_pytorch_model.safetensors")
+    (root / "scheduler").mkdir()
+    (root / "scheduler/scheduler_config.json").write_text(json.dumps(TINY_QWEN_IMAGE_SCHEDULER))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "QwenImagePipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen2_5_VLForConditionalGeneration"],
+                "tokenizer": ["transformers", "Qwen2Tokenizer"],
+                "transformer": ["diffusers", "QwenImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKLQwenImage"],
             }
         )
     )

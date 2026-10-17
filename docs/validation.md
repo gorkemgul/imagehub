@@ -530,6 +530,10 @@ Validated on CPU in the same environment as above, against diffusers 0.40.0 `Chr
 **exactly 0**: on CPU in float32, the local implementation produces a bit-identical result to the
 reference. The random-weight and tiny-snapshot comparisons below are exact.
 
+`chroma1-flash` was loaded strictly from `lodestones/Chroma1-Flash` at revision
+`093c4f63b60507234aa53a073f1f9f565b3f4336`; its published bfloat16 weights are upcast to float32
+on both sides.
+
 ### Comparisons without published weights (CPU, float32)
 
 | Comparison | Largest observed difference | Tolerance |
@@ -570,6 +574,20 @@ prompt, `max_sequence_length` 512 and initial noise `seed=42`. Two steps are use
 at a time. Record: `tensor_header_check`, `end_to_end` and `seed_end_to_end`,
 [validation.json](validation.json); component comparisons under the `chroma1-hd_*` keys,
 [validation-measurements.json](validation-measurements.json).
+
+`chroma1-flash` was compared with diffusers 0.40.0 `ChromaPipeline` on CPU in float32 in the same
+environment. All 16 real tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The recorded comparisons are the tensor header check
+(`text_encoder`, `transformer`, `vae`; 219 / 1023 / 244 tensors), the SentencePiece tokenizer token
+ids, the T5-XXL text encoder, one transformer step, the VAE decode, the flow-match Euler scheduler
+with exponential shifting (mu 1.15), and both end-to-end runs (2 steps, guidance 5.0, and seed 42).
+The real-checkpoint run took 24 minutes on an M2 Max (CPU). Records: `header_chroma1-flash`,
+`chroma1-flash_text_encoder`, `chroma1-flash_tokenizer`, `chroma1-flash_transformer`,
+`chroma1-flash_vae_decode`, `chroma1-flash_scheduler`, `e2e_chroma1-flash`,
+`e2e_chroma1-flash_latents` and `seed_e2e_chroma1-flash`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`, `end_to_end`
+and `seed_end_to_end`, [validation.json](validation.json).
 
 ## FLUX.2 klein
 
@@ -1229,6 +1247,34 @@ The official reference therefore ran in a child process with the same thread cou
 outputs and exited before the native outputs were compared. The real-checkpoint run took about two
 hours.
 
+## Qwen-Image
+
+`qwen-image` was loaded strictly from `Qwen/Qwen-Image` at revision
+`75e0b4be04f60ec59a75f475837eced720f823b6` and compared with diffusers 0.40.0 `QwenImagePipeline`
+and transformers 5.18.0 `Qwen2_5_VLForConditionalGeneration` on CPU in float32, on the float32
+upcast of the published bfloat16 weights. All 6 real-checkpoint tests passed, and the observed
+difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the
+local implementation produces a bit-identical image to the one diffusers produces. The
+real-checkpoint run took 30 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (`text_encoder`, `transformer`, `vae`; 729 / 1933 / 194 tensors) | 0 missing / extra / mismatched | exact |
+| Qwen2 tokenizer ids for the templated prompt | identical | exact |
+| Qwen2.5-VL text encoder (last hidden state) | 0 | 0 |
+| Qwen-Image transformer single step (1×4×64 latents, 1×8×3584 context, timestep 0.75, one call) | 0 | 0 |
+| VAE decode (16-channel latents) | 0 | 0 |
+| End to end: final latent / pixels (32×32, 2 steps, `true_cfg` 4.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (32×32, 2 steps, `true_cfg` 4.0; pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with the negative prompt
+"blurry, low quality". Two steps at 32×32 only shorten the CPU run; the backend defaults are 50
+steps at 1024×1024. Records: `header_qwen-image`, `qwen_image_tokenizer`, `qwen_image_text_encoder`,
+`qwen_image_transformer`, `qwen_image_vae`, `e2e_qwen-image` and `seed_e2e_qwen-image`,
+[validation-measurements.json](validation-measurements.json).
+
 ## Qwen-Image 2.1
 
 The reference is the implementation the Qwen team contributed to diffusers. No released diffusers
@@ -1737,19 +1783,42 @@ The prompt is lower-cased and stripped before tokenization; the reference's defa
 cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the script's
 `use_text_preprocessing=False` behavior.
 
-## HiDream-I1 Fast
+## HiDream-I1
 
-`hidream-i1-fast` is the HiDream-I1 Fast repository at revision `4856a5d` plus
+`hidream-i1-fast`, `hidream-i1-dev` (revision `0fad2ea`) and `hidream-i1-full` (revision `8ccbbfb`) are the HiDream-I1 repositories plus
 `meta-llama/Llama-3.1-8B-Instruct` at revision `0e9e39f`. The real-checkpoint tests
 (`tests/reference/test_ref_hidream.py`) compare against diffusers 0.40.0 and transformers 5.18.0 on
 CPU in float32 and require exactly 0 everywhere: the tensor headers of all six components, the
 tokenizers (CLIP, T5, Llama), the pooled CLIP, T5 and Llama layer outputs the pipeline uses, one
 transformer step with real conditioning, the VAE decode, the scheduler, and end to end with a
-shortened run (4 steps, seed 0) and a non-square seed test. All 8 real-checkpoint tests passed with
-exactly 0 difference in every comparison (see the table), and the run took 21 minutes on an M2 Max
+shortened run (4 steps, seed 0) and a non-square seed-42 test. All 8 real-checkpoint tests of
+`hidream-i1-fast` passed with exactly 0 difference in every comparison (see the table), and that run
+took 21 minutes on an M2 Max (CPU).
+
+The published CLIP encoders are float32, the T5 encoder and the VAE are bfloat16 for every
+checkpoint, and the transformer is bfloat16 for `hidream-i1-fast` and `hidream-i1-dev` and float16 for
+`hidream-i1-full`; both implementations upcast all of it to float32.
+
+`hidream-i1-dev` and `hidream-i1-full` were validated with the same eight cases each. All 16
+real-checkpoint tests passed, and the observed difference in every recorded comparison is **exactly
+0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical image to
+the one diffusers produces. The recorded comparisons are the tensor headers of the same six
+components (197 / 517 / 219 / 291 / 1615 / 244 tensors), the tokenizers on the 6 prompts, the pooled
+CLIP, T5 and Llama layer outputs, one transformer step at t = 1000 and 562.5, the VAE decode, the
+scheduler timesteps and sigmas (flow-match LCM for Dev, UniPC for Full, 16 steps), and both
+end-to-end runs (4 steps, seed 0, and seed 42). The Dev and Full run took 51 minutes on an M2 Max
 (CPU).
 
+Records: `header_hidream-i1-dev`, `header_hidream-i1-full`, `tokenizers_hidream-i1-dev`,
+`tokenizers_hidream-i1-full`, `hidream_pooled_clip`, `hidream_t5`, `hidream_llama_layers`,
+`hidream_transformer_t0`, `hidream_transformer_t1`, `hidream_vae_decode`,
+`hidream_scheduler_timesteps`, `hidream_scheduler_sigmas`, `hidream_e2e_latents`,
+`e2e_hidream_i1_dev`, `e2e_hidream_i1_full`, `seed_e2e_hidream_i1_dev` and
+`seed_e2e_hidream_i1_full`, [validation-measurements.json](validation-measurements.json).
+
 ### Comparisons (CPU, float32)
+
+All three checkpoints recorded the same values in every comparison.
 
 | Comparison | Largest observed difference | Tolerance |
 | --- | --- | --- |
@@ -1760,9 +1829,9 @@ exactly 0 difference in every comparison (see the table), and the run took 21 mi
 | Llama layer outputs used by the pipeline | 0 | 0 |
 | Transformer single step (t = 1000 and 562.5) | 0 | 0 |
 | VAE decode | 0 | 0 |
-| Flow-match LCM scheduler timesteps / sigmas (16 steps) | 0 / 0 | 0 / 0 |
+| Scheduler timesteps / sigmas (16 steps; flow-match LCM for Fast and Dev, UniPC for Full) | 0 / 0 | 0 / 0 |
 | End to end: final latent / pixels (4 steps, seed 0) | 0 / 0 | 0 / 0 |
-| End to end, seed 1234, non-square request (pixels) | 0 | 0 |
+| End to end, seed 42, non-square request (pixels) | 0 | 0 |
 
 What has been checked with random weights: the Llama text encoder against transformers (grouped
 key/value heads, `llama3` rotary scaling, padding), the Llama 3 tokenizer against the reference
@@ -1770,6 +1839,47 @@ fast tokenizer on a synthetic vocabulary (and, once, on the Llama 3.1 tokenizer 
 mirror with fuzzed text), and the whole backend on a tiny snapshot in the published layout against `HiDreamImagePipeline`
 (default settings, guidance with a negative prompt, non-square sizes, two images, two weight seeds):
 identical latents and identical bytes.
+
+## HiDream-O1
+
+`hidream-o1-image` was loaded strictly from `HiDream-ai/HiDream-O1-Image` at revision
+`0b0901d`; the reference is the official implementation at commit `2c2d29f` and, for the chat
+template and token ids, transformers 5.18.0. All 5 real-checkpoint tests passed on CPU in
+float32 with the published float32 weights, and the observed difference in every recorded
+comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation
+produces a bit-identical image to the one the official implementation produces. The
+real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (759 tensors; names and shapes) | 0 missing, extra or mismatched | exact |
+| Qwen2 chat template and token ids (3 prompts) and the 24-position sample layout | identical | exact |
+| Denoiser single step (t = 0.4, 2 image patches, one call) | 0 (max abs and max rel) | 0 |
+| End to end: final pixels (32×64, 2 steps, guidance 5.0, shift 3.0, seed 0) | 0 | 0 |
+| End to end, seed 42 (32×64, 2 steps, guidance 5.0, shift 3.0; pixels) | 0 | 0 |
+
+Both end-to-end runs use the prompt "A small red sailboat on a calm lake at sunrise." with
+classifier-free guidance and the published defaults; two steps at 32×64 only shorten the CPU run
+because the backend defaults to 50 steps at 2560×1440. Records: `header_hidream-o1-image`,
+`hidream_o1_tokenizer_positions`, `hidream_o1_denoiser_step`, `e2e_hidream-o1-image` and
+`seed_e2e_hidream-o1-image`,
+[validation-measurements.json](validation-measurements.json).
+
+Offline tests already check the published 759 tensor names and shapes and compare the new pixel
+projection, timestep embedding, mixed causal/generation decoder, fixed-point rotary positions and
+Flow-UniPC scheduler against the pinned source. A tiny full sampling test runs the official sampling
+code in CPU float32 with classifier-free guidance on and off, two seeds and both 32×64 orientations;
+the resulting uint8 images are exactly equal. The real-checkpoint suite
+(`tests/reference/test_ref_hidream_o1.py`) skips unless
+`IMAGEHUB_SNAPSHOT_HIDREAM_O1_IMAGE` points to a local snapshot and records the header,
+tokenizer/position, denoiser-step, `e2e_hidream-o1-image` and separate seed-42
+`seed_e2e_hidream-o1-image` comparisons. The official result is saved and freed before the native
+model is loaded, and the end-to-end runs use two steps and 32×64 output to keep the 8B checkpoint
+run bounded.
+
+Reference-image conditioning is not implemented or validated yet.
 
 ## OmniGen
 
@@ -1831,7 +1941,7 @@ first sequence of the batch only; the native module reproduces that.
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
   the cosine-schedule masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for
-  HiDream-I1 Fast. LlamaGen samples image tokens autoregressively and has no scheduler.
+  HiDream-I1 Fast and Dev, and UniPC flow prediction for HiDream-I1 Full. LlamaGen samples image tokens autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
 
@@ -1843,8 +1953,8 @@ first sequence of the batch only; the native module reproduces that.
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
-  6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
-  for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
+  6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed
+  for `qwen-image`, 7 passed for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
   for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `pixart-lcm-xl-1024`,
@@ -1854,8 +1964,9 @@ first sequence of the batch only; the native module reproduces that.
   `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
-  `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast` and 14 passed
-  for `chroma1-hd`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
+  `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast`, 8 passed each
+  for `hidream-i1-dev` and `hidream-i1-full`, 5 passed for `hidream-o1-image`, and 14 passed
+  for `chroma1-hd`, 16 passed for `chroma1-flash`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together, and
   7 passed for `deepfloyd-if-i-xl`. These include structural parity with random weights,
   end-to-end parity with a small model, real-checkpoint parity and tokenizer fuzz tests.

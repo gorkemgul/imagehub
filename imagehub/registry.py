@@ -114,6 +114,7 @@ for _task, _name, _path in (
     (Task.T2I, "krea2", "imagehub.backends.krea2:Krea2Backend"),
     (Task.T2I, "ernie-image", "imagehub.backends.ernie_image:ErnieImageBackend"),
     (Task.T2I, "hidream", "imagehub.backends.hidream:HiDreamBackend"),
+    (Task.T2I, "hidream-o1", "imagehub.backends.hidream_o1:HiDreamO1Backend"),
     (
         Task.T2I,
         "longcat-image",
