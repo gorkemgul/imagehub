@@ -6,6 +6,7 @@ import gc
 import json
 import struct
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -18,7 +19,7 @@ from imagehub.checkpoints import read_json, save_safetensors
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.chroma_transformer import ChromaTransformer2DModel
 from imagehub.models.t5 import T5EncoderModel
-from imagehub.schedulers.flow_match_euler import FlowMatchEulerDiscreteScheduler
+from imagehub.schedulers.flow_match_euler import FlowMatchEulerDiscreteScheduler, _beta_ppf
 from imagehub.tokenization_t5 import T5Tokenizer
 
 pytestmark = pytest.mark.reference
@@ -31,6 +32,18 @@ MODEL_ID = "chroma1-hd"
 MODEL_IDS = ("chroma1-hd", "chroma1-flash", "chroma1-base")
 PROMPT = "a photograph of an astronaut riding a horse"
 MAX_SEQUENCE_LENGTH = 512
+
+
+@pytest.fixture(autouse=True)
+def _reference_beta_sigmas_without_scipy(monkeypatch):
+    """Let Diffusers exercise beta schedules in the dependency-minimal test environment."""
+    scheduler_module = diffusers.schedulers.scheduling_flow_match_euler_discrete
+    if scheduler_module.is_scipy_available():
+        return
+    beta = SimpleNamespace(ppf=lambda probability, _alpha, _beta: _beta_ppf(float(probability)))
+    scipy = SimpleNamespace(stats=SimpleNamespace(beta=beta))
+    monkeypatch.setattr(scheduler_module, "scipy", scipy, raising=False)
+    monkeypatch.setattr(scheduler_module, "is_scipy_available", lambda: True)
 
 
 def _checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
