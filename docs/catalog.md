@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**38 architecture families, 85 published checkpoints.** A model is a separately published set of weights;
+**40 architecture families, 89 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -43,6 +43,8 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `flux1-dev` | `flux` | [black-forest-labs/FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) | `3de623f` | author | full | FLUX.1-dev Non-Commercial License | `flux-1` |
 | `flux1-krea-dev` | `flux` | [black-forest-labs/FLUX.1-Krea-dev](https://huggingface.co/black-forest-labs/FLUX.1-Krea-dev) | `8162a9c` | author | full | FLUX.1-dev Non-Commercial License | `flux-1` |
 | `flux1-kontext-dev` | `flux` | [black-forest-labs/FLUX.1-Kontext-dev](https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev) | `24e9ded` | author | full | FLUX.1-dev Non-Commercial License | `flux-1-kontext` |
+| `joyai-image-edit` | `joyai-image` | [jdopensource/JoyAI-Image-Edit-Diffusers](https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers) | `4b41fb2` | author | full | Apache-2.0 | `joyai-image` |
+| `joyai-image-edit-plus` | `joyai-image` | [jdopensource/JoyAI-Image-Edit-Plus-Diffusers](https://huggingface.co/jdopensource/JoyAI-Image-Edit-Plus-Diffusers) | `c268646` | author | full | Apache-2.0 | `joyai-image` |
 | `flux2-klein-4b` | `flux2` | [black-forest-labs/FLUX.2-klein-4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B) | `e7b7dc2` | author | full | Apache-2.0 | `flux-2` |
 | `flux2-klein-9b` | `flux2` | [black-forest-labs/FLUX.2-klein-9B](https://huggingface.co/black-forest-labs/FLUX.2-klein-9B) | `92196c8` | author | full | FLUX Non-Commercial License | `flux-2` |
 | `hunyuan-dit-v1.1-distilled` | `hunyuan-dit` | [Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled](https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled) | `527cf2e` | author | full | Tencent Hunyuan Community License | `hunyuan-dit` |
@@ -84,6 +86,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `cogview3-plus-3b` | `cogview3` | [zai-org/CogView3-Plus-3B](https://huggingface.co/zai-org/CogView3-Plus-3B) | `5d70e40` | author | full | Apache-2.0 | `cogview3-plus` |
 | `cogview4-6b` | `cogview4` | [zai-org/CogView4-6B](https://huggingface.co/zai-org/CogView4-6B) | `63a52b7` | author | full | Apache-2.0 | `cogview4` |
 | `ideogram4-fp8` | `ideogram4` | [ideogram-ai/ideogram-4-fp8](https://huggingface.co/ideogram-ai/ideogram-4-fp8) | `ee79a72` | author | full | Ideogram 4 Non-Commercial License | `ideogram-4` |
+| `qwen-image` | `qwen-image` | [Qwen/Qwen-Image](https://huggingface.co/Qwen/Qwen-Image) | `75e0b4b` | author | full | Apache-2.0 | `qwen-image-2` |
 | `qwen-image-2.1` | `qwen-image` | [Qwen/Qwen-Image-2.1](https://huggingface.co/Qwen/Qwen-Image-2.1) | `d26bb61` | author | full | Qwen Research License (research use; see the license) | `qwen-image-2` |
 | `ovis-image-7b` | `ovis-image` | [ATH-MaaS/Ovis-Image-7B](https://huggingface.co/ATH-MaaS/Ovis-Image-7B) | `41be1c5` | author | full | Apache-2.0 | `ovis-image` |
 | `z-image` | `z-image` | [Tongyi-MAI/Z-Image](https://huggingface.co/Tongyi-MAI/Z-Image) | `04cc4ab` | author | full | Apache-2.0 | `z-image` |
@@ -96,6 +99,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `hidream-i1-fast` | `hidream` | [HiDream-ai/HiDream-I1-Fast](https://huggingface.co/HiDream-ai/HiDream-I1-Fast) | `4856a5d` | author | full | MIT | `hidream-i1` |
 | `hidream-i1-dev` | `hidream` | [HiDream-ai/HiDream-I1-Dev](https://huggingface.co/HiDream-ai/HiDream-I1-Dev) | `0fad2ea` | author | full | MIT | `hidream-i1` |
 | `hidream-i1-full` | `hidream` | [HiDream-ai/HiDream-I1-Full](https://huggingface.co/HiDream-ai/HiDream-I1-Full) | `8ccbbfb` | author | full | MIT | `hidream-i1` |
+| `hidream-o1-image` | `hidream-o1` | [HiDream-ai/HiDream-O1-Image](https://huggingface.co/HiDream-ai/HiDream-O1-Image) | `0b0901d` | author | full | MIT | `hidream-o1-image` |
 | `glm-image` | `glm-image` | [zai-org/GLM-Image](https://huggingface.co/zai-org/GLM-Image) | `2c433cc` | author | full | MIT | `glm-image` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the

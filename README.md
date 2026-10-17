@@ -67,6 +67,7 @@ result.images[0].save("edited.png")
 | Stable Diffusion XL refiner | `sdxl-refiner-1.0` | `t2i` | T, I | CPU fp32 parity |
 | Stable Diffusion 3 and 3.5 | `sd3-medium`, `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | T | CPU fp32 parity |
 | DreamLite | `dreamlite-base`, `dreamlite-mobile` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 weights |
+| JoyAI-Image | `joyai-image-edit`, `joyai-image-edit-plus` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 weights |
 | FLUX.1 | `flux1-schnell`, `flux1-dev`, `flux1-krea-dev` | `t2i` | T | CPU fp32 parity |
 | FLUX.1 Kontext | `flux1-kontext-dev` | `t2i` | T, I | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | T | CPU fp32 parity |
@@ -97,10 +98,11 @@ result.images[0].save("edited.png")
 | CogView4 | `cogview4-6b` | `t2i` | T | CPU fp32 parity |
 | GLM-Image | `glm-image` | `t2i` | T | CPU fp32 parity |
 | Ideogram 4 | `ideogram4-fp8` | `t2i` | T | CPU fp32 parity with the official implementation |
-| Qwen-Image | `qwen-image-2.1` | `t2i` | T | CPU fp32 parity |
+| Qwen-Image | `qwen-image`, `qwen-image-2.1` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | T | CPU fp32 parity |
 | HiDream-I1 | `hidream-i1-dev`, `hidream-i1-fast`, `hidream-i1-full` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 and float16 weights |
+| HiDream-O1 | `hidream-o1-image` | `t2i` | T | CPU fp32 parity |
 
 [Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
 [Third-party notices](THIRD_PARTY_NOTICES.md)

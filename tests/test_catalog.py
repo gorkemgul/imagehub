@@ -33,6 +33,7 @@ def test_catalog_contents():
             "hidream-i1-dev",
             "hidream-i1-fast",
             "hidream-i1-full",
+            "hidream-o1-image",
             "hunyuan-dit-v1.1-distilled",
             "hunyuan-dit-v1.2",
             "hunyuan-dit-v1.2-distilled",
@@ -40,6 +41,8 @@ def test_catalog_contents():
             "ideogram4-fp8",
             "janus-pro-1b",
             "janus-pro-7b",
+            "joyai-image-edit",
+            "joyai-image-edit-plus",
             "kandinsky-2-1",
             "kandinsky-2.2",
             "kandinsky-3",
@@ -66,6 +69,7 @@ def test_catalog_contents():
             "playground-v2.5",
             "prx-1024-t2i-beta",
             "prx-512-t2i-sft",
+            "qwen-image",
             "qwen-image-2.1",
             "sana-1.5-4.8b-1024",
             "sana-1600m-1024",
@@ -280,11 +284,12 @@ def test_catalog_contents():
         "fp16" in name or name.endswith((".onnx", ".ckpt")) for name in z_image_base.files
     )
 
-    qwen_image = model_info("qwen-image-2.1")
+    qwen_image = model_info("qwen-image")
     assert qwen_image.family == "qwen-image"
     assert qwen_image.catalog_id == "qwen-image-2"
-    assert qwen_image.license == "Qwen Research License"
-    assert len(set(qwen_image.files)) == len(qwen_image.files) == 25
+    assert qwen_image.license == "Apache-2.0"
+    assert model_info("qwen-image-2.1").license == "Qwen Research License"
+    assert len(set(qwen_image.files)) == len(qwen_image.files) == 29
 
     janus = model_info("janus-pro-1b")
     assert janus.task is Task.T2I
@@ -678,6 +683,27 @@ def test_cogview4_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+
+
+def test_hidream_o1_catalog_entry():
+    spec = model_info("hidream-o1-image")
+    assert spec.task is Task.T2I
+    assert spec.family == "hidream-o1"
+    assert spec.repo_id == "HiDream-ai/HiDream-O1-Image"
+    assert spec.revision == "0b0901d99f200389e138c61946af1185f5f49a13"
+    assert spec.provenance == "author"
+    assert spec.catalog_id == "hidream-o1-image"
+    assert spec.format == "transformers"
+    assert spec.license == "MIT"
+    assert spec.image_input is None
+    assert spec.config == {"defaults": {"steps": 50, "guidance": 5.0, "shift": 3.0}}
+    assert spec.files[:4] == (
+        "config.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "model.safetensors.index.json",
+    )
+    assert spec.files[-1] == "model-00008-of-00008.safetensors"
 
 
 def test_ideogram4_catalog_entry():
@@ -1262,6 +1288,8 @@ def test_image_input_field():
     with_image = {spec.id: spec.image_input for spec in MODEL_CATALOG.values() if spec.image_input}
     assert with_image == {
         "flux1-kontext-dev": "optional",
+        "joyai-image-edit": "optional",
+        "joyai-image-edit-plus": "required",
         "sdxl-refiner-1.0": "required",
         "omnigen-v1": "optional",
     }

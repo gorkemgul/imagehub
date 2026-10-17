@@ -478,6 +478,44 @@ Each test ran the reference first, saved its outputs, freed it, then ran the nat
 component and seed tests took 11 minutes and its fixed-latent end-to-end test took 13 minutes. The
 full dev run took 25 minutes. The Krea [dev] real-checkpoint run took about 30 minutes on an M2 Max (CPU).
 
+## JoyAI-Image
+
+`joyai-image-edit` and `joyai-image-edit-plus` use the pinned Apache-2.0 checkpoints from
+jdopensource at revisions `4b41fb25d961f37668750178ccbb380da326201c` and
+`c2686460c7b64d8aa11bc4d0da423fb316b33f9e` and were compared with diffusers 0.40.0
+`JoyImageEditPipeline` and `JoyImageEditPlusPipeline` and transformers 5.18.0 on CPU in float32
+in the same environment as above. The repositories publish bfloat16 safetensors only; the weights
+are upcast to float32 on both sides. All 23 real tests passed, and the observed difference in
+every recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the local
+implementation produces a bit-identical image to the one diffusers produces. The real-checkpoint
+run took 123 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32, upcast bfloat16 weights)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (`text_encoder`, `transformer`, `vae`; 750 / 894 / 194 tensors, both checkpoints) | 0 missing / extra / mismatched | exact |
+| Qwen3-VL tokenizer and vision preprocessing: token ids, image grid and pixels (both checkpoints) | identical | exact |
+| Qwen3-VL text and vision conditioning, last hidden state (both checkpoints) | 0 | 0 |
+| `joyai-image-edit` transformer single step (timestep 500) | 0 | 0 |
+| `joyai-image-edit-plus` transformer single step (timestep 500, image-token mask and shape list) | 0 | 0 |
+| VAE encode / decode (64×80 input, both checkpoints) | 0 / 0 | 0 / 0 |
+| End to end with the input image: final pixels (512×512, 2 steps, guidance 4.0, seed 0, both checkpoints) | 0 | 0 |
+| End to end, seed 42 (pixels, both checkpoints) | 0 | 0 |
+
+The end-to-end prompt was "Turn the square blue." with a fixed synthetic input image resized to
+512×512. Two steps are used instead of the 40-step (Edit) and 30-step (Edit Plus) defaults only to
+shorten the CPU run. The reference pipelines and the native models are loaded one at a time, and
+each reference end-to-end run executes in a subprocess before the native model runs. Random-weight
+parity for the Qwen3-VL vision encoder, both transformer paths, the WAN VAE and the tiny pipeline
+is unchanged and exact.
+
+Records: `header_joyai-image-edit`, `tokenizer_vision_joyai-image-edit`,
+`conditioning_joyai-image-edit`, `transformer_joyai-image-edit`, `vae_encode_joyai-image-edit`,
+`vae_decode_joyai-image-edit`, `e2e_joyai-image-edit` and `seed_e2e_joyai-image-edit`, and the
+same eight keys under the `joyai-image-edit-plus` id,
+[validation-measurements.json](validation-measurements.json).
+
 ## FLUX.1 Kontext
 
 Validated on CPU in the same environment as above, against diffusers 0.40.0 `FluxKontextPipeline`.
@@ -1249,6 +1287,34 @@ The official reference therefore ran in a child process with the same thread cou
 outputs and exited before the native outputs were compared. The real-checkpoint run took about two
 hours.
 
+## Qwen-Image
+
+`qwen-image` was loaded strictly from `Qwen/Qwen-Image` at revision
+`75e0b4be04f60ec59a75f475837eced720f823b6` and compared with diffusers 0.40.0 `QwenImagePipeline`
+and transformers 5.18.0 `Qwen2_5_VLForConditionalGeneration` on CPU in float32, on the float32
+upcast of the published bfloat16 weights. All 6 real-checkpoint tests passed, and the observed
+difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the
+local implementation produces a bit-identical image to the one diffusers produces. The
+real-checkpoint run took 30 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (`text_encoder`, `transformer`, `vae`; 729 / 1933 / 194 tensors) | 0 missing / extra / mismatched | exact |
+| Qwen2 tokenizer ids for the templated prompt | identical | exact |
+| Qwen2.5-VL text encoder (last hidden state) | 0 | 0 |
+| Qwen-Image transformer single step (1×4×64 latents, 1×8×3584 context, timestep 0.75, one call) | 0 | 0 |
+| VAE decode (16-channel latents) | 0 | 0 |
+| End to end: final latent / pixels (32×32, 2 steps, `true_cfg` 4.0) | 0 / 0 | 0 / 0 |
+| End to end, seed 42 (32×32, 2 steps, `true_cfg` 4.0; pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with the negative prompt
+"blurry, low quality". Two steps at 32×32 only shorten the CPU run; the backend defaults are 50
+steps at 1024×1024. Records: `header_qwen-image`, `qwen_image_tokenizer`, `qwen_image_text_encoder`,
+`qwen_image_transformer`, `qwen_image_vae`, `e2e_qwen-image` and `seed_e2e_qwen-image`,
+[validation-measurements.json](validation-measurements.json).
+
 ## Qwen-Image 2.1
 
 The reference is the implementation the Qwen team contributed to diffusers. No released diffusers
@@ -1814,6 +1880,47 @@ mirror with fuzzed text), and the whole backend on a tiny snapshot in the publis
 (default settings, guidance with a negative prompt, non-square sizes, two images, two weight seeds):
 identical latents and identical bytes.
 
+## HiDream-O1
+
+`hidream-o1-image` was loaded strictly from `HiDream-ai/HiDream-O1-Image` at revision
+`0b0901d`; the reference is the official implementation at commit `2c2d29f` and, for the chat
+template and token ids, transformers 5.18.0. All 5 real-checkpoint tests passed on CPU in
+float32 with the published float32 weights, and the observed difference in every recorded
+comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation
+produces a bit-identical image to the one the official implementation produces. The
+real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (759 tensors; names and shapes) | 0 missing, extra or mismatched | exact |
+| Qwen2 chat template and token ids (3 prompts) and the 24-position sample layout | identical | exact |
+| Denoiser single step (t = 0.4, 2 image patches, one call) | 0 (max abs and max rel) | 0 |
+| End to end: final pixels (32×64, 2 steps, guidance 5.0, shift 3.0, seed 0) | 0 | 0 |
+| End to end, seed 42 (32×64, 2 steps, guidance 5.0, shift 3.0; pixels) | 0 | 0 |
+
+Both end-to-end runs use the prompt "A small red sailboat on a calm lake at sunrise." with
+classifier-free guidance and the published defaults; two steps at 32×64 only shorten the CPU run
+because the backend defaults to 50 steps at 2560×1440. Records: `header_hidream-o1-image`,
+`hidream_o1_tokenizer_positions`, `hidream_o1_denoiser_step`, `e2e_hidream-o1-image` and
+`seed_e2e_hidream-o1-image`,
+[validation-measurements.json](validation-measurements.json).
+
+Offline tests already check the published 759 tensor names and shapes and compare the new pixel
+projection, timestep embedding, mixed causal/generation decoder, fixed-point rotary positions and
+Flow-UniPC scheduler against the pinned source. A tiny full sampling test runs the official sampling
+code in CPU float32 with classifier-free guidance on and off, two seeds and both 32×64 orientations;
+the resulting uint8 images are exactly equal. The real-checkpoint suite
+(`tests/reference/test_ref_hidream_o1.py`) skips unless
+`IMAGEHUB_SNAPSHOT_HIDREAM_O1_IMAGE` points to a local snapshot and records the header,
+tokenizer/position, denoiser-step, `e2e_hidream-o1-image` and separate seed-42
+`seed_e2e_hidream-o1-image` comparisons. The official result is saved and freed before the native
+model is loaded, and the end-to-end runs use two steps and 32×64 output to keep the 8B checkpoint
+run bounded.
+
+Reference-image conditioning is not implemented or validated yet.
+
 ## OmniGen
 
 `omnigen-v1` is loaded strictly from `Shitao/OmniGen-v1-diffusers` at revision `016e2f6` and is compared
@@ -1886,8 +1993,8 @@ first sequence of the batch only; the native module reproduces that.
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
-  6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 7 passed
-  for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
+  6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed
+  for `qwen-image`, 7 passed for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
   `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
   for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `pixart-lcm-xl-1024`,
@@ -1898,9 +2005,10 @@ first sequence of the batch only; the native module reproduces that.
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast`, 8 passed each
-  for `hidream-i1-dev` and `hidream-i1-full`, and 14 passed
+  for `hidream-i1-dev` and `hidream-i1-full`, 5 passed for `hidream-o1-image`, and 14 passed
   for `chroma1-hd`, 16 passed for `chroma1-flash`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
-  `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together, and
+  `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together,
+  23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, and
   7 passed for `deepfloyd-if-i-xl`. These include structural parity with random weights,
   end-to-end parity with a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

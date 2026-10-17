@@ -18,8 +18,8 @@ measurements are grouped in flat
 ``components_llamagen``, ``components_wuerstchen``, ``components_glm_image``,
 ``components_longcat_image``,
 ``components_cogview3_plus``,
-``components_cogview4``, ``components_ideogram4``, ``components_hidream`` and
-``components_omnigen`` mappings: the base
+``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
+``components_hidream_o1`` and ``components_omnigen`` mappings: the base
 model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
 entry may also contain its
 own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
@@ -423,13 +423,26 @@ def main() -> None:
             key: value for key, value in measured.items() if key.startswith("ideogram4_")
         },
         "components_hidream": {
-            key: value for key, value in measured.items() if key.startswith("hidream_")
+            key: value
+            for key, value in measured.items()
+            if key.startswith("hidream_") and not key.startswith("hidream_o1_")
+        },
+        "components_hidream_o1": {
+            key: value for key, value in measured.items() if key.startswith("hidream_o1_")
         },
         "components_omnigen": {
             key: value for key, value in measured.items() if key.startswith("omnigen_")
         },
         "components_chroma": {
             key: value for key, value in measured.items() if key in CHROMA_COMPONENT_KEYS
+        },
+        "components_joyai_image": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(
+                ("tokenizer_vision_joyai-", "conditioning_joyai-", "transformer_joyai-", "vae_")
+            )
+            and "joyai-image" in key
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},

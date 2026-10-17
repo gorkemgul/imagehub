@@ -116,6 +116,138 @@ class ModelSpec:
 
 _entries: list[ModelSpec] = []
 
+_JOYAI_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "processor/chat_template.jinja",
+    "processor/tokenizer.json",
+    "processor/tokenizer_config.json",
+    "tokenizer/chat_template.jinja",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer_config.json",
+    "text_encoder/config.json",
+    "text_encoder/generation_config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00004.safetensors",
+    "text_encoder/model-00002-of-00004.safetensors",
+    "text_encoder/model-00003-of-00004.safetensors",
+    "text_encoder/model-00004-of-00004.safetensors",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors.index.json",
+    "transformer/diffusion_pytorch_model-00001-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00002-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00003-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00004-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00005-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00006-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00007-of-00007.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+_JOYAI_PLUS_FILES = _JOYAI_FILES + ("processor/processor_config.json",)
+_JOYAI_BASE_FILES = _JOYAI_FILES + (
+    "tokenizer/added_tokens.json",
+    "tokenizer/merges.txt",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/vocab.json",
+    "processor/added_tokens.json",
+    "processor/merges.txt",
+    "processor/preprocessor_config.json",
+    "processor/special_tokens_map.json",
+    "processor/video_preprocessor_config.json",
+    "processor/vocab.json",
+)
+
+_entries.extend(
+    (
+        ModelSpec(
+            id="joyai-image-edit",
+            task=Task.T2I,
+            family="joyai-image",
+            source="https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers",
+            repo_id="jdopensource/JoyAI-Image-Edit-Diffusers",
+            revision="4b41fb25d961f37668750178ccbb380da326201c",
+            provenance="author",
+            catalog_id="joyai-image",
+            format="diffusers",
+            license="Apache-2.0",
+            image_input="optional",
+            config={"defaults": {"steps": 40, "guidance": 4.0}},
+            files=_JOYAI_BASE_FILES,
+        ),
+        ModelSpec(
+            id="joyai-image-edit-plus",
+            task=Task.T2I,
+            family="joyai-image",
+            source="https://huggingface.co/jdopensource/JoyAI-Image-Edit-Plus-Diffusers",
+            repo_id="jdopensource/JoyAI-Image-Edit-Plus-Diffusers",
+            revision="c2686460c7b64d8aa11bc4d0da423fb316b33f9e",
+            provenance="author",
+            catalog_id="joyai-image",
+            format="diffusers",
+            license="Apache-2.0",
+            image_input="required",
+            config={"defaults": {"steps": 30, "guidance": 4.0}},
+            files=_JOYAI_PLUS_FILES,
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="qwen-image",
+        task=Task.T2I,
+        family="qwen-image",
+        source="https://huggingface.co/Qwen/Qwen-Image",
+        repo_id="Qwen/Qwen-Image",
+        revision="75e0b4be04f60ec59a75f475837eced720f823b6",
+        provenance="author",
+        catalog_id="qwen-image-2",
+        format="diffusers",
+        license="Apache-2.0",
+        reference={"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
+        config={
+            "defaults": {
+                "steps": 50,
+                "true_cfg": 4.0,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        files=(
+            "model_index.json",
+            "LICENSE",
+            "scheduler/scheduler_config.json",
+            "tokenizer/added_tokens.json",
+            "tokenizer/chat_template.jinja",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00004-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00005-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00006-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00007-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00008-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00009-of-00009.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 _entries.append(
     ModelSpec(
         id="deepfloyd-if-i-xl",
@@ -1896,6 +2028,43 @@ _entries.append(
             "vae/config.json",
             "vae/diffusion_pytorch_model.safetensors",
         ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hidream-o1-image",
+        task=Task.T2I,
+        family="hidream-o1",
+        source="https://huggingface.co/HiDream-ai/HiDream-O1-Image",
+        repo_id="HiDream-ai/HiDream-O1-Image",
+        revision="0b0901d99f200389e138c61946af1185f5f49a13",
+        provenance="author",
+        catalog_id="hidream-o1-image",
+        format="transformers",
+        license="MIT",
+        reference={
+            "hidream-o1": {
+                "repository": "HiDream-ai/HiDream-O1-Image",
+                "git_commit": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4",
+            }
+        },
+        config={"defaults": {"steps": 50, "guidance": 5.0, "shift": 3.0}},
+        files=(
+            "config.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00008.safetensors",
+            "model-00002-of-00008.safetensors",
+            "model-00003-of-00008.safetensors",
+            "model-00004-of-00008.safetensors",
+            "model-00005-of-00008.safetensors",
+            "model-00006-of-00008.safetensors",
+            "model-00007-of-00008.safetensors",
+            "model-00008-of-00008.safetensors",
+        ),
+        image_input=None,
     )
 )
 
