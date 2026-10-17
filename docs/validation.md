@@ -1834,10 +1834,30 @@ identical latents and identical bytes.
 
 ## HiDream-O1
 
-`hidream-o1-image` is pinned to `HiDream-ai/HiDream-O1-Image` revision `0b0901d`; the
-reference is the official implementation at commit `2c2d29f`. Real-checkpoint validation is
-pending, so the catalog status remains `experimental` and this section reports no measured
-real-weight results.
+`hidream-o1-image` was loaded strictly from `HiDream-ai/HiDream-O1-Image` at revision
+`0b0901d`; the reference is the official implementation at commit `2c2d29f` and, for the chat
+template and token ids, transformers 5.18.0. All 5 real-checkpoint tests passed on CPU in
+float32 with the published float32 weights, and the observed difference in every recorded
+comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation
+produces a bit-identical image to the one the official implementation produces. The
+real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (759 tensors; names and shapes) | 0 missing, extra or mismatched | exact |
+| Qwen2 chat template and token ids (3 prompts) and the 24-position sample layout | identical | exact |
+| Denoiser single step (t = 0.4, 2 image patches, one call) | 0 (max abs and max rel) | 0 |
+| End to end: final pixels (32×64, 2 steps, guidance 5.0, shift 3.0, seed 0) | 0 | 0 |
+| End to end, seed 42 (32×64, 2 steps, guidance 5.0, shift 3.0; pixels) | 0 | 0 |
+
+Both end-to-end runs use the prompt "A small red sailboat on a calm lake at sunrise." with
+classifier-free guidance and the published defaults; two steps at 32×64 only shorten the CPU run
+because the backend defaults to 50 steps at 2560×1440. Records: `header_hidream-o1-image`,
+`hidream_o1_tokenizer_positions`, `hidream_o1_denoiser_step`, `e2e_hidream-o1-image` and
+`seed_e2e_hidream-o1-image`,
+[validation-measurements.json](validation-measurements.json).
 
 Offline tests already check the published 759 tensor names and shapes and compare the new pixel
 projection, timestep embedding, mixed causal/generation decoder, fixed-point rotary positions and
@@ -1845,8 +1865,8 @@ Flow-UniPC scheduler against the pinned source. A tiny full sampling test runs t
 code in CPU float32 with classifier-free guidance on and off, two seeds and both 32×64 orientations;
 the resulting uint8 images are exactly equal. The real-checkpoint suite
 (`tests/reference/test_ref_hidream_o1.py`) skips unless
-`IMAGEHUB_SNAPSHOT_HIDREAM_O1_IMAGE` points to a local snapshot. It is prepared to record the
-header, tokenizer/position, denoiser-step, `e2e_hidream-o1-image` and separate seed-42
+`IMAGEHUB_SNAPSHOT_HIDREAM_O1_IMAGE` points to a local snapshot and records the header,
+tokenizer/position, denoiser-step, `e2e_hidream-o1-image` and separate seed-42
 `seed_e2e_hidream-o1-image` comparisons. The official result is saved and freed before the native
 model is loaded, and the end-to-end runs use two steps and 32×64 output to keep the 8B checkpoint
 run bounded.
@@ -1937,7 +1957,7 @@ first sequence of the batch only; the native module reproduces that.
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast`, 8 passed each
-  for `hidream-i1-dev` and `hidream-i1-full`, and 14 passed
+  for `hidream-i1-dev` and `hidream-i1-full`, 5 passed for `hidream-o1-image`, and 14 passed
   for `chroma1-hd`, 16 passed for `chroma1-flash`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together, and
   7 passed for `deepfloyd-if-i-xl`. These include structural parity with random weights,

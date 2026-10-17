@@ -2305,8 +2305,9 @@ implements text-to-image only. The catalog therefore declares no image input.
 
 **Memory and validation.** The eight float32 shards total about 32.8 GiB. The published 759-tensor
 layout, new pixel modules, tokenizer and positions, Flow-UniPC trajectory, guided and unguided
-sampling, two seeds and non-square output have offline exact-parity tests. Real-checkpoint
-validation is pending, so the catalog status is `experimental` and no full parity claim is made.
+sampling, two seeds and non-square output have offline exact-parity tests. All 5 real-checkpoint
+tests passed with every recorded comparison exactly 0; the run took 1 minute on an M2 Max (CPU)
+([validation](validation.md)).
 
 **Out of scope.** Reference-image, subject, layout and skeleton conditioning, the prompt-refiner
 agent, distributed inference, flash attention, Dev checkpoints and reduced-precision parity are
