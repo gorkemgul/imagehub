@@ -320,6 +320,9 @@ class _NativeVAE:
     latents_mean = [0.0] * 4
     latents_std = [1.0] * 4
 
+    def __init__(self):
+        self.decode_batch_sizes = []
+
     def encode(self, pixels):
         value = torch.nn.functional.avg_pool2d(pixels, 8)
         return torch.cat((value, value.mean(1, keepdim=True)), 1)
@@ -327,6 +330,7 @@ class _NativeVAE:
     encode_sample = encode
 
     def decode(self, latent):
+        self.decode_batch_sizes.append(len(latent))
         return torch.nn.functional.interpolate(latent[:, :3], scale_factor=8, mode="nearest").clamp(
             -1, 1
         )
@@ -414,6 +418,7 @@ def test_tiny_pipeline_end_to_end_exact(plus, seed, guidance, monkeypatch):
         .tensor
     )
     assert torch.equal(actual, expected)
+    assert backend.components.vae.decode_batch_sizes == [1 if plus else 2]
 
 
 MODEL_IDS = ("joyai-image-edit", "joyai-image-edit-plus")
