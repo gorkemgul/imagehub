@@ -405,6 +405,7 @@ class JoyAIImageBackend(TextToImageBackend):
                 1, target.shape[1], lt * pt, lh * ph, lw * pw
             )[:, :, 0]
         else:
+            # Preserve both slots through the VAE: CPU convolution rounding depends on batch shape.
             final = latents.flatten(0, 1)[:, :, 0]
         mean = torch.tensor(self.components.vae.latents_mean, device=self.device, dtype=self.dtype)[
             None, :, None, None
@@ -414,6 +415,7 @@ class JoyAIImageBackend(TextToImageBackend):
         ]
         decoded = self.components.vae.decode(final * std + mean)
         if not plus:
+            # The reference pipeline selects the generated slot only after decoding the full batch.
             decoded = decoded.unflatten(0, (latents.shape[0], latents.shape[1]))[:, -1]
         pixels = (
             decoded.add(1)
