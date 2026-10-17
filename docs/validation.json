@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-16",
+  "date": "2026-10-17",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -5064,6 +5064,69 @@
       }
     },
     {
+      "model_id": "hidream-o1-image",
+      "repo_id": "HiDream-ai/HiDream-O1-Image",
+      "revision": "0b0901d99f200389e138c61946af1185f5f49a13",
+      "provenance": "author",
+      "catalog_id": "hidream-o1-image",
+      "license": "MIT",
+      "reference": {
+        "hidream-o1": {
+          "repository": "HiDream-ai/HiDream-O1-Image",
+          "git_commit": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4"
+        }
+      },
+      "status": "full",
+      "files": {
+        "config.json": "5cd452860dc1e9c29dd71cc3cef7f39b338b7a40793f7a260655c2d3568f3661",
+        "tokenizer.json": "a14b1a1a5f4d16de13dc773daf791bc701216f3361a2ab6530b08228950ad85f",
+        "tokenizer_config.json": "23941c0283a942b4711c381a3b73689680b8dddc338f28fdb49fcfcd548ced2a",
+        "model.safetensors.index.json": "33865f9d84679a850080795107f049c3fac81c78d343322f66a36163b9ab53c9",
+        "model-00001-of-00008.safetensors": "db5d56d92c145eac59d3f69e744244523344c674312d6302e0bac370d72db0b0",
+        "model-00002-of-00008.safetensors": "2a06772156fe7f8d7b36b8d6e5ec4c96ade10a7791183ace3b2558a781157333",
+        "model-00003-of-00008.safetensors": "270b64408925c6ac760b3b457e66719ef1342a8b5c38f9782a469dd068a7dbf3",
+        "model-00004-of-00008.safetensors": "303aa9d7a1ca1598f94e391e5686feb714d9cec1800169ba9777495c7e38777b",
+        "model-00005-of-00008.safetensors": "483babbd0f1c63fa69a390f740ce354dac8dea57ecb2e01e70b7e4b1ab3d3e8e",
+        "model-00006-of-00008.safetensors": "3d225758a2a35a95aa95d42843b084e226cb7bd83b2fc0be5586619b2bc00ff3",
+        "model-00007-of-00008.safetensors": "817c6ac9a332d344d63b82a1481414205f2bf36da5021345c6ed739558b8e3d9",
+        "model-00008-of-00008.safetensors": "19c7495b4a90129d52b02c4d4fd1f8b0dcba8a6f9c99fb7f56098cd8a32675c6"
+      },
+      "tensor_header_check": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 759
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "reference": {
+          "git_commit": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4"
+        },
+        "revision": "0b0901d99f200389e138c61946af1185f5f49a13",
+        "seed": 0,
+        "size": [
+          32,
+          64
+        ],
+        "steps": 2
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "reference": {
+          "git_commit": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4"
+        },
+        "revision": "0b0901d99f200389e138c61946af1185f5f49a13",
+        "seed": 42,
+        "size": [
+          32,
+          64
+        ],
+        "steps": 2
+      }
+    },
+    {
       "model_id": "sdxl-turbo",
       "repo_id": "stabilityai/sdxl-turbo",
       "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
@@ -8495,7 +8558,8 @@
       "tolerance": 0.0
     },
     "qwen_image_transformer": {
-      "calls": 1,
+      "calls": 2,
+      "kv_cache": true,
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -12723,6 +12787,18 @@
       "tolerance": 0.0
     }
   },
+  "components_hidream_o1": {
+    "hidream_o1_denoiser_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "hidream_o1_tokenizer_positions": {
+      "exact": true,
+      "prompts": 3,
+      "sequence": 24
+    }
+  },
   "components_omnigen": {
     "omnigen_tokenizer_real": {
       "cases": 4,
@@ -12809,6 +12885,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "6 passed (qwen-image)"
+    "reference_summary": "5 passed (hidream-o1-image)"
   }
 }
