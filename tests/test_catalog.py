@@ -30,6 +30,7 @@ def test_catalog_contents():
             "flux2-klein-4b",
             "flux2-klein-9b",
             "glm-image",
+            "hart",
             "hidream-i1-dev",
             "hidream-i1-fast",
             "hidream-i1-full",

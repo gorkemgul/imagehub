@@ -2062,6 +2062,34 @@ run. Records: `header_prx-1024-t2i-beta` and `header_prx-512-t2i-sft`, the
 [validation-measurements.json](validation-measurements.json); `components_prx`,
 [validation.json](validation.json).
 
+## HART
+
+The `hart` checkpoint is pinned to `mit-han-lab/hart-0.7b-1024px` revision `b1521ff` and the
+Qwen2 text encoder to `mit-han-lab/Qwen2-VL-1.5B-Instruct` revision `6e5b539`. The comparison
+target is the official `HARTForT2I.autoregressive_infer_cfg` implementation at revision
+`e28a41f`, on CPU in float32.
+
+Offline tests strictly match the published tensor layouts (317 generator tensors, 190
+inference-path autoencoder tensors, and 338 Qwen2 text tensors). Random-weight comparisons cover
+Qwen2 padding behavior, HART rotary attention and cached stage execution, the multi-scale quantizer,
+the residual-diffusion MLP, and the hybrid-tokenizer decoder; all five comparisons are bit-exact. The real-checkpoint
+suite additionally checks tokenizer output and runs separate public-pipeline comparisons at seed 0
+and seed 42, recording `e2e_hart` and `seed_e2e_hart` with `passed=` fields.
+
+Real-checkpoint measurements are pending the opt-in real-checkpoint run. The end-to-end checks keep
+the fixed 1024×1024 output, one final MaskGIT pass, and eight residual steps because those dimensions
+are intrinsic to the published weights.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Expected result |
+| --- | --- |
+| Published generator / autoencoder / Qwen2 tensor layouts | no missing, extra, or mismatched tensors |
+| Qwen2 token ids and attention masks | identical |
+| Random-weight Qwen2, HART block, quantizer, diffusion MLP, and decoder | exact |
+| End to end, seed 0 through `pipeline(...)` | identical uint8 image |
+| Separate end to end, seed 42 through `pipeline(...)` | identical uint8 image |
+
 ## Differences found and fixed during validation
 
 The first run with real checkpoints exposed two tokenizer differences that tests with random weights

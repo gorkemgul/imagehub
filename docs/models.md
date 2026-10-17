@@ -2201,6 +2201,61 @@ tokens or caption embeddings are not supported.
 **License.** The repository declares the MIT license and the text encoder is Apache-2.0.
 imagehub does not distribute weights.
 
+# HART
+
+Catalog: [`hart`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `hart` · Task: `t2i`
+
+**Architecture.** HART generates an image as a pyramid of latent-token grids. A 24-layer,
+width-1536 transformer predicts discrete codebook entries at resolutions from 1×1 through 48×48;
+the last 64×64 stage is generated in one MaskGIT pass. A six-block diffusion MLP predicts a
+continuous 32-channel residual for each last-stage token in eight improved-DDPM steps. Adding the
+discrete and continuous latents gives the 64×64 feature map decoded by the hybrid tokenizer to
+1024×1024 pixels. Qwen2-VL-1.5B-Instruct supplies 300 prompt vectors, with the official prompt
+enhancement instruction prepended while encoding.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained hart checkpoints/hart
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="hart", model="checkpoints/hart", device="cpu") as pipe:
+    result = pipe("a blue Porsche 356 parked in front of a yellow brick wall", seed=42)
+    result.images[0].save("porsche.png")
+```
+
+**Settings.** The defaults follow the published sampler: guidance 4.5, seed 1, top-p disabled,
+the official system prompt enabled, and fixed 1024×1024 output. Supported options are `seed`,
+`cfg_scale`, `top_p`, `width`, `height`, `use_system_prompt`, and `more_smooth`. The published
+Gumbel smoothing mode is currently rejected (`more_smooth=True`) instead of silently changing the
+sampler. Unknown options are errors before weights are loaded.
+
+**Checkpoint layout.** The snapshot stores the EMA generator in `llm/ema_model.bin`, the hybrid
+autoencoder in `tokenizer/pytorch_model.bin`, and the Qwen2 weights and tokenizer files in
+`text_encoder/`. Only the autoencoder decoder, codebook, and multi-scale residual convolutions are
+loaded; training-only encoder and discriminator tensors remain verified download files but are not
+allocated for inference.
+
+**Memory and devices.** The published HART and hybrid-tokenizer tensors are float32; Qwen2 is
+bfloat16 and is upcast for CPU float32 validation. The complete native pipeline needs roughly 10 GB
+in CPU float32. CPU is the parity target; MPS and CUDA are unvalidated smoke-test devices.
+
+**Validation.** Published layouts cover 317 HART generator tensors, 190 inference autoencoder
+tensors, and 338 Qwen2 text tensors. Random-weight Qwen2, transformer-block, multi-scale quantizer,
+residual-diffusion, and decoder comparisons are exact. Real-checkpoint component and end-to-end
+tests are opt-in; see
+[validation](validation.md).
+
+**Out of scope.** Training, the safety checker, class-conditional checkpoints, CUDA fused kernels,
+several prompts per call, non-EMA generator weights, and reduced-precision parity are not supported.
+
+**License.** The HART code and weights are MIT; the Qwen2 text encoder is Apache-2.0. imagehub does
+not distribute weights.
+
 
 # HiDream-I1
 

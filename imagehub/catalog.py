@@ -2880,6 +2880,51 @@ for _id, _repo, _revision, _size in (
         )
     )
 
+_entries.append(
+    ModelSpec(
+        id="hart",
+        task=Task.T2I,
+        family="hart",
+        source="https://huggingface.co/mit-han-lab/hart-0.7b-1024px",
+        repo_id="mit-han-lab/hart-0.7b-1024px",
+        revision="b1521ff1449d6817c685b08614c554e7a5b5b8eb",
+        provenance="author",
+        catalog_id="hart",
+        format="pytorch",
+        license="MIT",
+        config={"defaults": {"cfg_scale": 4.5, "width": 1024, "height": 1024}},
+        reference={
+            "repository": {
+                "url": "https://github.com/mit-han-lab/hart",
+                "revision": "e28a41fe15025baf3d48ab004f5d3727c88d8fc7",
+            }
+        },
+        files=(
+            "llm/config.json",
+            "llm/ema_model.bin",
+            "tokenizer/config.json",
+            "tokenizer/pytorch_model.bin",
+        ),
+        subfolders={
+            "text_encoder": SubRepo(
+                repo_id="mit-han-lab/Qwen2-VL-1.5B-Instruct",
+                revision="6e5b5399a390528a3b2c9f5109fb795553d3db71",
+                files=(
+                    "config.json",
+                    "generation_config.json",
+                    "merges.txt",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00002.safetensors",
+                    "model-00002-of-00002.safetensors",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                    "vocab.json",
+                ),
+            )
+        },
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

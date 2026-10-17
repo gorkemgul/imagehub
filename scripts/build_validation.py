@@ -396,6 +396,9 @@ def main() -> None:
             for key, value in measured.items()
             if key.startswith(("llamagen_", "llamagen-"))
         },
+        "components_hart": {
+            key: value for key, value in measured.items() if key.startswith("hart_")
+        },
         "components_auraflow": {
             key: value for key, value in measured.items() if key.startswith("auraflow_")
         },

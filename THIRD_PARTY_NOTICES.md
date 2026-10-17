@@ -12,6 +12,7 @@ and outputs can be compared with them.
 | [transformers](https://github.com/huggingface/transformers) v5.18.0 | The HuggingFace Team, OpenAI and contributors | CLIP, T5/UMT5, T5Gemma, Gemma-2, Llama, Qwen, Qwen2.5-VL/Qwen3-VL, GLM, ChatGLM, BERT and Janus encoders; CLIP, Qwen, Gemma, ChatGLM, BERT, T5 and DeepSeek tokenizers | [Apache 2.0](licenses/Transformers-Apache-2.0.txt) |
 | [CLIP](https://github.com/openai/CLIP) | 2021 OpenAI | Byte-level BPE vocabulary conventions | [MIT](licenses/OpenAI-CLIP-MIT.txt) |
 | [LlamaGen](https://github.com/FoundationVision/LlamaGen) at `ce98ec4` | FoundationVision and contributors | GPT-XL caption embedder and autoregressive sampler, VQ-16 image tokenizer, 2D RoPE layout and KV-cache generation order | [MIT](licenses/LlamaGen-MIT.txt) |
+| [HART](https://github.com/mit-han-lab/hart) at `e28a41f` | MIT HAN Lab and contributors | Multi-scale autoregressive transformer, hybrid tokenizer decoder, residual diffusion head and sampling order | [MIT](licenses/HART-MIT.txt) |
 | [ideogram4](https://github.com/ideogram-oss/ideogram4) at `990fe1c` | Ideogram AI and contributors | Ideogram 4 transformer and text-model hidden-state selection, fp8 linear dequantization, sampler presets and prompt format | [Apache 2.0](licenses/Ideogram4-Apache-2.0.txt) |
 | [HiDream-O1-Image](https://github.com/HiDream-ai/HiDream-O1-Image) at `2c2d29f` | HiDream.ai and contributors | Pixel patch projections, timestep conditioning, mixed causal/generation attention mask and sampling order | [MIT](licenses/HiDream-O1-MIT.txt) |
 
