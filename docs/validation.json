@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-17",
+  "date": "2026-10-18",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -4886,6 +4886,70 @@
           640,
           384
         ]
+      }
+    },
+    {
+      "model_id": "meissonic",
+      "repo_id": "MeissonFlow/Meissonic",
+      "revision": "7ee5068bcebaaf6165e5d77c2969aa3b38e17b38",
+      "provenance": "author",
+      "catalog_id": "meissonic",
+      "license": "Apache-2.0",
+      "reference": {
+        "meissonic": {
+          "repository": "viiika/Meissonic",
+          "git_commit": "a9de06ca8c02c467aec3da275605fc59380299e2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "3c5c2de1c9fda481c32c4f19e3da82b6a0fbc11591731507681e89f620a65e35",
+        "scheduler/scheduler_config.json": "de28f73f40d0834ac252ac65ef48dc35fcec8a3b50b52cd80d0bb7c99884bdb6",
+        "text_encoder/config.json": "d891548c47c3c7770f3419af22093c7f98e76f6e5ec77fd444ef24ee76607aed",
+        "text_encoder/model.safetensors": "f32c52903fc74d29d0ea3f0ceea8080eec7ad4b2913e16555a4e546df0f37c7f",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "transformer/config.json": "0d3c6d62ed1a532c4433cf32291237883cc4714044f27611ba93ff3e089861da",
+        "transformer/diffusion_pytorch_model.safetensors": "a44b1775411bea393b930ad6524d536ef316910e6a898c9400394e21c7fe632f",
+        "vqvae/config.json": "f543c65e38300b098436a93d7b2c9e8246b47b3e9be8e0e6e37a5a5c6a050161",
+        "vqvae/diffusion_pytorch_model.safetensors": "1241a5c88b635af4f8cfb268e388ccaa70f55a458a473d68943e5c28d7b7f762"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 389,
+          "transformer": 867,
+          "vqvae": 277
+        }
+      },
+      "end_to_end": {
+        "guidance": 9.0,
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "size": [
+          32,
+          1024
+        ],
+        "steps": 2
+      },
+      "seed_end_to_end": {
+        "guidance": 9.0,
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "size": [
+          32,
+          1024
+        ],
+        "steps": 2
       }
     },
     {
@@ -11174,6 +11238,37 @@
       "tolerance": 0.0
     }
   },
+  "components_meissonic": {
+    "meissonic_text_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "meissonic_text_hidden": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "meissonic_tokenizer": {
+      "cases": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "tolerance": "exact"
+    },
+    "meissonic_transformer_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "meissonic_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_llamagen": {
     "llamagen-t2i-xl-256_gpt_prefill": {
       "max_abs": 0.0,
@@ -13137,6 +13232,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "18 passed (chroma1-base)"
+    "reference_summary": "6 passed (meissonic)"
   }
 }

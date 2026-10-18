@@ -1216,6 +1216,17 @@
     ],
     "steps": 30
   },
+  "e2e_meissonic": {
+    "guidance": 9.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "size": [
+      32,
+      1024
+    ],
+    "steps": 2
+  },
   "e2e_multistep_sdxl-turbo": {
     "guidance": 2.0,
     "latents": {
@@ -3551,6 +3562,26 @@
       "tensors": 248
     }
   },
+  "header_meissonic": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 389
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 867
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
+    }
+  },
   "header_omnigen-v1": {
     "transformer": {
       "extra": [],
@@ -5287,6 +5318,35 @@
     "tolerance": 0.0
   },
   "lumina_next_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "meissonic_text_embeds": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "meissonic_text_hidden": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "meissonic_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "meissonic_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "meissonic_vq_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -8462,6 +8522,17 @@
       768
     ],
     "steps": 12
+  },
+  "seed_e2e_meissonic": {
+    "guidance": 9.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "size": [
+      32,
+      1024
+    ],
+    "steps": 2
   },
   "seed_e2e_omnigen-v1": {
     "max_pixel_diff": 0,
