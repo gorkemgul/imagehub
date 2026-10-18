@@ -317,6 +317,12 @@ def _official_image(root: Path, seed: int) -> torch.Tensor:
     sys.path.insert(0, str(REFERENCE_ROOT))
     try:
         importlib.import_module("hart.modules.models.transformer")
+        autoencoder = importlib.import_module(
+            "hart.modules.models.autoencoder.hart_autoencoder_with_disc"
+        )
+        # Transformers 5 expects bookkeeping absent from the pinned HART wrapper.
+        if not hasattr(autoencoder.HARTAutoEncoderWithDisc, "all_tied_weights_keys"):
+            autoencoder.HARTAutoEncoderWithDisc.all_tied_weights_keys = {}
         encode = importlib.import_module("hart.utils").encode_prompts
         constants = importlib.import_module("hart.utils.constants")
         with _cpu_cuda_shim():
@@ -328,7 +334,10 @@ def _official_image(root: Path, seed: int) -> torch.Tensor:
                 .float()
                 .eval()
             )
-            model = transformers.AutoModel.from_pretrained(root / "llm", local_files_only=True)
+            model_config = transformers.AutoConfig.from_pretrained(
+                root / "llm", local_files_only=True
+            )
+            model = transformers.AutoModel.from_config(model_config)
             model.load_state_dict(load_weights(root / "llm/ema_model.bin"))
             model.eval()
             _, mask, positions, context = encode(
