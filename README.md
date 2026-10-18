@@ -87,6 +87,7 @@ result.images[0].save("edited.png")
 | OmniGen | `omnigen-v1` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 transformer |
 | Ovis-Image | `ovis-image-7b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 VAE weights |
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |
+| Meissonic | `meissonic` | `t2i` | T | CPU fp32 parity |
 | AuraFlow | `auraflow-v0.3` | `t2i` | T | CPU fp32 parity |
 | PRX | `prx-1024-t2i-beta`, `prx-512-t2i-sft` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
 | Chroma | `chroma1-hd`, `chroma1-flash`, `chroma1-base` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |

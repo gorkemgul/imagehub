@@ -1800,6 +1800,44 @@ for _amused_id, _amused_revision, _amused_size in (
 
 _entries.append(
     ModelSpec(
+        id="meissonic",
+        task=Task.T2I,
+        family="meissonic",
+        source="https://huggingface.co/MeissonFlow/Meissonic",
+        repo_id="MeissonFlow/Meissonic",
+        revision="7ee5068bcebaaf6165e5d77c2969aa3b38e17b38",
+        provenance="author",
+        catalog_id="meissonic",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        reference={
+            "meissonic": {
+                "repository": "viiika/Meissonic",
+                "git_commit": "a9de06ca8c02c467aec3da275605fc59380299e2",
+            },
+            "transformers": {"version": "5.18.0"},
+        },
+        config={"defaults": {"steps": 48, "guidance": 9.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vqvae/config.json",
+            "vqvae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="auraflow-v0.3",
         task=Task.T2I,
         family="auraflow",

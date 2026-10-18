@@ -2080,6 +2080,48 @@ inpainting and variation, and caller-supplied tokens or embeddings are not suppo
 **License.** Both repositories declare the OpenRAIL++ license; check its use restrictions before
 redistributing generated images or weights. imagehub does not distribute weights.
 
+# Meissonic
+
+Catalog: [`meissonic`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `meissonic` · Task: `t2i`
+
+**Architecture.** Meissonic is a masked image-token generator. Its CLIP text tower produces a
+pooled condition and 77 token states. A 1B-parameter transformer embeds a 64×64 grid of VQ tokens,
+compresses it to 32×32, applies 14 joint text/image blocks and 28 single-stream blocks with rotary
+position embeddings, restores the grid, and predicts one of 8192 codebook entries per position.
+The scheduler repeatedly samples tokens and remasks low-confidence positions on a cosine schedule.
+A VQ-VAE with 16× spatial compression decodes the completed grid.
+
+```bash
+python -m imagehub.pretrained meissonic checkpoints/meissonic
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="meissonic", model="checkpoints/meissonic") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** Defaults are 1024×1024, 48 steps, guidance 9, aesthetic score 6, crop `(0, 0)`,
+and temperature `(2, 0)`. Options are `seed`, `steps`, `guidance`, `width`, `height`,
+`negative_prompt`, `aesthetic_score`, `crop_coord`, and `temperature`. Dimensions must be multiples
+of 32 for the published transformer. A temperature pair is linearly interpolated across steps;
+one number falls to 0.01. Guidance at or below 1 disables the negative branch.
+
+**Memory.** The full-precision transformer is 4.0 GB, text encoder 1.4 GB, and VQ-VAE 0.6 GB.
+The 1024px transformer operates on 1,024 compressed image tokens plus 77 text tokens per branch.
+
+**Validation and limits.** CPU float32 tests compare the tokenizer, text encoder, transformer,
+scheduler, VQ decoder, completed token grid, and uint8 image with the pinned official `Pipeline`.
+The real end-to-end validation uses two steps and a narrow valid image to shorten its CPU run; it
+is a parity test, not a quality demonstration. Batches, caller-provided embeddings or tokens,
+callbacks, LoRA, image-to-image, inpainting, and fp16/bf16 parity are not supported.
+
+**License.** The weights and implementation declare Apache-2.0. imagehub does not distribute
+weights. See [validation](validation.md).
+
 # AuraFlow
 
 Catalog: [`auraflow`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:

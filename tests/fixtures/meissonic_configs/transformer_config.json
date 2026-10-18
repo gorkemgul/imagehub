@@ -1,0 +1,1 @@
+{"_class_name":"Transformer2DModel","_diffusers_version":"0.30.2","attention_head_dim":128,"axes_dims_rope":[16,56,56],"codebook_size":8192,"downsample":true,"guidance_embeds":false,"in_channels":64,"joint_attention_dim":1024,"num_attention_heads":8,"num_layers":14,"num_single_layers":28,"patch_size":1,"pooled_projection_dim":1024,"upsample":true,"vocab_size":8256}

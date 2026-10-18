@@ -908,6 +908,11 @@
       "pixels": 0
     }
   },
+  "e2e_hart": {
+    "passed": true,
+    "pixels_equal": true,
+    "seed": 0
+  },
   "e2e_hidream-o1-image": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -1215,6 +1220,17 @@
       1024
     ],
     "steps": 30
+  },
+  "e2e_meissonic": {
+    "guidance": 9.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "size": [
+      32,
+      1024
+    ],
+    "steps": 2
   },
   "e2e_multistep_sdxl-turbo": {
     "guidance": 2.0,
@@ -2503,6 +2519,36 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "hart_block_random": {
+    "passed": true,
+    "stages": 2,
+    "tolerance": "exact"
+  },
+  "hart_decoder_random": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "hart_diffusion_mlp_random": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "hart_quantizer_random": {
+    "passed": true,
+    "stages": 2,
+    "tolerance": "exact"
+  },
+  "hart_qwen2_random": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "hart_text_encoder": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "hart_tokenizer": {
+    "cases": 4,
+    "passed": true
+  },
   "header_amused-256": {
     "text_encoder": {
       "extra": [],
@@ -2962,6 +3008,13 @@
       "missing": [],
       "tensors": 1011
     }
+  },
+  "header_hart": {
+    "autoencoder_inference_tensors": 190,
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "transformer_tensors": 317
   },
   "header_hidream-i1-dev": {
     "text_encoder": {
@@ -3549,6 +3602,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_meissonic": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 389
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 867
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
     }
   },
   "header_omnigen-v1": {
@@ -5287,6 +5360,35 @@
     "tolerance": 0.0
   },
   "lumina_next_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "meissonic_text_embeds": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "meissonic_text_hidden": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "meissonic_tokenizer": {
+    "cases": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "tolerance": "exact"
+  },
+  "meissonic_transformer_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "meissonic_vq_decode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -8269,6 +8371,11 @@
     "size": 512,
     "steps": 2
   },
+  "seed_e2e_hart": {
+    "passed": true,
+    "pixels_equal": true,
+    "seed": 42
+  },
   "seed_e2e_hidream-o1-image": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -8462,6 +8569,17 @@
       768
     ],
     "steps": 12
+  },
+  "seed_e2e_meissonic": {
+    "guidance": 9.0,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "size": [
+      32,
+      1024
+    ],
+    "steps": 2
   },
   "seed_e2e_omnigen-v1": {
     "max_pixel_diff": 0,

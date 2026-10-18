@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**41 architecture families, 90 published checkpoints.** A model is a separately published set of weights;
+**42 architecture families, 91 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -75,6 +75,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `chroma1-base` | `chroma` | [lodestones/Chroma1-Base](https://huggingface.co/lodestones/Chroma1-Base) | `50ebe12` | author | full | Apache-2.0 | `chroma1-base` |
 | `amused-256` | `amused` | [amused/amused-256](https://huggingface.co/amused/amused-256) | `09b6259` | author | full | OpenRAIL++ | `amused` |
 | `amused-512` | `amused` | [amused/amused-512](https://huggingface.co/amused/amused-512) | `6f3f309` | author | full | OpenRAIL++ | `amused` |
+| `meissonic` | `meissonic` | [MeissonFlow/Meissonic](https://huggingface.co/MeissonFlow/Meissonic) | `7ee5068` | author | full | Apache-2.0 | `meissonic` |
 | `auraflow-v0.3` | `auraflow` | [fal/AuraFlow-v0.3](https://huggingface.co/fal/AuraFlow-v0.3) | `2cd8588` | author | full | Apache-2.0 | `auraflow` |
 | `prx-1024-t2i-beta` | `prx` | [Photoroom/prx-1024-t2i-beta](https://huggingface.co/Photoroom/prx-1024-t2i-beta) | `0370504` | author | full | Apache-2.0 | `prx` |
 | `prx-512-t2i-sft` | `prx` | [Photoroom/prx-512-t2i-sft](https://huggingface.co/Photoroom/prx-512-t2i-sft) | `2996423` | author | full | Apache-2.0 | `prx` |
