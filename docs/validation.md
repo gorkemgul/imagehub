@@ -1765,6 +1765,31 @@ configuration at small spatial sizes. Tiny-snapshot end-to-end parity covers the
 guidance on and off, non-square sizes, two seeds and several weight seeds, using a random snapshot in
 the published diffusers layout.
 
+## Meissonic
+
+`meissonic` is pinned to `MeissonFlow/Meissonic` revision `7ee5068` and compared on CPU in
+float32 with the official `viiika/Meissonic` `src.pipeline.Pipeline` at commit `a9de06c`.
+Offline fixtures cover 389 text-encoder tensors, 867 transformer tensors, and 277 VQ-VAE tensors
+with no missing, extra, or mismatched names or shapes. Random-weight tests compare the transformer
+and scheduler exactly, and tiny whole-pipeline tests compare guidance off and on, a non-square
+image, multiple seeds, final tokens, and uint8 pixels exactly.
+
+The real-checkpoint suite is in `tests/reference/test_ref_meissonic.py`. All 6 real tests passed,
+and the observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU
+in float32, the local implementation produces a bit-identical image to the one the official
+pipeline produces. The recorded comparisons are the tensor header check (`text_encoder`,
+`transformer`, `vqvae`; 389 / 867 / 277 tensors, with no missing, extra or shape-mismatched
+tensors), the CLIP tokenizer token ids (4 prompts), the projected and penultimate CLIP text
+encoder states, one transformer step (masked token grid at 1024×32, timestep 1), the VQ-VAE
+decode, and separate public-pipeline runs at seeds 0 and 42. Both end-to-end cases use 2 steps at
+1024×32 instead of the 48-step 1024×1024 default to keep the CPU validation short while
+exercising the published transformer's compression path. The real-checkpoint run took less than a
+minute on an M2 Max (CPU). Records: `header_meissonic`, `meissonic_tokenizer`,
+`meissonic_text_embeds`, `meissonic_text_hidden`, `meissonic_transformer_step`,
+`meissonic_vq_decode`, `e2e_meissonic` and `seed_e2e_meissonic`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`,
+`end_to_end` and `seed_end_to_end`, [validation.json](validation.json).
+
 ## AuraFlow
 
 Validated on CPU in the same environment as above. `auraflow-v0.3` is loaded strictly from
@@ -2018,8 +2043,8 @@ first sequence of the batch only; the native module reproduces that.
   for `hidream-i1-dev` and `hidream-i1-full`, 5 passed for `hidream-o1-image`, and 14 passed
   for `chroma1-hd`, 16 passed for `chroma1-flash`, 18 passed for `chroma1-base`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together,
-  23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, and
-  7 passed for `deepfloyd-if-i-xl`. These include structural parity with random weights,
+  23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, 7 passed for
+  `deepfloyd-if-i-xl`, and 6 passed for `meissonic`. These include structural parity with random weights,
   end-to-end parity with a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

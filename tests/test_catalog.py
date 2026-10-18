@@ -56,6 +56,7 @@ def test_catalog_contents():
             "longcat-image",
             "lumina-image-2.0",
             "lumina-next",
+            "meissonic",
             "omnigen-v1",
             "ovis-image-7b",
             "pixart-alpha-xl-1024",
@@ -1356,6 +1357,40 @@ def test_amused_catalog_entries(model_id, revision, size):
     assert not spec.gated
     assert spec.config == {
         "defaults": {"steps": 12, "guidance": 10.0, "width": size, "height": size}
+    }
+    assert spec.files == (
+        "model_index.json",
+        "scheduler/scheduler_config.json",
+        "text_encoder/config.json",
+        "text_encoder/model.safetensors",
+        "tokenizer/merges.txt",
+        "tokenizer/special_tokens_map.json",
+        "tokenizer/tokenizer_config.json",
+        "tokenizer/vocab.json",
+        "transformer/config.json",
+        "transformer/diffusion_pytorch_model.safetensors",
+        "vqvae/config.json",
+        "vqvae/diffusion_pytorch_model.safetensors",
+    )
+
+
+def test_meissonic_catalog_entry():
+    spec = model_info("meissonic")
+    assert spec.task is Task.T2I
+    assert spec.family == spec.catalog_id == "meissonic"
+    assert spec.source == "https://huggingface.co/MeissonFlow/Meissonic"
+    assert spec.repo_id == "MeissonFlow/Meissonic"
+    assert spec.revision == "7ee5068bcebaaf6165e5d77c2969aa3b38e17b38"
+    assert spec.provenance == "author"
+    assert spec.format == "diffusers"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.config == {
+        "defaults": {"steps": 48, "guidance": 9.0, "width": 1024, "height": 1024}
+    }
+    assert spec.reference["meissonic"] == {
+        "repository": "viiika/Meissonic",
+        "git_commit": "a9de06ca8c02c467aec3da275605fc59380299e2",
     }
     assert spec.files == (
         "model_index.json",
