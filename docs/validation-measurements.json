@@ -1394,6 +1394,11 @@
     ],
     "steps": 20
   },
+  "e2e_pixeldit": {
+    "max_abs_diff": 0,
+    "passed": true,
+    "tolerance": "exact"
+  },
   "e2e_playground-v2": {
     "guidance": 3.0,
     "latents": {
@@ -5712,6 +5717,39 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "pixeldit_denoiser_step": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "pixeldit_fixture_header": {
+    "extra": [],
+    "mismatch": [],
+    "missing": [],
+    "tensors": 391
+  },
+  "pixeldit_flow_dpm_random": {
+    "max_abs_diff": 0.0,
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "pixeldit_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "pixeldit_tiny_e2e": {
+    "max_abs_diff": 0,
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "pixeldit_transformer_random": {
+    "max_abs_diff": 0.0,
+    "passed": true,
+    "tolerance": "exact"
+  },
   "prx_prx-1024-t2i-beta_text_encoder": {
     "masks_equal": true,
     "max_abs": 0.0,
@@ -8631,6 +8669,11 @@
     "max_pixel_diff": 0,
     "passed": true,
     "seed": 42
+  },
+  "seed_e2e_pixeldit": {
+    "max_abs_diff": 0,
+    "passed": true,
+    "tolerance": "exact"
   },
   "seed_e2e_playground-v2": {
     "guidance": 3.0,

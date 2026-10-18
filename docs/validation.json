@@ -8033,6 +8033,99 @@
         "pixels_equal": true,
         "seed": 42
       }
+    },
+    {
+      "model_id": "pixeldit",
+      "repo_id": "nvidia/PixelDiT-1300M-1024px",
+      "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
+      "provenance": "author",
+      "catalog_id": "pixeldit",
+      "license": "NVIDIA License (NSCLv1; non-commercial research or evaluation)",
+      "reference": {
+        "repository": {
+          "url": "https://github.com/NVlabs/PixelDiT",
+          "revision": "f7d7c35f71893d81c6e71d2576ea80601a1e8529"
+        }
+      },
+      "status": "full",
+      "files": {
+        "LICENSE": {
+          "repo_id": "nvidia/PixelDiT-1300M-1024px",
+          "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
+          "sha256": "5a974fcf1ffb2bc86af3ce6a6f55b60e351537cf6761443a1dc2db557f9c82af"
+        },
+        "README.md": {
+          "repo_id": "nvidia/PixelDiT-1300M-1024px",
+          "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
+          "sha256": "3ab788409a8cabe248cbaaeeeb9070d56a2bf22756f6911d8be7c616f94972e2"
+        },
+        "config.json": {
+          "repo_id": "nvidia/PixelDiT-1300M-1024px",
+          "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
+          "sha256": "66ea80d2d57d14f797ebda1058e3075cc19943adaa219ad11124543c865c3939"
+        },
+        "pixeldit_t2i_v1.pth": {
+          "repo_id": "nvidia/PixelDiT-1300M-1024px",
+          "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
+          "sha256": "625fd174d6348af3ad1123b281ab817643efa5dc447c2344eeb222e88b4317db"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "b3195cba8e4a8e637f15bc0bab6b48fd0f4e02967fac72925e2dfb02c4d5b8d7"
+        },
+        "text_encoder/generation_config.json": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "069b655f964da6484bea4ab6ecfc34f6c5f47448a5b88711218555a76dce34e8"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "ada0043f3e3b2e5ab2f445cad9c0fbbf9d91ad444675e6a82b822591c63abf5a"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "532d792c9178805064170a3ec485b7dedbfccc6fd297b92c31a6091b6c7e41bf"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "6d6d9ce84db398fb6e0191f91542e5da0a73da2cb695e172a24edc2146dc8d20"
+        },
+        "text_encoder/special_tokens_map.json": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351"
+        },
+        "text_encoder/tokenizer.json": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "3f289bc05132635a8bc7aca7aa21255efd5e18f3710f43e3cdb96bcd41be4922"
+        },
+        "text_encoder/tokenizer.model": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2"
+        },
+        "text_encoder/tokenizer_config.json": {
+          "repo_id": "Efficient-Large-Model/gemma-2-2b-it",
+          "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+          "sha256": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89"
+        }
+      },
+      "tensor_header_check": null,
+      "end_to_end": {
+        "max_abs_diff": 0,
+        "passed": true,
+        "tolerance": "exact"
+      },
+      "seed_end_to_end": {
+        "max_abs_diff": 0,
+        "passed": true,
+        "tolerance": "exact"
+      }
     }
   ],
   "components": {
@@ -11496,6 +11589,41 @@
       "passed": true
     }
   },
+  "components_pixeldit": {
+    "pixeldit_denoiser_step": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "pixeldit_fixture_header": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 391
+    },
+    "pixeldit_flow_dpm_random": {
+      "max_abs_diff": 0.0,
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "pixeldit_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "pixeldit_tiny_e2e": {
+      "max_abs_diff": 0,
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "pixeldit_transformer_random": {
+      "max_abs_diff": 0.0,
+      "passed": true,
+      "tolerance": "exact"
+    }
+  },
   "components_auraflow": {
     "auraflow_auraflow-v0.3_text_encoder_negative": {
       "max_abs": 0.0,
@@ -13363,6 +13491,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (hart)"
+    "reference_summary": "8 passed (pixeldit)"
   }
 }
