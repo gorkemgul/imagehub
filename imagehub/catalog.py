@@ -2963,6 +2963,53 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="pixeldit",
+        task=Task.T2I,
+        family="pixeldit",
+        source="https://huggingface.co/nvidia/PixelDiT-1300M-1024px",
+        repo_id="nvidia/PixelDiT-1300M-1024px",
+        revision="7c63b99a7a399918a1d6478b095698a65f664847",
+        provenance="author",
+        catalog_id="pixeldit",
+        format="pytorch",
+        license="NVIDIA License (NSCLv1; non-commercial research or evaluation)",
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 2.75,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        reference={
+            "repository": {
+                "url": "https://github.com/NVlabs/PixelDiT",
+                "revision": "f7d7c35f71893d81c6e71d2576ea80601a1e8529",
+            }
+        },
+        files=("LICENSE", "README.md", "config.json", "pixeldit_t2i_v1.pth"),
+        subfolders={
+            "text_encoder": SubRepo(
+                repo_id="Efficient-Large-Model/gemma-2-2b-it",
+                revision="569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+                files=(
+                    "config.json",
+                    "generation_config.json",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00002.safetensors",
+                    "model-00002-of-00002.safetensors",
+                    "special_tokens_map.json",
+                    "tokenizer.json",
+                    "tokenizer.model",
+                    "tokenizer_config.json",
+                ),
+            )
+        },
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

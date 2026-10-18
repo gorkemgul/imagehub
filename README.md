@@ -93,6 +93,7 @@ result.images[0].save("edited.png")
 | Chroma | `chroma1-hd`, `chroma1-flash`, `chroma1-base` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
 | HART | `hart` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
+| PixelDiT | `pixeldit` | `t2i` | T | Exact CPU fp32 parity suite |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |

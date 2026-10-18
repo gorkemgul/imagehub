@@ -404,6 +404,9 @@ def main() -> None:
         "components_hart": {
             key: value for key, value in measured.items() if key.startswith("hart_")
         },
+        "components_pixeldit": {
+            key: value for key, value in measured.items() if key.startswith("pixeldit_")
+        },
         "components_auraflow": {
             key: value for key, value in measured.items() if key.startswith("auraflow_")
         },

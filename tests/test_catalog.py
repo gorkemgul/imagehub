@@ -67,6 +67,7 @@ def test_catalog_contents():
             "pixart-sigma-xl-256",
             "pixart-sigma-xl-2k",
             "pixart-sigma-xl-512",
+            "pixeldit",
             "playground-v2",
             "playground-v2.5",
             "prx-1024-t2i-beta",
@@ -632,6 +633,19 @@ def test_pixart_sigma_transformer_only_catalog_entries():
                 "height": size,
             }
         }
+
+
+def test_pixeldit_catalog_entry():
+    spec = model_info("pixeldit")
+    assert spec.task is Task.T2I
+    assert spec.family == spec.catalog_id == "pixeldit"
+    assert spec.repo_id == "nvidia/PixelDiT-1300M-1024px"
+    assert spec.revision == "7c63b99a7a399918a1d6478b095698a65f664847"
+    assert spec.provenance == "author"
+    assert spec.format == "pytorch"
+    assert "NSCLv1" in spec.license
+    assert spec.files == ("LICENSE", "README.md", "config.json", "pixeldit_t2i_v1.pth")
+    assert spec.subfolders["text_encoder"].revision == ("569d9809d0c8b6722d4d31b5a77a2ec7a400650a")
 
 
 def test_cogview3_plus_catalog_entry():

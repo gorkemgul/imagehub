@@ -5,6 +5,17 @@ Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB u
 12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
 References are recorded per model in `validation.json` under `reference`.
 
+## PixelDiT
+
+`pixeldit` is pinned to `nvidia/PixelDiT-1300M-1024px` revision `7c63b99` and the official
+`NVlabs/PixelDiT` implementation revision `f7d7c35`. Offline validation strictly checks all 391
+published denoiser tensors plus the Gemma-2 shards. Exact random-weight comparisons cover the
+dual-level transformer, the second-order FLOW DPM-Solver++ trajectory, and a tiny whole generation
+ending in uint8 pixels. The real-checkpoint suite separately records `pixeldit_text_encoder`,
+`pixeldit_denoiser_step`, `e2e_pixeldit` (seed 0) and `seed_e2e_pixeldit` (seed 42, a separate public
+`pipeline(...)` run). Both end-to-end cases use two steps and 16×16 pixels to bound CPU time; model
+defaults remain 50 steps and 1024×1024.
+
 ## Scope
 
 ## Latent Diffusion Model
