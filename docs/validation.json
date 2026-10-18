@@ -7934,6 +7934,105 @@
         "seed": 42,
         "tolerance": "exact"
       }
+    },
+    {
+      "model_id": "hart",
+      "repo_id": "mit-han-lab/hart-0.7b-1024px",
+      "revision": "b1521ff1449d6817c685b08614c554e7a5b5b8eb",
+      "provenance": "author",
+      "catalog_id": "hart",
+      "license": "MIT",
+      "reference": {
+        "repository": {
+          "url": "https://github.com/mit-han-lab/hart",
+          "revision": "e28a41fe15025baf3d48ab004f5d3727c88d8fc7"
+        }
+      },
+      "status": "full",
+      "files": {
+        "llm/config.json": {
+          "repo_id": "mit-han-lab/hart-0.7b-1024px",
+          "revision": "b1521ff1449d6817c685b08614c554e7a5b5b8eb",
+          "sha256": "742589f9d0ce6fcad8a481b82cf393700060ab7f2263a4f5740c994d16ef78dc"
+        },
+        "llm/ema_model.bin": {
+          "repo_id": "mit-han-lab/hart-0.7b-1024px",
+          "revision": "b1521ff1449d6817c685b08614c554e7a5b5b8eb",
+          "sha256": "d72f47fc01a3f085b9b501fad29b0defe3469bf0d89e0c39f16f6a5d2f129abe"
+        },
+        "tokenizer/config.json": {
+          "repo_id": "mit-han-lab/hart-0.7b-1024px",
+          "revision": "b1521ff1449d6817c685b08614c554e7a5b5b8eb",
+          "sha256": "366be4d6a938e3d453fdcffc8cae7869472df6de773ab2dca7bd0d044f2aa01c"
+        },
+        "tokenizer/pytorch_model.bin": {
+          "repo_id": "mit-han-lab/hart-0.7b-1024px",
+          "revision": "b1521ff1449d6817c685b08614c554e7a5b5b8eb",
+          "sha256": "e7d90c6069ce9768b2f8a328e9fce624e4c77e8b6ab4b8d771e2d93e258d8663"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "a58e896d2756a7947f23f3db55667c19ca3b8524188a30c8c640cd7ff72a5136"
+        },
+        "text_encoder/generation_config.json": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "e558847a8b4402616f1273797b015104dc266fe4b520056fca88823ba8f8ebe6"
+        },
+        "text_encoder/merges.txt": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "6be55c3cc0f2e192fa5b24d15da271d2a7142a483b32445c5454477aa0ca516c"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "68035e2ea441220e74bf1c90f5290307a8a008ae4f2a3cc1d6976a10c937e76b"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "6ff0d5e8cdbd94a0411fbe5b4aded8774485cae77563102550b9f233307bf531"
+        },
+        "text_encoder/tokenizer.json": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "f7c9b2dba4a296b1aa76c16a34b8225c0c118978400d4bb66bff0902d702f5b8"
+        },
+        "text_encoder/tokenizer_config.json": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "482bd979881423375ca5414e4e0d94cd7c5349dbb17fffd46b4d36d71e62a1bc"
+        },
+        "text_encoder/vocab.json": {
+          "repo_id": "mit-han-lab/Qwen2-VL-1.5B-Instruct",
+          "revision": "6e5b5399a390528a3b2c9f5109fb795553d3db71",
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      },
+      "tensor_header_check": {
+        "autoencoder_inference_tensors": 190,
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "transformer_tensors": 317
+      },
+      "end_to_end": {
+        "passed": true,
+        "pixels_equal": true,
+        "seed": 0
+      },
+      "seed_end_to_end": {
+        "passed": true,
+        "pixels_equal": true,
+        "seed": 42
+      }
     }
   ],
   "components": {
@@ -11365,6 +11464,38 @@
       "ids": "16x16"
     }
   },
+  "components_hart": {
+    "hart_block_random": {
+      "passed": true,
+      "stages": 2,
+      "tolerance": "exact"
+    },
+    "hart_decoder_random": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "hart_diffusion_mlp_random": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "hart_quantizer_random": {
+      "passed": true,
+      "stages": 2,
+      "tolerance": "exact"
+    },
+    "hart_qwen2_random": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "hart_text_encoder": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "hart_tokenizer": {
+      "cases": 4,
+      "passed": true
+    }
+  },
   "components_auraflow": {
     "auraflow_auraflow-v0.3_text_encoder_negative": {
       "max_abs": 0.0,
@@ -13232,6 +13363,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "6 passed (meissonic)"
+    "reference_summary": "8 passed (hart)"
   }
 }
