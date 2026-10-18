@@ -2044,8 +2044,9 @@ first sequence of the batch only; the native module reproduces that.
   for `chroma1-hd`, 16 passed for `chroma1-flash`, 18 passed for `chroma1-base`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together,
   23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, 7 passed for
-  `deepfloyd-if-i-xl`, and 6 passed for `meissonic`. These include structural parity with random weights,
-  end-to-end parity with a small model, real-checkpoint parity and tokenizer fuzz tests.
+  `deepfloyd-if-i-xl`, 6 passed for `meissonic`, and 8 passed for `hart`. These include structural
+  parity with random weights, end-to-end parity with a small model, real-checkpoint parity and
+  tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
 - MPS smoke test: 1 passed.
@@ -2085,6 +2086,44 @@ run. Records: `header_prx-1024-t2i-beta` and `header_prx-512-t2i-sft`, the
 `prx_prx-1024-t2i-beta_*` and `prx_prx-512-t2i-sft_*` component keys, `e2e_prx-1024-t2i-beta`,
 `e2e_prx-512-t2i-sft`, `seed_e2e_prx-1024-t2i-beta` and `seed_e2e_prx-512-t2i-sft`,
 [validation-measurements.json](validation-measurements.json); `components_prx`,
+[validation.json](validation.json).
+
+## HART
+
+Validated on CPU in the same environment as above. The `hart` checkpoint was loaded strictly from
+`mit-han-lab/hart-0.7b-1024px` at revision `b1521ff` (with the Qwen2 text encoder
+`mit-han-lab/Qwen2-VL-1.5B-Instruct` at revision `6e5b539`) and compared with the official
+`HARTForT2I.autoregressive_infer_cfg` implementation at revision `e28a41f` on CPU in float32. All
+8 real-checkpoint tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one the official implementation produces. The published HART generator and hybrid
+tokenizer weights are float32; the published Qwen2 text-encoder weights are bfloat16 and are upcast
+to float32 on both sides. The real-checkpoint run took 3 minutes on an M2 Max (CPU).
+
+Offline tests strictly match the published tensor layouts (317 generator tensors, 190
+inference-path autoencoder tensors, and 338 Qwen2 text tensors). Random-weight comparisons cover
+Qwen2 padding behavior, HART rotary attention and cached stage execution, the multi-scale quantizer,
+the residual-diffusion MLP, and the hybrid-tokenizer decoder; all five comparisons are bit-exact.
+The real-checkpoint suite additionally checks the Qwen2 tokenizer on 4 fixed prompts and the encoded
+prompt tensors, and runs separate public-pipeline comparisons at seed 0 and seed 42, recording
+`header_hart`, `hart_tokenizer`, `hart_text_encoder`, `e2e_hart` and `seed_e2e_hart` with `passed=`
+fields. The end-to-end checks keep the fixed 1024×1024 output, one final MaskGIT pass, and eight
+residual steps because those dimensions are intrinsic to the published weights; both runs use the
+prompt "A blue Porsche 356 parked in front of a yellow brick wall." with the published defaults
+(guidance 4.5, the official system prompt enabled, top-p disabled).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: generator and inference autoencoder (317 / 190 tensors) | 0 missing / extra / mismatched | exact |
+| Qwen2 tokenizer token ids / attention masks (4 fixed prompts, 300 tokens) | identical / identical | exact / exact |
+| Qwen2 prompt encoding: context, mask, positions (official `encode_prompts`) | 0 / identical / identical | 0 / exact / exact |
+| End to end: final pixels (1024×1024, one MaskGIT pass, eight residual steps, guidance 4.5, seed 0) | 0 | 0 |
+| Separate end to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `header_hart`, `hart_tokenizer`, `hart_text_encoder`, `e2e_hart` and `seed_e2e_hart`,
+[validation-measurements.json](validation-measurements.json); `components_hart`,
 [validation.json](validation.json).
 
 ## Differences found and fixed during validation

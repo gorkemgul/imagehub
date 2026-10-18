@@ -1,0 +1,1109 @@
+{
+  "tensors": {
+    "attn_bias_for_masking": [
+      1,
+      1,
+      9750,
+      9750
+    ],
+    "blocks.0.attn.proj.bias": [
+      1536
+    ],
+    "blocks.0.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.0.attn.q_bias": [
+      1536
+    ],
+    "blocks.0.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.0.attn.v_bias": [
+      1536
+    ],
+    "blocks.0.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.0.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.0.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.0.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.0.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.1.attn.proj.bias": [
+      1536
+    ],
+    "blocks.1.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.1.attn.q_bias": [
+      1536
+    ],
+    "blocks.1.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.1.attn.v_bias": [
+      1536
+    ],
+    "blocks.1.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.1.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.1.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.1.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.1.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.10.attn.proj.bias": [
+      1536
+    ],
+    "blocks.10.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.10.attn.q_bias": [
+      1536
+    ],
+    "blocks.10.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.10.attn.v_bias": [
+      1536
+    ],
+    "blocks.10.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.10.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.10.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.10.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.10.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.11.attn.proj.bias": [
+      1536
+    ],
+    "blocks.11.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.11.attn.q_bias": [
+      1536
+    ],
+    "blocks.11.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.11.attn.v_bias": [
+      1536
+    ],
+    "blocks.11.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.11.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.11.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.11.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.11.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.12.attn.proj.bias": [
+      1536
+    ],
+    "blocks.12.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.12.attn.q_bias": [
+      1536
+    ],
+    "blocks.12.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.12.attn.v_bias": [
+      1536
+    ],
+    "blocks.12.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.12.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.12.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.12.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.12.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.13.attn.proj.bias": [
+      1536
+    ],
+    "blocks.13.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.13.attn.q_bias": [
+      1536
+    ],
+    "blocks.13.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.13.attn.v_bias": [
+      1536
+    ],
+    "blocks.13.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.13.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.13.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.13.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.13.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.14.attn.proj.bias": [
+      1536
+    ],
+    "blocks.14.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.14.attn.q_bias": [
+      1536
+    ],
+    "blocks.14.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.14.attn.v_bias": [
+      1536
+    ],
+    "blocks.14.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.14.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.14.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.14.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.14.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.15.attn.proj.bias": [
+      1536
+    ],
+    "blocks.15.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.15.attn.q_bias": [
+      1536
+    ],
+    "blocks.15.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.15.attn.v_bias": [
+      1536
+    ],
+    "blocks.15.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.15.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.15.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.15.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.15.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.16.attn.proj.bias": [
+      1536
+    ],
+    "blocks.16.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.16.attn.q_bias": [
+      1536
+    ],
+    "blocks.16.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.16.attn.v_bias": [
+      1536
+    ],
+    "blocks.16.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.16.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.16.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.16.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.16.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.17.attn.proj.bias": [
+      1536
+    ],
+    "blocks.17.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.17.attn.q_bias": [
+      1536
+    ],
+    "blocks.17.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.17.attn.v_bias": [
+      1536
+    ],
+    "blocks.17.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.17.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.17.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.17.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.17.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.18.attn.proj.bias": [
+      1536
+    ],
+    "blocks.18.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.18.attn.q_bias": [
+      1536
+    ],
+    "blocks.18.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.18.attn.v_bias": [
+      1536
+    ],
+    "blocks.18.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.18.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.18.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.18.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.18.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.19.attn.proj.bias": [
+      1536
+    ],
+    "blocks.19.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.19.attn.q_bias": [
+      1536
+    ],
+    "blocks.19.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.19.attn.v_bias": [
+      1536
+    ],
+    "blocks.19.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.19.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.19.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.19.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.19.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.2.attn.proj.bias": [
+      1536
+    ],
+    "blocks.2.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.2.attn.q_bias": [
+      1536
+    ],
+    "blocks.2.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.2.attn.v_bias": [
+      1536
+    ],
+    "blocks.2.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.2.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.2.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.2.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.2.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.20.attn.proj.bias": [
+      1536
+    ],
+    "blocks.20.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.20.attn.q_bias": [
+      1536
+    ],
+    "blocks.20.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.20.attn.v_bias": [
+      1536
+    ],
+    "blocks.20.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.20.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.20.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.20.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.20.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.21.attn.proj.bias": [
+      1536
+    ],
+    "blocks.21.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.21.attn.q_bias": [
+      1536
+    ],
+    "blocks.21.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.21.attn.v_bias": [
+      1536
+    ],
+    "blocks.21.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.21.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.21.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.21.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.21.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.22.attn.proj.bias": [
+      1536
+    ],
+    "blocks.22.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.22.attn.q_bias": [
+      1536
+    ],
+    "blocks.22.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.22.attn.v_bias": [
+      1536
+    ],
+    "blocks.22.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.22.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.22.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.22.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.22.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.23.attn.proj.bias": [
+      1536
+    ],
+    "blocks.23.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.23.attn.q_bias": [
+      1536
+    ],
+    "blocks.23.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.23.attn.v_bias": [
+      1536
+    ],
+    "blocks.23.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.23.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.23.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.23.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.23.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.3.attn.proj.bias": [
+      1536
+    ],
+    "blocks.3.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.3.attn.q_bias": [
+      1536
+    ],
+    "blocks.3.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.3.attn.v_bias": [
+      1536
+    ],
+    "blocks.3.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.3.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.3.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.3.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.3.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.4.attn.proj.bias": [
+      1536
+    ],
+    "blocks.4.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.4.attn.q_bias": [
+      1536
+    ],
+    "blocks.4.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.4.attn.v_bias": [
+      1536
+    ],
+    "blocks.4.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.4.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.4.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.4.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.4.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.5.attn.proj.bias": [
+      1536
+    ],
+    "blocks.5.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.5.attn.q_bias": [
+      1536
+    ],
+    "blocks.5.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.5.attn.v_bias": [
+      1536
+    ],
+    "blocks.5.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.5.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.5.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.5.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.5.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.6.attn.proj.bias": [
+      1536
+    ],
+    "blocks.6.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.6.attn.q_bias": [
+      1536
+    ],
+    "blocks.6.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.6.attn.v_bias": [
+      1536
+    ],
+    "blocks.6.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.6.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.6.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.6.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.6.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.7.attn.proj.bias": [
+      1536
+    ],
+    "blocks.7.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.7.attn.q_bias": [
+      1536
+    ],
+    "blocks.7.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.7.attn.v_bias": [
+      1536
+    ],
+    "blocks.7.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.7.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.7.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.7.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.7.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.8.attn.proj.bias": [
+      1536
+    ],
+    "blocks.8.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.8.attn.q_bias": [
+      1536
+    ],
+    "blocks.8.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.8.attn.v_bias": [
+      1536
+    ],
+    "blocks.8.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.8.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.8.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.8.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.8.ln_wo_grad.weight": [
+      1536
+    ],
+    "blocks.9.attn.proj.bias": [
+      1536
+    ],
+    "blocks.9.attn.proj.weight": [
+      1536,
+      1536
+    ],
+    "blocks.9.attn.q_bias": [
+      1536
+    ],
+    "blocks.9.attn.qkv_proj.weight": [
+      4608,
+      1536
+    ],
+    "blocks.9.attn.v_bias": [
+      1536
+    ],
+    "blocks.9.attn.zero_k_bias": [
+      1536
+    ],
+    "blocks.9.ffn.down_proj.weight": [
+      1536,
+      4096
+    ],
+    "blocks.9.ffn.gate_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.9.ffn.up_proj.weight": [
+      4096,
+      1536
+    ],
+    "blocks.9.ln_wo_grad.weight": [
+      1536
+    ],
+    "context_embed.bias": [
+      1536
+    ],
+    "context_embed.weight": [
+      1536,
+      1536
+    ],
+    "context_norm.weight": [
+      1536
+    ],
+    "decoder_norm.weight": [
+      1536
+    ],
+    "diffloss.net.cond_embed.bias": [
+      1024
+    ],
+    "diffloss.net.cond_embed.weight": [
+      1024,
+      1536
+    ],
+    "diffloss.net.final_layer.adaLN_modulation.1.bias": [
+      2048
+    ],
+    "diffloss.net.final_layer.adaLN_modulation.1.weight": [
+      2048,
+      1024
+    ],
+    "diffloss.net.final_layer.linear.bias": [
+      64
+    ],
+    "diffloss.net.final_layer.linear.weight": [
+      64,
+      1024
+    ],
+    "diffloss.net.input_proj.bias": [
+      1024
+    ],
+    "diffloss.net.input_proj.weight": [
+      1024,
+      32
+    ],
+    "diffloss.net.res_blocks.0.adaLN_modulation.1.bias": [
+      3072
+    ],
+    "diffloss.net.res_blocks.0.adaLN_modulation.1.weight": [
+      3072,
+      1024
+    ],
+    "diffloss.net.res_blocks.0.in_ln.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.0.in_ln.weight": [
+      1024
+    ],
+    "diffloss.net.res_blocks.0.mlp.0.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.0.mlp.0.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.0.mlp.2.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.0.mlp.2.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.1.adaLN_modulation.1.bias": [
+      3072
+    ],
+    "diffloss.net.res_blocks.1.adaLN_modulation.1.weight": [
+      3072,
+      1024
+    ],
+    "diffloss.net.res_blocks.1.in_ln.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.1.in_ln.weight": [
+      1024
+    ],
+    "diffloss.net.res_blocks.1.mlp.0.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.1.mlp.0.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.1.mlp.2.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.1.mlp.2.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.2.adaLN_modulation.1.bias": [
+      3072
+    ],
+    "diffloss.net.res_blocks.2.adaLN_modulation.1.weight": [
+      3072,
+      1024
+    ],
+    "diffloss.net.res_blocks.2.in_ln.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.2.in_ln.weight": [
+      1024
+    ],
+    "diffloss.net.res_blocks.2.mlp.0.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.2.mlp.0.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.2.mlp.2.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.2.mlp.2.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.3.adaLN_modulation.1.bias": [
+      3072
+    ],
+    "diffloss.net.res_blocks.3.adaLN_modulation.1.weight": [
+      3072,
+      1024
+    ],
+    "diffloss.net.res_blocks.3.in_ln.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.3.in_ln.weight": [
+      1024
+    ],
+    "diffloss.net.res_blocks.3.mlp.0.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.3.mlp.0.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.3.mlp.2.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.3.mlp.2.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.4.adaLN_modulation.1.bias": [
+      3072
+    ],
+    "diffloss.net.res_blocks.4.adaLN_modulation.1.weight": [
+      3072,
+      1024
+    ],
+    "diffloss.net.res_blocks.4.in_ln.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.4.in_ln.weight": [
+      1024
+    ],
+    "diffloss.net.res_blocks.4.mlp.0.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.4.mlp.0.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.4.mlp.2.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.4.mlp.2.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.5.adaLN_modulation.1.bias": [
+      3072
+    ],
+    "diffloss.net.res_blocks.5.adaLN_modulation.1.weight": [
+      3072,
+      1024
+    ],
+    "diffloss.net.res_blocks.5.in_ln.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.5.in_ln.weight": [
+      1024
+    ],
+    "diffloss.net.res_blocks.5.mlp.0.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.5.mlp.0.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.res_blocks.5.mlp.2.bias": [
+      1024
+    ],
+    "diffloss.net.res_blocks.5.mlp.2.weight": [
+      1024,
+      1024
+    ],
+    "diffloss.net.time_embed.mlp.0.bias": [
+      1024
+    ],
+    "diffloss.net.time_embed.mlp.0.weight": [
+      1024,
+      256
+    ],
+    "diffloss.net.time_embed.mlp.2.bias": [
+      1024
+    ],
+    "diffloss.net.time_embed.mlp.2.weight": [
+      1024,
+      1024
+    ],
+    "head.bias": [
+      4096
+    ],
+    "head.weight": [
+      4096,
+      1536
+    ],
+    "head_nm.ada_lin.1.bias": [
+      3072
+    ],
+    "head_nm.ada_lin.1.weight": [
+      3072,
+      1536
+    ],
+    "head_nm.ln_wo_grad.weight": [
+      1536
+    ],
+    "lvl_1L": [
+      1,
+      9750
+    ],
+    "lvl_embed.mlp.0.bias": [
+      1536
+    ],
+    "lvl_embed.mlp.0.weight": [
+      1536,
+      256
+    ],
+    "lvl_embed.mlp.2.bias": [
+      1536
+    ],
+    "lvl_embed.mlp.2.weight": [
+      1536,
+      1536
+    ],
+    "word_embed.bias": [
+      1536
+    ],
+    "word_embed.weight": [
+      1536,
+      32
+    ]
+  }
+}

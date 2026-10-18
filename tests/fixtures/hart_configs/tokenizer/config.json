@@ -1,0 +1,54 @@
+{
+  "architectures": [
+    "HARTAutoEncoderWithDisc"
+  ],
+  "beta": 0.25,
+  "ch": 160,
+  "ch_mult": [
+    1,
+    1,
+    2,
+    2,
+    4
+  ],
+  "default_qresi_counts": 0,
+  "disable_quant_resi": false,
+  "double_decoder": false,
+  "dropout": 0.0,
+  "freeze_codebook_for_hybrid": true,
+  "hybrid": false,
+  "levels": [
+    8,
+    8,
+    8,
+    6,
+    5
+  ],
+  "model_type": "hart_autoencoder_with_disc",
+  "quant_conv_ks": 3,
+  "quant_resi": 0.5,
+  "quantizer_type": "var_hybrid",
+  "share_quant_resi": 4,
+  "test_mode": false,
+  "torch_dtype": "float32",
+  "transformers_version": "4.36.2",
+  "using_znorm": false,
+  "v_patch_nums": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    7,
+    9,
+    12,
+    16,
+    21,
+    27,
+    36,
+    48,
+    64
+  ],
+  "vocab_size": 4096,
+  "z_channels": 32
+}

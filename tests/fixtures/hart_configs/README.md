@@ -1,0 +1,1 @@
+Temporary Redirect. Redirecting to /api/resolve-cache/models/mit-han-lab/hart-0.7b-1024px/b1521ff1449d6817c685b08614c554e7a5b5b8eb/README.md?%2Fmit-han-lab%2Fhart-0.7b-1024px%2Fresolve%2Fb1521ff1449d6817c685b08614c554e7a5b5b8eb%2FREADME.md=&etag=%22478d09fe60b75f3297dfe2780553b1add2e073f7%22

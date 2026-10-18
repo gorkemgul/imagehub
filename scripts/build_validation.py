@@ -152,7 +152,7 @@ def header_check(header: dict | None) -> dict | None:
     """Merge per-component header records into missing/extra/mismatch lists and counts."""
     if header is None:
         return None
-    if all(key in header for key in ("missing", "extra", "mismatch", "tensors")):
+    if all(key in header for key in ("missing", "extra", "mismatch")):
         return header
     if all(set(entry) == {"fp8", "scales", "tensors"} for entry in header.values()):
         return header
@@ -400,6 +400,9 @@ def main() -> None:
             key: value
             for key, value in measured.items()
             if key.startswith(("llamagen_", "llamagen-"))
+        },
+        "components_hart": {
+            key: value for key, value in measured.items() if key.startswith("hart_")
         },
         "components_auraflow": {
             key: value for key, value in measured.items() if key.startswith("auraflow_")
