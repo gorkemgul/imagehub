@@ -458,6 +458,12 @@ class PixelDiT(NativeModel):
             nn.Linear(2048, 768),
         )
 
+    def prepare_state_dict(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
+        # The published loader copies the pickle tensors into freshly allocated
+        # parameters. Preserve that layout: CPU matrix multiplication can otherwise
+        # choose a different summation path for tensors assigned from the mmap.
+        return {name: tensor.clone() for name, tensor in state.items()}
+
     def forward(
         self, x: Tensor, timestep: Tensor, text: Tensor, mask: Tensor | None = None
     ) -> Tensor:

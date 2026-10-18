@@ -65,6 +65,16 @@ def test_published_header_layout() -> None:
     assert actual == expected
 
 
+def test_checkpoint_tensors_are_copied_from_pickle_storage() -> None:
+    model = PixelDiT(TINY_CONFIG)
+    state = model.state_dict()
+    prepared = model.prepare_state_dict(state)
+    assert prepared.keys() == state.keys()
+    for name, tensor in state.items():
+        assert torch.equal(prepared[name], tensor)
+        assert prepared[name].data_ptr() != tensor.data_ptr()
+
+
 def test_tiny_transformer_non_square_shape() -> None:
     model = PixelDiT(TINY_CONFIG).eval()
     output = model(

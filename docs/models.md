@@ -1025,7 +1025,8 @@ tests. Random-weight transformer, flow-solver and tiny end-to-end comparisons ag
 official implementation are bit-exact. The opt-in real-checkpoint suite covers the tokenizer,
 Gemma-2 output, one denoiser step, and separate seed-0 and seed-42 runs through the public pipeline;
 the end-to-end cases use two steps at 16×16 to keep CPU execution short while exercising the full
-pixel-space path.
+pixel-space path. Checkpoint tensors are copied from pickle storage before assignment to preserve
+the parameter layout and CPU summation order used by the published loader.
 
 **Memory and limits.** The transformer has about 1.3B parameters and Gemma-2 about 2.6B. Training,
 class-conditional checkpoints, FlowEdit, batches, caller-provided noise and reduced-precision
