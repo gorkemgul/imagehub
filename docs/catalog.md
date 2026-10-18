@@ -81,7 +81,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `prx-512-t2i-sft` | `prx` | [Photoroom/prx-512-t2i-sft](https://huggingface.co/Photoroom/prx-512-t2i-sft) | `2996423` | author | full | Apache-2.0 | `prx` |
 | `llamagen-t2i-xl-256` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
 | `llamagen-t2i-xl-512` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
-| `hart` | `hart` | [mit-han-lab/hart-0.7b-1024px](https://huggingface.co/mit-han-lab/hart-0.7b-1024px) | `b1521ff` | author | experimental | MIT | `hart` |
+| `hart` | `hart` | [mit-han-lab/hart-0.7b-1024px](https://huggingface.co/mit-han-lab/hart-0.7b-1024px) | `b1521ff` | author | full | MIT | `hart` |
 | `krea2-turbo` | `krea2` | [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) | `98e0fe1` | author | full | Krea 2 Community License | `krea-2` |
 | `ernie-image` | `ernie-image` | [baidu/ERNIE-Image](https://huggingface.co/baidu/ERNIE-Image) | `5346b31` | author | full | Apache-2.0 | `ernie-image` |
 | `longcat-image` | `longcat-image` | [meituan-longcat/LongCat-Image](https://huggingface.co/meituan-longcat/LongCat-Image) | `d2ea50b` | author | full | Apache-2.0 | `longcat-image` |
