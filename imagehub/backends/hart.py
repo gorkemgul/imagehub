@@ -18,7 +18,6 @@ from imagehub.checkpoints import load_weights, read_json, read_snapshot
 from imagehub.image import Image
 from imagehub.models.hart import HARTAutoencoder, HARTTransformer
 from imagehub.models.qwen2 import Qwen2Model
-from imagehub.schedulers.ddpm import DDPMScheduler
 from imagehub.tokenization_qwen import Qwen2Tokenizer
 from imagehub.types import ImageResult, T2IRequest
 
@@ -116,26 +115,91 @@ def _diffusion_sample(
     half = condition.shape[0] // 2
     noise = torch.randn((half, latent), generator=generator, dtype=condition.dtype)
     noise = torch.cat((noise, noise)).to(condition.device)
-    scheduler = DDPMScheduler(
-        {
-            "beta_schedule": "squaredcos_cap_v2",
-            "variance_type": "learned_range",
-            "clip_sample": True,
-        }
+
+    # The published sampler builds an eight-step SpacedDiffusion schedule in
+    # float64, then converts each coefficient to float32 before tensor math.
+    # Reproduce those coefficients and its operation order exactly: applying
+    # the general DDPM formulas to the original 1,000-step cumulative products
+    # is mathematically equivalent, but differs after float32 rounding.
+    alpha_cumprod = 1.0
+    selected_cumprod: list[float] = []
+    selected = [round(index * 999 / 7) for index in range(8)]
+    selected_set = set(selected)
+    for index in range(1000):
+        start = math.cos((index / 1000 + 0.008) / 1.008 * math.pi / 2) ** 2
+        end = math.cos(((index + 1) / 1000 + 0.008) / 1.008 * math.pi / 2) ** 2
+        alpha_cumprod *= 1 - min(1 - end / start, 0.999)
+        if index in selected_set:
+            selected_cumprod.append(alpha_cumprod)
+
+    betas: list[float] = []
+    previous = 1.0
+    for cumulative in selected_cumprod:
+        betas.append(1 - cumulative / previous)
+        previous = cumulative
+    alphas = [1 - beta for beta in betas]
+    cumulative = 1.0
+    spaced_cumprod = []
+    for alpha in alphas:
+        cumulative *= alpha
+        spaced_cumprod.append(cumulative)
+    previous_cumprod = [1.0, *spaced_cumprod[:-1]]
+    posterior_variance = [
+        beta * (1 - previous_alpha) / (1 - alpha)
+        for beta, previous_alpha, alpha in zip(betas, previous_cumprod, spaced_cumprod, strict=True)
+    ]
+    posterior_log_variance = [
+        math.log(posterior_variance[1]),
+        *(math.log(value) for value in posterior_variance[1:]),
+    ]
+    coefficient_1 = [
+        beta * math.sqrt(previous_alpha) / (1 - alpha)
+        for beta, previous_alpha, alpha in zip(betas, previous_cumprod, spaced_cumprod, strict=True)
+    ]
+    coefficient_2 = [
+        (1 - previous_alpha) * math.sqrt(step_alpha) / (1 - alpha)
+        for step_alpha, previous_alpha, alpha in zip(
+            alphas, previous_cumprod, spaced_cumprod, strict=True
+        )
+    ]
+    constants = torch.tensor(
+        [
+            [
+                math.sqrt(1 / alpha),
+                math.sqrt(1 / alpha - 1),
+                coefficient_1[index],
+                coefficient_2[index],
+                posterior_log_variance[index],
+                math.log(betas[index]),
+            ]
+            for index, alpha in enumerate(spaced_cumprod)
+        ],
+        dtype=torch.float32,
+        device=condition.device,
     )
-    scheduler.num_inference_steps = 8
-    scheduler.timesteps = torch.tensor(
-        list(reversed([round(index * 999 / 7) for index in range(8)])), dtype=torch.long
-    )
-    for timestep in scheduler.timesteps:
-        t = torch.full((len(noise),), int(timestep), device=condition.device, dtype=torch.long)
+
+    for index in reversed(range(8)):
+        timestep = selected[index]
+        t = torch.full((len(noise),), timestep, device=condition.device, dtype=torch.long)
         combined = torch.cat((noise[:half], noise[:half]))
         output = model.diffloss.net(combined, t, condition)
         epsilon, variance = output.split(latent, dim=1)
         conditional, unconditional = epsilon.chunk(2)
         guided = conditional * (1 + guidance) - unconditional * guidance
-        output = torch.cat((torch.cat((guided, guided)), variance), dim=1)
-        noise = scheduler.step(output, timestep, noise, generator=generator)
+        epsilon = torch.cat((guided, guided))
+        reciprocal, reciprocal_minus_one, coef_1, coef_2, minimum, maximum = constants[index]
+        predicted = (reciprocal * noise - reciprocal_minus_one * epsilon).clamp(-1, 1)
+        mean = coef_1 * predicted + coef_2 * noise
+        fraction = (variance + 1) / 2
+        log_variance = fraction * maximum + (1 - fraction) * minimum
+        variance_noise = torch.randn(
+            noise.shape,
+            generator=generator,
+            device="cpu" if generator.device.type == "cpu" else noise.device,
+            dtype=noise.dtype,
+        ).to(noise.device)
+        nonzero = float(index != 0)
+        noise = mean + nonzero * torch.exp(0.5 * log_variance) * variance_noise
     return noise * 0.6
 
 

@@ -6,13 +6,14 @@ import sys
 import types
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 import torch
 from helpers import snapshot_dir
 
 from imagehub import pipeline
-from imagehub.backends.hart import SYSTEM_PROMPT, HARTComponents, encode_prompt
+from imagehub.backends.hart import SYSTEM_PROMPT, HARTComponents, _diffusion_sample, encode_prompt
 from imagehub.checkpoints import load_weights
 from imagehub.models.hart import HARTBlock, HARTDecoder, HARTDiffusionMLP, HARTQuantizer
 from imagehub.models.qwen2 import Qwen2Model
@@ -177,7 +178,23 @@ def test_random_diffusion_head_is_exact(hart_reference, record):
     with torch.no_grad():
         expected = reference(value, timestep, condition)
         actual = ours(value, timestep, condition)
-    passed = torch.equal(actual, expected)
+        reference_loss = diffusion.DiffLoss(8, 32, 2, 32, "8").eval()
+        reference_loss.net.load_state_dict(ours.state_dict())
+        sample_condition = torch.randn(4, 32)
+        torch.manual_seed(5)
+        with _cpu_cuda_shim():
+            expected_sample = reference_loss.sample(sample_condition, cfg=4.5 * 12 / 13)
+        holder = types.SimpleNamespace(
+            config={"latent_channels": 8},
+            diffloss=types.SimpleNamespace(net=ours),
+        )
+        actual_sample = _diffusion_sample(
+            cast(Any, holder),
+            sample_condition,
+            4.5 * 12 / 13,
+            torch.Generator().manual_seed(5),
+        )
+    passed = torch.equal(actual, expected) and torch.equal(actual_sample, expected_sample)
     record("hart_diffusion_mlp_random", passed=passed, tolerance="exact")
     assert passed
 
