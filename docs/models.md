@@ -992,6 +992,49 @@ precomputed prompt embeddings, batches of several prompts and fp16/bf16 parity a
 
 **License.** The repository declares the MIT license. imagehub does not distribute weights.
 
+# PixelDiT
+
+Catalog: [`pixeldit`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `pixeldit` · Task: `t2i`
+
+**Architecture.** PixelDiT generates RGB pixels directly, without an autoencoder. Fourteen
+patch-level MM-DiT blocks jointly attend to image patches and Gemma-2 text tokens for global
+semantics. Two pixel-level transformer blocks then compact each 16×16 patch into one attention
+token and expand it back to pixel tokens, with per-pixel AdaLN modulation from the patch stream.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained pixeldit checkpoints/pixeldit
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="pixeldit", model="checkpoints/pixeldit") as pipe:
+    result = pipe("a blue ceramic cat on a wooden table", seed=0)
+result.images[0].save("cat.png")
+```
+
+**Settings.** Defaults are 50 `steps`, `guidance` 2.75, seed 0 and 1024×1024. `width` and
+`height` must be divisible by 16. `negative_prompt`, `interval_guidance` and `use_chi_prompt` are
+also supported. Sampling uses the official second-order flow DPM-Solver++ with flow shift 4.
+
+**Validation.** The 391 published PixelDiT tensors and both Gemma-2 shards have strict layout
+tests. Random-weight transformer, flow-solver and tiny end-to-end comparisons against the pinned
+official implementation are bit-exact. The opt-in real-checkpoint suite covers the tokenizer,
+Gemma-2 output, one denoiser step, and separate seed-0 and seed-42 runs through the public pipeline;
+the end-to-end cases use two steps at 16×16 to keep CPU execution short while exercising the full
+pixel-space path. Checkpoint tensors are copied from pickle storage before assignment to preserve
+the parameter layout and CPU summation order used by the published loader.
+
+**Memory and limits.** The transformer has about 1.3B parameters and Gemma-2 about 2.6B. Training,
+class-conditional checkpoints, FlowEdit, batches, caller-provided noise and reduced-precision
+parity are out of scope.
+
+**License.** The weights and official implementation use the NVIDIA NSCLv1 license and are limited
+to non-commercial research or evaluation. imagehub does not distribute weights.
+
 # Ovis-Image
 
 Catalog: [`ovis-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:

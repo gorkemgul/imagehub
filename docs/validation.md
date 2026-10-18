@@ -5,6 +5,43 @@ Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB u
 12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
 References are recorded per model in `validation.json` under `reference`.
 
+## PixelDiT
+
+`pixeldit` is pinned to `nvidia/PixelDiT-1300M-1024px` revision `7c63b99` and the official
+`NVlabs/PixelDiT` implementation revision `f7d7c35`. Offline validation strictly checks all 391
+published denoiser tensors plus the Gemma-2 shards. Exact random-weight comparisons cover the
+dual-level transformer, the second-order FLOW DPM-Solver++ trajectory, and a tiny whole generation
+ending in uint8 pixels. The real-checkpoint suite separately records `pixeldit_text_encoder`,
+`pixeldit_denoiser_step`, `e2e_pixeldit` (seed 0) and `seed_e2e_pixeldit` (seed 42, a separate public
+`pipeline(...)` run). Both end-to-end cases use two steps and 16×16 pixels to bound CPU time; model
+defaults remain 50 steps and 1024×1024.
+
+Validated on CPU in the same environment as above. All 8 real tests passed, and the observed
+difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the
+local implementation produces a bit-identical image to the one the official implementation
+produces. The published denoiser weights are float32; the published Gemma-2 text-encoder weights
+are bfloat16 and are upcast to float32 on both sides. The real-checkpoint run took less than a
+minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (published denoiser; 391 tensors) | 0 missing / extra / mismatched | exact |
+| Gemma tokenizer token ids and text-encoder hidden state (4 prompts) | identical / 0 | exact / 0 |
+| Denoiser single step (published weights, 16×16 input, t = 0.5) | 0 | 0 |
+| Random-weight transformer (tiny configuration) | 0 | 0 |
+| Random-weight second-order flow DPM-Solver++ trajectory (4 steps) | 0 | 0 |
+| Random-weight tiny end to end (uint8 pixels) | 0 | 0 |
+| End to end: final pixels (16×16, 2 steps, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `pixeldit_fixture_header`, `pixeldit_text_encoder`, `pixeldit_denoiser_step`,
+`pixeldit_transformer_random`, `pixeldit_flow_dpm_random`, `pixeldit_tiny_e2e`, `e2e_pixeldit`
+and `seed_e2e_pixeldit`,
+[validation-measurements.json](validation-measurements.json); `components_pixeldit` and
+`tests.reference_summary`, [validation.json](validation.json).
+
 ## Scope
 
 ## Latent Diffusion Model
@@ -2044,7 +2081,7 @@ first sequence of the batch only; the native module reproduces that.
   for `chroma1-hd`, 16 passed for `chroma1-flash`, 18 passed for `chroma1-base`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together,
   23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, 7 passed for
-  `deepfloyd-if-i-xl`, 6 passed for `meissonic`, and 8 passed for `hart`. These include structural
+  `deepfloyd-if-i-xl`, 6 passed for `meissonic`, and 8 passed each for `hart` and `pixeldit`. These include structural
   parity with random weights, end-to-end parity with a small model, real-checkpoint parity and
   tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
