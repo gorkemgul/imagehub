@@ -8,7 +8,8 @@ Meissonic, AuraFlow,
 LlamaGen,
 Wuerstchen v2, LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen
 measurements are grouped in flat
-``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
+``components_sdxl``, ``components_segmind_sd``, ``components_qwen_image``, ``components_sd3``,
+``components_flux1``,
 ``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
 ``components_kandinsky21``, ``components_kandinsky22``,
 ``components_kandinsky3``,
@@ -55,7 +56,8 @@ LIMITS = [
     "no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler "
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind "
+    "Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler "
     "with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, "
     "Euler for SDXL, "
     "flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift "
@@ -285,6 +287,11 @@ def main() -> None:
         },
         "components_sd_turbo": {
             key: value for key, value in measured.items() if key in SD_TURBO_COMPONENT_KEYS
+        },
+        "components_segmind_sd": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith("sd_") and "segmind-" in key
         },
         "components_sd21": {
             key: value for key, value in measured.items() if key in SD21_COMPONENT_KEYS

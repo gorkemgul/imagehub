@@ -108,6 +108,8 @@ the four-step distilled checkpoint and does not use classifier-free guidance. Re
 `end_to_end` and `seed_end_to_end` under `dreamlite-base` and `dreamlite-mobile`, and
 `components_dreamlite`, [validation.json](validation.json).
 
+## Stable Diffusion 1.x
+
 - **5 checkpoints, `full`:** `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`.
   The published tensors were loaded strictly. A 50-step generation from the same initial noise was
   compared against diffusers.
@@ -115,7 +117,7 @@ the four-step distilled checkpoint and does not use classifier-free guidance. Re
   implementation produces a bit-identical image to the one diffusers produces.
 - This statement is not a quality benchmark.
 
-## Comparisons (CPU, float32)
+### Comparisons (CPU, float32)
 
 | Comparison | Checkpoint | Largest observed difference | Tolerance |
 | --- | --- | --- | --- |
@@ -139,7 +141,7 @@ Tolerances are set by this rule: if the measured difference is 0, the tolerance 
 is the next order of magnitude up. Since every measurement came out 0, no tolerance needed to be
 loosened.
 
-## Tensor header check
+### Tensor header check
 
 For each of the five checkpoints, the tensor names and shapes of three components (`text_encoder`,
 `unet`, `vae`) were read without loading the weights into memory (header only for safetensors,
@@ -147,6 +149,20 @@ For each of the five checkpoints, the tensor names and shapes of three component
 `prepare_state_dict`. Across all 5 × 3 components, missing, extra and shape-mismatched tensors are
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
+
+## Segmind Small-SD and Tiny-SD
+
+- **2 checkpoints, `full`:** `segmind-small-sd` and `segmind-tiny-sd`.
+- Validation covers strict published tensor layouts, tokenizer and CLIP output, a U-Net step, VAE
+  decode, the published DEIS/DPM-Solver++ trajectory, and four-step 64×64 public-pipeline runs at
+  seed 0 and seed 42. Random-weight U-Net and tiny end-to-end tests also compare both pruned layouts
+  exactly with diffusers.
+- CPU float32 comparisons require exact tensor and uint8 image equality. Tiny-SD's published
+  float16 tensors are upcast by both implementations for this comparison.
+- Records: `header_segmind-small-sd`, `header_segmind-tiny-sd`, component keys prefixed with
+  `sd_`, `e2e_segmind-small-sd`, `e2e_segmind-tiny-sd`, `seed_e2e_segmind-small-sd`, and
+  `seed_e2e_segmind-tiny-sd`.
+- This statement is not a quality benchmark.
 
 ## LCM
 

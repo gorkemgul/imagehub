@@ -34,6 +34,8 @@ def test_matches_sdxl_published_tensor_layout():
         ("sdxl_configs/unet.json", "sdxl"),
         ("segmind_vega_configs/unet.json", "segmind-vega"),
         ("ssd1b_configs/unet.json", "ssd1b"),
+        ("segmind_small_sd_configs/unet.json", "segmind-small-sd"),
+        ("segmind_tiny_sd_configs/unet.json", "segmind-tiny-sd"),
         ("sd1_configs/v1-5/unet.json", "sd1"),
         ("sd1_configs/v1-1/unet.json", "sd1"),
     ],
@@ -49,6 +51,18 @@ def test_real_release_configs_match_published_tensor_layout(config_path, family)
             )[component].items()
         },
         "ssd1b": ssd1b_published_shapes,
+        "segmind-small-sd": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "segmind_small_sd_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "segmind-tiny-sd": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "segmind_tiny_sd_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
         "sd1": published_shapes,
     }
     assert meta_shapes(UNet2DConditionModel, config) == fixtures[family]("unet")
@@ -59,6 +73,22 @@ def test_ssd1b_mid_block_has_one_resnet_and_no_attention():
     model = UNet2DConditionModel(config)
     assert len(model.mid_block.resnets) == 1
     assert model.mid_block.attentions is None
+    sample = torch.randn(2, 4, 8, 8)
+    with torch.inference_mode():
+        out = model(sample, torch.tensor(981), torch.randn(2, 7, 32))
+    assert out.shape == sample.shape
+
+
+def test_no_mid_block_omits_published_tensors_and_runs():
+    config = TINY_UNET_CONFIG | {
+        "block_out_channels": [32, 64, 64],
+        "down_block_types": ["CrossAttnDownBlock2D"] * 3,
+        "up_block_types": ["CrossAttnUpBlock2D"] * 3,
+        "mid_block_type": None,
+    }
+    model = UNet2DConditionModel(config)
+    assert model.mid_block is None
+    assert not any(name.startswith("mid_block.") for name in model.state_dict())
     sample = torch.randn(2, 4, 8, 8)
     with torch.inference_mode():
         out = model(sample, torch.tensor(981), torch.randn(2, 7, 32))

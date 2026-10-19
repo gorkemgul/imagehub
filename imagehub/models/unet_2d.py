@@ -710,6 +710,7 @@ class UNet2DConditionModel(NativeModel):
                 f"Unsupported U-Net setting cross_attention_norm={cfg['cross_attention_norm']!r}"
             )
         if cfg["mid_block_type"] not in (
+            None,
             "UNetMidBlock2DCrossAttn",
             "UNetMidBlock2DSimpleCrossAttn",
             "UNetMidBlock2D",
@@ -757,13 +758,17 @@ class UNet2DConditionModel(NativeModel):
                     transformer_layers=transformer_layers[i],
                 )
             )
-        self.mid_block = MidBlock(
-            ch[-1],
-            cfg=cfg,
-            temb=temb,
-            context_dim=context_dims[-1],
-            heads=heads[-1],
-            transformer_layers=transformer_layers[-1],
+        self.mid_block = (
+            None
+            if cfg["mid_block_type"] is None
+            else MidBlock(
+                ch[-1],
+                cfg=cfg,
+                temb=temb,
+                context_dim=context_dims[-1],
+                heads=heads[-1],
+                transformer_layers=transformer_layers[-1],
+            )
         )
         rev = list(reversed(ch))
         rev_layers = list(reversed(layers))
@@ -943,7 +948,8 @@ class UNet2DConditionModel(NativeModel):
         for down in self.down_blocks:
             x, block_skips = down(x, temb, context)
             skips.extend(block_skips)
-        x = self.mid_block(x, temb, context)
+        if self.mid_block is not None:
+            x = self.mid_block(x, temb, context)
         for up in self.up_blocks:
             assert isinstance(up, UpBlock)
             n = len(up.resnets)

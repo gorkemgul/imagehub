@@ -26,6 +26,8 @@ from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel
 from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.schedulers.ddim import DDIMScheduler
+from imagehub.schedulers.deis_multistep import DEISMultistepScheduler
+from imagehub.schedulers.dpmsolver_multistep import DPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
@@ -50,7 +52,15 @@ _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
 
 def _scheduler(
     config: dict[str, Any],
-) -> tuple[PNDMScheduler | DDIMScheduler | EulerDiscreteScheduler | LCMScheduler, str]:
+) -> tuple[
+    PNDMScheduler
+    | DDIMScheduler
+    | EulerDiscreteScheduler
+    | LCMScheduler
+    | DPMSolverMultistepScheduler
+    | DEISMultistepScheduler,
+    str,
+]:
     class_name = config.get("_class_name", "PNDMScheduler")
     if class_name == "DDIMScheduler":
         return DDIMScheduler(config), "ddim"
@@ -60,6 +70,10 @@ def _scheduler(
         return EulerDiscreteScheduler(config), "euler"
     if class_name == "LCMScheduler":
         return LCMScheduler(config), "lcm"
+    if class_name == "DPMSolverMultistepScheduler":
+        return DPMSolverMultistepScheduler(config), "dpm-solver++"
+    if class_name == "DEISMultistepScheduler":
+        return DEISMultistepScheduler(config), "deis"
     raise ValueError(f"Unsupported Stable Diffusion scheduler {class_name}")
 
 
@@ -209,7 +223,14 @@ def denoise(
         if use_cfg:
             noise_uncond, noise_text = noise.chunk(2)
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
-        assert isinstance(scheduler, PNDMScheduler | DDIMScheduler | EulerDiscreteScheduler)
+        assert isinstance(
+            scheduler,
+            PNDMScheduler
+            | DDIMScheduler
+            | EulerDiscreteScheduler
+            | DPMSolverMultistepScheduler
+            | DEISMultistepScheduler,
+        )
         latents = scheduler.step(noise, t, latents)
     return latents
 
