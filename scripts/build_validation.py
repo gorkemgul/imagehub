@@ -8,7 +8,8 @@ Meissonic, AuraFlow,
 LlamaGen,
 Wuerstchen v2, LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen
 measurements are grouped in flat
-``components_segmind_sd``, ``components_bk_sdm``, ``components_sdxl``, ``components_qwen_image``, ``components_sd3``,
+``components_segmind_sd``, ``components_bk_sdm``,
+``components_sdxl``, ``components_qwen_image``, ``components_sd3``,
 ``components_flux1``,
 ``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
 ``components_kandinsky21``, ``components_kandinsky22``,
