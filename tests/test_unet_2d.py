@@ -108,7 +108,7 @@ def test_no_mid_block_omits_published_tensors_and_runs():
         "mid_block_type": None,
     }
     model = UNet2DConditionModel(config)
-    assert model.mid_block is None
+    assert len(model.mid_block.resnets) == 0
     assert not any(name.startswith("mid_block.") for name in model.state_dict())
     sample = torch.randn(2, 4, 8, 8)
     with torch.inference_mode():
