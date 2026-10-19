@@ -108,6 +108,8 @@ the four-step distilled checkpoint and does not use classifier-free guidance. Re
 `end_to_end` and `seed_end_to_end` under `dreamlite-base` and `dreamlite-mobile`, and
 `components_dreamlite`, [validation.json](validation.json).
 
+## Stable Diffusion 1.x
+
 - **5 checkpoints, `full`:** `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`.
   The published tensors were loaded strictly. A 50-step generation from the same initial noise was
   compared against diffusers.
@@ -147,6 +149,25 @@ For each of the five checkpoints, the tensor names and shapes of three component
 `prepare_state_dict`. Across all 5 × 3 components, missing, extra and shape-mismatched tensors are
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
+
+## BK-SDM
+
+`bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny` use the existing Stable Diffusion pipeline with
+block-pruned U-Nets. They are pinned to the three author repositories at revisions `0c03b7a`,
+`572238d` and `0364108` and are compared with diffusers 0.40.0 `StableDiffusionPipeline` and
+transformers 5.18.0 on CPU in float32.
+
+The dedicated reference suite checks every published tensor header; tokenizer and text-encoder
+outputs; one U-Net step; VAE encode and decode; PNDM timesteps; exact random-weight U-Net parity at
+tiny and published layouts; and tiny guided and unguided end-to-end generation at non-square sizes.
+For each checkpoint, `e2e_<model-id>` is a four-step 64×64 public-pipeline run at seed 0 and
+`seed_e2e_<model-id>` is a separate run at seed 42. Both use guidance 7.5 and the prompt
+"a photograph of an astronaut riding a horse".
+
+Records: `header_bk-sdm-base`, `header_bk-sdm-small`, `header_bk-sdm-tiny`,
+`bk_sdm_*_bk-sdm-base`, `bk_sdm_*_bk-sdm-small`, `bk_sdm_*_bk-sdm-tiny`,
+`e2e_bk-sdm-base`, `e2e_bk-sdm-small`, `e2e_bk-sdm-tiny`, `seed_e2e_bk-sdm-base`,
+`seed_e2e_bk-sdm-small` and `seed_e2e_bk-sdm-tiny`.
 
 ## LCM
 

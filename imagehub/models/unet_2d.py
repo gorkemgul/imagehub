@@ -482,7 +482,10 @@ class MidBlock(nn.Module):
             return _resnet(cfg, ch, ch, temb, output_scale_factor=cfg["mid_block_scale_factor"])
 
         self.attentions: nn.ModuleList | None
-        if cfg["mid_block_type"] == "UNetMidBlock2DCrossAttn":
+        if cfg["mid_block_type"] is None:
+            self.resnets = nn.ModuleList()
+            self.attentions = None
+        elif cfg["mid_block_type"] == "UNetMidBlock2DCrossAttn":
             self.resnets = nn.ModuleList([resnet(), resnet()])
             self.attentions = _transformers(
                 cfg,
@@ -512,6 +515,8 @@ class MidBlock(nn.Module):
             self.attentions = None
 
     def forward(self, x: Tensor, temb: Tensor, context: Tensor) -> Tensor:
+        if not self.resnets:
+            return x
         x = self.resnets[0](x, temb)
         if self.attentions is not None:
             x = self.attentions[0](x, context)
@@ -710,6 +715,7 @@ class UNet2DConditionModel(NativeModel):
                 f"Unsupported U-Net setting cross_attention_norm={cfg['cross_attention_norm']!r}"
             )
         if cfg["mid_block_type"] not in (
+            None,
             "UNetMidBlock2DCrossAttn",
             "UNetMidBlock2DSimpleCrossAttn",
             "UNetMidBlock2D",

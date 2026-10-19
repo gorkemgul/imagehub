@@ -114,6 +114,41 @@ fp16 parity are not in this release.
 bind whoever downloads and uses the weights. imagehub does not distribute weights.
 
 
+# BK-SDM
+
+Catalog: [`bk-sdm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `bk-sdm-base`, `bk-sdm-small`, `bk-sdm-tiny` · Task: `t2i`
+
+**Architecture.** BK-SDM distills Stable Diffusion 1.4 into smaller U-Nets by removing repeated
+residual and cross-attention blocks. Base keeps four stages and the cross-attention mid block;
+Small removes the mid block; Tiny also removes the innermost stage. All three reuse the SD 1.4
+CLIP text encoder, f=8 KL autoencoder and PNDM scheduler.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained bk-sdm-small checkpoints/bk-sdm-small
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="bk-sdm-small", model="checkpoints/bk-sdm-small") as pipe:
+    result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` (50), `guidance` (7.5; 1 and below turns guidance off), `width`/`height`
+(512, multiples of 8), `negative_prompt`, `num_images` (1), `seed`, `latents`. Unrecognized settings
+raise an error.
+
+**Out of scope.** There is no safety checker. Image-to-image, DreamBooth training, SD 2.1-derived
+variants, 2M-data variants, Core ML exports and fp16 parity are not included.
+
+**License.** The weights are licensed under CreativeML OpenRAIL-M; its use restrictions bind
+whoever downloads or uses them. imagehub does not distribute weights.
+
+
 # Latent Consistency Model (LCM)
 
 Catalog: [`lcm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

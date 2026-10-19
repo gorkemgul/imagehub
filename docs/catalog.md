@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**43 architecture families, 93 published checkpoints.** A model is a separately published set of weights;
+**43 architecture families, 96 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -18,6 +18,9 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `sd-v1-3` | `stable-diffusion` | [CompVis/stable-diffusion-v1-3](https://huggingface.co/CompVis/stable-diffusion-v1-3) | `159f26f` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `sd-v1-4` | `stable-diffusion` | [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) | `133a221` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `sd-v1-5` | `stable-diffusion` | [stable-diffusion-v1-5/stable-diffusion-v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5) | `451f4fe` | community mirror | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
+| `bk-sdm-base` | `stable-diffusion` | [nota-ai/bk-sdm-base](https://huggingface.co/nota-ai/bk-sdm-base) | `0c03b7a` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
+| `bk-sdm-small` | `stable-diffusion` | [nota-ai/bk-sdm-small](https://huggingface.co/nota-ai/bk-sdm-small) | `572238d` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
+| `bk-sdm-tiny` | `stable-diffusion` | [nota-ai/bk-sdm-tiny](https://huggingface.co/nota-ai/bk-sdm-tiny) | `0364108` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
 | `sd-v2-1` | `stable-diffusion` | [sd2-community/stable-diffusion-2-1](https://huggingface.co/sd2-community/stable-diffusion-2-1) | `bb21548` | community mirror | full | CreativeML-OpenRAIL++-M | `stable-diffusion-2` |
 | `sd-turbo` | `stable-diffusion` | [stabilityai/sd-turbo](https://huggingface.co/stabilityai/sd-turbo) | `b261bac` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` (SD Turbo) |
 | `lcm-dreamshaper-v7` | `stable-diffusion` | [SimianLuo/LCM_Dreamshaper_v7](https://huggingface.co/SimianLuo/LCM_Dreamshaper_v7) | `a85df6a` | author | full | MIT | `lcm` |

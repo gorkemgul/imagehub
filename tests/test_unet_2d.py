@@ -33,6 +33,9 @@ def test_matches_sdxl_published_tensor_layout():
         ("playground_v25_configs/unet.json", "sdxl"),
         ("sdxl_configs/unet.json", "sdxl"),
         ("segmind_vega_configs/unet.json", "segmind-vega"),
+        ("bk_sdm_configs/base/unet.json", "bk-sdm-base"),
+        ("bk_sdm_configs/small/unet.json", "bk-sdm-small"),
+        ("bk_sdm_configs/tiny/unet.json", "bk-sdm-tiny"),
         ("ssd1b_configs/unet.json", "ssd1b"),
         ("sd1_configs/v1-5/unet.json", "sd1"),
         ("sd1_configs/v1-1/unet.json", "sd1"),
@@ -49,6 +52,24 @@ def test_real_release_configs_match_published_tensor_layout(config_path, family)
             )[component].items()
         },
         "ssd1b": ssd1b_published_shapes,
+        "bk-sdm-base": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "bk_sdm_base_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "bk-sdm-small": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "bk_sdm_small_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "bk-sdm-tiny": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "bk_sdm_tiny_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
         "sd1": published_shapes,
     }
     assert meta_shapes(UNet2DConditionModel, config) == fixtures[family]("unet")
@@ -63,6 +84,16 @@ def test_ssd1b_mid_block_has_one_resnet_and_no_attention():
     with torch.inference_mode():
         out = model(sample, torch.tensor(981), torch.randn(2, 7, 32))
     assert out.shape == sample.shape
+
+
+def test_bk_sdm_omitted_mid_block_is_identity():
+    model = UNet2DConditionModel(TINY_UNET_CONFIG | {"mid_block_type": None})
+    assert len(model.mid_block.resnets) == 0
+    assert model.mid_block.attentions is None
+    sample = torch.randn(2, 32, 5, 7)
+    temb = torch.randn(2, 128)
+    context = torch.randn(2, 7, 32)
+    assert model.mid_block(sample, temb, context) is sample
 
 
 def test_nested_transformer_layers_apply_per_resnet():
