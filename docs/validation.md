@@ -152,17 +152,42 @@ Record: `tensor_header_check`, [validation.json](validation.json).
 
 ## Segmind Small-SD and Tiny-SD
 
-- **2 checkpoints, `full`:** `segmind-small-sd` and `segmind-tiny-sd`.
-- Validation covers strict published tensor layouts, tokenizer and CLIP output, a U-Net step, VAE
-  decode, the published DEIS/DPM-Solver++ trajectory, and four-step 64×64 public-pipeline runs at
-  seed 0 and seed 42. Random-weight U-Net and tiny end-to-end tests also compare both pruned layouts
-  exactly with diffusers.
-- CPU float32 comparisons require exact tensor and uint8 image equality. Tiny-SD's published
-  float16 tensors are upcast by both implementations for this comparison.
-- Records: `header_segmind-small-sd`, `header_segmind-tiny-sd`, component keys prefixed with
-  `sd_`, `e2e_segmind-small-sd`, `e2e_segmind-tiny-sd`, `seed_e2e_segmind-small-sd`, and
-  `seed_e2e_segmind-tiny-sd`.
-- This statement is not a quality benchmark.
+Validated on CPU in the same environment as above. `segmind-small-sd` and `segmind-tiny-sd`, both
+`full` in the catalog, were loaded strictly and compared with diffusers 0.40.0
+`StableDiffusionPipeline`. Validation covers strict published tensor layouts, tokenizer and CLIP
+output, a U-Net step, VAE decode, the published DEIS/DPM-Solver++ trajectory, and four-step 64×64
+public-pipeline runs at seed 0 and seed 42; the random-weight U-Net and tiny end-to-end tests
+compare both pruned layouts exactly with diffusers. CPU float32 comparisons require exact tensor
+and uint8 image equality. All 14 real tests passed, and the observed difference in every recorded
+comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation produces a
+bit-identical image to the one diffusers produces. Small-SD's published tensors are float32, and
+Tiny-SD's published float16 tensors are upcast to float32 by both implementations. The
+real-checkpoint run took 0 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 196 / 442 / 248 tensors) | small-sd | 0 missing / extra / mismatched | exact |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 196 / 358 / 248 tensors) | tiny-sd | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (4 prompts) | both | identical | exact |
+| CLIP text encoder | both | 0 | 0 |
+| U-Net single step (t = 500) | both | 0 | 0 |
+| VAE decode | both | 0 | 0 |
+| Published scheduler (DEIS / DPM-Solver++, 4 steps) | both | 0 | 0 |
+| End to end: final pixels (64×64, 4 steps, guidance 5.0, seed 0) | both | 0 | 0 |
+| End to end, seed 42 (pixels) | both | 0 | 0 |
+
+Records: `header_segmind-small-sd`, `header_segmind-tiny-sd`, `sd_tokenizer_*`, `sd_text_encoder_*`,
+`sd_unet_*`, `sd_vae_decode_*`, `sd_scheduler_*`, `e2e_segmind-small-sd`, `e2e_segmind-tiny-sd`,
+`seed_e2e_segmind-small-sd` and `seed_e2e_segmind-tiny-sd`,
+[validation-measurements.json](validation-measurements.json); `components_segmind_sd` and
+`tests.reference_summary`, [validation.json](validation.json).
+
+The end-to-end comparisons are deliberately short: 64×64 for four steps. `e2e_segmind-small-sd` and
+`e2e_segmind-tiny-sd` use seed 0, `seed_e2e_segmind-small-sd` and `seed_e2e_segmind-tiny-sd` use
+seed 42, and all four runs use guidance 5.0 and the same negative prompt. Their final pixels differ
+by **exactly 0** in every run. This statement is not a quality benchmark.
 
 ## LCM
 
@@ -2119,7 +2144,7 @@ first sequence of the batch only; the native module reproduces that.
 - Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 9 passed for `segmind-vega`, 12 passed for the three SDXL-Lightning models, 11 passed
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 14 passed for `segmind-small-sd` and `segmind-tiny-sd` together, 9 passed for `segmind-vega`, 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed
