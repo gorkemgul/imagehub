@@ -1884,6 +1884,19 @@
       "pixels": 0
     }
   },
+  "e2e_segmind-vega": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
   "e2e_ssd-1b": {
     "guidance": 5.0,
     "latents": {
@@ -4377,6 +4390,32 @@
       "mismatch": [],
       "missing": [],
       "tensors": 1680
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_segmind-vega": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 564
     },
     "vae": {
       "extra": [],
@@ -7970,6 +8009,14 @@
     ],
     "tolerance": 0.0
   },
+  "sdxl_scheduler_segmind-vega": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": [
+      4
+    ],
+    "tolerance": 0.0
+  },
   "sdxl_scheduler_ssd-1b": {
     "measurements": {
       "30": {
@@ -8069,6 +8116,11 @@
     },
     "tolerance": 0.0
   },
+  "sdxl_text_encoder_2_segmind-vega": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_text_encoder_2_ssd-1b": {
     "hidden_states": {
       "max_abs": 0.0,
@@ -8093,6 +8145,11 @@
     "tolerance": 0.0
   },
   "sdxl_text_encoder_sdxl-turbo": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_text_encoder_segmind-vega": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -8129,6 +8186,12 @@
   "sdxl_tokenizers_sdxl-turbo": {
     "mismatches": [],
     "prompts": 18,
+    "tokenizers": 2,
+    "tolerance": "exact"
+  },
+  "sdxl_tokenizers_segmind-vega": {
+    "mismatches": [],
+    "prompts": 4,
     "tokenizers": 2,
     "tolerance": "exact"
   },
@@ -8188,6 +8251,14 @@
     ],
     "tolerance": 0.0
   },
+  "sdxl_unet_segmind-vega": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
+    ],
+    "tolerance": 0.0
+  },
   "sdxl_unet_ssd-1b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -8223,6 +8294,11 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sdxl_vae_decode_segmind-vega": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_vae_decode_ssd-1b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -8249,6 +8325,11 @@
     "tolerance": 0.0
   },
   "sdxl_vae_encode_sdxl-turbo": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_encode_segmind-vega": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -8901,6 +8982,19 @@
       512
     ],
     "steps": 1
+  },
+  "seed_e2e_segmind-vega": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "seed_e2e_ssd-1b": {
     "guidance": 5.0,

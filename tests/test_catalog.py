@@ -95,6 +95,7 @@ def test_catalog_contents():
             "sdxl-lightning-8step",
             "sdxl-refiner-1.0",
             "sdxl-turbo",
+            "segmind-vega",
             "ssd-1b",
             "stable-cascade",
             "stable-cascade-lite",
@@ -349,6 +350,22 @@ def test_catalog_contents():
     assert ssd1b.format == "diffusers"
     assert ssd1b.license == "Apache-2.0"
     assert len(set(ssd1b.files)) == len(ssd1b.files) == 18
+
+    vega = model_info("segmind-vega")
+    assert vega.task is Task.T2I
+    assert vega.family == "stable-diffusion-xl"
+    assert vega.repo_id == "segmind/Segmind-Vega"
+    assert vega.revision == "7714c4363e5856ff974a4f4b068e8691f26d0b40"
+    assert vega.provenance == "author"
+    assert vega.catalog_id == "segmind-vega"
+    assert vega.format == "diffusers"
+    assert vega.license == "Apache-2.0"
+    assert vega.reference["diffusers"]["git_commit"] == ("d035dcd7cc7c88e0a154609b62887d50bba9fdc2")
+    assert vega.reference["segmind-ssd-1b"]["git_commit"] == (
+        "2bfc35f41f21531c61e3d3470bca907fd839d035"
+    )
+    assert len(set(vega.files)) == len(vega.files) == 18
+    assert not any("fp16" in name or name == "segmind-vega.safetensors" for name in vega.files)
 
     playground_v2 = model_info("playground-v2")
     assert playground_v2.task is Task.T2I

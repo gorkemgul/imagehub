@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-18",
+  "date": "2026-10-19",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -5576,6 +5576,85 @@
       }
     },
     {
+      "model_id": "segmind-vega",
+      "repo_id": "segmind/Segmind-Vega",
+      "revision": "7714c4363e5856ff974a4f4b068e8691f26d0b40",
+      "provenance": "author",
+      "catalog_id": "segmind-vega",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0",
+          "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        },
+        "segmind-ssd-1b": {
+          "repository": "segmind/SSD-1B",
+          "git_commit": "2bfc35f41f21531c61e3d3470bca907fd839d035"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "bee9da7a472804636f0e511e811e90b44cd4a0afb13cc597cc8e05cefb4f0c6c",
+        "scheduler/scheduler_config.json": "42f423cbdd612bb366aeff7cf86d9aee14710877d23a72bec4b4d4b48b7b0f5e",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "302ca98cdfe14f0dde43bbe548bded5c849eff942e0101baa5692a63d40005ac",
+        "tokenizer/special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "f7f5acb7f67848927f51ded74407214d5bf15fe1d866795eceff75dbb79c6838",
+        "tokenizer_2/special_tokens_map.json": "c4dbb96da703fb38f10ccf0490df2fd476811c5a3e71b7e0189cffeed3224e25",
+        "text_encoder/config.json": "ef82e75987a79868f3aac651a65d143b0a121216ef558c2c9a62958d712b5271",
+        "text_encoder_2/config.json": "77c3a5f83df214610218412e384d4a18ab0ef4f11572398ff8ba65eb2a16117b",
+        "unet/config.json": "c9921241cb90b2bc6039b07d57f8720c77bd728078bfa83b92729f6d9be48713",
+        "vae/config.json": "b930fd06a32078669d15cf1d336e4ca09707c7d84f393cf81c8b55aa077ed74b",
+        "text_encoder/model.safetensors": "92b998a9a64549bfa05c019bde114be6681549a0c79caee903fe30c9444d08b9",
+        "text_encoder_2/model.safetensors": "943a2924ee888295a156dd47089d67181d633b782337890af11ef4b15af17ec5",
+        "unet/diffusion_pytorch_model.safetensors": "1ab33e37fbb2566c55cd729e4ab79cc2f99cd9d0a578fabc7a2cf4ee47968be1",
+        "vae/diffusion_pytorch_model.safetensors": "1598f3d24932bcfe6634e8b618ea1e30ab1d57f5aad13a6d2de446d2199f2341"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 564,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
       "model_id": "playground-v2",
       "repo_id": "playgroundai/playground-v2-1024px-aesthetic",
       "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
@@ -8453,6 +8532,14 @@
       ],
       "tolerance": 0.0
     },
+    "sdxl_scheduler_segmind-vega": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
     "sdxl_scheduler_ssd-1b": {
       "measurements": {
         "30": {
@@ -8552,6 +8639,11 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_2_segmind-vega": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_2_ssd-1b": {
       "hidden_states": {
         "max_abs": 0.0,
@@ -8576,6 +8668,11 @@
       "tolerance": 0.0
     },
     "sdxl_text_encoder_sdxl-turbo": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_segmind-vega": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -8612,6 +8709,12 @@
     "sdxl_tokenizers_sdxl-turbo": {
       "mismatches": [],
       "prompts": 18,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_segmind-vega": {
+      "mismatches": [],
+      "prompts": 4,
       "tokenizers": 2,
       "tolerance": "exact"
     },
@@ -8671,6 +8774,14 @@
       ],
       "tolerance": 0.0
     },
+    "sdxl_unet_segmind-vega": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
     "sdxl_unet_ssd-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -8706,6 +8817,11 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sdxl_vae_decode_segmind-vega": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_vae_decode_ssd-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -8732,6 +8848,11 @@
       "tolerance": 0.0
     },
     "sdxl_vae_encode_sdxl-turbo": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_segmind-vega": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -13491,6 +13612,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (pixeldit)"
+    "reference_summary": "9 passed (segmind-vega)"
   }
 }

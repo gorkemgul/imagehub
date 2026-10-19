@@ -303,6 +303,41 @@ seeded CPU generator as the initial noise. `playground-v2` and `playground-v2.5`
 3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable. The `playground-v2`
 real-checkpoint run took 21 minutes on an M2 Max (CPU).
 
+### Segmind-Vega
+
+The dedicated Segmind-Vega suite targets diffusers 0.40.0 `StableDiffusionXLPipeline`. Published
+header fixtures cover both text encoders, the U-Net and VAE. Random-weight tests cover the tiny and
+published U-Net layouts, and tiny-pipeline tests cover classifier-free guidance on and off at
+non-square sizes. The real-checkpoint run checks both tokenizers, both text encoders, a U-Net step,
+VAE encode/decode, Euler scheduling and two separate public-API generations. All 9 real tests
+passed, and the observed difference in every recorded comparison is **exactly 0** (0 means exact):
+on CPU in float32, the local implementation produces a bit-identical image to the one diffusers
+produces. The real-checkpoint run took less than a minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (`text_encoder`, `text_encoder_2`, `unet`, `vae`; 196 / 517 / 564 / 248 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (2 tokenizers, 4 prompts) | identical | exact |
+| CLIP text encoder | 0 | 0 |
+| OpenCLIP bigG text encoder | 0 | 0 |
+| U-Net single step (t = 500) | 0 | 0 |
+| VAE decode / encode | 0 / 0 | 0 / 0 |
+| Euler scheduler (4 steps) | 0 | 0 |
+| End to end: final pixels (64×64, 4 steps, guidance 5.0, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `header_segmind-vega`, `sdxl_tokenizers_segmind-vega`,
+`sdxl_text_encoder_segmind-vega`, `sdxl_text_encoder_2_segmind-vega`,
+`sdxl_unet_segmind-vega`, `sdxl_vae_decode_segmind-vega`, `sdxl_vae_encode_segmind-vega`,
+`sdxl_scheduler_segmind-vega`, `e2e_segmind-vega` and `seed_e2e_segmind-vega`,
+[validation-measurements.json](validation-measurements.json).
+
+The real end-to-end comparisons are deliberately short: 64×64 for four steps.
+`e2e_segmind-vega` uses seed 0 and `seed_e2e_segmind-vega` uses seed 42; both use guidance 5.0 and
+the same negative prompt. Their final pixels differ by **exactly 0** in both runs.
+
 The SDXL-Lightning reference is built exactly as described by the model card: a float32 U-Net from
 the SDXL base configuration loaded with the published U-Net file, placed in the base pipeline, and
 an Euler scheduler with trailing timestep spacing. The text encoders and VAE are the validated SDXL
@@ -372,6 +407,12 @@ For `ssd-1b`, the same header-only tensor check covered the four components (`te
 `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 944 / 248, and missing, extra and
 shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
+
+For `segmind-vega`, the header-only tensor check covers the four components (`text_encoder`,
+`text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 564 / 248, with no missing, extra or
+shape-mismatched tensors. The published full-precision safetensors are used; fp16 and single-file
+duplicates are excluded. Record: `header_segmind-vega`,
+[validation-measurements.json](validation-measurements.json).
 
 For `playground-v2`, the same header-only tensor check covered the four components
 (`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and
@@ -2062,7 +2103,7 @@ first sequence of the batch only; the native module reproduces that.
 - Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 12 passed for the three SDXL-Lightning models, 11 passed
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 9 passed for `segmind-vega`, 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed

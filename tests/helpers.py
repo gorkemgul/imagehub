@@ -456,6 +456,7 @@ def write_tiny_sdxl(
     seed: int = 0,
     scheduler_config: dict | None = None,
     vae_config: dict | None = None,
+    unet_config: dict | None = None,
     sample_size: int = 32,
     refiner: bool = False,
 ) -> Path:
@@ -500,6 +501,8 @@ def write_tiny_sdxl(
         "norm_num_groups": 8,
         "sample_size": sample_size,
     }
+    if unet_config is not None:
+        unet |= unet_config
     vae = TINY_VAE_FILE_CONFIG | {"scaling_factor": 0.13025, "force_upcast": True}
     if vae_config is not None:
         vae |= vae_config

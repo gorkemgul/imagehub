@@ -14,6 +14,7 @@ def test_family_and_model_aliases_are_registered():
     assert "sd-v2-1" in names
     assert "lcm-dreamshaper-v7" in names
     assert "sdxl-base-1.0" in names
+    assert "segmind-vega" in names
     assert "janus" in names
     assert "janus-pro-1b" in names
     assert {"sd3.5-medium", "sd3.5-large"} <= set(names)
