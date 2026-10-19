@@ -432,20 +432,27 @@ The license's use restrictions bind whoever downloads and uses the weights. imag
 distribute weights.
 
 
-# SSD-1B
+# SSD-1B and Segmind-Vega
 
-Catalog: [`ssd-1b`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `ssd-1b` · Task: `t2i`
+Catalog: [`ssd-1b`](https://github.com/gorkemgul/awesome-text-to-image-architectures),
+[`segmind-vega`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `ssd-1b`, `segmind-vega` · Task: `t2i`
 
 **Architecture.** A distilled SDXL model with the same frozen CLIP ViT-L/14 and OpenCLIP bigG text
 encoders, f=8 KL autoencoder and Euler scheduler as SDXL. Its 1.3B-parameter U-Net uses per-block
 transformer depths and a mid block without attention while retaining SDXL's `text_time`
 micro-conditioning.
 
+Segmind-Vega is the smaller 0.74B-parameter U-Net from the same progressive distillation work. Its
+three U-Net levels use one, one and two transformer layers per attention block, and its middle
+block has one residual block and no attention. The text encoders, VAE, Euler scheduler and SDXL
+micro-conditioning are unchanged.
+
 **Usage.**
 
 ```bash
 python -m imagehub.pretrained ssd-1b checkpoints/ssd-1b
+python -m imagehub.pretrained segmind-vega checkpoints/segmind-vega
 ```
 
 ```python
@@ -456,20 +463,28 @@ with pipeline("t2i", backend="ssd-1b", model="checkpoints/ssd-1b", device="mps")
     result.images[0].save("cat.png")
 ```
 
+Use `backend="segmind-vega"` with `model="checkpoints/segmind-vega"` for Vega. The model card
+recommends a negative prompt and guidance around 9.0 for image quality; imagehub retains the
+reference pipeline defaults unless those options are supplied.
+
 **Settings.** The defaults and supported settings are the same as for SDXL: `steps` (50, at most
 1000), `guidance` (5.0), `width`/`height` (the U-Net config's native size, 1024 here, and multiples
 of 8), `negative_prompt` (None), `num_images` (1), `seed`, `latents`, `original_size`,
 `crops_coords_top_left` and `target_size`. Unrecognized settings raise an error.
 
-**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
-`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
-runs are smoke tests only; there is no claim of exact equality on these devices.
+**Seed compatibility.** SSD-1B's recorded CPU validation gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)`. The dedicated Vega suite includes the same
+comparison; its real-checkpoint record is produced by the controller ([validation](validation.md)).
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
 (img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
 fp16 parity are not in this release.
 
 **License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
+
+**Memory.** Segmind-Vega's U-Net is about 3.0 GB in float32; a complete float32 pipeline is about
+6.6 GB. SSD-1B is larger because its U-Net retains more transformer blocks.
 
 
 # Stable Diffusion 3 and 3.5

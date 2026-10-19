@@ -303,6 +303,20 @@ seeded CPU generator as the initial noise. `playground-v2` and `playground-v2.5`
 3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable. The `playground-v2`
 real-checkpoint run took 21 minutes on an M2 Max (CPU).
 
+### Segmind-Vega
+
+The dedicated Segmind-Vega suite targets diffusers 0.40.0 `StableDiffusionXLPipeline`. Published
+header fixtures cover both text encoders, the U-Net and VAE. Random-weight tests cover the tiny and
+published U-Net layouts, and tiny-pipeline tests cover classifier-free guidance on and off at
+non-square sizes. The real-checkpoint run, pending the controller validation, checks both
+tokenizers, both text encoders, a U-Net step, VAE encode/decode, Euler scheduling and two separate
+public-API generations.
+
+The real end-to-end comparisons are deliberately short: 64×64 for four steps.
+`e2e_segmind-vega` uses seed 0 and `seed_e2e_segmind-vega` uses seed 42; both use guidance 5.0 and
+the same negative prompt. Their measurements and pass status are recorded only by those separate
+runs.
+
 The SDXL-Lightning reference is built exactly as described by the model card: a float32 U-Net from
 the SDXL base configuration loaded with the published U-Net file, placed in the base pipeline, and
 an Euler scheduler with trailing timestep spacing. The text encoders and VAE are the validated SDXL
@@ -372,6 +386,11 @@ For `ssd-1b`, the same header-only tensor check covered the four components (`te
 `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 944 / 248, and missing, extra and
 shape-mismatched tensors are **0**. Record: `tensor_header_check`,
 [validation.json](validation.json).
+
+For `segmind-vega`, the header-only tensor check covers the four components (`text_encoder`,
+`text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 564 / 248, with no missing, extra or
+shape-mismatched tensors. The published full-precision safetensors are used; fp16 and single-file
+duplicates are excluded.
 
 For `playground-v2`, the same header-only tensor check covered the four components
 (`text_encoder`, `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 1680 / 248, and

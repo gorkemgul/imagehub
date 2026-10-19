@@ -32,6 +32,7 @@ def test_matches_sdxl_published_tensor_layout():
     [
         ("playground_v25_configs/unet.json", "sdxl"),
         ("sdxl_configs/unet.json", "sdxl"),
+        ("segmind_vega_configs/unet.json", "segmind-vega"),
         ("ssd1b_configs/unet.json", "ssd1b"),
         ("sd1_configs/v1-5/unet.json", "sd1"),
         ("sd1_configs/v1-1/unet.json", "sd1"),
@@ -41,6 +42,12 @@ def test_real_release_configs_match_published_tensor_layout(config_path, family)
     config = json.loads((FIXTURES / config_path).read_text(encoding="utf-8"))
     fixtures = {
         "sdxl": sdxl_published_shapes,
+        "segmind-vega": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "segmind_vega_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
         "ssd1b": ssd1b_published_shapes,
         "sd1": published_shapes,
     }

@@ -2179,6 +2179,52 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="segmind-vega",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/segmind/Segmind-Vega",
+        repo_id="segmind/Segmind-Vega",
+        revision="7714c4363e5856ff974a4f4b068e8691f26d0b40",
+        provenance="author",
+        catalog_id="segmind-vega",
+        format="diffusers",
+        license="Apache-2.0",
+        reference={
+            "diffusers": {
+                "version": "0.40.0",
+                "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+            },
+            "transformers": {"version": "5.18.0"},
+            "segmind-ssd-1b": {
+                "repository": "segmind/SSD-1B",
+                "git_commit": "2bfc35f41f21531c61e3d3470bca907fd839d035",
+            },
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/special_tokens_map.json",
+            "text_encoder/config.json",
+            "text_encoder_2/config.json",
+            "unet/config.json",
+            "vae/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="playground-v2",
         task=Task.T2I,
         family="stable-diffusion-xl",
