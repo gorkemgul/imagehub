@@ -144,14 +144,16 @@ class StableDiffusionComponents:
                 + _hint(root, model_id)
             )
         try:
+            unet = UNet2DConditionModel.from_pretrained(root / "unet", device=device, dtype=dtype)
+            # Pickled diffusers checkpoints can store convolution kernels as channels-last.
+            # Its non-accelerate loader copies them into contiguous module parameters.
+            unet.to(memory_format=torch.contiguous_format)
             return cls(
                 tokenizer=CLIPTokenizer(root / "tokenizer"),
                 text_encoder=CLIPTextModel.from_pretrained(
                     root / "text_encoder", device=device, dtype=dtype
                 ),
-                unet=UNet2DConditionModel.from_pretrained(
-                    root / "unet", device=device, dtype=dtype
-                ),
+                unet=unet,
                 vae=AutoencoderKL.from_pretrained(root / "vae", device=device, dtype=dtype),
                 scheduler_config=read_json(root / "scheduler" / "scheduler_config.json"),
             )
