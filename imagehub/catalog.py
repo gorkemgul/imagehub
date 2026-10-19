@@ -564,6 +564,28 @@ for _id, _repo, _revision, _precision in (
         )
     )
 
+for _variant, _revision in (
+    ("base", "0c03b7a0369b49f97d1acf7256d4ee55ced9b2e0"),
+    ("small", "572238db7ed3a10858900803f3fc8cca53e893e0"),
+    ("tiny", "0364108e53b7f7f4d2585e817a0b7a83dc261cfa"),
+):
+    _repo = f"nota-ai/bk-sdm-{_variant}"
+    _entries.append(
+        ModelSpec(
+            id=f"bk-sdm-{_variant}",
+            task=Task.T2I,
+            family="stable-diffusion",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            files=_SD1_COMMON + _SD1_SAFETENSORS,
+            format="diffusers",
+            catalog_id="bk-sdm",
+            revision=_revision,
+            provenance="author",
+            license="CreativeML-OpenRAIL-M",
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="sd-v2-1",

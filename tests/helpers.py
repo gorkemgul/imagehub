@@ -303,7 +303,7 @@ def write_tiny_sd(
     directory: str | os.PathLike[str],
     *,
     seed: int = 0,
-    unet_config: dict | None = None,
+    unet_config: dict[str, Any] | None = None,
     scheduler_config: dict | None = None,
 ) -> Path:
     """A random-weight SD 1.x snapshot in the published diffusers layout (diffusers loads it)."""

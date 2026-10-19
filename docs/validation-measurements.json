@@ -246,6 +246,114 @@
     "prompts": 615,
     "tolerance": "exact"
   },
+  "bk_sdm_scheduler_bk-sdm-base": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": [
+      4
+    ],
+    "tolerance": 0.0
+  },
+  "bk_sdm_scheduler_bk-sdm-small": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": [
+      4
+    ],
+    "tolerance": 0.0
+  },
+  "bk_sdm_scheduler_bk-sdm-tiny": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": [
+      4
+    ],
+    "tolerance": 0.0
+  },
+  "bk_sdm_text_encoder_bk-sdm-base": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "bk_sdm_text_encoder_bk-sdm-small": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "bk_sdm_text_encoder_bk-sdm-tiny": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "bk_sdm_tokenizer_bk-sdm-base": {
+    "mismatches": [],
+    "prompts": 4,
+    "tolerance": "exact"
+  },
+  "bk_sdm_tokenizer_bk-sdm-small": {
+    "mismatches": [],
+    "prompts": 4,
+    "tolerance": "exact"
+  },
+  "bk_sdm_tokenizer_bk-sdm-tiny": {
+    "mismatches": [],
+    "prompts": 4,
+    "tolerance": "exact"
+  },
+  "bk_sdm_unet_bk-sdm-base": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
+    ],
+    "tolerance": 0.0
+  },
+  "bk_sdm_unet_bk-sdm-small": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
+    ],
+    "tolerance": 0.0
+  },
+  "bk_sdm_unet_bk-sdm-tiny": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
+    ],
+    "tolerance": 0.0
+  },
+  "bk_sdm_vae_decode_bk-sdm-base": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "bk_sdm_vae_decode_bk-sdm-small": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "bk_sdm_vae_decode_bk-sdm-tiny": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "bk_sdm_vae_encode_bk-sdm-base": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "bk_sdm_vae_encode_bk-sdm-small": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "bk_sdm_vae_encode_bk-sdm-tiny": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "chatglm_random_all-bias": {
     "max_abs_diff": 0.0,
     "tolerance": "exact"
@@ -664,6 +772,45 @@
     "passed": true,
     "pixels_match": true,
     "tokens_match": true
+  },
+  "e2e_bk-sdm-base": {
+    "guidance": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "e2e_bk-sdm-small": {
+    "guidance": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "e2e_bk-sdm-tiny": {
+    "guidance": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "e2e_chroma1-base": {
     "guidance": 5.0,
@@ -2643,6 +2790,66 @@
       "mismatch": [],
       "missing": [],
       "tensors": 331
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_bk-sdm-base": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 442
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_bk-sdm-small": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 396
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_bk-sdm-tiny": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 358
     },
     "vae": {
       "extra": [],
@@ -8487,6 +8694,45 @@
       1360,
       768
     ]
+  },
+  "seed_e2e_bk-sdm-base": {
+    "guidance": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "seed_e2e_bk-sdm-small": {
+    "guidance": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "seed_e2e_bk-sdm-tiny": {
+    "guidance": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "seed_e2e_chroma1-base": {
     "max_pixel_diff": 0,

@@ -482,7 +482,10 @@ class MidBlock(nn.Module):
             return _resnet(cfg, ch, ch, temb, output_scale_factor=cfg["mid_block_scale_factor"])
 
         self.attentions: nn.ModuleList | None
-        if cfg["mid_block_type"] == "UNetMidBlock2DCrossAttn":
+        if cfg["mid_block_type"] is None:
+            self.resnets = nn.ModuleList()
+            self.attentions = None
+        elif cfg["mid_block_type"] == "UNetMidBlock2DCrossAttn":
             self.resnets = nn.ModuleList([resnet(), resnet()])
             self.attentions = _transformers(
                 cfg,
@@ -512,6 +515,8 @@ class MidBlock(nn.Module):
             self.attentions = None
 
     def forward(self, x: Tensor, temb: Tensor, context: Tensor) -> Tensor:
+        if not self.resnets:
+            return x
         x = self.resnets[0](x, temb)
         if self.attentions is not None:
             x = self.attentions[0](x, context)

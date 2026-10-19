@@ -189,6 +189,43 @@ The end-to-end comparisons are deliberately short: 64×64 for four steps. `e2e_s
 seed 42, and all four runs use guidance 5.0 and the same negative prompt. Their final pixels differ
 by **exactly 0** in every run. This statement is not a quality benchmark.
 
+## BK-SDM
+
+`bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny` use the existing Stable Diffusion pipeline with
+block-pruned U-Nets. They are pinned to the three author repositories at revisions `0c03b7a`,
+`572238d` and `0364108` and are compared with diffusers 0.40.0 `StableDiffusionPipeline` and
+transformers 5.18.0 on CPU in float32. All 27 real tests passed, and the observed difference in
+every recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the local
+implementation produces a bit-identical image to the one diffusers produces. The real-checkpoint
+run took less than a minute on an M2 Max (CPU).
+
+The dedicated reference suite checks every published tensor header; tokenizer and text-encoder
+outputs; one U-Net step; VAE encode and decode; PNDM timesteps; exact random-weight U-Net parity at
+tiny and published layouts; and tiny guided and unguided end-to-end generation at non-square sizes.
+For each checkpoint, `e2e_<model-id>` is a four-step 64×64 public-pipeline run at seed 0 and
+`seed_e2e_<model-id>` is a separate run at seed 42. Both use guidance 7.5 and the prompt
+"a photograph of an astronaut riding a horse".
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 196 / 442 / 248 tensors) | bk-sdm-base | 0 missing / extra / mismatched | exact |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 196 / 396 / 248 tensors) | bk-sdm-small | 0 missing / extra / mismatched | exact |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 196 / 358 / 248 tensors) | bk-sdm-tiny | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (4 prompts) | all three | identical | exact |
+| CLIP text encoder | all three | 0 | 0 |
+| U-Net single step (t = 500) | all three | 0 | 0 |
+| VAE decode / encode | all three | 0 / 0 | 0 / 0 |
+| PNDM scheduler timesteps (4 steps) | all three | 0 | 0 |
+| End to end: final pixels (64×64, 4 steps, guidance 7.5, seed 0) | all three | 0 | 0 |
+| End to end, seed 42 (pixels) | all three | 0 | 0 |
+
+Records: `header_bk-sdm-base`, `header_bk-sdm-small`, `header_bk-sdm-tiny`,
+`bk_sdm_*_bk-sdm-base`, `bk_sdm_*_bk-sdm-small`, `bk_sdm_*_bk-sdm-tiny`,
+`e2e_bk-sdm-base`, `e2e_bk-sdm-small`, `e2e_bk-sdm-tiny`, `seed_e2e_bk-sdm-base`,
+`seed_e2e_bk-sdm-small` and `seed_e2e_bk-sdm-tiny`.
+
 ## LCM
 
 Validated on CPU in the same environment as above. `lcm-dreamshaper-v7` was loaded strictly from
@@ -2163,7 +2200,8 @@ first sequence of the batch only; the native module reproduces that.
   for `chroma1-hd`, 16 passed for `chroma1-flash`, 18 passed for `chroma1-base`, 7 passed for `ovis-image-7b`, 8 passed for `prx-1024-t2i-beta` and
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together,
   23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, 7 passed for
-  `deepfloyd-if-i-xl`, 6 passed for `meissonic`, and 8 passed each for `hart` and `pixeldit`. These include structural
+  `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
+  for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`. These include structural
   parity with random weights, end-to-end parity with a small model, real-checkpoint parity and
   tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
