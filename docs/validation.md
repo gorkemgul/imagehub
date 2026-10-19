@@ -162,7 +162,7 @@ and uint8 image equality. All 14 real tests passed, and the observed difference 
 comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation produces a
 bit-identical image to the one diffusers produces. Small-SD's published tensors are float32, and
 Tiny-SD's published float16 tensors are upcast to float32 by both implementations. The
-real-checkpoint run took 0 minutes on an M2 Max (CPU).
+real-checkpoint run took 1 minute on an M2 Max (CPU).
 
 ### Comparisons (CPU, float32)
 
