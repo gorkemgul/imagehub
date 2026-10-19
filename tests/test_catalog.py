@@ -12,6 +12,9 @@ def test_catalog_contents():
             "amused-256",
             "amused-512",
             "auraflow-v0.3",
+            "bk-sdm-base",
+            "bk-sdm-small",
+            "bk-sdm-tiny",
             "chroma1-base",
             "chroma1-flash",
             "chroma1-hd",
@@ -120,6 +123,20 @@ def test_catalog_contents():
         assert not any(
             name.startswith(("safety_checker/", "feature_extractor/")) for name in spec.files
         )
+
+    bk_sdm = [model_info(f"bk-sdm-{variant}") for variant in ("base", "small", "tiny")]
+    assert [spec.revision for spec in bk_sdm] == [
+        "0c03b7a0369b49f97d1acf7256d4ee55ced9b2e0",
+        "572238db7ed3a10858900803f3fc8cca53e893e0",
+        "0364108e53b7f7f4d2585e817a0b7a83dc261cfa",
+    ]
+    for spec in bk_sdm:
+        assert spec.task is Task.T2I
+        assert spec.family == "stable-diffusion"
+        assert spec.catalog_id == "bk-sdm"
+        assert spec.provenance == "author"
+        assert spec.license == "CreativeML-OpenRAIL-M"
+        assert spec.files == model_info("sd-v1-4").files
 
     sd21 = model_info("sd-v2-1")
     assert sd21.task is Task.T2I

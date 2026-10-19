@@ -974,6 +974,207 @@
       }
     },
     {
+      "model_id": "bk-sdm-base",
+      "repo_id": "nota-ai/bk-sdm-base",
+      "revision": "0c03b7a0369b49f97d1acf7256d4ee55ced9b2e0",
+      "provenance": "author",
+      "catalog_id": "bk-sdm",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
+        "scheduler/scheduler_config.json": "8335df29b53da12e9aeca35b1c2e60d88b23eae4cc5ad3d07efdcd7f003cc343",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "00439066fcba73de57644cf41e4e3b9f2dbb09d7f3fc2005898ba52399045882",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "aa210e6d6abd239a466af57a1dadb62d5ced63295064d295a549e08a6c4a2020",
+        "unet/config.json": "1ab5a6ed0658aba8c2b39c495d0f29288978cd2e1d9810de67b8247472a58ed7",
+        "vae/config.json": "0e5966d4d52c8077648754ffd2c14ab5e0b26a4bdfa6af1d207c27550fa6d2af",
+        "text_encoder/model.safetensors": "7b3a12df205cb3c74dd4eae4354d93f606ae6b3bc29d5d06fd97921cb9ad8a81",
+        "unet/diffusion_pytorch_model.safetensors": "2249092ca3c85f70d0ce26577718c0296417bfd9da292dded42957bc232a0b49",
+        "vae/diffusion_pytorch_model.safetensors": "a2b5134f4dbc140d9c11f11cba3233099e00af40f262f136c691fb7d38d2194c"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 442,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "bk-sdm-small",
+      "repo_id": "nota-ai/bk-sdm-small",
+      "revision": "572238db7ed3a10858900803f3fc8cca53e893e0",
+      "provenance": "author",
+      "catalog_id": "bk-sdm",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
+        "scheduler/scheduler_config.json": "8335df29b53da12e9aeca35b1c2e60d88b23eae4cc5ad3d07efdcd7f003cc343",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "00439066fcba73de57644cf41e4e3b9f2dbb09d7f3fc2005898ba52399045882",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "aa210e6d6abd239a466af57a1dadb62d5ced63295064d295a549e08a6c4a2020",
+        "unet/config.json": "c20cac953013cd6d1e5bc9d0f279b23a5c56797e3a85d7573a7dffbc6ad3409a",
+        "vae/config.json": "0e5966d4d52c8077648754ffd2c14ab5e0b26a4bdfa6af1d207c27550fa6d2af",
+        "text_encoder/model.safetensors": "7b3a12df205cb3c74dd4eae4354d93f606ae6b3bc29d5d06fd97921cb9ad8a81",
+        "unet/diffusion_pytorch_model.safetensors": "926b7327291c79a1bb56f1e416342f8981bf45933f827437c5be498b16aef937",
+        "vae/diffusion_pytorch_model.safetensors": "a2b5134f4dbc140d9c11f11cba3233099e00af40f262f136c691fb7d38d2194c"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 396,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "bk-sdm-tiny",
+      "repo_id": "nota-ai/bk-sdm-tiny",
+      "revision": "0364108e53b7f7f4d2585e817a0b7a83dc261cfa",
+      "provenance": "author",
+      "catalog_id": "bk-sdm",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "c7cc314014486aa2f7f17ab8f90197fe0412c818cdefb9e15601ae58752b5001",
+        "scheduler/scheduler_config.json": "8335df29b53da12e9aeca35b1c2e60d88b23eae4cc5ad3d07efdcd7f003cc343",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "00439066fcba73de57644cf41e4e3b9f2dbb09d7f3fc2005898ba52399045882",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "aa210e6d6abd239a466af57a1dadb62d5ced63295064d295a549e08a6c4a2020",
+        "unet/config.json": "1ff785ca27c8e050e9d695b704e2231fd52a212840c7932397acaa98f566d4ab",
+        "vae/config.json": "0e5966d4d52c8077648754ffd2c14ab5e0b26a4bdfa6af1d207c27550fa6d2af",
+        "text_encoder/model.safetensors": "7b3a12df205cb3c74dd4eae4354d93f606ae6b3bc29d5d06fd97921cb9ad8a81",
+        "unet/diffusion_pytorch_model.safetensors": "ded7f8745ae51e6e41ac3fdd3354b9ec3cb4b18c2e5b02539635e7b28bafee5f",
+        "vae/diffusion_pytorch_model.safetensors": "a2b5134f4dbc140d9c11f11cba3233099e00af40f262f136c691fb7d38d2194c"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 358,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
       "model_id": "sd-v2-1",
       "repo_id": "sd2-community/stable-diffusion-2-1",
       "revision": "bb2154823665391b4fb29b0b9cf82a198964ee05",
@@ -9015,6 +9216,116 @@
       "tolerance": 0.0
     }
   },
+  "components_bk_sdm": {
+    "bk_sdm_scheduler_bk-sdm-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_scheduler_bk-sdm-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_scheduler_bk-sdm-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_text_encoder_bk-sdm-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_text_encoder_bk-sdm-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_text_encoder_bk-sdm-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_tokenizer_bk-sdm-base": {
+      "mismatches": [],
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "bk_sdm_tokenizer_bk-sdm-small": {
+      "mismatches": [],
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "bk_sdm_tokenizer_bk-sdm-tiny": {
+      "mismatches": [],
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "bk_sdm_unet_bk-sdm-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_unet_bk-sdm-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_unet_bk-sdm-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_vae_decode_bk-sdm-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_vae_decode_bk-sdm-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_vae_decode_bk-sdm-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_vae_encode_bk-sdm-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_vae_encode_bk-sdm-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_vae_encode_bk-sdm-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_ldm": {
     "ldm_text_encoder": {
       "max_abs": 0.0,
@@ -13612,6 +13923,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "9 passed (segmind-vega)"
+    "reference_summary": "27 passed (bk-sdm-base, bk-sdm-small, bk-sdm-tiny)"
   }
 }

@@ -299,7 +299,12 @@ MODEL_INDEX = {
 }
 
 
-def write_tiny_sd(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+def write_tiny_sd(
+    directory: str | os.PathLike[str],
+    *,
+    seed: int = 0,
+    unet_config: dict[str, Any] | None = None,
+) -> Path:
     """A random-weight SD 1.x snapshot in the published diffusers layout (diffusers loads it)."""
     from imagehub.checkpoints import save_safetensors
     from imagehub.models.autoencoder_kl import AutoencoderKL
@@ -313,12 +318,13 @@ def write_tiny_sd(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
     (root / "scheduler").mkdir()
     (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(SD1_SCHEDULER))
     (root / "model_index.json").write_text(json.dumps(MODEL_INDEX))
+    tiny_unet = TINY_UNET_FILE_CONFIG | (unet_config or {})
     for name, cls, config, weights in (
         ("text_encoder", CLIPTextModel, TINY_TEXT_FILE_CONFIG, "model.safetensors"),
         (
             "unet",
             UNet2DConditionModel,
-            TINY_UNET_FILE_CONFIG,
+            tiny_unet,
             "diffusion_pytorch_model.safetensors",
         ),
         ("vae", AutoencoderKL, TINY_VAE_FILE_CONFIG, "diffusion_pytorch_model.safetensors"),
