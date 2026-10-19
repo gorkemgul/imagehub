@@ -98,6 +98,8 @@ def test_catalog_contents():
             "sdxl-lightning-8step",
             "sdxl-refiner-1.0",
             "sdxl-turbo",
+            "segmind-small-sd",
+            "segmind-tiny-sd",
             "segmind-vega",
             "ssd-1b",
             "stable-cascade",
@@ -383,6 +385,35 @@ def test_catalog_contents():
     )
     assert len(set(vega.files)) == len(vega.files) == 18
     assert not any("fp16" in name or name == "segmind-vega.safetensors" for name in vega.files)
+
+    for model_id, repo_id, revision, precision in (
+        (
+            "segmind-small-sd",
+            "segmind/small-sd",
+            "f8b087e68071a29bbe85a4b07e6e1e8998d59aa7",
+            "float32",
+        ),
+        (
+            "segmind-tiny-sd",
+            "segmind/tiny-sd",
+            "cad0bd7495fa6c4bcca01b19a723dc91627fe84f",
+            "float16",
+        ),
+    ):
+        spec = model_info(model_id)
+        assert spec.family == "stable-diffusion"
+        assert spec.repo_id == repo_id
+        assert spec.revision == revision
+        assert spec.provenance == "author"
+        assert spec.catalog_id == "bk-sdm"
+        assert spec.license == "CreativeML-OpenRAIL-M"
+        assert spec.config == {"precision": precision}
+        assert len(spec.files) == 12
+        assert spec.files[-3:] == (
+            "text_encoder/pytorch_model.bin",
+            "unet/diffusion_pytorch_model.bin",
+            "vae/diffusion_pytorch_model.bin",
+        )
 
     playground_v2 = model_info("playground-v2")
     assert playground_v2.task is Task.T2I

@@ -42,7 +42,17 @@ DPMSOLVER_MULTISTEP_DEFAULTS: dict[str, Any] = {
 # ``flow_shift`` are validated separately.
 _MODE_KEYS = frozenset({"prediction_type", "use_flow_sigmas", "flow_shift"})
 _REQUIRED = {
-    key: value for key, value in DPMSOLVER_MULTISTEP_DEFAULTS.items() if key not in _MODE_KEYS
+    key: value
+    for key, value in DPMSOLVER_MULTISTEP_DEFAULTS.items()
+    if key not in _MODE_KEYS | {"beta_start", "beta_end", "beta_schedule", "steps_offset"}
+}
+_IGNORED_COMPATIBILITY_KEYS = {
+    "clip_sample",
+    "clip_sample_range",
+    "dynamic_thresholding_ratio",
+    "sample_max_value",
+    "set_alpha_to_one",
+    "skip_prk_steps",
 }
 
 
@@ -55,12 +65,16 @@ class DPMSolverMultistepScheduler:
         unknown = sorted(
             key
             for key in config
-            if not key.startswith("_") and key not in DPMSOLVER_MULTISTEP_DEFAULTS
+            if not key.startswith("_")
+            and key not in DPMSOLVER_MULTISTEP_DEFAULTS
+            and key not in _IGNORED_COMPATIBILITY_KEYS
         )
         if unknown:
             raise ValueError(f"Unsupported DPM-Solver setting {unknown[0]}")
         cfg = DPMSOLVER_MULTISTEP_DEFAULTS | {
-            key: value for key, value in config.items() if not key.startswith("_")
+            key: value
+            for key, value in config.items()
+            if not key.startswith("_") and key in DPMSOLVER_MULTISTEP_DEFAULTS
         }
         for key, expected in _REQUIRED.items():
             if cfg[key] != expected:
@@ -81,7 +95,24 @@ class DPMSolverMultistepScheduler:
             raise ValueError(f"Unsupported DPM-Solver setting flow_shift={cfg['flow_shift']!r}")
         self.config = cfg
         count = cfg["num_train_timesteps"]
-        self.betas = torch.linspace(cfg["beta_start"], cfg["beta_end"], count, dtype=torch.float32)
+        if cfg["beta_schedule"] == "linear":
+            self.betas = torch.linspace(
+                cfg["beta_start"], cfg["beta_end"], count, dtype=torch.float32
+            )
+        elif cfg["beta_schedule"] == "scaled_linear":
+            self.betas = (
+                torch.linspace(
+                    cfg["beta_start"] ** 0.5,
+                    cfg["beta_end"] ** 0.5,
+                    count,
+                    dtype=torch.float32,
+                )
+                ** 2
+            )
+        else:
+            raise ValueError(
+                f"Unsupported DPM-Solver setting beta_schedule={cfg['beta_schedule']!r}"
+            )
         self.alphas = 1.0 - self.betas
         self.alphas_cumprod = torch.cumprod(self.alphas, dim=0)
         self.alpha_t = torch.sqrt(self.alphas_cumprod)

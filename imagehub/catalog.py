@@ -523,6 +523,47 @@ for _version, _repo, _revision, _provenance, _weights in (
         )
     )
 
+for _id, _repo, _revision, _precision in (
+    (
+        "segmind-small-sd",
+        "segmind/small-sd",
+        "f8b087e68071a29bbe85a4b07e6e1e8998d59aa7",
+        "float32",
+    ),
+    (
+        "segmind-tiny-sd",
+        "segmind/tiny-sd",
+        "cad0bd7495fa6c4bcca01b19a723dc91627fe84f",
+        "float16",
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="stable-diffusion",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            files=_SD1_COMMON + _SD1_BIN,
+            format="diffusers",
+            catalog_id="bk-sdm",
+            revision=_revision,
+            provenance="author",
+            license="CreativeML-OpenRAIL-M",
+            config={"precision": _precision},
+            reference={
+                "diffusers": {
+                    "version": "0.40.0",
+                    "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+                },
+                "segmind-distill-sd": {
+                    "repository": "segmind/distill-sd",
+                    "git_commit": "c1e97a70d141df09e6fe5cc7dbd66e0cbeae3eeb",
+                },
+            },
+        )
+    )
+
 for _variant, _revision in (
     ("base", "0c03b7a0369b49f97d1acf7256d4ee55ced9b2e0"),
     ("small", "572238db7ed3a10858900803f3fc8cca53e893e0"),

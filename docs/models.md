@@ -114,6 +114,45 @@ fp16 parity are not in this release.
 bind whoever downloads and uses the weights. imagehub does not distribute weights.
 
 
+# Segmind Small-SD and Tiny-SD
+
+Catalog: [`bk-sdm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `segmind-small-sd`, `segmind-tiny-sd` · Task: `t2i`
+
+**Architecture.** These are knowledge-distilled Stable Diffusion 1.x checkpoints with pruned
+U-Nets. Small-SD keeps four channel stages but one residual/attention layer per stage. Tiny-SD
+keeps three stages and removes the mid-block. They retain the CLIP text encoder and f=8 KL
+autoencoder layout. Small uses its published second-order DEIS scheduler; Tiny uses its published
+second-order DPM-Solver++ scheduler.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained segmind-small-sd checkpoints/segmind-small-sd
+python -m imagehub.pretrained segmind-tiny-sd checkpoints/segmind-tiny-sd
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="segmind-tiny-sd", model="checkpoints/segmind-tiny-sd"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` (50), `guidance` (7.5), `width`/`height` (512, multiples of 8),
+`negative_prompt`, `num_images`, `seed`, and `latents`. Unrecognized settings raise an error.
+Tiny-SD publishes only float16 weights; CPU validation upcasts them to float32.
+
+**Out of scope.** There is no safety checker or invisible watermark. img2img and alternate
+schedulers are not included.
+
+**License.** Both weight sets use CreativeML OpenRAIL-M. Its use restrictions bind whoever
+downloads and uses the weights; imagehub does not distribute weights.
+
+
 # BK-SDM
 
 Catalog: [`bk-sdm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

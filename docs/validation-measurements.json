@@ -2031,6 +2031,30 @@
       "pixels": 0
     }
   },
+  "e2e_segmind-small-sd": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "e2e_segmind-tiny-sd": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
   "e2e_segmind-vega": {
     "guidance": 5.0,
     "passed": true,
@@ -4597,6 +4621,46 @@
       "mismatch": [],
       "missing": [],
       "tensors": 1680
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_segmind-small-sd": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 442
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_segmind-tiny-sd": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 358
     },
     "vae": {
       "extra": [],
@@ -7928,6 +7992,38 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sd_scheduler_segmind-small-sd": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": 4,
+    "tolerance": 0.0
+  },
+  "sd_scheduler_segmind-tiny-sd": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": 4,
+    "tolerance": 0.0
+  },
+  "sd_text_encoder_segmind-small-sd": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd_text_encoder_segmind-tiny-sd": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd_tokenizer_segmind-small-sd": {
+    "mismatches": [],
+    "prompts": 4,
+    "tolerance": "exact"
+  },
+  "sd_tokenizer_segmind-tiny-sd": {
+    "mismatches": [],
+    "prompts": 4,
+    "tolerance": "exact"
+  },
   "sd_turbo_scheduler": {
     "measurements": {
       "1": {
@@ -7993,6 +8089,32 @@
     "tolerance": 0.0
   },
   "sd_turbo_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd_unet_segmind-small-sd": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
+    ],
+    "tolerance": 0.0
+  },
+  "sd_unet_segmind-tiny-sd": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
+    ],
+    "tolerance": 0.0
+  },
+  "sd_vae_decode_segmind-small-sd": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sd_vae_decode_segmind-tiny-sd": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -9228,6 +9350,30 @@
       512
     ],
     "steps": 1
+  },
+  "seed_e2e_segmind-small-sd": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "seed_e2e_segmind-tiny-sd": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "seed_e2e_segmind-vega": {
     "guidance": 5.0,
