@@ -416,6 +416,25 @@ The real end-to-end comparisons are deliberately short: 64×64 for four steps.
 `e2e_segmind-vega` uses seed 0 and `seed_e2e_segmind-vega` uses seed 42; both use guidance 5.0 and
 the same negative prompt. Their final pixels differ by **exactly 0** in both runs.
 
+### KOALA
+
+The dedicated KOALA suite targets diffusers 0.40.0 `StableDiffusionXLPipeline` for `koala-700m`
+and `koala-1b`. Published header fixtures cover both text encoders, the U-Net and VAE for each
+checkpoint. Random-weight tests cover tiny and published U-Net layouts, including the absent
+KOALA-700M mid-block, and tiny-pipeline tests cover classifier-free guidance on and off at
+non-square sizes.
+
+The real-checkpoint comparison covers both tokenizers, both text encoders, one U-Net step, VAE
+encode/decode, the four-step Euler schedule and two separate public-API generations for each
+checkpoint. `e2e_koala-700m` and `e2e_koala-1b` use seed 0;
+`seed_e2e_koala-700m` and `seed_e2e_koala-1b` use seed 42. All use 64×64 output, four steps,
+guidance 5.0 and the same negative prompt. Exact measurements are pending the real-checkpoint run.
+
+Records: `header_<id>`, `sdxl_tokenizers_<id>`, `sdxl_text_encoder_<id>`,
+`sdxl_text_encoder_2_<id>`, `sdxl_unet_<id>`, `sdxl_vae_decode_<id>`,
+`sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`, where `<id>` is
+`koala-700m` or `koala-1b`, [validation-measurements.json](validation-measurements.json).
+
 The SDXL-Lightning reference is built exactly as described by the model card: a float32 U-Net from
 the SDXL base configuration loaded with the published U-Net file, placed in the base pipeline, and
 an Euler scheduler with trailing timestep spacing. The text encoders and VAE are the validated SDXL
@@ -490,6 +509,12 @@ For `segmind-vega`, the header-only tensor check covers the four components (`te
 `text_encoder_2`, `unet`, `vae`): tensor counts 196 / 517 / 564 / 248, with no missing, extra or
 shape-mismatched tensors. The published full-precision safetensors are used; fp16 and single-file
 duplicates are excluded. Record: `header_segmind-vega`,
+[validation-measurements.json](validation-measurements.json).
+
+For `koala-700m` and `koala-1b`, dedicated header checks cover the four components
+(`text_encoder`, `text_encoder_2`, `unet`, `vae`) against pinned published safetensors. The exact
+tensor counts and real-checkpoint results are pending the controller run. Records:
+`header_koala-700m` and `header_koala-1b`,
 [validation-measurements.json](validation-measurements.json).
 
 For `playground-v2`, the same header-only tensor check covered the four components
