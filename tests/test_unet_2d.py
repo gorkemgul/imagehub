@@ -33,6 +33,8 @@ def test_matches_sdxl_published_tensor_layout():
         ("playground_v25_configs/unet.json", "sdxl"),
         ("sdxl_configs/unet.json", "sdxl"),
         ("segmind_vega_configs/unet.json", "segmind-vega"),
+        ("koala_700m_configs/unet.json", "koala-700m"),
+        ("koala_1b_configs/unet.json", "koala-1b"),
         ("bk_sdm_configs/base/unet.json", "bk-sdm-base"),
         ("bk_sdm_configs/small/unet.json", "bk-sdm-small"),
         ("bk_sdm_configs/tiny/unet.json", "bk-sdm-tiny"),
@@ -51,6 +53,18 @@ def test_real_release_configs_match_published_tensor_layout(config_path, family)
             name: entry["shape"]
             for name, entry in json.loads(
                 (FIXTURES / "segmind_vega_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "koala-700m": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "koala_700m_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "koala-1b": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "koala_1b_tensor_shapes.json").read_text(encoding="utf-8")
             )[component].items()
         },
         "ssd1b": ssd1b_published_shapes,

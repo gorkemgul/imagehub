@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**43 architecture families, 99 published checkpoints.** A model is a separately published set of weights;
+**43 architecture families, 104 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -23,6 +23,9 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `bk-sdm-base` | `stable-diffusion` | [nota-ai/bk-sdm-base](https://huggingface.co/nota-ai/bk-sdm-base) | `0c03b7a` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
 | `bk-sdm-small` | `stable-diffusion` | [nota-ai/bk-sdm-small](https://huggingface.co/nota-ai/bk-sdm-small) | `572238d` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
 | `bk-sdm-tiny` | `stable-diffusion` | [nota-ai/bk-sdm-tiny](https://huggingface.co/nota-ai/bk-sdm-tiny) | `0364108` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
+| `bk-sdm-v2-base` | `stable-diffusion` | [nota-ai/bk-sdm-v2-base](https://huggingface.co/nota-ai/bk-sdm-v2-base) | `21915be` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
+| `bk-sdm-v2-small` | `stable-diffusion` | [nota-ai/bk-sdm-v2-small](https://huggingface.co/nota-ai/bk-sdm-v2-small) | `ad82c51` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
+| `bk-sdm-v2-tiny` | `stable-diffusion` | [nota-ai/bk-sdm-v2-tiny](https://huggingface.co/nota-ai/bk-sdm-v2-tiny) | `68277af` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
 | `sd-v2-1` | `stable-diffusion` | [sd2-community/stable-diffusion-2-1](https://huggingface.co/sd2-community/stable-diffusion-2-1) | `bb21548` | community mirror | full | CreativeML-OpenRAIL++-M | `stable-diffusion-2` |
 | `sd-turbo` | `stable-diffusion` | [stabilityai/sd-turbo](https://huggingface.co/stabilityai/sd-turbo) | `b261bac` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` (SD Turbo) |
 | `lcm-dreamshaper-v7` | `stable-diffusion` | [SimianLuo/LCM_Dreamshaper_v7](https://huggingface.co/SimianLuo/LCM_Dreamshaper_v7) | `a85df6a` | author | full | MIT | `lcm` |
@@ -39,6 +42,8 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `sdxl-turbo` | `stable-diffusion-xl` | [stabilityai/sdxl-turbo](https://huggingface.co/stabilityai/sdxl-turbo) | `7115331` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` |
 | `ssd-1b` | `stable-diffusion-xl` | [segmind/SSD-1B](https://huggingface.co/segmind/SSD-1B) | `60987f3` | author | full | Apache-2.0 | `ssd-1b` |
 | `segmind-vega` | `stable-diffusion-xl` | [segmind/Segmind-Vega](https://huggingface.co/segmind/Segmind-Vega) | `7714c43` | author | full | Apache-2.0 | `segmind-vega` |
+| `koala-700m` | `stable-diffusion-xl` | [etri-vilab/koala-700m](https://huggingface.co/etri-vilab/koala-700m) | `5e73a31` | author | full | Unspecified | `koala` |
+| `koala-1b` | `stable-diffusion-xl` | [etri-vilab/koala-1b](https://huggingface.co/etri-vilab/koala-1b) | `8ef26f3` | author | full | Unspecified | `koala` |
 | `playground-v2` | `stable-diffusion-xl` | [playgroundai/playground-v2-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2-1024px-aesthetic) | `737a24e` | author | full | playground-v2-community | `playground-v2` |
 | `playground-v2.5` | `stable-diffusion-xl` | [playgroundai/playground-v2.5-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2.5-1024px-aesthetic) | `1e032f1` | author | full | playground-v2dot5-community | `playground-v2` |
 | `sd3-medium` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3-medium-diffusers](https://huggingface.co/stabilityai/stable-diffusion-3-medium-diffusers) | `ea42f8c` | author | full | Stability AI Community License | `stable-diffusion-3` |

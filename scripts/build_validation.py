@@ -8,7 +8,7 @@ Meissonic, AuraFlow,
 LlamaGen,
 Wuerstchen v2, LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen
 measurements are grouped in flat
-``components_segmind_sd``, ``components_bk_sdm``,
+``components_segmind_sd``, ``components_bk_sdm``, ``components_bk_sdm_v2``,
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``,
 ``components_flux1``,
 ``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
@@ -301,7 +301,12 @@ def main() -> None:
             key: value for key, value in measured.items() if key in LCM_COMPONENT_KEYS
         },
         "components_bk_sdm": {
-            key: value for key, value in measured.items() if key.startswith("bk_sdm_")
+            key: value
+            for key, value in measured.items()
+            if key.startswith("bk_sdm_") and not key.startswith("bk_sdm_v2_")
+        },
+        "components_bk_sdm_v2": {
+            key: value for key, value in measured.items() if key.startswith("bk_sdm_v2_")
         },
         "components_ldm": {
             key: value for key, value in measured.items() if key in LDM_COMPONENT_KEYS

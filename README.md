@@ -62,8 +62,8 @@ result.images[0].save("edited.png")
 | Family | Checkpoints | Task | Input | Validation |
 | --- | --- | --- | --- | --- |
 | Latent Diffusion Model | `ldm-text2im-large-256` | `t2i` | T | CPU fp32 parity |
-| Stable Diffusion | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`, `segmind-small-sd`, `segmind-tiny-sd`, `bk-sdm-base`, `bk-sdm-small`, `bk-sdm-tiny`, `sd-v2-1`, `sd-turbo`, `lcm-dreamshaper-v7` | `t2i` | T | CPU fp32 parity (`segmind-tiny-sd` on the upcast float16 weights) |
-| Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step`, `sdxl-turbo`, `ssd-1b`, `segmind-vega`, `playground-v2`, `playground-v2.5` | `t2i` | T | CPU fp32 parity |
+| Stable Diffusion | `sd-v1-1`, `sd-v1-2`, `sd-v1-3`, `sd-v1-4`, `sd-v1-5`, `segmind-small-sd`, `segmind-tiny-sd`, `bk-sdm-base`, `bk-sdm-small`, `bk-sdm-tiny`, `bk-sdm-v2-base`, `bk-sdm-v2-small`, `bk-sdm-v2-tiny`, `sd-v2-1`, `sd-turbo`, `lcm-dreamshaper-v7` | `t2i` | T | CPU fp32 parity (`segmind-tiny-sd` on the upcast float16 weights) |
+| Stable Diffusion XL | `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`, `sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step`, `sdxl-turbo`, `ssd-1b`, `segmind-vega`, `koala-700m`, `koala-1b`, `playground-v2`, `playground-v2.5` | `t2i` | T | CPU fp32 parity |
 | Stable Diffusion XL refiner | `sdxl-refiner-1.0` | `t2i` | T, I | CPU fp32 parity |
 | Stable Diffusion 3 and 3.5 | `sd3-medium`, `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | T | CPU fp32 parity |
 | DreamLite | `dreamlite-base`, `dreamlite-mobile` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 weights |

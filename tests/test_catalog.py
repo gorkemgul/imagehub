@@ -15,6 +15,9 @@ def test_catalog_contents():
             "bk-sdm-base",
             "bk-sdm-small",
             "bk-sdm-tiny",
+            "bk-sdm-v2-base",
+            "bk-sdm-v2-small",
+            "bk-sdm-v2-tiny",
             "chroma1-base",
             "chroma1-flash",
             "chroma1-hd",
@@ -52,6 +55,8 @@ def test_catalog_contents():
             "kandinsky-2.2",
             "kandinsky-3",
             "kandinsky-5-t2i-lite",
+            "koala-1b",
+            "koala-700m",
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
@@ -140,6 +145,21 @@ def test_catalog_contents():
         assert spec.provenance == "author"
         assert spec.license == "CreativeML-OpenRAIL-M"
         assert spec.files == model_info("sd-v1-4").files
+
+    bk_sdm_v2 = [model_info(f"bk-sdm-v2-{variant}") for variant in ("base", "small", "tiny")]
+    assert [spec.revision for spec in bk_sdm_v2] == [
+        "21915be4c3a83f3fa45f93559750df44943509b1",
+        "ad82c51a3b568e855a7f79c5b893ea2f9ebb197f",
+        "68277af553777858cd47e133f92e4db47321bc74",
+    ]
+    for spec in bk_sdm_v2:
+        assert spec.task is Task.T2I
+        assert spec.family == "stable-diffusion"
+        assert spec.catalog_id == "bk-sdm"
+        assert spec.provenance == "author"
+        assert spec.license == "CreativeML-OpenRAIL-M"
+        assert spec.config == {"defaults": {"steps": 50, "guidance": 7.5}}
+        assert spec.files == model_info("sd-v2-1").files
 
     sd21 = model_info("sd-v2-1")
     assert sd21.task is Task.T2I
@@ -386,6 +406,36 @@ def test_catalog_contents():
     )
     assert len(set(vega.files)) == len(vega.files) == 18
     assert not any("fp16" in name or name == "segmind-vega.safetensors" for name in vega.files)
+
+    for model_id, repo_id, revision in (
+        (
+            "koala-700m",
+            "etri-vilab/koala-700m",
+            "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+        ),
+        (
+            "koala-1b",
+            "etri-vilab/koala-1b",
+            "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+        ),
+    ):
+        koala = model_info(model_id)
+        assert koala.task is Task.T2I
+        assert koala.family == "stable-diffusion-xl"
+        assert koala.repo_id == repo_id
+        assert koala.revision == revision
+        assert koala.provenance == "author"
+        assert koala.catalog_id == "koala"
+        assert koala.format == "diffusers"
+        assert koala.license == "Unspecified"
+        assert koala.reference["diffusers"]["git_commit"] == (
+            "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        )
+        assert koala.reference["sdxl-koala"]["git_commit"] == (
+            "df9dac7514cc2bd6882a5161401cd9740349c11b"
+        )
+        assert len(set(koala.files)) == len(koala.files) == 18
+        assert not any("fp16" in name or name.endswith((".bin", ".onnx")) for name in koala.files)
 
     for model_id, repo_id, revision, precision in (
         (
