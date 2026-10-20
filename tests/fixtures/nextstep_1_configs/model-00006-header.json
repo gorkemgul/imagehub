@@ -1,0 +1,134 @@
+{
+"layers.21.mlp.down_proj.weight": [
+5120,
+13824
+],
+"layers.21.mlp.gate_proj.weight": [
+13824,
+5120
+],
+"layers.21.mlp.up_proj.weight": [
+13824,
+5120
+],
+"layers.21.self_attn.k_proj.weight": [
+1024,
+5120
+],
+"layers.21.self_attn.o_proj.weight": [
+5120,
+5120
+],
+"layers.21.self_attn.q_proj.weight": [
+5120,
+5120
+],
+"layers.21.self_attn.v_proj.weight": [
+1024,
+5120
+],
+"layers.22.mlp.down_proj.weight": [
+5120,
+13824
+],
+"layers.22.mlp.gate_proj.weight": [
+13824,
+5120
+],
+"layers.22.mlp.up_proj.weight": [
+13824,
+5120
+],
+"layers.22.self_attn.k_proj.weight": [
+1024,
+5120
+],
+"layers.22.self_attn.o_proj.weight": [
+5120,
+5120
+],
+"layers.22.self_attn.q_proj.weight": [
+5120,
+5120
+],
+"layers.22.self_attn.v_proj.weight": [
+1024,
+5120
+],
+"layers.23.mlp.down_proj.weight": [
+5120,
+13824
+],
+"layers.23.mlp.gate_proj.weight": [
+13824,
+5120
+],
+"layers.23.mlp.up_proj.weight": [
+13824,
+5120
+],
+"layers.23.self_attn.k_proj.weight": [
+1024,
+5120
+],
+"layers.23.self_attn.o_proj.weight": [
+5120,
+5120
+],
+"layers.23.self_attn.q_proj.weight": [
+5120,
+5120
+],
+"layers.23.self_attn.v_proj.weight": [
+1024,
+5120
+],
+"layers.24.mlp.down_proj.weight": [
+5120,
+13824
+],
+"layers.24.mlp.gate_proj.weight": [
+13824,
+5120
+],
+"layers.24.mlp.up_proj.weight": [
+13824,
+5120
+],
+"layers.24.self_attn.k_proj.weight": [
+1024,
+5120
+],
+"layers.24.self_attn.o_proj.weight": [
+5120,
+5120
+],
+"layers.24.self_attn.q_proj.weight": [
+5120,
+5120
+],
+"layers.24.self_attn.v_proj.weight": [
+1024,
+5120
+],
+"layers.25.mlp.gate_proj.weight": [
+13824,
+5120
+],
+"layers.25.self_attn.k_proj.weight": [
+1024,
+5120
+],
+"layers.25.self_attn.o_proj.weight": [
+5120,
+5120
+],
+"layers.25.self_attn.q_proj.weight": [
+5120,
+5120
+],
+"layers.25.self_attn.v_proj.weight": [
+1024,
+5120
+]
+}
