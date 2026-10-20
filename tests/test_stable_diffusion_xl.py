@@ -108,6 +108,23 @@ def test_lightning_uses_scheduler_overrides_and_model_defaults(tiny_sdxl):
     assert result.metadata["scheduler_overrides"] == {"timestep_spacing": "trailing"}
 
 
+@pytest.mark.parametrize("model_id", ["koala-lightning-700m", "koala-lightning-1b"])
+def test_koala_lightning_uses_published_sampling_defaults(tiny_sdxl, model_id):
+    backend = StableDiffusionXLBackend(tiny_sdxl, model_id=model_id).load()
+    assert backend.components is not None
+    assert backend.components.scheduler_config["timestep_spacing"] == "trailing"
+    result = backend.infer(
+        __import__("imagehub.types", fromlist=["T2IRequest"]).T2IRequest("cat"),
+        seed=0,
+        width=32,
+        height=32,
+    )
+    assert result.metadata["steps"] == 10
+    assert result.metadata["guidance"] == 3.5
+    assert result.metadata["scheduler"] == "euler"
+    assert result.metadata["scheduler_overrides"] == {"timestep_spacing": "trailing"}
+
+
 def test_hyper_sd_uses_lcm_scheduler_and_explicit_timestep_defaults(tiny_sdxl):
     backend = StableDiffusionXLBackend(tiny_sdxl, model_id="hyper-sdxl-1step").load()
     assert backend.components is not None

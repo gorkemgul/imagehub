@@ -453,6 +453,28 @@ Records: `header_koala-700m`, `header_koala-1b`, `sdxl_tokenizers_<id>`,
 `sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`, where `<id>` is
 `koala-700m` or `koala-1b`, [validation-measurements.json](validation-measurements.json).
 
+### KOALA-Lightning
+
+The dedicated KOALA-Lightning suite targets diffusers 0.40.0
+`StableDiffusionXLPipeline` for `koala-lightning-700m` and `koala-lightning-1b`. Published header
+fixtures cover both text encoders, the U-Net and VAE for each checkpoint. The layouts contain
+196 / 517 / 584 / 248 tensors for the 700M checkpoint and 196 / 517 / 790 / 248 tensors for the
+1B checkpoint. Random-weight tests cover both U-Net layouts, and tiny-pipeline tests cover
+classifier-free guidance on and off at non-square sizes with exact uint8 output comparison.
+
+The real-checkpoint suite separately compares both tokenizers, both text encoders, one U-Net step,
+VAE encode/decode and the 10-step trailing Euler schedule. Its two public-API generations per
+checkpoint use the published 10-step and guidance 3.5 defaults at 64×64: `e2e_<id>` uses seed 0
+and `seed_e2e_<id>` uses seed 42. Each record includes `passed`, and the controller supplies the
+two local snapshots for these long runs.
+
+Records: `header_<id>`, `sdxl_tokenizers_<id>`, `sdxl_text_encoder_<id>`,
+`sdxl_text_encoder_2_<id>`, `sdxl_unet_<id>`, `sdxl_vae_decode_<id>`,
+`sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`, where `<id>` is
+`koala-lightning-700m` or `koala-lightning-1b`.
+
+### SDXL-Lightning
+
 The SDXL-Lightning reference is built exactly as described by the model card: a float32 U-Net from
 the SDXL base configuration loaded with the published U-Net file, placed in the base pipeline, and
 an Euler scheduler with trailing timestep spacing. The text encoders and VAE are the validated SDXL

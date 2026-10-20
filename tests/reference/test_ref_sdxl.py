@@ -59,7 +59,15 @@ SDXL_MODEL_IDS = tuple(
     for spec in MODEL_CATALOG.values()
     if spec.family == "stable-diffusion-xl"
     and spec.base is None
-    and spec.id not in ("sdxl-refiner-1.0", "segmind-vega", "koala-700m", "koala-1b")
+    and spec.id
+    not in (
+        "sdxl-refiner-1.0",
+        "segmind-vega",
+        "koala-700m",
+        "koala-1b",
+        "koala-lightning-700m",
+        "koala-lightning-1b",
+    )
 )
 SCHEDULERS = {
     "EDMDPMSolverMultistepScheduler": EDMDPMSolverMultistepScheduler,
