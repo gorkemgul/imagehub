@@ -2267,6 +2267,12 @@
     "steps": 4,
     "tolerance": 0
   },
+  "e2e_show-o-512": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 2
+  },
   "e2e_ssd-1b": {
     "guidance": 5.0,
     "latents": {
@@ -5056,6 +5062,20 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_show-o-512": {
+    "showo": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 437
+    },
+    "vq": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 382
     }
   },
   "header_ssd-1b": {
@@ -10010,6 +10030,12 @@
     "steps": 4,
     "tolerance": 0
   },
+  "seed_e2e_show-o-512": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
+  },
   "seed_e2e_ssd-1b": {
     "guidance": 5.0,
     "passed": true,
@@ -10058,6 +10084,20 @@
   },
   "seed_noise": {
     "exact": true
+  },
+  "show_o_phi_logits": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "show_o_tokenizer": {
+    "identical": true,
+    "prompts": 5
+  },
+  "show_o_vq_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
   },
   "smoke_mps": {
     "device_name": "Apple M2 Max",
