@@ -724,18 +724,41 @@ upcast to float32 on both sides. Config and safetensors-header fixtures verify t
 8-double-stream / 38-single-stream transformer layout; the existing FLUX.1 random-weight and tiny
 pipeline tests cover exact configurable-module and generation-loop parity.
 
-The real-checkpoint run is pending. It will compare strict headers for all four weighted
-components, tokenizer ids, CLIP and T5 outputs, a transformer denoising step, VAE encode/decode,
-the dynamically shifted scheduler, and two separate public-pipeline image runs. `e2e_flux-1-lite-8b`
+The real-checkpoint run compared strict headers for all four weighted components, tokenizer ids,
+CLIP and T5 outputs, a transformer denoising step, VAE encode/decode, the dynamically shifted
+scheduler, and two separate public-pipeline image runs. `e2e_flux-1-lite-8b`
 uses seed 0 and `seed_e2e_flux-1-lite-8b` uses seed 42; both use two steps, guidance 3.5 and 64x64
 output. The reference images are produced in a subprocess that exits before the native pipeline
 loads.
+
+All 6 real tests passed, and the observed difference in every recorded comparison is **exactly 0**
+(0 means exact): on CPU in float32, on the upcast bfloat16 weights, the local implementation
+produces a bit-identical image to the one diffusers produces. The real-checkpoint run took 3
+minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32, upcast bfloat16 weights)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (`text_encoder`, `text_encoder_2`, `transformer`, `vae`; 196 / 219 / 808 / 244 tensors) | 0 missing / extra / mismatched | exact |
+| CLIP and T5 tokenizer token ids (77 and 512 tokens) | identical | exact |
+| CLIP pooled output / T5 last hidden state | 0 / 0 | 0 / 0 |
+| Transformer single step (random conditioning, timestep 0.5, guidance 3.5) | 0 | 0 |
+| VAE decode / encode (8×8 latents, 64×64 image) | 0 / 0 | 0 / 0 |
+| Flow-match Euler scheduler (dynamic shifting, mu 1.15) | exact | exact |
+| End to end: final pixels (64×64, 2 steps, guidance 3.5, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels, same settings) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with 512 text tokens.
+Two steps and 64x64 output are used instead of the 28-step, 1024x1024 model-card defaults only to
+shorten the CPU run.
 
 Records: `header_flux-1-lite-8b`, `flux1_tokenizers_flux-1-lite-8b`,
 `flux1_clip_flux-1-lite-8b`, `flux1_t5_flux-1-lite-8b`,
 `flux1_transformer_flux-1-lite-8b`, `flux1_vae_decode_flux-1-lite-8b`,
 `flux1_vae_encode_flux-1-lite-8b`, `flux1_scheduler_flux-1-lite-8b`,
-`e2e_flux-1-lite-8b` and `seed_e2e_flux-1-lite-8b`.
+`e2e_flux-1-lite-8b` and `seed_e2e_flux-1-lite-8b`,
+[validation-measurements.json](validation-measurements.json).
 
 ## JoyAI-Image
 
@@ -2289,7 +2312,7 @@ first sequence of the batch only; the native module reproduces that.
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed
   for `qwen-image`, 7 passed for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
-  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
+  `flux1-dev` and `flux1-krea-dev`, 6 passed for `flux-1-lite-8b`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
   for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `pixart-lcm-xl-1024`,
   28 passed for `pixart-alpha-xl-512`,
