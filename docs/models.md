@@ -561,6 +561,55 @@ fp16 parity are not in this release.
 6.6 GB. SSD-1B is larger because its U-Net retains more transformer blocks.
 
 
+# KOALA
+
+Catalog: [`koala`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `koala-700m`, `koala-1b` · Task: `t2i`
+
+**Architecture.** KOALA distills SDXL into smaller denoising U-Nets while retaining SDXL's two
+text encoders, f=8 KL autoencoder, Euler scheduler and `text_time` micro-conditioning. Both U-Nets
+use one residual layer per level. KOALA-700M uses transformer depths `[1, 2, 5]` and omits the
+middle block; KOALA-1B uses `[1, 2, 6]` and retains the SDXL cross-attention middle block.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained koala-700m checkpoints/koala-700m
+python -m imagehub.pretrained koala-1b checkpoints/koala-1b
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="koala-700m", model="checkpoints/koala-700m") as pipe:
+    result = pipe("a portrait painting of a golden retriever", seed=42)
+    result.images[0].save("retriever.png")
+```
+
+Use `backend="koala-1b"` and the matching snapshot for the larger variant. The model cards show
+25-step generation and a negative prompt for image quality; imagehub retains the reference
+pipeline defaults unless options are supplied.
+
+**Settings.** The supported settings match SDXL: `steps` (50, at most 1000), `guidance` (5.0),
+`width`/`height` (1024 by default and multiples of 8), `negative_prompt` (None), `num_images` (1),
+`seed`, `latents`, `original_size`, `crops_coords_top_left` and `target_size`. Unrecognized settings
+raise an error.
+
+**Validation.** Dedicated CPU float32 tests compare the published tensor layouts, tokenizers, text
+encoders, U-Net, VAE, Euler scheduler and two public-API generations per checkpoint against
+diffusers 0.40.0. MPS and CUDA runs are smoke tests only.
+
+**Out of scope.** There is no safety checker or watermark. Image-to-image, other schedulers and
+reduced-precision parity are not included.
+
+**License.** The model repositories do not declare weight-license metadata. The linked author code
+repository describes separate non-commercial and proprietary commercial terms; review the terms
+before downloading. imagehub does not distribute weights.
+
+**Memory.** The full-precision U-Net files are about 3.1 GB for KOALA-700M and 4.6 GB for KOALA-1B.
+The two text encoders and VAE add about 3.6 GB.
+
+
 # Stable Diffusion 3 and 3.5
 
 Catalog: [`stable-diffusion-3`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

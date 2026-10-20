@@ -2286,6 +2286,64 @@ _entries.append(
     )
 )
 
+for _id, _repo, _revision in (
+    (
+        "koala-700m",
+        "etri-vilab/koala-700m",
+        "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    ),
+    (
+        "koala-1b",
+        "etri-vilab/koala-1b",
+        "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="stable-diffusion-xl",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="koala",
+            format="diffusers",
+            license="Unspecified",
+            reference={
+                "diffusers": {
+                    "version": "0.40.0",
+                    "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+                },
+                "transformers": {"version": "5.18.0"},
+                "sdxl-koala": {
+                    "repository": "youngwanLEE/sdxl-koala",
+                    "git_commit": "df9dac7514cc2bd6882a5161401cd9740349c11b",
+                },
+            },
+            files=(
+                "model_index.json",
+                "scheduler/scheduler_config.json",
+                "tokenizer/vocab.json",
+                "tokenizer/merges.txt",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer_2/vocab.json",
+                "tokenizer_2/merges.txt",
+                "tokenizer_2/tokenizer_config.json",
+                "tokenizer_2/special_tokens_map.json",
+                "text_encoder/config.json",
+                "text_encoder_2/config.json",
+                "unet/config.json",
+                "vae/config.json",
+                "text_encoder/model.safetensors",
+                "text_encoder_2/model.safetensors",
+                "unet/diffusion_pytorch_model.safetensors",
+                "vae/diffusion_pytorch_model.safetensors",
+            ),
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="playground-v2",

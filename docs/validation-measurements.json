@@ -1258,6 +1258,32 @@
     "steps": 4,
     "tolerance": "exact"
   },
+  "e2e_koala-1b": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "e2e_koala-700m": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
   "e2e_kolors": {
     "guidance": 5.0,
     "latents": {
@@ -3669,6 +3695,58 @@
       "mismatch": [],
       "missing": [],
       "tensors": 244
+    }
+  },
+  "header_koala-1b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 790
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_koala-700m": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 584
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
     }
   },
   "header_kolors": {
@@ -8216,6 +8294,22 @@
     ],
     "tolerance": 0.0
   },
+  "sdxl_scheduler_koala-1b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": [
+      4
+    ],
+    "tolerance": 0.0
+  },
+  "sdxl_scheduler_koala-700m": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": [
+      4
+    ],
+    "tolerance": 0.0
+  },
   "sdxl_scheduler_playground-v2": {
     "measurements": {
       "30": {
@@ -8393,6 +8487,16 @@
     },
     "tolerance": 0.0
   },
+  "sdxl_text_encoder_2_koala-1b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_text_encoder_2_koala-700m": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_text_encoder_2_playground-v2": {
     "hidden_states": {
       "max_abs": 0.0,
@@ -8463,6 +8567,16 @@
     },
     "tolerance": 0.0
   },
+  "sdxl_text_encoder_koala-1b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_text_encoder_koala-700m": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_text_encoder_playground-v2": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -8491,6 +8605,18 @@
   "sdxl_tokenizers": {
     "mismatches": [],
     "prompts": 18,
+    "tokenizers": 2,
+    "tolerance": "exact"
+  },
+  "sdxl_tokenizers_koala-1b": {
+    "mismatches": [],
+    "prompts": 4,
+    "tokenizers": 2,
+    "tolerance": "exact"
+  },
+  "sdxl_tokenizers_koala-700m": {
+    "mismatches": [],
+    "prompts": 4,
     "tokenizers": 2,
     "tolerance": "exact"
   },
@@ -8537,6 +8663,22 @@
       999,
       500,
       1
+    ],
+    "tolerance": 0.0
+  },
+  "sdxl_unet_koala-1b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
+    ],
+    "tolerance": 0.0
+  },
+  "sdxl_unet_koala-700m": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
     ],
     "tolerance": 0.0
   },
@@ -8603,6 +8745,16 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sdxl_vae_decode_koala-1b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_decode_koala-700m": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_vae_decode_playground-v2": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -8634,6 +8786,16 @@
     "tolerance": 0.0
   },
   "sdxl_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_encode_koala-1b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_encode_koala-700m": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -8978,6 +9140,32 @@
     "steps": 4,
     "tolerance": "exact",
     "width": 1408
+  },
+  "seed_e2e_koala-1b": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
+  "seed_e2e_koala-700m": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "seed_e2e_kolors": {
     "max_pixel_diff": 0,

@@ -51,6 +51,8 @@ def test_catalog_contents():
             "kandinsky-2.2",
             "kandinsky-3",
             "kandinsky-5-t2i-lite",
+            "koala-1b",
+            "koala-700m",
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
@@ -385,6 +387,36 @@ def test_catalog_contents():
     )
     assert len(set(vega.files)) == len(vega.files) == 18
     assert not any("fp16" in name or name == "segmind-vega.safetensors" for name in vega.files)
+
+    for model_id, repo_id, revision in (
+        (
+            "koala-700m",
+            "etri-vilab/koala-700m",
+            "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+        ),
+        (
+            "koala-1b",
+            "etri-vilab/koala-1b",
+            "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+        ),
+    ):
+        koala = model_info(model_id)
+        assert koala.task is Task.T2I
+        assert koala.family == "stable-diffusion-xl"
+        assert koala.repo_id == repo_id
+        assert koala.revision == revision
+        assert koala.provenance == "author"
+        assert koala.catalog_id == "koala"
+        assert koala.format == "diffusers"
+        assert koala.license == "Unspecified"
+        assert koala.reference["diffusers"]["git_commit"] == (
+            "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        )
+        assert koala.reference["sdxl-koala"]["git_commit"] == (
+            "df9dac7514cc2bd6882a5161401cd9740349c11b"
+        )
+        assert len(set(koala.files)) == len(koala.files) == 18
+        assert not any("fp16" in name or name.endswith((".bin", ".onnx")) for name in koala.files)
 
     for model_id, repo_id, revision, precision in (
         (
