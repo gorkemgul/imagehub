@@ -44,12 +44,20 @@ def _ids(height: int, width: int, text_length: int):
     return img_ids, txt_ids
 
 
-@pytest.mark.parametrize("variant", ["schnell", "dev"])
+@pytest.mark.parametrize("variant", ["schnell", "dev", "lite"])
 def test_flux1_published_layout(variant):
-    config = json.loads(
-        (CONFIGS / f"{variant}_transformer_config.json").read_text(encoding="utf-8")
+    config_path = (
+        Path(__file__).parents[1] / "fixtures/flux_lite_configs/transformer.json"
+        if variant == "lite"
+        else CONFIGS / f"{variant}_transformer_config.json"
     )
-    published = json.loads(TENSORS.read_text(encoding="utf-8"))
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    tensor_path = (
+        Path(__file__).parents[1] / "fixtures/flux_lite_transformer_tensors.json"
+        if variant == "lite"
+        else TENSORS
+    )
+    published = json.loads(tensor_path.read_text(encoding="utf-8"))
     with torch.device("meta"):
         expected = diffusers.FluxTransformer2DModel(**config).state_dict()
         actual = FluxTransformer2DModel(config).state_dict()
@@ -57,7 +65,7 @@ def test_flux1_published_layout(variant):
     assert {name: tuple(value.shape) for name, value in actual.items()} == {
         name: tuple(value.shape) for name, value in expected.items()
     }
-    if variant == "schnell":
+    if variant in {"schnell", "lite"}:
         assert {name: list(value.shape) for name, value in actual.items()} == published
 
 

@@ -634,6 +634,27 @@ Each test ran the reference first, saved its outputs, freed it, then ran the nat
 component and seed tests took 11 minutes and its fixed-latent end-to-end test took 13 minutes. The
 full dev run took 25 minutes. The Krea [dev] real-checkpoint run took about 30 minutes on an M2 Max (CPU).
 
+### Flux.1-Lite 8B
+
+The dedicated Flux.1-Lite suite targets diffusers 0.40.0 `FluxPipeline` and the ungated
+`Freepik/flux.1-lite-8B` checkpoint at revision `16b9373`. The published bfloat16 weights are
+upcast to float32 on both sides. Config and safetensors-header fixtures verify the reduced
+8-double-stream / 38-single-stream transformer layout; the existing FLUX.1 random-weight and tiny
+pipeline tests cover exact configurable-module and generation-loop parity.
+
+The real-checkpoint run is pending. It will compare strict headers for all four weighted
+components, tokenizer ids, CLIP and T5 outputs, a transformer denoising step, VAE encode/decode,
+the dynamically shifted scheduler, and two separate public-pipeline image runs. `e2e_flux-1-lite-8b`
+uses seed 0 and `seed_e2e_flux-1-lite-8b` uses seed 42; both use two steps, guidance 3.5 and 64x64
+output. The reference images are produced in a subprocess that exits before the native pipeline
+loads.
+
+Records: `header_flux-1-lite-8b`, `flux1_tokenizers_flux-1-lite-8b`,
+`flux1_clip_flux-1-lite-8b`, `flux1_t5_flux-1-lite-8b`,
+`flux1_transformer_flux-1-lite-8b`, `flux1_vae_decode_flux-1-lite-8b`,
+`flux1_vae_encode_flux-1-lite-8b`, `flux1_scheduler_flux-1-lite-8b`,
+`e2e_flux-1-lite-8b` and `seed_e2e_flux-1-lite-8b`.
+
 ## JoyAI-Image
 
 `joyai-image-edit` and `joyai-image-edit-plus` use the pinned Apache-2.0 checkpoints from

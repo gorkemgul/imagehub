@@ -609,7 +609,7 @@ not distribute weights.
 # FLUX.1
 
 Catalog: [`flux-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `flux1-schnell`, `flux1-dev`, `flux1-krea-dev`, `flux1-kontext-dev` · Task: `t2i`
+Models: `flux1-schnell`, `flux1-dev`, `flux1-krea-dev`, `flux-1-lite-8b`, `flux1-kontext-dev` · Task: `t2i`
 
 **Architecture.** CLIP-L supplies a pooled embedding and T5-XXL supplies sequence embeddings to a
 12B rectified-flow transformer with 19 double-stream blocks, 38 single-stream blocks, 24 attention
@@ -644,10 +644,38 @@ and `width`/`height` must be multiples of 16. The other supported options are `n
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** Fill, Redux, Depth and Canny variants, ControlNet, LoRA and fp16/bf16 parity are
-not supported. `flux1-schnell`, `flux1-dev` and `flux1-krea-dev` take no image input; for Kontext, see below.
+not supported. `flux1-schnell`, `flux1-dev`, `flux1-krea-dev` and `flux-1-lite-8b` take no image
+input; for Kontext, see below.
 
 **License.** The schnell weights use the Apache-2.0 license. The dev, Krea [dev] and Kontext weights use the
 FLUX.1-dev Non-Commercial License; see the license. imagehub does not distribute weights.
+
+## Flux.1-Lite 8B
+
+`flux-1-lite-8b` (`Freepik/flux.1-lite-8B`) distills FLUX.1-dev by reducing the double-stream
+transformer from 19 blocks to 8 while retaining all 38 single-stream blocks, the two text encoders,
+VAE and dynamically shifted flow-match scheduler. The component weights are published only in
+bfloat16 and are upcast for CPU float32 inference.
+
+```bash
+python -m imagehub.pretrained flux-1-lite-8b checkpoints/flux-1-lite-8b
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="flux-1-lite-8b", model="checkpoints/flux-1-lite-8b", device="mps"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+- **Defaults.** 28 steps, guidance 3.5, 512 text tokens and 1024x1024, matching the model card.
+- **Access and license.** The repository is ungated. The weights inherit the FLUX.1-dev
+  Non-Commercial License.
+- **Memory.** The two transformer shards total about 16.3 GB in bfloat16. CPU float32 loading
+  requires roughly twice that for the transformer, plus T5-XXL, CLIP-L and the VAE.
 
 ## FLUX.1 Krea [dev]
 

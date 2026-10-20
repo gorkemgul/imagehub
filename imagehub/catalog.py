@@ -1307,6 +1307,46 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="flux-1-lite-8b",
+        task=Task.T2I,
+        family="flux",
+        source="https://huggingface.co/Freepik/flux.1-lite-8B",
+        repo_id="Freepik/flux.1-lite-8B",
+        revision="16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+        provenance="author",
+        catalog_id="flux-1",
+        format="diffusers",
+        license="FLUX.1-dev Non-Commercial License",
+        config={"defaults": {"steps": 28, "guidance": 3.5, "max_sequence_length": 512}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors.index.json",
+            "text_encoder_2/model-00001-of-00002.safetensors",
+            "text_encoder_2/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/spiece.model",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="flux1-kontext-dev",
         task=Task.T2I,
         family="flux",
