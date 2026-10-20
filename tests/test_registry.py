@@ -17,6 +17,7 @@ def test_family_and_model_aliases_are_registered():
     assert "sdxl-base-1.0" in names
     assert "segmind-vega" in names
     assert {"koala-700m", "koala-1b"} <= set(names)
+    assert {"koala-lightning-700m", "koala-lightning-1b"} <= set(names)
     assert "janus" in names
     assert "janus-pro-1b" in names
     assert {"sd3.5-medium", "sd3.5-large"} <= set(names)

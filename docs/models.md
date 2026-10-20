@@ -571,7 +571,7 @@ fp16 parity are not in this release.
 # KOALA
 
 Catalog: [`koala`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `koala-700m`, `koala-1b` · Task: `t2i`
+Models: `koala-700m`, `koala-1b`, `koala-lightning-700m`, `koala-lightning-1b` · Task: `t2i`
 
 **Architecture.** KOALA distills SDXL into smaller denoising U-Nets while retaining SDXL's two
 text encoders, f=8 KL autoencoder, Euler scheduler and `text_time` micro-conditioning. Both U-Nets
@@ -583,6 +583,8 @@ middle block; KOALA-1B uses `[1, 2, 6]` and retains the SDXL cross-attention mid
 ```bash
 python -m imagehub.pretrained koala-700m checkpoints/koala-700m
 python -m imagehub.pretrained koala-1b checkpoints/koala-1b
+python -m imagehub.pretrained koala-lightning-700m checkpoints/koala-lightning-700m
+python -m imagehub.pretrained koala-lightning-1b checkpoints/koala-lightning-1b
 ```
 
 ```python
@@ -597,7 +599,12 @@ Use `backend="koala-1b"` and the matching snapshot for the larger variant. The m
 25-step generation and a negative prompt for image quality; imagehub retains the reference
 pipeline defaults unless options are supplied.
 
-**Settings.** The supported settings match SDXL: `steps` (50, at most 1000), `guidance` (5.0),
+The Lightning checkpoints use the same two U-Net layouts but are trained for few-step generation.
+Select `backend="koala-lightning-700m"` or `backend="koala-lightning-1b"` with its matching
+snapshot. Their model-card defaults are 10 steps, guidance 3.5 and Euler trailing timestep spacing.
+
+**Settings.** The supported settings match SDXL: `steps` (50 for base KOALA and 10 for Lightning,
+at most 1000), `guidance` (5.0 for base KOALA and 3.5 for Lightning),
 `width`/`height` (1024 by default and multiples of 8), `negative_prompt` (None), `num_images` (1),
 `seed`, `latents`, `original_size`, `crops_coords_top_left` and `target_size`. Unrecognized settings
 raise an error.
@@ -613,8 +620,8 @@ reduced-precision parity are not included.
 repository describes separate non-commercial and proprietary commercial terms; review the terms
 before downloading. imagehub does not distribute weights.
 
-**Memory.** The full-precision U-Net files are about 3.1 GB for KOALA-700M and 4.6 GB for KOALA-1B.
-The two text encoders and VAE add about 3.6 GB.
+**Memory.** The full-precision U-Net files are about 3.1 GB for each 700M release and 4.6 GB for
+each 1B release. The two text encoders and VAE add about 3.6 GB.
 
 
 # Stable Diffusion 3 and 3.5

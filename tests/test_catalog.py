@@ -56,6 +56,8 @@ def test_catalog_contents():
             "kandinsky-5-t2i-lite",
             "koala-1b",
             "koala-700m",
+            "koala-lightning-1b",
+            "koala-lightning-700m",
             "kolors",
             "krea2-turbo",
             "lcm-dreamshaper-v7",
@@ -433,6 +435,34 @@ def test_catalog_contents():
         assert koala.reference["sdxl-koala"]["git_commit"] == (
             "df9dac7514cc2bd6882a5161401cd9740349c11b"
         )
+        assert len(set(koala.files)) == len(koala.files) == 18
+        assert not any("fp16" in name or name.endswith((".bin", ".onnx")) for name in koala.files)
+
+    for model_id, repo_id, revision in (
+        (
+            "koala-lightning-700m",
+            "etri-vilab/koala-lightning-700m",
+            "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+        ),
+        (
+            "koala-lightning-1b",
+            "etri-vilab/koala-lightning-1b",
+            "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+        ),
+    ):
+        koala = model_info(model_id)
+        assert koala.task is Task.T2I
+        assert koala.family == "stable-diffusion-xl"
+        assert koala.repo_id == repo_id
+        assert koala.revision == revision
+        assert koala.provenance == "author"
+        assert koala.catalog_id == "koala"
+        assert koala.format == "diffusers"
+        assert koala.license == "Unspecified"
+        assert koala.config == {
+            "defaults": {"steps": 10, "guidance": 3.5},
+            "scheduler": {"timestep_spacing": "trailing"},
+        }
         assert len(set(koala.files)) == len(koala.files) == 18
         assert not any("fp16" in name or name.endswith((".bin", ".onnx")) for name in koala.files)
 

@@ -492,6 +492,51 @@ Records: `header_koala-700m`, `header_koala-1b`, `sdxl_tokenizers_<id>`,
 `sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`, where `<id>` is
 `koala-700m` or `koala-1b`, [validation-measurements.json](validation-measurements.json).
 
+### KOALA-Lightning
+
+The dedicated KOALA-Lightning suite targets diffusers 0.40.0
+`StableDiffusionXLPipeline` for `koala-lightning-700m` and `koala-lightning-1b`. Published header
+fixtures cover both text encoders, the U-Net and VAE for each checkpoint. The layouts contain
+196 / 517 / 584 / 248 tensors for the 700M checkpoint and 196 / 517 / 790 / 248 tensors for the
+1B checkpoint. Random-weight tests cover both U-Net layouts, and tiny-pipeline tests cover
+classifier-free guidance on and off at non-square sizes with exact uint8 output comparison.
+
+The real-checkpoint suite separately compares both tokenizers, both text encoders, one U-Net step,
+VAE encode/decode and the 10-step trailing Euler schedule. Its two public-API generations per
+checkpoint use the published 10-step and guidance 3.5 defaults at 64×64: `e2e_<id>` uses seed 0
+and `seed_e2e_<id>` uses seed 42. All 16 real tests passed, and the observed difference in every
+recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation
+produces a bit-identical image to the one diffusers produces. The published weights are float32.
+The real-checkpoint run took 0 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check (`text_encoder`, `text_encoder_2`, `unet`, `vae`; 196 / 517 / 584 / 248 tensors) | koala-lightning-700m | 0 missing / extra / mismatched | exact |
+| Tensor header check (`text_encoder`, `text_encoder_2`, `unet`, `vae`; 196 / 517 / 790 / 248 tensors) | koala-lightning-1b | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (2 tokenizers, 4 prompts) | both | identical | exact |
+| CLIP text encoder | both | 0 | 0 |
+| OpenCLIP bigG text encoder | both | 0 | 0 |
+| U-Net single step (t = 500) | both | 0 | 0 |
+| VAE decode / encode | both | 0 / 0 | 0 / 0 |
+| Euler scheduler (10 steps) | both | 0 | 0 |
+| End to end: final pixels (64×64, 10 steps, guidance 3.5, seed 0) | both | 0 | 0 |
+| End to end, seed 42 (pixels) | both | 0 | 0 |
+
+The end-to-end runs use 64×64 output, ten steps and guidance 3.5, the published KOALA-Lightning
+defaults. `e2e_koala-lightning-700m` and `e2e_koala-lightning-1b` use seed 0,
+`seed_e2e_koala-lightning-700m` and `seed_e2e_koala-lightning-1b` use seed 42, and their final
+pixels differ by **exactly 0** in every run.
+
+Records: `header_koala-lightning-700m`, `header_koala-lightning-1b`, `sdxl_tokenizers_<id>`,
+`sdxl_text_encoder_<id>`, `sdxl_text_encoder_2_<id>`, `sdxl_unet_<id>`, `sdxl_vae_decode_<id>`,
+`sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`, where `<id>` is
+`koala-lightning-700m` or `koala-lightning-1b`,
+[validation-measurements.json](validation-measurements.json).
+
+### SDXL-Lightning
+
 The SDXL-Lightning reference is built exactly as described by the model card: a float32 U-Net from
 the SDXL base configuration loaded with the published U-Net file, placed in the base pipeline, and
 an Euler scheduler with trailing timestep spacing. The text encoders and VAE are the validated SDXL
@@ -2263,7 +2308,7 @@ first sequence of the batch only; the native module reproduces that.
 - Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 14 passed for `segmind-small-sd` and `segmind-tiny-sd` together, 9 passed for `segmind-vega`, 18 passed for `koala-700m` and `koala-1b` together, 12 passed for the three SDXL-Lightning models, 11 passed
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 14 passed for `segmind-small-sd` and `segmind-tiny-sd` together, 9 passed   for `segmind-vega`, 18 passed for `koala-700m` and `koala-1b` together, 16 passed for `koala-lightning-700m` and `koala-lightning-1b` together, 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed
