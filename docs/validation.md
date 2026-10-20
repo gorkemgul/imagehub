@@ -2329,9 +2329,9 @@ first sequence of the batch only; the native module reproduces that.
   23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, 7 passed for
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
-  `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`. These include structural
-  parity with random weights, end-to-end parity with a small model, real-checkpoint parity and
-  tokenizer fuzz tests.
+  `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, and 6 passed for
+  `show-o-512`. These include structural parity with random weights, end-to-end parity with
+  a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
 - MPS smoke test: 1 passed.
@@ -2492,4 +2492,25 @@ CodeGen tokenizer output, random-weight Phi attention and MLP, exact MAGVIT-v2 d
 tiny discrete-denoising output. Real-checkpoint tests separately compare Phi logits, VQ decoding,
 and public-pipeline uint8 images at seed 0 and seed 42. Both end-to-end cases use two steps rather
 than the 18-step default to keep the CPU run short; guidance 10 and 512×512 output remain unchanged.
-Measurements are pending the real-checkpoint run.
+All 6 real-checkpoint tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one the official Show-o implementation produces. The real-checkpoint run took 1 minute
+on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: `showo`, `vq` (437 / 382 tensors) | 0 missing / extra / mismatched | exact |
+| CodeGen tokenizer token ids (5 prompts) | identical | exact |
+| Phi logits | 0 | 0 |
+| MAGVIT-v2 decode | 0 | 0 |
+| End to end: uint8 image (512×512, 2 steps, guidance 10, seed 0) | 0 | 0 |
+| End to end, seed 42 (uint8 image) | 0 | 0 |
+
+The end-to-end runs keep every pipeline default (guidance 10, 512×512) and use 2 steps instead of
+the 18-step default only to shorten the CPU run. Records: `header_show-o-512`, `show_o_tokenizer`,
+`show_o_phi_logits`, `show_o_vq_decode`, `e2e_show-o-512` and `seed_e2e_show-o-512`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`,
+`end_to_end` and `seed_end_to_end` under `show-o-512` and `tests.reference_summary`,
+[validation.json](validation.json).
