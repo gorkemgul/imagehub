@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**43 architecture families, 104 published checkpoints.** A model is a separately published set of weights;
+**43 architecture families, 106 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -44,6 +44,8 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `segmind-vega` | `stable-diffusion-xl` | [segmind/Segmind-Vega](https://huggingface.co/segmind/Segmind-Vega) | `7714c43` | author | full | Apache-2.0 | `segmind-vega` |
 | `koala-700m` | `stable-diffusion-xl` | [etri-vilab/koala-700m](https://huggingface.co/etri-vilab/koala-700m) | `5e73a31` | author | full | Unspecified | `koala` |
 | `koala-1b` | `stable-diffusion-xl` | [etri-vilab/koala-1b](https://huggingface.co/etri-vilab/koala-1b) | `8ef26f3` | author | full | Unspecified | `koala` |
+| `koala-lightning-700m` | `stable-diffusion-xl` | [etri-vilab/koala-lightning-700m](https://huggingface.co/etri-vilab/koala-lightning-700m) | `358e0e3` | author | full | Unspecified | `koala` |
+| `koala-lightning-1b` | `stable-diffusion-xl` | [etri-vilab/koala-lightning-1b](https://huggingface.co/etri-vilab/koala-lightning-1b) | `b4114f7` | author | full | Unspecified | `koala` |
 | `playground-v2` | `stable-diffusion-xl` | [playgroundai/playground-v2-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2-1024px-aesthetic) | `737a24e` | author | full | playground-v2-community | `playground-v2` |
 | `playground-v2.5` | `stable-diffusion-xl` | [playgroundai/playground-v2.5-1024px-aesthetic](https://huggingface.co/playgroundai/playground-v2.5-1024px-aesthetic) | `1e032f1` | author | full | playground-v2dot5-community | `playground-v2` |
 | `sd3-medium` | `stable-diffusion-3` | [stabilityai/stable-diffusion-3-medium-diffusers](https://huggingface.co/stabilityai/stable-diffusion-3-medium-diffusers) | `ea42f8c` | author | full | Stability AI Community License | `stable-diffusion-3` |
