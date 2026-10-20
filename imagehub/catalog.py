@@ -3241,6 +3241,57 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="show-o-512",
+        task=Task.T2I,
+        family="show-o",
+        source="https://huggingface.co/showlab/show-o-512x512",
+        repo_id="showlab/show-o-512x512",
+        revision="dbe757d951099968fb102d249d35a764528df2dd",
+        provenance="author",
+        catalog_id="show-o",
+        format="safetensors",
+        license="Apache-2.0",
+        config={
+            "defaults": {
+                "guidance": 10.0,
+                "temperature": 1.0,
+                "steps": 18,
+                "width": 512,
+                "height": 512,
+            }
+        },
+        reference={
+            "repository": {
+                "url": "https://github.com/showlab/Show-o",
+                "revision": "45a5a2de01d1ebd10cd5864d29310a76476cdf23",
+            }
+        },
+        files=("config.json", "pytorch_model.safetensors"),
+        subfolders={
+            "vq": SubRepo(
+                repo_id="showlab/magvitv2",
+                revision="5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d",
+                files=("config.json", "pytorch_model.safetensors"),
+            ),
+            "tokenizer": SubRepo(
+                repo_id="microsoft/phi-1_5",
+                revision="77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+                files=(
+                    "added_tokens.json",
+                    "config.json",
+                    "merges.txt",
+                    "special_tokens_map.json",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                    "vocab.json",
+                ),
+            ),
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="pixeldit",
         task=Task.T2I,
         family="pixeldit",

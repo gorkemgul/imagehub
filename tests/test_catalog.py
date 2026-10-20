@@ -108,6 +108,7 @@ def test_catalog_contents():
             "segmind-small-sd",
             "segmind-tiny-sd",
             "segmind-vega",
+            "show-o-512",
             "ssd-1b",
             "stable-cascade",
             "stable-cascade-lite",

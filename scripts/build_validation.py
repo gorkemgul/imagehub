@@ -5,7 +5,7 @@ measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.1,
 Kandinsky 2.2, Kandinsky 3,
 Kandinsky 5, Stable Cascade, PixArt, Sana, Lumina-Image 2.0, Lumina-Next, aMUSEd,
 Meissonic, AuraFlow,
-LlamaGen,
+LlamaGen, Show-o,
 Wuerstchen v2, LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen
 measurements are grouped in flat
 ``components_segmind_sd``, ``components_bk_sdm``, ``components_bk_sdm_v2``,
@@ -19,7 +19,7 @@ measurements are grouped in flat
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
 ``components_lumina2``, ``components_lumina_next``, ``components_amused``,
 ``components_meissonic``, ``components_auraflow``,
-``components_llamagen``, ``components_wuerstchen``, ``components_glm_image``,
+``components_llamagen``, ``components_show_o``, ``components_wuerstchen``, ``components_glm_image``,
 ``components_longcat_image``,
 ``components_cogview3_plus``,
 ``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
@@ -419,6 +419,9 @@ def main() -> None:
         },
         "components_hart": {
             key: value for key, value in measured.items() if key.startswith("hart_")
+        },
+        "components_show_o": {
+            key: value for key, value in measured.items() if key.startswith("show_o_")
         },
         "components_pixeldit": {
             key: value for key, value in measured.items() if key.startswith("pixeldit_")

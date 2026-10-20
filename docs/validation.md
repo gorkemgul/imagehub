@@ -2478,3 +2478,18 @@ of the 50-step default only to shorten the CPU run. Records: `header_ovis-image-
 [validation-measurements.json](validation-measurements.json); `tensor_header_check`,
 `end_to_end` and `seed_end_to_end` under `ovis-image-7b` and `tests.reference_summary`,
 [validation.json](validation.json).
+
+## Show-o
+
+`show-o-512` is pinned to `showlab/show-o-512x512` revision `dbe757d951099968fb102d249d35a764528df2dd`,
+with `showlab/magvitv2` revision `5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d` and the
+`microsoft/phi-1_5` tokenizer at revision `77aa61eeac94fbf33d492b9f2744c98b42d5b5eb`.
+The CPU float32 reference is the official `Showo` class and its `t2i_generate` method at repository
+revision `45a5a2de01d1ebd10cd5864d29310a76476cdf23`.
+
+Offline validation checks all 437 Show-o and 382 MAGVIT-v2 published tensor names and shapes, exact
+CodeGen tokenizer output, random-weight Phi attention and MLP, exact MAGVIT-v2 decoding, and exact
+tiny discrete-denoising output. Real-checkpoint tests separately compare Phi logits, VQ decoding,
+and public-pipeline uint8 images at seed 0 and seed 42. Both end-to-end cases use two steps rather
+than the 18-step default to keep the CPU run short; guidance 10 and 512×512 output remain unchanged.
+Measurements are pending the real-checkpoint run.
