@@ -156,23 +156,30 @@ downloads and uses the weights; imagehub does not distribute weights.
 # BK-SDM
 
 Catalog: [`bk-sdm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `bk-sdm-base`, `bk-sdm-small`, `bk-sdm-tiny` · Task: `t2i`
+Models: `bk-sdm-base`, `bk-sdm-small`, `bk-sdm-tiny`, `bk-sdm-v2-base`,
+`bk-sdm-v2-small`, `bk-sdm-v2-tiny` · Task: `t2i`
 
 **Architecture.** BK-SDM distills Stable Diffusion 1.4 into smaller U-Nets by removing repeated
 residual and cross-attention blocks. Base keeps four stages and the cross-attention mid block;
 Small removes the mid block; Tiny also removes the innermost stage. All three reuse the SD 1.4
 CLIP text encoder, f=8 KL autoencoder and PNDM scheduler.
 
+The v2 checkpoints apply the same three pruning layouts to Stable Diffusion 2.1-base. They use its
+23-layer OpenCLIP-H text encoder, 1024-wide text conditioning and linear-projection U-Net
+attention, while retaining the published epsilon-prediction PNDM scheduler and 512×512 native
+image size.
+
 **Usage.**
 
 ```bash
 python -m imagehub.pretrained bk-sdm-small checkpoints/bk-sdm-small
+python -m imagehub.pretrained bk-sdm-v2-small checkpoints/bk-sdm-v2-small
 ```
 
 ```python
 from imagehub import pipeline
 
-with pipeline("t2i", backend="bk-sdm-small", model="checkpoints/bk-sdm-small") as pipe:
+with pipeline("t2i", backend="bk-sdm-v2-small", model="checkpoints/bk-sdm-v2-small") as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
 ```
@@ -181,8 +188,8 @@ with pipeline("t2i", backend="bk-sdm-small", model="checkpoints/bk-sdm-small") a
 (512, multiples of 8), `negative_prompt`, `num_images` (1), `seed`, `latents`. Unrecognized settings
 raise an error.
 
-**Out of scope.** There is no safety checker. Image-to-image, DreamBooth training, SD 2.1-derived
-variants, 2M-data variants, Core ML exports and fp16 parity are not included.
+**Out of scope.** There is no safety checker. Image-to-image, DreamBooth training, 2M-data variants,
+Core ML exports and fp16 parity are not included.
 
 **License.** The weights are licensed under CreativeML OpenRAIL-M; its use restrictions bind
 whoever downloads or uses them. imagehub does not distribute weights.

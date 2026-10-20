@@ -226,6 +226,27 @@ Records: `header_bk-sdm-base`, `header_bk-sdm-small`, `header_bk-sdm-tiny`,
 `e2e_bk-sdm-base`, `e2e_bk-sdm-small`, `e2e_bk-sdm-tiny`, `seed_e2e_bk-sdm-base`,
 `seed_e2e_bk-sdm-small` and `seed_e2e_bk-sdm-tiny`.
 
+## BK-SDM v2
+
+`bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny` reuse the Stable Diffusion pipeline with
+the BK-SDM pruning layouts and Stable Diffusion 2.1-base conditioning. They are pinned to the author
+repositories at revisions `21915be`, `ad82c51` and `68277af` and target diffusers 0.40.0
+`StableDiffusionPipeline` and transformers 5.18.0 on CPU in float32.
+
+The dedicated suite checks the published tensor headers; tokenizer and OpenCLIP-H text-encoder
+outputs; one U-Net step; VAE encode and decode; PNDM timesteps; exact random-weight U-Net parity at
+tiny and published layouts; and exact tiny guided and unguided end-to-end generation at non-square
+sizes. Real-checkpoint measurements are pending the controller run. That run records a separate
+four-step 64×64 public-pipeline comparison for every checkpoint at seed 0 as `e2e_<model-id>` and at
+seed 42 as `seed_e2e_<model-id>`, both with guidance 7.5.
+
+Expected records: `header_bk-sdm-v2-base`, `header_bk-sdm-v2-small`,
+`header_bk-sdm-v2-tiny`, `bk_sdm_v2_*_bk-sdm-v2-base`,
+`bk_sdm_v2_*_bk-sdm-v2-small`, `bk_sdm_v2_*_bk-sdm-v2-tiny`,
+`e2e_bk-sdm-v2-base`, `e2e_bk-sdm-v2-small`, `e2e_bk-sdm-v2-tiny`,
+`seed_e2e_bk-sdm-v2-base`, `seed_e2e_bk-sdm-v2-small` and
+`seed_e2e_bk-sdm-v2-tiny`.
+
 ## LCM
 
 Validated on CPU in the same environment as above. `lcm-dreamshaper-v7` was loaded strictly from
@@ -2207,7 +2228,7 @@ first sequence of the batch only; the native module reproduces that.
   the difference from CPU. There is no parity claim on these devices.
 - There is no parity claim for float16 or bfloat16.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
-- Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
+- Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x and BK-SDM v2, Euler
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base, SSD-1B and Kolors,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
