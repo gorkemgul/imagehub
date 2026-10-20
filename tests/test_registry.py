@@ -12,6 +12,7 @@ def test_family_and_model_aliases_are_registered():
     assert "stable-diffusion-3" in names
     assert {"sd-v1-1", "sd-v1-5"} <= set(names)
     assert "sd-v2-1" in names
+    assert {"bk-sdm-v2-base", "bk-sdm-v2-small", "bk-sdm-v2-tiny"} <= set(names)
     assert "lcm-dreamshaper-v7" in names
     assert "sdxl-base-1.0" in names
     assert "segmind-vega" in names

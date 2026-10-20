@@ -226,6 +226,45 @@ Records: `header_bk-sdm-base`, `header_bk-sdm-small`, `header_bk-sdm-tiny`,
 `e2e_bk-sdm-base`, `e2e_bk-sdm-small`, `e2e_bk-sdm-tiny`, `seed_e2e_bk-sdm-base`,
 `seed_e2e_bk-sdm-small` and `seed_e2e_bk-sdm-tiny`.
 
+## BK-SDM v2
+
+`bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny` reuse the Stable Diffusion pipeline with
+the BK-SDM pruning layouts and Stable Diffusion 2.1-base conditioning. They are pinned to the author
+repositories at revisions `21915be`, `ad82c51` and `68277af` and are compared with diffusers 0.40.0
+`StableDiffusionPipeline` and transformers 5.18.0 on CPU in float32. All 27 real tests passed, and
+the observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one diffusers produces. The
+real-checkpoint run took less than a minute on an M2 Max (CPU).
+
+The dedicated suite checks the published tensor headers; tokenizer and OpenCLIP-H text-encoder
+outputs; one U-Net step; VAE encode and decode; PNDM timesteps; exact random-weight U-Net parity at
+tiny and published layouts; and exact tiny guided and unguided end-to-end generation at non-square
+sizes. For each checkpoint, `e2e_<model-id>` is a separate four-step 64×64 public-pipeline
+comparison at seed 0 and `seed_e2e_<model-id>` is a run at seed 42; both use guidance 7.5 and the
+prompt "a photograph of an astronaut riding a horse".
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 372 / 442 / 248 tensors) | bk-sdm-v2-base | 0 missing / extra / mismatched | exact |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 372 / 396 / 248 tensors) | bk-sdm-v2-small | 0 missing / extra / mismatched | exact |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 372 / 358 / 248 tensors) | bk-sdm-v2-tiny | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (4 prompts) | all three | identical | exact |
+| CLIP (OpenCLIP-H) text encoder | all three | 0 | 0 |
+| U-Net single step (t = 500) | all three | 0 | 0 |
+| VAE decode / encode | all three | 0 / 0 | 0 / 0 |
+| PNDM scheduler timesteps (4 steps) | all three | 0 | 0 |
+| End to end: final pixels (64×64, 4 steps, guidance 7.5, seed 0) | all three | 0 | 0 |
+| End to end, seed 42 (pixels) | all three | 0 | 0 |
+
+Records: `header_bk-sdm-v2-base`, `header_bk-sdm-v2-small`, `header_bk-sdm-v2-tiny`,
+`bk_sdm_v2_*_bk-sdm-v2-base`, `bk_sdm_v2_*_bk-sdm-v2-small`, `bk_sdm_v2_*_bk-sdm-v2-tiny`,
+`e2e_bk-sdm-v2-base`, `e2e_bk-sdm-v2-small`, `e2e_bk-sdm-v2-tiny`, `seed_e2e_bk-sdm-v2-base`,
+`seed_e2e_bk-sdm-v2-small` and `seed_e2e_bk-sdm-v2-tiny`,
+[validation-measurements.json](validation-measurements.json); `components_bk_sdm_v2`,
+[validation.json](validation.json).
+
 ## LCM
 
 Validated on CPU in the same environment as above. `lcm-dreamshaper-v7` was loaded strictly from
@@ -2229,7 +2268,7 @@ first sequence of the batch only; the native module reproduces that.
   the difference from CPU. There is no parity claim on these devices.
 - There is no parity claim for float16 or bfloat16.
 - There is no safety checker or invisible watermark. The reference was run with `safety_checker=None`.
-- Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x, Euler
+- Only the scheduler published with each checkpoint is implemented: PNDM (PLMS) for SD 1.x and BK-SDM v2, Euler
   with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Euler for SDXL base, SSD-1B and Kolors,
   LCM for Hyper-SDXL and DMD2, Euler ancestral for SDXL Turbo, EDM DPM-Solver++ for Playground v2.5,
   flow-match Euler for Z-Image and Stable Diffusion 3 and 3.5, flow-match Euler with a static shift
@@ -2266,7 +2305,8 @@ first sequence of the batch only; the native module reproduces that.
   `prx-512-t2i-sft` together, 8 passed for `dreamlite-base` and `dreamlite-mobile` together,
   23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, 7 passed for
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
-  for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`. These include structural
+  for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
+  `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`. These include structural
   parity with random weights, end-to-end parity with a small model, real-checkpoint parity and
   tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for

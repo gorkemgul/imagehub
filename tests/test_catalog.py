@@ -15,6 +15,9 @@ def test_catalog_contents():
             "bk-sdm-base",
             "bk-sdm-small",
             "bk-sdm-tiny",
+            "bk-sdm-v2-base",
+            "bk-sdm-v2-small",
+            "bk-sdm-v2-tiny",
             "chroma1-base",
             "chroma1-flash",
             "chroma1-hd",
@@ -143,6 +146,21 @@ def test_catalog_contents():
         assert spec.provenance == "author"
         assert spec.license == "CreativeML-OpenRAIL-M"
         assert spec.files == model_info("sd-v1-4").files
+
+    bk_sdm_v2 = [model_info(f"bk-sdm-v2-{variant}") for variant in ("base", "small", "tiny")]
+    assert [spec.revision for spec in bk_sdm_v2] == [
+        "21915be4c3a83f3fa45f93559750df44943509b1",
+        "ad82c51a3b568e855a7f79c5b893ea2f9ebb197f",
+        "68277af553777858cd47e133f92e4db47321bc74",
+    ]
+    for spec in bk_sdm_v2:
+        assert spec.task is Task.T2I
+        assert spec.family == "stable-diffusion"
+        assert spec.catalog_id == "bk-sdm"
+        assert spec.provenance == "author"
+        assert spec.license == "CreativeML-OpenRAIL-M"
+        assert spec.config == {"defaults": {"steps": 50, "guidance": 7.5}}
+        assert spec.files == model_info("sd-v2-1").files
 
     sd21 = model_info("sd-v2-1")
     assert sd21.task is Task.T2I
