@@ -1375,6 +1375,222 @@
       }
     },
     {
+      "model_id": "bk-sdm-v2-base",
+      "repo_id": "nota-ai/bk-sdm-v2-base",
+      "revision": "21915be4c3a83f3fa45f93559750df44943509b1",
+      "provenance": "author",
+      "catalog_id": "bk-sdm",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0",
+          "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        },
+        "bk-sdm": {
+          "repository": "Nota-NetsPresso/BK-SDM",
+          "git_commit": "e13670c8a7e2b896f508cbece59335930703be6c"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "5d3fa2ab730f365513a6f9818959cdafec05ae2fdd74712bb22190de28e87200",
+        "scheduler/scheduler_config.json": "11a31766f87f038929b0a9f902025dce58588fb5b837578727d4f3b77276a64e",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "fdd524218f0554acb77cdecf36807c01f4d1ad2574fd6345d0bdef48873c3d14",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "text_encoder/config.json": "246e460c44d4668e8c1315a6b7812e9c1aa5631431e416fc2e6204183abfc960",
+        "text_encoder/model.safetensors": "1e4aa519f64dc6386f88221a66c106a09fa027b47a20cc0e126687695f2a6669",
+        "unet/config.json": "10faabf5d58c5dde52a100315251e0db64e5a154ca51460234bb499e757208a2",
+        "unet/diffusion_pytorch_model.safetensors": "95da6565c1ce27293a9b6a43a00098ca634d391825de12d59413880c9610bb1a",
+        "vae/config.json": "c95174319cb1814f06578897b138dce55c22dc8d17ff771d47f96f10934ca8b5",
+        "vae/diffusion_pytorch_model.safetensors": "a1d993488569e928462932c8c38a0760b874d166399b14414135bd9c42df5815"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 372,
+          "unet": 442,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "bk-sdm-v2-small",
+      "repo_id": "nota-ai/bk-sdm-v2-small",
+      "revision": "ad82c51a3b568e855a7f79c5b893ea2f9ebb197f",
+      "provenance": "author",
+      "catalog_id": "bk-sdm",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0",
+          "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        },
+        "bk-sdm": {
+          "repository": "Nota-NetsPresso/BK-SDM",
+          "git_commit": "e13670c8a7e2b896f508cbece59335930703be6c"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "5d3fa2ab730f365513a6f9818959cdafec05ae2fdd74712bb22190de28e87200",
+        "scheduler/scheduler_config.json": "11a31766f87f038929b0a9f902025dce58588fb5b837578727d4f3b77276a64e",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "fdd524218f0554acb77cdecf36807c01f4d1ad2574fd6345d0bdef48873c3d14",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "text_encoder/config.json": "246e460c44d4668e8c1315a6b7812e9c1aa5631431e416fc2e6204183abfc960",
+        "text_encoder/model.safetensors": "1e4aa519f64dc6386f88221a66c106a09fa027b47a20cc0e126687695f2a6669",
+        "unet/config.json": "c45980a029329748ef04bf8f9e2fd149f5a2b32a41a10e5f660cb22aa8d64a59",
+        "unet/diffusion_pytorch_model.safetensors": "adb7ac8ddcc0bc3c6d77f28e8495966df1019c1633bded8c009ada9e831d4247",
+        "vae/config.json": "c95174319cb1814f06578897b138dce55c22dc8d17ff771d47f96f10934ca8b5",
+        "vae/diffusion_pytorch_model.safetensors": "a1d993488569e928462932c8c38a0760b874d166399b14414135bd9c42df5815"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 372,
+          "unet": 396,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "bk-sdm-v2-tiny",
+      "repo_id": "nota-ai/bk-sdm-v2-tiny",
+      "revision": "68277af553777858cd47e133f92e4db47321bc74",
+      "provenance": "author",
+      "catalog_id": "bk-sdm",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0",
+          "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        },
+        "bk-sdm": {
+          "repository": "Nota-NetsPresso/BK-SDM",
+          "git_commit": "e13670c8a7e2b896f508cbece59335930703be6c"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "5d3fa2ab730f365513a6f9818959cdafec05ae2fdd74712bb22190de28e87200",
+        "scheduler/scheduler_config.json": "11a31766f87f038929b0a9f902025dce58588fb5b837578727d4f3b77276a64e",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "fdd524218f0554acb77cdecf36807c01f4d1ad2574fd6345d0bdef48873c3d14",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "text_encoder/config.json": "246e460c44d4668e8c1315a6b7812e9c1aa5631431e416fc2e6204183abfc960",
+        "text_encoder/model.safetensors": "1e4aa519f64dc6386f88221a66c106a09fa027b47a20cc0e126687695f2a6669",
+        "unet/config.json": "5457a38409592c645288d796e955151c83bab1a9998fa5042346821146c5672a",
+        "unet/diffusion_pytorch_model.safetensors": "5f29565f60b95f6db4007b16c6ea91580c7c41d2a8f24c92f0a48c4f4d21d151",
+        "vae/config.json": "c95174319cb1814f06578897b138dce55c22dc8d17ff771d47f96f10934ca8b5",
+        "vae/diffusion_pytorch_model.safetensors": "a1d993488569e928462932c8c38a0760b874d166399b14414135bd9c42df5815"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 372,
+          "unet": 358,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
       "model_id": "sd-turbo",
       "repo_id": "stabilityai/sd-turbo",
       "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
@@ -9762,6 +9978,116 @@
       "tolerance": 0.0
     }
   },
+  "components_bk_sdm_v2": {
+    "bk_sdm_v2_scheduler_bk-sdm-v2-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_scheduler_bk-sdm-v2-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_scheduler_bk-sdm-v2-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_text_encoder_bk-sdm-v2-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_text_encoder_bk-sdm-v2-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_text_encoder_bk-sdm-v2-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_tokenizer_bk-sdm-v2-base": {
+      "mismatches": [],
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "bk_sdm_v2_tokenizer_bk-sdm-v2-small": {
+      "mismatches": [],
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "bk_sdm_v2_tokenizer_bk-sdm-v2-tiny": {
+      "mismatches": [],
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "bk_sdm_v2_unet_bk-sdm-v2-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_unet_bk-sdm-v2-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_unet_bk-sdm-v2-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_vae_decode_bk-sdm-v2-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_vae_decode_bk-sdm-v2-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_vae_decode_bk-sdm-v2-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_vae_encode_bk-sdm-v2-base": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_vae_encode_bk-sdm-v2-small": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "bk_sdm_v2_vae_encode_bk-sdm-v2-tiny": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_ldm": {
     "ldm_text_encoder": {
       "max_abs": 0.0,
@@ -14359,6 +14685,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "18 passed (koala-700m, koala-1b)"
+    "reference_summary": "27 passed (bk-sdm-v2-base, bk-sdm-v2-small, bk-sdm-v2-tiny)"
   }
 }

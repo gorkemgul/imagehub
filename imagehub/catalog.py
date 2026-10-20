@@ -616,6 +616,53 @@ _entries.append(
     )
 )
 
+for _variant, _revision in (
+    ("base", "21915be4c3a83f3fa45f93559750df44943509b1"),
+    ("small", "ad82c51a3b568e855a7f79c5b893ea2f9ebb197f"),
+    ("tiny", "68277af553777858cd47e133f92e4db47321bc74"),
+):
+    _repo = f"nota-ai/bk-sdm-v2-{_variant}"
+    _entries.append(
+        ModelSpec(
+            id=f"bk-sdm-v2-{_variant}",
+            task=Task.T2I,
+            family="stable-diffusion",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="bk-sdm",
+            format="diffusers",
+            license="CreativeML-OpenRAIL-M",
+            config={"defaults": {"steps": 50, "guidance": 7.5}},
+            reference={
+                "diffusers": {
+                    "version": "0.40.0",
+                    "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+                },
+                "transformers": {"version": "5.18.0"},
+                "bk-sdm": {
+                    "repository": "Nota-NetsPresso/BK-SDM",
+                    "git_commit": "e13670c8a7e2b896f508cbece59335930703be6c",
+                },
+            },
+            files=(
+                "model_index.json",
+                "scheduler/scheduler_config.json",
+                "tokenizer/merges.txt",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/vocab.json",
+                "text_encoder/config.json",
+                "text_encoder/model.safetensors",
+                "unet/config.json",
+                "unet/diffusion_pytorch_model.safetensors",
+                "vae/config.json",
+                "vae/diffusion_pytorch_model.safetensors",
+            ),
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="sd-turbo",
