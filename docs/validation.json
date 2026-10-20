@@ -5990,6 +5990,164 @@
       }
     },
     {
+      "model_id": "koala-700m",
+      "repo_id": "etri-vilab/koala-700m",
+      "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+      "provenance": "author",
+      "catalog_id": "koala",
+      "license": "Unspecified",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0",
+          "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        },
+        "sdxl-koala": {
+          "repository": "youngwanLEE/sdxl-koala",
+          "git_commit": "df9dac7514cc2bd6882a5161401cd9740349c11b"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "6d7b93508390ab91ac5bfbe4aeb4dc2d83f7bb1b05fb069d714b5b0c75f70d44",
+        "scheduler/scheduler_config.json": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "39b8b2e4b1949e36969caa425b6c81c68bace99198dd9078ce05d16ad401fe7f",
+        "text_encoder_2/config.json": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34",
+        "unet/config.json": "d6483f943f4ead52331d4c5ad301357f2c38363993d66427f3cb9d5da771d288",
+        "vae/config.json": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7",
+        "text_encoder/model.safetensors": "5c3d6454dd2d23414b56aa1b5858a72487a656937847b6fea8d0606d7a42cdbc",
+        "text_encoder_2/model.safetensors": "3a6032f63d37ae02bbc74ccd6a27440578cd71701f96532229d0154f55a8d3ff",
+        "unet/diffusion_pytorch_model.safetensors": "24a872414fa3dee94aee5f484e1dc680db1edab7de275d48dcb9a82e84f8c93c",
+        "vae/diffusion_pytorch_model.safetensors": "1b909373b28f2137098b0fd9dbc6f97f8410854f31f84ddc9fa04b077b0ace2c"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 584,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "koala-1b",
+      "repo_id": "etri-vilab/koala-1b",
+      "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+      "provenance": "author",
+      "catalog_id": "koala",
+      "license": "Unspecified",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0",
+          "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        },
+        "sdxl-koala": {
+          "repository": "youngwanLEE/sdxl-koala",
+          "git_commit": "df9dac7514cc2bd6882a5161401cd9740349c11b"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "6d7b93508390ab91ac5bfbe4aeb4dc2d83f7bb1b05fb069d714b5b0c75f70d44",
+        "scheduler/scheduler_config.json": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "39b8b2e4b1949e36969caa425b6c81c68bace99198dd9078ce05d16ad401fe7f",
+        "text_encoder_2/config.json": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34",
+        "unet/config.json": "f15460025a93269674dadd6aae249a0870acc7ecbc4b36297282c739d6ded2d0",
+        "vae/config.json": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7",
+        "text_encoder/model.safetensors": "5c3d6454dd2d23414b56aa1b5858a72487a656937847b6fea8d0606d7a42cdbc",
+        "text_encoder_2/model.safetensors": "3a6032f63d37ae02bbc74ccd6a27440578cd71701f96532229d0154f55a8d3ff",
+        "unet/diffusion_pytorch_model.safetensors": "37248adc1b9eec5d105a6e2eb27d131282d0cfe2a1598c0f96b3922374484b51",
+        "vae/diffusion_pytorch_model.safetensors": "1b909373b28f2137098b0fd9dbc6f97f8410854f31f84ddc9fa04b077b0ace2c"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 790,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "runtime_note": "Four 64x64 steps keep the real-checkpoint comparison short.",
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
       "model_id": "playground-v2",
       "repo_id": "playgroundai/playground-v2-1024px-aesthetic",
       "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
@@ -8745,6 +8903,22 @@
       ],
       "tolerance": 0.0
     },
+    "sdxl_scheduler_koala-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_koala-700m": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": [
+        4
+      ],
+      "tolerance": 0.0
+    },
     "sdxl_scheduler_playground-v2": {
       "measurements": {
         "30": {
@@ -8922,6 +9096,16 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_2_koala-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_2_koala-700m": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_2_playground-v2": {
       "hidden_states": {
         "max_abs": 0.0,
@@ -8992,6 +9176,16 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_koala-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_koala-700m": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_playground-v2": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -9020,6 +9214,18 @@
     "sdxl_tokenizers": {
       "mismatches": [],
       "prompts": 18,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_koala-1b": {
+      "mismatches": [],
+      "prompts": 4,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_koala-700m": {
+      "mismatches": [],
+      "prompts": 4,
       "tokenizers": 2,
       "tolerance": "exact"
     },
@@ -9066,6 +9272,22 @@
         999,
         500,
         1
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_unet_koala-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "sdxl_unet_koala-700m": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
       ],
       "tolerance": 0.0
     },
@@ -9132,6 +9354,16 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sdxl_vae_decode_koala-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_decode_koala-700m": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_vae_decode_playground-v2": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -9163,6 +9395,16 @@
       "tolerance": 0.0
     },
     "sdxl_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_koala-1b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_koala-700m": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -14117,6 +14359,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "14 passed (segmind-small-sd, segmind-tiny-sd)"
+    "reference_summary": "18 passed (koala-700m, koala-1b)"
   }
 }
