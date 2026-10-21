@@ -1172,6 +1172,44 @@ precomputed prompt embeddings, batches of several prompts and fp16/bf16 parity a
 
 **License.** The repository declares the MIT license. imagehub does not distribute weights.
 
+# Show-o
+
+Catalog: [`show-o`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `show-o-512` · Task: `t2i`
+
+**Architecture.** Show-o extends the 1.3B Phi-1.5 decoder to a shared vocabulary containing text,
+prompt-control and 8,192 image tokens. Text uses causal attention, while the 1,024 image-token region
+uses bidirectional attention. Image tokens are predicted in parallel over 18 cosine-remasking rounds
+and decoded by a lookup-free MAGVIT-v2 tokenizer with 16× spatial compression.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained show-o-512 checkpoints/show-o-512
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="show-o-512", model="checkpoints/show-o-512") as pipe:
+    result = pipe("a watercolor painting of a lighthouse", seed=42)
+    result.images[0].save("lighthouse.png")
+```
+
+**Settings.** The checkpoint generates 512×512 images. Defaults are 18 `steps`, guidance 10 and
+temperature 1. The supported options are `seed`, `steps`, `guidance`, `temperature`, `width` and
+`height`; width and height must remain 512. Unrecognized settings raise an error before weights load.
+
+**Memory and validation.** The float32 unified transformer is about 5.8 GB and MAGVIT-v2 about
+0.38 GB. Offline tests cover every published tensor, CodeGen tokenization, Phi attention and MLP,
+MAGVIT-v2 decoding, omni-attention prompting, discrete denoising, and short two-step end-to-end runs
+at seeds 0 and 42. The shortened run changes only the step count from the 18-step default.
+
+**Out of scope.** Multimodal understanding, image input, inpainting, extrapolation, CLIP-ViT
+variants, 256-pixel checkpoints, batches and reduced-precision parity are not supported.
+
+**License.** The model card declares Apache-2.0. imagehub does not distribute weights.
+
 # PixelDiT
 
 Catalog: [`pixeldit`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

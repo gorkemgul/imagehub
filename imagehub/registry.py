@@ -112,6 +112,7 @@ for _task, _name, _path in (
     (Task.T2I, "meissonic", "imagehub.backends.meissonic:MeissonicBackend"),
     (Task.T2I, "llamagen", "imagehub.backends.llamagen:LlamaGenBackend"),
     (Task.T2I, "hart", "imagehub.backends.hart:HARTBackend"),
+    (Task.T2I, "show-o", "imagehub.backends.show_o:ShowOBackend"),
     (Task.T2I, "pixeldit", "imagehub.backends.pixeldit:PixelDiTBackend"),
     (Task.T2I, "auraflow", "imagehub.backends.auraflow:AuraFlowBackend"),
     (Task.T2I, "krea2", "imagehub.backends.krea2:Krea2Backend"),
