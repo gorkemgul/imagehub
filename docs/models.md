@@ -77,17 +77,18 @@ license before downloading or using them.
 # Stable Diffusion 1.x
 
 Catalog: [`stable-diffusion-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `sd-v1-1` … `sd-v1-5` · Task: `t2i`
+Models: `sd-v1-1` … `sd-v1-5`, `dreamshaper-8` · Task: `t2i`
 
 **Architecture.** An f=8 KL autoencoder (512×512×3 image ↔ 64×64×4 latent), a 860M-parameter U-Net
 conditioned through cross-attention, and a frozen CLIP ViT-L/14 text encoder (last layer, unpooled
-output). The scheduler is the PNDM published with the checkpoints (`skip_prk_steps=True`, i.e. PLMS):
-50 steps perform 51 U-Net evaluations.
+output). The base checkpoints use PNDM (`skip_prk_steps=True`, i.e. PLMS); DreamShaper 8 uses the
+published second-order DEIS scheduler.
 
 **Usage.**
 
 ```bash
 python -m imagehub.pretrained sd-v1-5 checkpoints/sd-v1-5
+python -m imagehub.pretrained dreamshaper-8 checkpoints/dreamshaper-8
 ```
 
 ```python
@@ -101,6 +102,8 @@ with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5", device="mps
 **Settings.** `steps` (50), `guidance` (7.5; 1 and below turns guidance off), `width`/`height`
 (512, multiples of 8), `negative_prompt`, `num_images` (1), `seed`, `latents`. Unrecognized settings
 raise an error.
+
+Select `backend="dreamshaper-8"` with `model="checkpoints/dreamshaper-8"` to use the fine-tune.
 
 **Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS has a smoke

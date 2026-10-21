@@ -523,6 +523,23 @@ for _version, _repo, _revision, _provenance, _weights in (
         )
     )
 
+_entries.append(
+    ModelSpec(
+        id="dreamshaper-8",
+        task=Task.T2I,
+        family="stable-diffusion",
+        source="https://huggingface.co/Lykon/dreamshaper-8",
+        repo_id="Lykon/dreamshaper-8",
+        files=_SD1_COMMON + _SD1_SAFETENSORS,
+        format="diffusers",
+        catalog_id="stable-diffusion-1",
+        revision="a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917",
+        provenance="author",
+        license="CreativeML-OpenRAIL-M",
+        config={"defaults": {"steps": 50, "guidance": 7.5}},
+    )
+)
+
 for _id, _repo, _revision, _precision in (
     (
         "segmind-small-sd",

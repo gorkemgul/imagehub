@@ -45,6 +45,7 @@ def test_matches_sdxl_published_tensor_layout():
         ("segmind_tiny_sd_configs/unet.json", "segmind-tiny-sd"),
         ("sd1_configs/v1-5/unet.json", "sd1"),
         ("sd1_configs/v1-1/unet.json", "sd1"),
+        ("dreamshaper_8_configs/unet.json", "sd1"),
     ],
 )
 def test_real_release_configs_match_published_tensor_layout(config_path, family):

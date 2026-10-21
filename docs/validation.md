@@ -150,6 +150,17 @@ For each of the five checkpoints, the tensor names and shapes of three component
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
 
+### DreamShaper 8
+
+`dreamshaper-8` reuses the Stable Diffusion 1.x components and the existing DEIS scheduler. Its
+published full-precision safetensors headers contain the supported CLIP, U-Net and VAE layouts.
+The opt-in reference suite checks strict headers, tokenizer ids, CLIP output, one U-Net step, VAE
+decode, the DEIS trajectory, and separate default 512×512 public-pipeline generations at seeds 0
+and 42. Numerical results are pending the real-checkpoint run; records are
+`header_dreamshaper-8`, `sd_tokenizer_dreamshaper-8`, `sd_text_encoder_dreamshaper-8`,
+`sd_unet_dreamshaper-8`, `sd_vae_decode_dreamshaper-8`, `sd_scheduler_dreamshaper-8`,
+`e2e_dreamshaper-8` and `seed_e2e_dreamshaper-8`.
+
 ## Segmind Small-SD and Tiny-SD
 
 Validated on CPU in the same environment as above. `segmind-small-sd` and `segmind-tiny-sd`, both
