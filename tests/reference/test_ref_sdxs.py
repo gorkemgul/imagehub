@@ -42,6 +42,9 @@ def sdxs():
         feature_extractor=None,
         requires_safety_checker=False,
     )
+    reference.scheduler = diffusers.EulerDiscreteScheduler.from_config(
+        read_json(root / "scheduler" / "scheduler_config.json")
+    )
     reference.set_progress_bar_config(disable=True)
     return root, ours, reference
 
