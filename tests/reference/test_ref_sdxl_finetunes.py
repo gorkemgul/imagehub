@@ -1,6 +1,7 @@
 """Community SDXL fine-tune parity against diffusers 0.40.0 on CPU float32.
 
-Set ``IMAGEHUB_SNAPSHOT_<ID>`` for each checkpoint. The end-to-end comparisons are deliberately
+Set ``IMAGEHUB_SNAPSHOT_<ID>`` for each checkpoint. Snapshots may contain either the default
+Diffusers weights or an explicitly published variant. The end-to-end comparisons are deliberately
 short; they are still run through the public pipeline API at two independent seeds.
 """
 
@@ -55,6 +56,14 @@ SCHEDULERS = {
 PROMPT = "a photograph of an astronaut riding a horse"
 
 
+def _diffusers_variant(root: Path) -> str | None:
+    """Return the variant when every model component is stored under its variant filename."""
+    component_dirs = tuple(root / component for component in COMPONENTS)
+    if all(any(directory.glob("*.fp16.safetensors")) for directory in component_dirs):
+        return "fp16"
+    return None
+
+
 def _checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
     path = next(directory / name for name in WEIGHT_FILES if (directory / name).is_file())
     with path.open("rb") as source:
@@ -69,11 +78,23 @@ def real_pipelines(request):
     root = snapshot_dir(model_id)
     ours = StableDiffusionXLComponents.load(root, device=CPU, dtype=torch.float32)
     reference = diffusers.StableDiffusionXLPipeline.from_pretrained(
-        root, local_files_only=True, add_watermarker=False, torch_dtype=torch.float32
+        root,
+        local_files_only=True,
+        add_watermarker=False,
+        torch_dtype=torch.float32,
+        variant=_diffusers_variant(root),
     )
     reference.to(CPU)
     reference.set_progress_bar_config(disable=True)
     return model_id, root, ours, reference
+
+
+@pytest.mark.parametrize(
+    ("model_id", "expected"),
+    (("juggernaut-xl-v9", "fp16"), ("animagine-xl-4.0", None), ("dreamshaper-xl-1.0", None)),
+)
+def test_reference_variant_matches_snapshot(model_id, expected):
+    assert _diffusers_variant(snapshot_dir(model_id)) == expected
 
 
 @pytest.mark.parametrize("model_id", MODEL_IDS)
