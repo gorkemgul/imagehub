@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-20",
+  "date": "2026-10-21",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -9045,6 +9045,99 @@
       }
     },
     {
+      "model_id": "show-o-512",
+      "repo_id": "showlab/show-o-512x512",
+      "revision": "dbe757d951099968fb102d249d35a764528df2dd",
+      "provenance": "author",
+      "catalog_id": "show-o",
+      "license": "Apache-2.0",
+      "reference": {
+        "repository": {
+          "url": "https://github.com/showlab/Show-o",
+          "revision": "45a5a2de01d1ebd10cd5864d29310a76476cdf23"
+        }
+      },
+      "status": "full",
+      "files": {
+        "config.json": {
+          "repo_id": "showlab/show-o-512x512",
+          "revision": "dbe757d951099968fb102d249d35a764528df2dd",
+          "sha256": "fa1bd4b6b1290e23203ae050282c3c23ffa44e9f714e5fe545f145a1a4584c7e"
+        },
+        "pytorch_model.safetensors": {
+          "repo_id": "showlab/show-o-512x512",
+          "revision": "dbe757d951099968fb102d249d35a764528df2dd",
+          "sha256": "638739e52da4f5cba220b7cd59c04819f852dda180124c5a32c9c48b35a7299f"
+        },
+        "vq/config.json": {
+          "repo_id": "showlab/magvitv2",
+          "revision": "5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d",
+          "sha256": "75b8e650dce094065e2da4983c323f8ca943ed76b8ec8960aef99dafa3d04e6d"
+        },
+        "vq/pytorch_model.safetensors": {
+          "repo_id": "showlab/magvitv2",
+          "revision": "5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d",
+          "sha256": "79656bf974d99c215465a61df5e93b97e03282b0941f62f6294719527873b778"
+        },
+        "tokenizer/added_tokens.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "eca8e90d1be6af3afeb1a37f070f9492645c551a9fb2e1ce2a4a8b21f04ffc8b"
+        },
+        "tokenizer/config.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "2fe52126434075e8a23aca5bfed8cca8aff7051779e6f11c76de9e9e9923dcef"
+        },
+        "tokenizer/merges.txt": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "6f50ab5a5a509a1c309d6171f339b196a900dc9c99ad0408ff23bb615fdae7ad"
+        },
+        "tokenizer/tokenizer.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "337da36be7a71a6e88aa9148967a7bc8736f4b47c7de8e19ba92b89e80734cfc"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "001d5ef96609ff1bc02c1b7edabf97d4617c450620cf8dfbbad97c27cd9b5cb6"
+        },
+        "tokenizer/vocab.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "3ba3c3109ff33976c4bd966589c11ee14fcaa1f4c9e5e154c2ed7f99d80709e7"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "showo": 437,
+          "vq": 382
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 2
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 2
+      }
+    },
+    {
       "model_id": "pixeldit",
       "repo_id": "nvidia/PixelDiT-1300M-1024px",
       "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
@@ -13123,6 +13216,22 @@
       "passed": true
     }
   },
+  "components_show_o": {
+    "show_o_phi_logits": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "show_o_tokenizer": {
+      "identical": true,
+      "prompts": 5
+    },
+    "show_o_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_pixeldit": {
     "pixeldit_denoiser_step": {
       "max_abs": 0.0,
@@ -15025,6 +15134,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "6 passed (flux-1-lite-8b)"
+    "reference_summary": "6 passed (show-o-512)"
   }
 }
