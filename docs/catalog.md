@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**44 architecture families, 106 published checkpoints.** A model is a separately published set of weights;
+**44 architecture families, 107 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -55,6 +55,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `flux1-schnell` | `flux` | [black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) | `741f7c3` | author | full | Apache-2.0 | `flux-1` |
 | `flux1-dev` | `flux` | [black-forest-labs/FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) | `3de623f` | author | full | FLUX.1-dev Non-Commercial License | `flux-1` |
 | `flux1-krea-dev` | `flux` | [black-forest-labs/FLUX.1-Krea-dev](https://huggingface.co/black-forest-labs/FLUX.1-Krea-dev) | `8162a9c` | author | full | FLUX.1-dev Non-Commercial License | `flux-1` |
+| `flux-1-lite-8b` | `flux` | [Freepik/flux.1-lite-8B](https://huggingface.co/Freepik/flux.1-lite-8B) | `16b9373` | author | full | FLUX.1-dev Non-Commercial License | `flux-1` |
 | `flux1-kontext-dev` | `flux` | [black-forest-labs/FLUX.1-Kontext-dev](https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev) | `24e9ded` | author | full | FLUX.1-dev Non-Commercial License | `flux-1-kontext` |
 | `joyai-image-edit` | `joyai-image` | [jdopensource/JoyAI-Image-Edit-Diffusers](https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers) | `4b41fb2` | author | full | Apache-2.0 | `joyai-image` |
 | `joyai-image-edit-plus` | `joyai-image` | [jdopensource/JoyAI-Image-Edit-Plus-Diffusers](https://huggingface.co/jdopensource/JoyAI-Image-Edit-Plus-Diffusers) | `c268646` | author | full | Apache-2.0 | `joyai-image` |
@@ -160,9 +161,10 @@ ship weights for the original `janus` package rather than the transformers layou
 All four Stable Diffusion 3 and 3.5 repositories are gated. Accept their terms on Hugging Face,
 then set `HF_TOKEN` when downloading with `python -m imagehub.pretrained`.
 
-Both FLUX.1 repositories are gated. Accept their terms on Hugging Face, then set `HF_TOKEN` when
-downloading with `python -m imagehub.pretrained`. The schnell weights use Apache-2.0; the dev
-weights use the FLUX.1-dev Non-Commercial License.
+The Black Forest Labs FLUX.1 repositories are gated. Accept their terms on Hugging Face, then set
+`HF_TOKEN` when downloading with `python -m imagehub.pretrained`. Flux.1-Lite is ungated. The
+schnell weights use Apache-2.0; the dev, Krea, Lite and Kontext weights use the FLUX.1-dev
+Non-Commercial License.
 
 The `flux2-klein-9b` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN`
 when downloading with `python -m imagehub.pretrained`.

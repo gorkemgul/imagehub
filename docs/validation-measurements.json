@@ -1084,6 +1084,12 @@
     "passed": true,
     "steps": 4
   },
+  "e2e_flux-1-lite-8b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 2
+  },
   "e2e_flux1-dev": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -2447,6 +2453,11 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "flux1_clip_flux-1-lite-8b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "flux1_clip_flux1-dev": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -2489,6 +2500,11 @@
     "mu": 1.15,
     "tolerance": "exact"
   },
+  "flux1_scheduler_flux-1-lite-8b": {
+    "exact": true,
+    "mu": 1.15,
+    "tolerance": "exact"
+  },
   "flux1_scheduler_flux1-dev": {
     "exact": true,
     "mu": 1.15,
@@ -2500,6 +2516,11 @@
     "tolerance": "exact"
   },
   "flux1_t5": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_t5_flux-1-lite-8b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -2526,7 +2547,16 @@
     "exact": true,
     "tolerance": "exact"
   },
+  "flux1_tokenizers_flux-1-lite-8b": {
+    "exact": true,
+    "tolerance": "exact"
+  },
   "flux1_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_transformer_flux-1-lite-8b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -2546,6 +2576,11 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "flux1_vae_decode_flux-1-lite-8b": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "flux1_vae_decode_flux1-dev": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -2557,6 +2592,11 @@
     "tolerance": 0.0
   },
   "flux1_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "flux1_vae_encode_flux-1-lite-8b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -3351,6 +3391,32 @@
       "mismatch": [],
       "missing": [],
       "tensors": 251
+    }
+  },
+  "header_flux-1-lite-8b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 808
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
     }
   },
   "header_flux1-dev": {
@@ -9406,6 +9472,12 @@
     "passed": true,
     "seed": 0,
     "steps": 4
+  },
+  "seed_e2e_flux-1-lite-8b": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
   },
   "seed_e2e_flux1-dev": {
     "max_pixel_diff": 0,

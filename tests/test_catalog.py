@@ -29,6 +29,7 @@ def test_catalog_contents():
             "dreamlite-base",
             "dreamlite-mobile",
             "ernie-image",
+            "flux-1-lite-8b",
             "flux1-dev",
             "flux1-kontext-dev",
             "flux1-krea-dev",
