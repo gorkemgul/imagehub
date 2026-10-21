@@ -114,6 +114,40 @@ fp16 parity are not in this release.
 bind whoever downloads and uses the weights. imagehub does not distribute weights.
 
 
+# SDXS-512
+
+Catalog: [`sdxs`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `sdxs-512-0.9` · Task: `t2i`
+
+**Architecture.** SDXS-512 is a one-step distilled Stable Diffusion model. It uses a three-stage,
+one-layer U-Net without a mid block, an OpenCLIP ViT-H/14 text encoder, a tiny distilled
+autoencoder, and the published Euler scheduler with trailing timestep spacing.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained sdxs-512-0.9 checkpoints/sdxs-512-0.9
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="sdxs-512-0.9", model="checkpoints/sdxs-512-0.9") as pipe:
+    result = pipe("portrait photo of a girl, golden hour", seed=42)
+    result.images[0].save("portrait.png")
+```
+
+**Settings.** The model-card defaults are `steps=1` and `guidance=0.0`. Output defaults to
+512×512; `width` and `height` must be multiples of 8. `negative_prompt`, `num_images`, `seed`, and
+`latents` are also accepted. Unrecognized settings raise an error.
+
+**Out of scope.** There is no safety checker or invisible watermark. Image conditioning, img2img,
+the optional large VAE, alternate schedulers, and fp16 parity are not included.
+
+**License.** The weights use CreativeML Open RAIL++-M. Its use restrictions bind whoever downloads
+and uses the weights; imagehub does not distribute weights.
+
+
 # Segmind Small-SD and Tiny-SD
 
 Catalog: [`bk-sdm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

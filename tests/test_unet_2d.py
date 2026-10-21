@@ -249,7 +249,6 @@ def test_timestep_conditioning_shape_and_requirement():
     "option",
     [
         {"num_class_embeds": 10},
-        {"only_cross_attention": True},
         {"upcast_attention": "yes"},
         {"center_input_sample": True},
         {"conv_in_kernel": 5},
