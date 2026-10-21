@@ -757,6 +757,93 @@ _entries.append(
         ),
     )
 )
+
+_SDXL_FINETUNE_CONFIGS = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "tokenizer/vocab.json",
+    "tokenizer/merges.txt",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer_2/vocab.json",
+    "tokenizer_2/merges.txt",
+    "tokenizer_2/tokenizer_config.json",
+    "tokenizer_2/special_tokens_map.json",
+    "text_encoder/config.json",
+    "text_encoder_2/config.json",
+    "unet/config.json",
+    "vae/config.json",
+)
+_SDXL_FINETUNE_REFERENCE = {
+    "diffusers": {"version": "0.40.0"},
+    "transformers": {"version": "5.18.0"},
+}
+for (
+    _finetune_id,
+    _finetune_repo,
+    _finetune_revision,
+    _finetune_license,
+    _finetune_precision,
+    _finetune_files,
+) in (
+    (
+        "juggernaut-xl-v9",
+        "RunDiffusion/Juggernaut-XL-v9",
+        "cf419233522daa0b9ea36c3aff98fa2cab1fb0fb",
+        "CreativeML-OpenRAIL-M",
+        "float16",
+        (
+            "text_encoder/model.fp16.safetensors",
+            "text_encoder_2/model.fp16.safetensors",
+            "unet/diffusion_pytorch_model.fp16.safetensors",
+            "vae/diffusion_pytorch_model.fp16.safetensors",
+        ),
+    ),
+    (
+        "animagine-xl-4.0",
+        "cagliostrolab/animagine-xl-4.0",
+        "2b7c1b397761bf5bd3cc42e5b39ec99314a75a96",
+        "CreativeML-OpenRAIL++-M",
+        "float16",
+        (
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    ),
+    (
+        "dreamshaper-xl-1.0",
+        "Lykon/dreamshaper-xl-1-0",
+        "41e6644752a8c9aa63930e6043c4fd83c7708420",
+        "CreativeML-OpenRAIL++-M",
+        "float32",
+        (
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_finetune_id,
+            task=Task.T2I,
+            family="stable-diffusion-xl",
+            source=f"https://huggingface.co/{_finetune_repo}",
+            repo_id=_finetune_repo,
+            revision=_finetune_revision,
+            provenance="author",
+            catalog_id="sdxl",
+            format="diffusers",
+            license=_finetune_license,
+            reference=_SDXL_FINETUNE_REFERENCE,
+            config={"precision": _finetune_precision},
+            files=_SDXL_FINETUNE_CONFIGS + _finetune_files,
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="sdxl-refiner-1.0",

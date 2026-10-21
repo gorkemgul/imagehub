@@ -60,7 +60,7 @@ LIMITS = [
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind "
     "Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler "
     "with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, "
-    "Euler for SDXL, "
+    "Euler, trailing DDPM and leading DEIS for SDXL, "
     "flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift "
     "for FLUX.1 "
     "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, "

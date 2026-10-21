@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**44 architecture families, 107 published checkpoints.** A model is a separately published set of weights;
+**44 architecture families, 110 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -32,6 +32,9 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `dreamlite-base` | `dreamlite` | [carlofkl/DreamLite-base](https://huggingface.co/carlofkl/DreamLite-base) | `a9a0f15` | author | full | CC-BY-NC-4.0 (non-commercial) | `dreamlite` |
 | `dreamlite-mobile` | `dreamlite` | [carlofkl/DreamLite-mobile](https://huggingface.co/carlofkl/DreamLite-mobile) | `a48c656` | author | full | CC-BY-NC-4.0 (non-commercial) | `dreamlite` |
 | `sdxl-base-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) | `4621659` | author | full | CreativeML Open RAIL++-M | `sdxl` |
+| `juggernaut-xl-v9` | `stable-diffusion-xl` | [RunDiffusion/Juggernaut-XL-v9](https://huggingface.co/RunDiffusion/Juggernaut-XL-v9) | `cf41923` | author | full | CreativeML OpenRAIL-M | `sdxl` |
+| `animagine-xl-4.0` | `stable-diffusion-xl` | [cagliostrolab/animagine-xl-4.0](https://huggingface.co/cagliostrolab/animagine-xl-4.0) | `2b7c1b3` | author | full | CreativeML Open RAIL++-M | `sdxl` |
+| `dreamshaper-xl-1.0` | `stable-diffusion-xl` | [Lykon/dreamshaper-xl-1-0](https://huggingface.co/Lykon/dreamshaper-xl-1-0) | `41e6644` | author | full | CreativeML Open RAIL++-M | `sdxl` |
 | `sdxl-refiner-1.0` | `stable-diffusion-xl` | [stabilityai/stable-diffusion-xl-refiner-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0) | `5d4cfe8` | author | full | CreativeML Open RAIL++-M | `sdxl` |
 | `sdxl-lightning-2step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
 | `sdxl-lightning-4step` | `stable-diffusion-xl` | [ByteDance/SDXL-Lightning](https://huggingface.co/ByteDance/SDXL-Lightning) | `c9a24f4` | author | full | CreativeML Open RAIL++-M | `sdxl-lightning` |
@@ -126,6 +129,9 @@ files, so they are loaded with `weights_only=True`, containing tensors only.
 Segmind Small-SD and Tiny-SD likewise publish tensor-only `.bin` component files. Small-SD's
 tensors are float32; Tiny-SD has only float16 published tensors, which are upcast for CPU float32
 validation.
+Juggernaut XL v9 publishes only float16 component files. Animagine XL 4.0 likewise publishes
+float16 component tensors, although its component filenames do not carry an `fp16` suffix. Both
+are upcast for CPU float32 validation. DreamShaper XL 1.0 publishes float32 component tensors.
 
 Composite checkpoints can name a base model, omit base files with `base_exclude`, and overlay their
 own files. They can also use `subfolders` to place files from a second repository in a named

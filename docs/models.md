@@ -318,7 +318,8 @@ imagehub does not distribute weights.
 
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
 Models: `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`,
-`sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step` · Task: `t2i`
+`sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step`,
+`juggernaut-xl-v9`, `animagine-xl-4.0`, `dreamshaper-xl-1.0` · Task: `t2i`
 (the refiner `sdxl-refiner-1.0` has its own section below)
 
 **Architecture.** Two frozen text encoders: CLIP ViT-L/14 (penultimate layer output) and OpenCLIP
@@ -342,10 +343,20 @@ the SDXL base. Both use an LCM scheduler built from the SDXL scheduler configura
 0.0, and 1024×1024. Their defaults are respectively 4 steps with explicit timesteps
 `[999, 749, 499, 249]` and 1 step with `[399]`.
 
+**Community fine-tunes.** `juggernaut-xl-v9`, `animagine-xl-4.0` and
+`dreamshaper-xl-1.0` are complete SDXL fine-tunes rather than U-Net overlays. They retain their
+published DDPM (trailing spacing), Euler and DEIS (leading spacing) schedulers, respectively.
+Juggernaut targets photorealistic work, Animagine targets anime tag prompts, and DreamShaper is a
+general artistic fine-tune. Juggernaut and Animagine publish float16 component tensors, which are
+upcast when the pipeline runs in CPU float32; DreamShaper publishes float32 components.
+
 **Usage.**
 
 ```bash
 python -m imagehub.pretrained sdxl-base-1.0 checkpoints/sdxl-base-1.0
+python -m imagehub.pretrained juggernaut-xl-v9 checkpoints/juggernaut-xl-v9
+python -m imagehub.pretrained animagine-xl-4.0 checkpoints/animagine-xl-4.0
+python -m imagehub.pretrained dreamshaper-xl-1.0 checkpoints/dreamshaper-xl-1.0
 ```
 
 ```python
@@ -397,8 +408,9 @@ with pipeline("t2i", backend="dmd2-sdxl-4step", model="checkpoints/dmd2-sdxl-4st
 `width`/`height` (the U-Net config's native size, 1024 here, and multiples of 8), `negative_prompt`
 (None; with an empty negative prompt, zero embeddings are used), `num_images` (1), `seed`,
 `latents`, and the micro-conditioning inputs `original_size`, `crops_coords_top_left` and
-`target_size` (default to the generated size and `(0, 0)`). The SDXL backend also supports the LCM
-scheduler and an explicit `timesteps` sequence; supplying `timesteps` sets the step count.
+`target_size` (default to the generated size and `(0, 0)`). The SDXL backend supports the
+checkpoint's Euler, DDPM, DEIS or LCM scheduler and an explicit `timesteps` sequence for Euler and
+LCM; supplying `timesteps` sets the step count.
 Unrecognized settings raise an error.
 
 **Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
@@ -414,6 +426,9 @@ the license's use restrictions bind whoever downloads and uses the weights. The 
 card has no license metadata, and the repository's license file covers only the FLUX-related files,
 so the Hyper-SDXL weights are recorded as `Unspecified`. The DMD2 weights are licensed under
 CC-BY-NC-4.0, which prohibits commercial use. imagehub does not distribute weights.
+Juggernaut XL v9 is licensed under CreativeML OpenRAIL-M. Animagine XL 4.0 and DreamShaper XL 1.0
+are licensed under CreativeML Open RAIL++-M. The license restrictions bind whoever downloads and
+uses the weights.
 
 
 # SDXL refiner

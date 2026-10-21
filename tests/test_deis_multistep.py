@@ -51,7 +51,7 @@ def test_requires_set_timesteps_before_sampling():
         {"prediction_type": "v_prediction"},
         {"solver_type": "midpoint"},
         {"thresholding": True},
-        {"timestep_spacing": "leading"},
+        {"timestep_spacing": "trailing"},
         {"use_karras_sigmas": True},
         {"unknown_option": True},
     ],

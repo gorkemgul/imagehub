@@ -55,7 +55,7 @@ def test_ddpm_step_requires_timesteps():
         {"variance_type": "fixed_large"},
         {"prediction_type": "sample"},
         {"rescale_betas_zero_snr": True},
-        {"timestep_spacing": "trailing"},
+        {"timestep_spacing": "linspace"},
         {"trained_betas": [0.1]},
         {"variance_type": "learned"},
         {"unknown": True},

@@ -420,6 +420,24 @@ seeded CPU generator as the initial noise. `playground-v2` and `playground-v2.5`
 3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable. The `playground-v2`
 real-checkpoint run took 21 minutes on an M2 Max (CPU).
 
+### Community fine-tunes
+
+`juggernaut-xl-v9`, `animagine-xl-4.0` and `dreamshaper-xl-1.0` target diffusers 0.40.0
+`StableDiffusionXLPipeline`. Their pinned published headers match the existing SDXL text encoders,
+U-Net and VAE layouts. The suite also covers each published scheduler: trailing DDPM for
+Juggernaut, Euler for Animagine and leading DEIS for DreamShaper.
+
+Real-checkpoint validation is pending the controller run. The planned CPU float32 comparisons are
+tokenizer outputs, both text encoders, one U-Net denoising step, VAE encode/decode, a four-step
+scheduler trajectory, and separate 64×64 public-pipeline generations at seed 0 and seed 42. The
+records are `header_<id>`, `sdxl_tokenizers_<id>`, `sdxl_text_encoder_<id>`,
+`sdxl_text_encoder_2_<id>`, `sdxl_unet_<id>`, `sdxl_vae_decode_<id>`,
+`sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`.
+
+Juggernaut and Animagine are validated after their published float16 tensors are upcast to CPU
+float32. DreamShaper publishes float32 component tensors. Safety checking, watermarking, fp16
+arithmetic parity and duplicate single-file checkpoints are excluded.
+
 ### Segmind-Vega
 
 The dedicated Segmind-Vega suite targets diffusers 0.40.0 `StableDiffusionXLPipeline`. Published

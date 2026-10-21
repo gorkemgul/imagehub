@@ -13,6 +13,32 @@ pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
 
+@pytest.mark.parametrize("steps", [1, 4, 30, 50])
+def test_juggernaut_trailing_ddpm_trajectory_exact(steps):
+    config = json.loads(
+        (Path(__file__).parents[1] / "fixtures/juggernaut_xl_v9_configs/scheduler.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    reference = diffusers.DDPMScheduler.from_config(config)
+    native = DDPMScheduler(config)
+    reference.set_timesteps(steps)
+    native.set_timesteps(steps)
+    assert torch.equal(native.timesteps, reference.timesteps)
+    generator = torch.Generator().manual_seed(0)
+    expected = torch.randn(1, 4, 4, 6, generator=generator)
+    actual = expected.clone()
+    expected_generator = torch.Generator().manual_seed(42)
+    actual_generator = torch.Generator().manual_seed(42)
+    for timestep in reference.timesteps:
+        output = torch.randn(expected.shape, generator=generator)
+        expected = reference.step(
+            output, timestep, expected, generator=expected_generator
+        ).prev_sample
+        actual = native.step(output, timestep, actual, generator=actual_generator)
+        assert torch.equal(actual, expected)
+
+
 @pytest.mark.parametrize("steps", [25, 50])
 def test_ddpm_timesteps_match_reference(steps, record):
     root = snapshot_dir("hunyuan-dit-v1.1-distilled")
