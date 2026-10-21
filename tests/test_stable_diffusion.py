@@ -26,6 +26,26 @@ def tiny_lcm(tmp_path_factory):
     return write_tiny_lcm(tmp_path_factory.mktemp("tiny-lcm"))
 
 
+@pytest.fixture(scope="module")
+def tiny_sdxs(tmp_path_factory):
+    return write_tiny_sd(
+        tmp_path_factory.mktemp("tiny-sdxs"),
+        tiny_vae=True,
+        scheduler_config={"_class_name": "EulerDiscreteScheduler", "timestep_spacing": "trailing"},
+        unet_config={
+            "sample_size": 4,
+            "block_out_channels": [32, 64, 64],
+            "down_block_types": ["CrossAttnDownBlock2D"] * 3,
+            "up_block_types": ["CrossAttnUpBlock2D"] * 3,
+            "layers_per_block": 1,
+            "attention_head_dim": [2, 4, 4],
+            "only_cross_attention": [True, False, False],
+            "mid_block_type": None,
+            "use_linear_projection": True,
+        },
+    )
+
+
 def test_generates_images_with_metadata(tiny_sd):
     with pipeline("t2i", backend="stable-diffusion", model=tiny_sd) as pipe:
         result = pipe("a cat", seed=3, steps=4, width=64, height=48, num_images=2)
@@ -49,6 +69,15 @@ def test_sd_turbo_uses_model_defaults_and_unet_size(tiny_sd):
     unet_path.write_text(json.dumps(unet), encoding="utf-8")
 
     result = pipeline("t2i", backend="sd-turbo", model=tiny_sd)("a cat", seed=3)
+
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["steps"] == 1
+    assert result.metadata["guidance"] == 0.0
+    assert result.metadata["scheduler"] == "euler"
+
+
+def test_sdxs_uses_tiny_vae_and_published_defaults(tiny_sdxs):
+    result = pipeline("t2i", backend="sdxs-512-0.9", model=tiny_sdxs)("a cat", seed=42)
 
     assert (result.images[0].width, result.images[0].height) == (32, 32)
     assert result.metadata["steps"] == 1

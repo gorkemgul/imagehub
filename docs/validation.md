@@ -150,6 +150,18 @@ For each of the five checkpoints, the tensor names and shapes of three component
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
 
+## SDXS-512
+
+`sdxs-512-0.9` uses the existing Stable Diffusion pipeline with its published one-step Euler
+schedule and TinyVAE decoder. Offline tests cover the pinned full-precision tensor headers (373
+text-encoder, 358 U-Net, and 134 VAE tensors), exact random-weight U-Net parity, and exact tiny
+end-to-end parity at the defaults and with guidance at a non-square size. Dedicated real-checkpoint
+tests compare tokenizer and text-encoder outputs, one denoiser step, VAE decoding, the scheduler,
+and separate 512×512 public-pipeline generations at seed 0 and seed 42. CPU float32 comparisons
+require exact tensor and uint8 equality. Real-checkpoint measurements are pending the controller
+run; records are `header_sdxs-512-0.9`, `sdxs_tokenizer_text_encoder_sdxs-512-0.9`,
+`sdxs_components_sdxs-512-0.9`, `e2e_sdxs-512-0.9`, and `seed_e2e_sdxs-512-0.9`.
+
 ## Segmind Small-SD and Tiny-SD
 
 Validated on CPU in the same environment as above. `segmind-small-sd` and `segmind-tiny-sd`, both
