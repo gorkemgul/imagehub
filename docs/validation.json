@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-21",
+  "date": "2026-10-22",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -1757,7 +1757,7 @@
           "version": "5.18.0"
         }
       },
-      "status": "experimental",
+      "status": "full",
       "files": {
         "model_index.json": "ed9d54586fae5f6f47400c5f7fbde440c7ff50081d3b62ce4d4c3880c53f3cb9",
         "scheduler/scheduler_config.json": "91d57030b1a965f4878c952acaaa84d6956b640697b69fc642a13d3bf83e5e9c",
@@ -1772,9 +1772,40 @@
         "vae/config.json": "ad96f19ac8241278e5a472fe8bfec939bc80addea71c17f2501019b712cda23d",
         "vae/diffusion_pytorch_model.safetensors": "d7956d561b1efbd861ad9b03fd8f01510f9e87eddc07bdfd20837009433f6ee5"
       },
-      "tensor_header_check": null,
-      "end_to_end": null,
-      "seed_end_to_end": null
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 372,
+          "unet": 358,
+          "vae": 134
+        }
+      },
+      "end_to_end": {
+        "guidance": 0.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 0.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1,
+        "tolerance": 0
+      }
     },
     {
       "model_id": "sdxl-base-1.0",
@@ -10161,7 +10192,35 @@
       "tolerance": 0.0
     }
   },
-  "components_sdxs": {},
+  "components_sdxs": {
+    "sdxs_components_sdxs-512-0.9": {
+      "sigmas": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "timesteps": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0,
+      "unet": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "vae_decode": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      }
+    },
+    "sdxs_tokenizer_text_encoder_sdxs-512-0.9": {
+      "text_encoder": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tokenizer_mismatches": 0,
+      "tolerance": 0.0
+    }
+  },
   "components_segmind_sd": {
     "sd_scheduler_segmind-small-sd": {
       "max_abs": 0.0,
@@ -15170,6 +15229,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "0 passed (sdxs-512-0.9)"
+    "reference_summary": "5 passed (sdxs-512-0.9)"
   }
 }
