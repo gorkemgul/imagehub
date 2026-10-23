@@ -2660,3 +2660,23 @@ the 18-step default only to shorten the CPU run. Records: `header_show-o-512`, `
 [validation-measurements.json](validation-measurements.json); `tensor_header_check`,
 `end_to_end` and `seed_end_to_end` under `show-o-512` and `tests.reference_summary`,
 [validation.json](validation.json).
+
+## Emu3-Gen
+
+`emu3-gen` pins `BAAI/Emu3-Gen` revision
+`40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72`, its vision tokenizer revision
+`c81f916ad371289e205310a7539255e8a9396488`, and the official Emu3 implementation revision
+`dbbf9858194d70b8c58293e219ecffe22df0f9c7`.
+
+Offline validation checks every published generator and vision-tokenizer tensor name and shape and
+compares tiny random-weight language-model and VQ-decoder outputs exactly. The real-checkpoint suite
+checks a language-model step and VQ decode, then performs separate seed-0 and seed-42 runs through
+`pipeline("t2i", ...)`. End-to-end runs use a 2×3 visual-token grid (24×16 pixels), top-k 1 and the
+published guidance path. This shortened case exercises prompt formatting, positive/negative passes,
+forced row and image markers, autoregressive cache updates, visual lookup and decoding without an
+impractical full 90×90 CPU generation.
+
+Real-checkpoint measurements are pending the controlled run. Records are `emu3_gen_headers`,
+`emu3_gen_language_model_random`, `emu3_gen_vision_decode_random`,
+`emu3_gen_real_components`, `e2e_emu3-gen` and `seed_e2e_emu3-gen`; the validation grouping is
+`components_emu3`.
