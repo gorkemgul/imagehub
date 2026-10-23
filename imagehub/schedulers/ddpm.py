@@ -26,7 +26,9 @@ DDPM_DEFAULTS: dict[str, Any] = {
     "steps_offset": 0,
     "rescale_betas_zero_snr": False,
 }
-_IGNORED = frozenset({"set_alpha_to_one", "skip_prk_steps", "lambda_min_clipped"})
+_IGNORED = frozenset(
+    {"set_alpha_to_one", "skip_prk_steps", "lambda_min_clipped", "interpolation_type"}
+)
 
 
 def _cosine_betas(count: int, max_beta: float = 0.999) -> Tensor:
@@ -65,7 +67,7 @@ class DDPMScheduler:
             raise ValueError(f"Unsupported DDPM setting variance_type={cfg['variance_type']!r}")
         if cfg["rescale_betas_zero_snr"]:
             raise ValueError("Unsupported DDPM setting rescale_betas_zero_snr=True")
-        if cfg["timestep_spacing"] != "leading":
+        if cfg["timestep_spacing"] not in ("leading", "trailing"):
             raise ValueError(
                 f"Unsupported DDPM setting timestep_spacing={cfg['timestep_spacing']!r}"
             )
@@ -121,11 +123,17 @@ class DDPMScheduler:
         if type(num_inference_steps) is not int or not 0 < num_inference_steps <= count:
             raise ValueError(f"num_inference_steps must be an int in [1, {count}]")
         self.num_inference_steps = num_inference_steps
-        step_ratio = count // num_inference_steps
-        self.timesteps = (
-            torch.arange(num_inference_steps - 1, -1, -1, dtype=torch.int64) * step_ratio
-            + self.config["steps_offset"]
-        )
+        if self.config["timestep_spacing"] == "trailing":
+            step_ratio = count / num_inference_steps
+            self.timesteps = (
+                torch.arange(num_inference_steps, 0, -1, dtype=torch.float64) * step_ratio
+            ).round().to(torch.int64) - 1
+        else:
+            step_ratio = count // num_inference_steps
+            self.timesteps = (
+                torch.arange(num_inference_steps - 1, -1, -1, dtype=torch.int64) * step_ratio
+                + self.config["steps_offset"]
+            )
 
     def previous_timestep(self, timestep: Tensor | int) -> Tensor:
         indices = (self.timesteps == torch.as_tensor(timestep)).nonzero(as_tuple=True)[0]

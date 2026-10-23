@@ -67,6 +67,9 @@ SDXL_MODEL_IDS = tuple(
         "koala-1b",
         "koala-lightning-700m",
         "koala-lightning-1b",
+        "juggernaut-xl-v9",
+        "animagine-xl-4.0",
+        "dreamshaper-xl-1.0",
     )
 )
 SCHEDULERS = {

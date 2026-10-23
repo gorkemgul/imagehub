@@ -38,6 +38,7 @@ _IGNORED_COMPATIBILITY_KEYS = {
     "clip_sample_range",
     "set_alpha_to_one",
     "skip_prk_steps",
+    "interpolation_type",
 }
 
 
@@ -178,8 +179,10 @@ class DEISMultistepScheduler:
         rho_t, rho_s0, rho_s1 = sigma_t / alpha_t, sigma_s0 / alpha_s0, sigma_s1 / alpha_s1
 
         def integral(t: Tensor, b: Tensor, c: Tensor) -> Tensor:
+            # The reference applies NumPy's float32 logarithm to these scalar CPU tensors.
+            # Rounding the standard-library result back to the input dtype is bit-identical.
             def log(value: Tensor) -> Tensor:
-                return value.new_tensor(math.log(value.item()))
+                return torch.tensor(math.log(float(value)), dtype=value.dtype, device=value.device)
 
             return t * (-log(c) + log(t) - 1) / (log(b) - log(c))
 

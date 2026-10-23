@@ -11,6 +11,7 @@ def test_catalog_contents():
         "t2i": (
             "amused-256",
             "amused-512",
+            "animagine-xl-4.0",
             "auraflow-v0.3",
             "bk-sdm-base",
             "bk-sdm-small",
@@ -29,6 +30,7 @@ def test_catalog_contents():
             "dreamlite-base",
             "dreamlite-mobile",
             "dreamshaper-8",
+            "dreamshaper-xl-1.0",
             "ernie-image",
             "flux-1-lite-8b",
             "flux1-dev",
@@ -52,6 +54,7 @@ def test_catalog_contents():
             "janus-pro-7b",
             "joyai-image-edit",
             "joyai-image-edit-plus",
+            "juggernaut-xl-v9",
             "kandinsky-2-1",
             "kandinsky-2.2",
             "kandinsky-3",
@@ -534,6 +537,38 @@ def test_catalog_contents():
     assert playground.config == {"defaults": {"guidance": 3.0}}
     assert len(set(playground.files)) == len(playground.files) == 18
     assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in playground.files)
+
+    fine_tunes = {
+        model_id: model_info(model_id)
+        for model_id in ("juggernaut-xl-v9", "animagine-xl-4.0", "dreamshaper-xl-1.0")
+    }
+    assert [fine_tunes[model_id].revision for model_id in fine_tunes] == [
+        "cf419233522daa0b9ea36c3aff98fa2cab1fb0fb",
+        "2b7c1b397761bf5bd3cc42e5b39ec99314a75a96",
+        "41e6644752a8c9aa63930e6043c4fd83c7708420",
+    ]
+    for spec in fine_tunes.values():
+        assert spec.family == "stable-diffusion-xl"
+        assert spec.catalog_id == "sdxl"
+        assert spec.provenance == "author"
+        assert spec.format == "diffusers"
+        assert spec.reference == {
+            "diffusers": {"version": "0.40.0"},
+            "transformers": {"version": "5.18.0"},
+        }
+        assert len(set(spec.files)) == len(spec.files) == 18
+        assert not any(name.endswith((".bin", ".ckpt")) for name in spec.files)
+    assert fine_tunes["juggernaut-xl-v9"].repo_id == "RunDiffusion/Juggernaut-XL-v9"
+    assert fine_tunes["juggernaut-xl-v9"].license == "CreativeML-OpenRAIL-M"
+    assert fine_tunes["juggernaut-xl-v9"].config == {"precision": "float16"}
+    assert sum("fp16" in name for name in fine_tunes["juggernaut-xl-v9"].files) == 4
+    assert fine_tunes["animagine-xl-4.0"].repo_id == "cagliostrolab/animagine-xl-4.0"
+    assert fine_tunes["animagine-xl-4.0"].license == "CreativeML-OpenRAIL++-M"
+    assert fine_tunes["animagine-xl-4.0"].config == {"precision": "float16"}
+    assert not any("fp16" in name for name in fine_tunes["animagine-xl-4.0"].files)
+    assert fine_tunes["dreamshaper-xl-1.0"].repo_id == "Lykon/dreamshaper-xl-1-0"
+    assert fine_tunes["dreamshaper-xl-1.0"].license == "CreativeML-OpenRAIL++-M"
+    assert fine_tunes["dreamshaper-xl-1.0"].config == {"precision": "float32"}
 
     for model_id in ("sd3-medium", "sd3.5-medium", "sd3.5-large", "sd3.5-large-turbo"):
         spec = model_info(model_id)

@@ -853,6 +853,18 @@
     "steps": 12,
     "tokens_equal": true
   },
+  "e2e_animagine-xl-4.0": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
   "e2e_auraflow-v0.3": {
     "guidance": 3.5,
     "latents": {
@@ -1089,6 +1101,18 @@
       512
     ],
     "steps": 50,
+    "tolerance": 0
+  },
+  "e2e_dreamshaper-xl-1.0": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
     "tolerance": 0
   },
   "e2e_ernie_image": {
@@ -1380,6 +1404,18 @@
     "passed": true,
     "seed": 0,
     "steps": 2
+  },
+  "e2e_juggernaut-xl-v9": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "e2e_kandinsky-2-1": {
     "passed": true,
@@ -3047,6 +3083,32 @@
       "tensors": 277
     }
   },
+  "header_animagine-xl-4.0": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1680
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
   "header_auraflow-v0.3": {
     "text_encoder": {
       "extra": [],
@@ -3409,6 +3471,32 @@
       "mismatch": [],
       "missing": [],
       "tensors": 686
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
+    }
+  },
+  "header_dreamshaper-xl-1.0": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1680
     },
     "vae": {
       "extra": [],
@@ -3928,6 +4016,32 @@
       "mismatch": [],
       "missing": [],
       "tensors": 194
+    }
+  },
+  "header_juggernaut-xl-v9": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 517
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1680
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
     }
   },
   "header_kandinsky-2-1": {
@@ -8758,6 +8872,21 @@
     ],
     "tolerance": 0.0
   },
+  "sdxl_scheduler_animagine-xl-4.0": {
+    "max_abs": 0.0,
+    "steps": 4,
+    "tolerance": 0.0
+  },
+  "sdxl_scheduler_dreamshaper-xl-1.0": {
+    "max_abs": 0.0,
+    "steps": 4,
+    "tolerance": 0.0
+  },
+  "sdxl_scheduler_juggernaut-xl-v9": {
+    "max_abs": 0.0,
+    "steps": 4,
+    "tolerance": 0.0
+  },
   "sdxl_scheduler_koala-1b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -8967,6 +9096,45 @@
     },
     "tolerance": 0.0
   },
+  "sdxl_text_encoder_2_animagine-xl-4.0": {
+    "hidden_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "text_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0
+  },
+  "sdxl_text_encoder_2_dreamshaper-xl-1.0": {
+    "hidden_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "text_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0
+  },
+  "sdxl_text_encoder_2_juggernaut-xl-v9": {
+    "hidden_states": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "text_embeds": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0
+  },
   "sdxl_text_encoder_2_koala-1b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -9057,6 +9225,21 @@
     },
     "tolerance": 0.0
   },
+  "sdxl_text_encoder_animagine-xl-4.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_text_encoder_dreamshaper-xl-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_text_encoder_juggernaut-xl-v9": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_text_encoder_koala-1b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -9105,6 +9288,24 @@
   "sdxl_tokenizers": {
     "mismatches": [],
     "prompts": 18,
+    "tokenizers": 2,
+    "tolerance": "exact"
+  },
+  "sdxl_tokenizers_animagine-xl-4.0": {
+    "mismatches": [],
+    "prompts": 4,
+    "tokenizers": 2,
+    "tolerance": "exact"
+  },
+  "sdxl_tokenizers_dreamshaper-xl-1.0": {
+    "mismatches": [],
+    "prompts": 4,
+    "tokenizers": 2,
+    "tolerance": "exact"
+  },
+  "sdxl_tokenizers_juggernaut-xl-v9": {
+    "mismatches": [],
+    "prompts": 4,
     "tokenizers": 2,
     "tolerance": "exact"
   },
@@ -9176,6 +9377,24 @@
       500,
       1
     ],
+    "tolerance": 0.0
+  },
+  "sdxl_unet_animagine-xl-4.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timestep": 500,
+    "tolerance": 0.0
+  },
+  "sdxl_unet_dreamshaper-xl-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timestep": 500,
+    "tolerance": 0.0
+  },
+  "sdxl_unet_juggernaut-xl-v9": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timestep": 500,
     "tolerance": 0.0
   },
   "sdxl_unet_koala-1b": {
@@ -9273,6 +9492,21 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sdxl_vae_decode_animagine-xl-4.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_decode_dreamshaper-xl-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_decode_juggernaut-xl-v9": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sdxl_vae_decode_koala-1b": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -9324,6 +9558,21 @@
     "tolerance": 0.0
   },
   "sdxl_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_encode_animagine-xl-4.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_encode_dreamshaper-xl-1.0": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "sdxl_vae_encode_juggernaut-xl-v9": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -9422,6 +9671,18 @@
       640,
       384
     ]
+  },
+  "seed_e2e_animagine-xl-4.0": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "seed_e2e_auraflow-v0.3": {
     "max_pixel_diff": 0,
@@ -9599,6 +9860,18 @@
     "steps": 50,
     "tolerance": 0
   },
+  "seed_e2e_dreamshaper-xl-1.0": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
+  },
   "seed_e2e_ernie_image": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -9746,6 +10019,18 @@
     "passed": true,
     "seed": 42,
     "steps": 2
+  },
+  "seed_e2e_juggernaut-xl-v9": {
+    "guidance": 5.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      64,
+      64
+    ],
+    "steps": 4,
+    "tolerance": 0
   },
   "seed_e2e_kandinsky-2-1": {
     "passed": true,
