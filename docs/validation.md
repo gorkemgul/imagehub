@@ -150,6 +150,36 @@ For each of the five checkpoints, the tensor names and shapes of three component
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
 
+### DreamShaper 8
+
+Validated on CPU in the same environment as above. `dreamshaper-8`, `full` in the catalog, reuses
+the Stable Diffusion 1.x components and the published second-order DEIS scheduler. Its published
+float32 safetensors headers contain the supported CLIP, U-Net and VAE layouts and were loaded
+strictly. The reference suite checks strict headers, tokenizer ids, CLIP output, one U-Net step, VAE
+decode, the DEIS trajectory, and separate default 512×512 public-pipeline generations at seeds 0
+and 42. All 4 real tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The published weights are float32, so no upcast is involved.
+The real-checkpoint run took 5 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 196 / 686 / 248 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (4 prompts) | identical | exact |
+| CLIP text encoder | 0 | 0 |
+| U-Net single step (t = 500) | 0 | 0 |
+| VAE decode | 0 | 0 |
+| Published DEIS trajectory (4 steps) | 0 | 0 |
+| End to end: final pixels (512×512, 50 steps, guidance 7.5, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `header_dreamshaper-8`, `sd_tokenizer_dreamshaper-8`, `sd_text_encoder_dreamshaper-8`,
+`sd_unet_dreamshaper-8`, `sd_vae_decode_dreamshaper-8`, `sd_scheduler_dreamshaper-8`,
+`e2e_dreamshaper-8` and `seed_e2e_dreamshaper-8`,
+[validation-measurements.json](validation-measurements.json).
+
 ## SDXS-512
 
 `sdxs-512-0.9` uses the existing Stable Diffusion pipeline with its published one-step Euler
@@ -2382,7 +2412,7 @@ first sequence of the batch only; the native module reproduces that.
 
 - Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
-- Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
+- Reference tests (CPU): 34 passed for SD 1.x, 4 passed for `dreamshaper-8`, and 25 passed, 2 skipped for the SDXL family
   (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 14 passed for `segmind-small-sd` and `segmind-tiny-sd` together, 9 passed   for `segmind-vega`, 18 passed for `koala-700m` and `koala-1b` together, 16 passed for `koala-lightning-700m` and `koala-lightning-1b` together, 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,

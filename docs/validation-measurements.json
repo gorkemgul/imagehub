@@ -1079,6 +1079,18 @@
     "steps": 4,
     "tolerance": 0
   },
+  "e2e_dreamshaper-8": {
+    "guidance": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 50,
+    "tolerance": 0
+  },
   "e2e_ernie_image": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -3383,6 +3395,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 134
+    }
+  },
+  "header_dreamshaper-8": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 686
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 248
     }
   },
   "header_ernie_image": {
@@ -8473,6 +8505,12 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sd_scheduler_dreamshaper-8": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "steps": 4,
+    "tolerance": 0.0
+  },
   "sd_scheduler_segmind-small-sd": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -8485,6 +8523,11 @@
     "steps": 4,
     "tolerance": 0.0
   },
+  "sd_text_encoder_dreamshaper-8": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "sd_text_encoder_segmind-small-sd": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -8494,6 +8537,11 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "sd_tokenizer_dreamshaper-8": {
+    "mismatches": [],
+    "prompts": 4,
+    "tolerance": "exact"
   },
   "sd_tokenizer_segmind-small-sd": {
     "mismatches": [],
@@ -8574,6 +8622,14 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sd_unet_dreamshaper-8": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "timesteps": [
+      500
+    ],
+    "tolerance": 0.0
+  },
   "sd_unet_segmind-small-sd": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -8588,6 +8644,11 @@
     "timesteps": [
       500
     ],
+    "tolerance": 0.0
+  },
+  "sd_vae_decode_dreamshaper-8": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
     "tolerance": 0.0
   },
   "sd_vae_decode_segmind-small-sd": {
@@ -9525,6 +9586,18 @@
     "pixels_max_abs": 0,
     "seed": 42,
     "steps": 4
+  },
+  "seed_e2e_dreamshaper-8": {
+    "guidance": 7.5,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 50,
+    "tolerance": 0
   },
   "seed_e2e_ernie_image": {
     "max_pixel_diff": 0,
