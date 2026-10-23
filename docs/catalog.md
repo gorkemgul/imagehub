@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**44 architecture families, 111 published checkpoints.** A model is a separately published set of weights;
+**44 architecture families, 112 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -18,6 +18,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `sd-v1-3` | `stable-diffusion` | [CompVis/stable-diffusion-v1-3](https://huggingface.co/CompVis/stable-diffusion-v1-3) | `159f26f` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `sd-v1-4` | `stable-diffusion` | [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) | `133a221` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `sd-v1-5` | `stable-diffusion` | [stable-diffusion-v1-5/stable-diffusion-v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5) | `451f4fe` | community mirror | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
+| `dreamshaper-8` | `stable-diffusion` | [Lykon/dreamshaper-8](https://huggingface.co/Lykon/dreamshaper-8) | `a7e52b9` | author | full | CreativeML OpenRAIL-M | `stable-diffusion-1` |
 | `segmind-small-sd` | `stable-diffusion` | [segmind/small-sd](https://huggingface.co/segmind/small-sd) | `f8b087e` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
 | `segmind-tiny-sd` | `stable-diffusion` | [segmind/tiny-sd](https://huggingface.co/segmind/tiny-sd) | `cad0bd7` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
 | `bk-sdm-base` | `stable-diffusion` | [nota-ai/bk-sdm-base](https://huggingface.co/nota-ai/bk-sdm-base) | `0c03b7a` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |

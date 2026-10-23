@@ -37,6 +37,12 @@ def test_schedule_and_trajectory_are_repeatable():
     assert torch.equal(samples[0], samples[1])
 
 
+def test_leading_schedule_uses_step_offset():
+    scheduler = DEISMultistepScheduler(CONFIG | {"timestep_spacing": "leading"})
+    scheduler.set_timesteps(4)
+    assert torch.equal(scheduler.timesteps, torch.tensor([801, 601, 401, 201]))
+
+
 def test_requires_set_timesteps_before_sampling():
     scheduler = DEISMultistepScheduler(CONFIG)
     sample = torch.randn(1, 4, 3, 3)

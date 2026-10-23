@@ -29,6 +29,7 @@ def test_catalog_contents():
             "dmd2-sdxl-4step",
             "dreamlite-base",
             "dreamlite-mobile",
+            "dreamshaper-8",
             "dreamshaper-xl-1.0",
             "ernie-image",
             "flux-1-lite-8b",
@@ -138,6 +139,14 @@ def test_catalog_contents():
         assert not any(
             name.startswith(("safety_checker/", "feature_extractor/")) for name in spec.files
         )
+
+    dreamshaper = model_info("dreamshaper-8")
+    assert dreamshaper.repo_id == "Lykon/dreamshaper-8"
+    assert dreamshaper.revision == "a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917"
+    assert dreamshaper.provenance == "author"
+    assert dreamshaper.catalog_id == "stable-diffusion-1"
+    assert dreamshaper.config == {"defaults": {"steps": 50, "guidance": 7.5}}
+    assert dreamshaper.files == model_info("sd-v1-4").files
 
     bk_sdm = [model_info(f"bk-sdm-{variant}") for variant in ("base", "small", "tiny")]
     assert [spec.revision for spec in bk_sdm] == [

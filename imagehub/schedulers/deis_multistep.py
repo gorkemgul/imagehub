@@ -1,4 +1,4 @@
-"""Second-order DEIS scheduler for the published Segmind Small-SD configuration."""
+"""Second-order DEIS scheduler for published Stable Diffusion configurations."""
 
 from __future__ import annotations
 
@@ -43,7 +43,7 @@ _IGNORED_COMPATIBILITY_KEYS = {
 
 
 class DEISMultistepScheduler:
-    """The second-order log-rho DEIS mode used by Small-SD."""
+    """The second-order log-rho DEIS mode used by Small-SD and DreamShaper."""
 
     init_noise_sigma = 1.0
 
@@ -74,17 +74,16 @@ class DEISMultistepScheduler:
             "use_beta_sigmas": False,
             "use_flow_sigmas": False,
             "flow_shift": 1.0,
-            "timestep_spacing": ("linspace", "leading"),
             "use_dynamic_shifting": False,
             "time_shift_type": "exponential",
         }
         for key, expected in required.items():
-            if isinstance(expected, tuple):
-                valid = cfg[key] in expected
-            else:
-                valid = cfg[key] == expected
-            if not valid:
+            if cfg[key] != expected:
                 raise ValueError(f"Unsupported DEIS setting {key}={cfg[key]!r}")
+        if cfg["timestep_spacing"] not in ("linspace", "leading"):
+            raise ValueError(
+                f"Unsupported DEIS setting timestep_spacing={cfg['timestep_spacing']!r}"
+            )
         if cfg["beta_schedule"] == "scaled_linear":
             betas = (
                 torch.linspace(
@@ -122,20 +121,22 @@ class DEISMultistepScheduler:
         count = self.config["num_train_timesteps"]
         if type(num_inference_steps) is not int or not 0 < num_inference_steps <= count:
             raise ValueError(f"num_inference_steps must be an int in [1, {count}]")
-        if self.config["timestep_spacing"] == "leading":
-            step_ratio = count // (num_inference_steps + 1)
-            timesteps = (
-                torch.arange(num_inference_steps + 1, dtype=torch.int64)
-                .mul(step_ratio)
-                .flip(0)[:-1]
-                + self.config["steps_offset"]
-            )
-        else:
+        if self.config["timestep_spacing"] == "linspace":
             timesteps = (
                 torch.linspace(0, count - 1, num_inference_steps + 1, dtype=torch.float64)
                 .round()
                 .flip(0)[:-1]
                 .to(torch.int64)
+            )
+        elif self.config["timestep_spacing"] == "leading":
+            step_ratio = count // (num_inference_steps + 1)
+            timesteps = (
+                torch.arange(num_inference_steps + 1, dtype=torch.int64).flip(0)[:-1] * step_ratio
+                + self.config["steps_offset"]
+            )
+        else:
+            raise ValueError(
+                f"Unsupported DEIS setting timestep_spacing={self.config['timestep_spacing']!r}"
             )
         sigmas = self._training_sigmas[timesteps]
         sigma_last = self._training_sigmas[0]
