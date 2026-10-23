@@ -2336,6 +2336,49 @@ prompts or images per call, and caller-supplied latents or embeddings.
 checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
 distribute weights.
 
+# Lumina-DiMOO
+
+Catalog: [`lumina-dimoo`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `lumina-dimoo` · Task: `t2i`
+
+**Architecture.** Lumina-DiMOO is a fully discrete diffusion model. Its 32-layer, width-4096
+LLaDA transformer uses bidirectional attention, 32 heads, rotary position embeddings, RMS norms
+and gated SiLU feed-forwards. Text and 8,192 image tokens share one 134,548-entry vocabulary.
+Generation appends a 16x-downsampled rectangular grid of mask tokens to the formatted prompt. At
+each step the transformer predicts every still-masked image token, Gumbel-max samples it, and a
+cosine schedule remasks the least-confident samples. The final ids are decoded by the published
+aMUSEd VQ model.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained lumina-dimoo checkpoints/lumina-dimoo
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="lumina-dimoo", model="checkpoints/lumina-dimoo") as pipe:
+    result = pipe("a red cube on a white table", seed=42)
+    result.images[0].save("cube.png")
+```
+
+**Settings.** Defaults follow the published command-line sampler: 64 steps, guidance 4.0,
+temperature 1.0 and 1024x1024 output. `width` and `height` may be non-square positive multiples of
+16. Supported options are `seed`, `steps`, `guidance`, `temperature`, `width` and `height`.
+Temperature 0 uses greedy token selection. Guidance 0 skips the unconditional forward pass.
+Unknown options are rejected before loading.
+
+**Memory and validation.** The four language-model shards contain BF16 weights (about 15 GB); the
+VQ decoder is float32 (about 0.6 GB). CPU float32 is the parity target. Header checks cover all 291
+LLaDA and 277 VQ tensors. Random-weight LLaDA logits and tiny masked-token trajectories are exact;
+the real-checkpoint tests use 32x32 images and two steps to keep their CPU run short.
+
+**Out of scope.** Image editing, inpainting, understanding, batching, the experimental max-logit
+cache, training, and reduced-precision parity are not supported.
+
+**License.** The code and weights are Apache-2.0. imagehub does not distribute weights.
+
 # aMUSEd
 
 Catalog: [`amused`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

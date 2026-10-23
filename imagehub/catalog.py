@@ -2047,6 +2047,46 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="lumina-dimoo",
+        task=Task.T2I,
+        family="lumina-dimoo",
+        source="https://huggingface.co/Alpha-VLLM/Lumina-DiMOO",
+        repo_id="Alpha-VLLM/Lumina-DiMOO",
+        revision="f014549e17679e41b119959754cdd9320af9bdc8",
+        provenance="author",
+        catalog_id="lumina-dimoo",
+        format="safetensors",
+        license="Apache-2.0",
+        gated=False,
+        reference={
+            "lumina-dimoo": {
+                "repository": "Alpha-VLLM/Lumina-DiMOO",
+                "git_commit": "81344e60545ae8d70f11039d3450717d974f831b",
+                "class": "LLaDAForMultiModalGeneration/generate_image",
+            }
+        },
+        config={"defaults": {"steps": 64, "guidance": 4.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "args.json",
+            "config.json",
+            "generation_config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00004.safetensors",
+            "model-00002-of-00004.safetensors",
+            "model-00003-of-00004.safetensors",
+            "model-00004-of-00004.safetensors",
+            "special_tokens_map.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "vqvae/config.json",
+            "vqvae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 for _amused_id, _amused_revision, _amused_size in (
     ("amused-256", "09b6259bf96dbe6d70a852b70812420fe02df55e", 256),
     ("amused-512", "6f3f309ba188a08e347bff9691a0ac791817ca97", 512),
