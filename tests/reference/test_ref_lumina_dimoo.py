@@ -230,6 +230,24 @@ def test_real_tokenizer_seeded_fuzz(record):
     record("lumina_dimoo_tokenizer_fuzz", prompts=len(prompts), mismatches=0, tolerance="exact")
 
 
+def _load_official_model(modeling, root: Path):
+    model_class = modeling.LLaDAForMultiModalGeneration
+    # Transformers 5 expects bookkeeping absent from the pinned official wrapper.
+    if not hasattr(model_class, "all_tied_weights_keys"):
+        model_class.all_tied_weights_keys = {}
+    if not getattr(model_class.tie_weights, "_imagehub_transformers_5_compatible", False):
+        original_tie_weights = model_class.tie_weights
+
+        def tie_weights(self, **_kwargs):
+            return original_tie_weights(self)
+
+        tie_weights._imagehub_transformers_5_compatible = True
+        model_class.tie_weights = tie_weights
+    return model_class.from_pretrained(
+        root, torch_dtype=torch.float32, local_files_only=True
+    ).eval()
+
+
 def test_real_model_logits(record):
     root = snapshot_dir(MODEL_ID)
     ours = LLaDAForMultiModalGeneration.from_pretrained(root, dtype=torch.float32)
@@ -240,9 +258,7 @@ def test_real_model_logits(record):
     sys.path.insert(0, str(REFERENCE_ROOT))
     try:
         modeling = importlib.import_module("model.modeling_xllmx_dimoo")
-        reference = modeling.LLaDAForMultiModalGeneration.from_pretrained(
-            root, torch_dtype=torch.float32, local_files_only=True
-        ).eval()
+        reference = _load_official_model(modeling, root)
         with torch.inference_mode():
             expected = reference(ids, infer=True).logits
     finally:
@@ -277,9 +293,7 @@ def _official_real_image(snapshot: str, prompt: str, seed: int, out_path: str) -
     modeling = importlib.import_module("model.modeling_xllmx_dimoo")
     generation = importlib.import_module("generators.image_generation_generator")
     tokenizer = transformers.AutoTokenizer.from_pretrained(root, local_files_only=True)
-    model = modeling.LLaDAForMultiModalGeneration.from_pretrained(
-        root, torch_dtype=torch.float32, local_files_only=True
-    ).eval()
+    model = _load_official_model(modeling, root)
     conditional_text, unconditional_text = format_prompt(prompt)
     conditional = tokenizer.encode(conditional_text)
     unconditional = torch.tensor([tokenizer.encode(unconditional_text)])
