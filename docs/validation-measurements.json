@@ -2248,6 +2248,18 @@
       "pixels": 0
     }
   },
+  "e2e_sdxs-512-0.9": {
+    "guidance": 0.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 0,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 1,
+    "tolerance": 0
+  },
   "e2e_segmind-small-sd": {
     "guidance": 5.0,
     "passed": true,
@@ -5094,6 +5106,26 @@
       "mismatch": [],
       "missing": [],
       "tensors": 248
+    }
+  },
+  "header_sdxs-512-0.9": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 372
+    },
+    "unet": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 358
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 134
     }
   },
   "header_segmind-small-sd": {
@@ -9346,6 +9378,33 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "sdxs_components_sdxs-512-0.9": {
+    "sigmas": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "timesteps": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tolerance": 0.0,
+    "unet": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "vae_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    }
+  },
+  "sdxs_tokenizer_text_encoder_sdxs-512-0.9": {
+    "text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0
+    },
+    "tokenizer_mismatches": 0,
+    "tolerance": 0.0
+  },
   "seed_e2e_amused-256": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -10137,6 +10196,18 @@
       512
     ],
     "steps": 1
+  },
+  "seed_e2e_sdxs-512-0.9": {
+    "guidance": 0.0,
+    "passed": true,
+    "pixels_max_abs": 0,
+    "seed": 42,
+    "size": [
+      512,
+      512
+    ],
+    "steps": 1,
+    "tolerance": 0
   },
   "seed_e2e_segmind-small-sd": {
     "guidance": 5.0,

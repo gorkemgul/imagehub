@@ -974,71 +974,6 @@
       }
     },
     {
-      "model_id": "dreamshaper-8",
-      "repo_id": "Lykon/dreamshaper-8",
-      "revision": "a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917",
-      "provenance": "author",
-      "catalog_id": "stable-diffusion-1",
-      "license": "CreativeML-OpenRAIL-M",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "fcee0918cf5816238f4fd35ce1bdc329616b6213ada6dbf5a22953c71390aa35",
-        "scheduler/scheduler_config.json": "725c528a8f6f91d3e11a543718f1066b6d1682a147483c1a4a4aecf67fd9c824",
-        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
-        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
-        "tokenizer/tokenizer_config.json": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
-        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
-        "text_encoder/config.json": "52e29b35e93261515dc07bf248ec8398a729e54f1886e946f8c095ede26be29b",
-        "unet/config.json": "8125830747f921e26e263e394b8954482cf3b4b4f1beb154704ee3cc57042be8",
-        "vae/config.json": "ac5ee038bf165a245be9259ff14753de0d77d0fe2ee3ac39364c589d44410f48",
-        "text_encoder/model.safetensors": "5cd76eb3ed326974cfd66795384e890742dfdb5a80f5f4e4cb1547d51ec75d86",
-        "unet/diffusion_pytorch_model.safetensors": "89b54dc332757e6fff8caef7399e8061833d7d668d42fdbcc02b3e366921c5a6",
-        "vae/diffusion_pytorch_model.safetensors": "a02c00c3ec17e99528f0ce53bcc508729ce9f9d3e653eb1cbc99a5da0030446f"
-      },
-      "tensor_header_check": {
-        "missing": [],
-        "extra": [],
-        "mismatch": [],
-        "tensors": {
-          "text_encoder": 196,
-          "unet": 686,
-          "vae": 248
-        }
-      },
-      "end_to_end": {
-        "guidance": 7.5,
-        "passed": true,
-        "pixels_max_abs": 0,
-        "seed": 0,
-        "size": [
-          512,
-          512
-        ],
-        "steps": 50,
-        "tolerance": 0
-      },
-      "seed_end_to_end": {
-        "guidance": 7.5,
-        "passed": true,
-        "pixels_max_abs": 0,
-        "seed": 42,
-        "size": [
-          512,
-          512
-        ],
-        "steps": 50,
-        "tolerance": 0
-      }
-    },
-    {
       "model_id": "segmind-small-sd",
       "repo_id": "segmind/small-sd",
       "revision": "f8b087e68071a29bbe85a4b07e6e1e8998d59aa7",
@@ -1804,6 +1739,72 @@
         "passed": true,
         "pixels_max_abs": 0,
         "seed": 42
+      }
+    },
+    {
+      "model_id": "sdxs-512-0.9",
+      "repo_id": "IDKiro/sdxs-512-0.9",
+      "revision": "c332f05f60eb4b453de513be52c2a18c48d8cfe6",
+      "provenance": "author",
+      "catalog_id": "sdxs",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0",
+          "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "ed9d54586fae5f6f47400c5f7fbde440c7ff50081d3b62ce4d4c3880c53f3cb9",
+        "scheduler/scheduler_config.json": "91d57030b1a965f4878c952acaaa84d6956b640697b69fc642a13d3bf83e5e9c",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "d562b18a0c6d32a168fce3d7a342fce64579ebacffb98fb71b0affc494fc32d8",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "text_encoder/config.json": "7e33bfc475f6cf76e69b28b101993ca834d1f22ff4d35caefde32d63d4f42fba",
+        "text_encoder/model.safetensors": "cce6febb0b6d876ee5eb24af35e27e764eb4f9b1d0b7c026c8c3333d4cfc916c",
+        "unet/config.json": "d248682d3f6364e9dbd25c4ac5960735439d060fcd379aa5c6992d740648d30f",
+        "unet/diffusion_pytorch_model.safetensors": "c2afb7dbea11b64d0bfbc4d1a45854aa65408b8a74a732438225d3f2ec85c71c",
+        "vae/config.json": "ad96f19ac8241278e5a472fe8bfec939bc80addea71c17f2501019b712cda23d",
+        "vae/diffusion_pytorch_model.safetensors": "d7956d561b1efbd861ad9b03fd8f01510f9e87eddc07bdfd20837009433f6ee5"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 372,
+          "unet": 358,
+          "vae": 134
+        }
+      },
+      "end_to_end": {
+        "guidance": 0.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 0.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1,
+        "tolerance": 0
       }
     },
     {
@@ -10191,34 +10192,32 @@
       "tolerance": 0.0
     }
   },
-  "components_dreamshaper": {
-    "sd_scheduler_dreamshaper-8": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "steps": 4,
-      "tolerance": 0.0
+  "components_sdxs": {
+    "sdxs_components_sdxs-512-0.9": {
+      "sigmas": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "timesteps": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0,
+      "unet": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "vae_decode": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      }
     },
-    "sd_text_encoder_dreamshaper-8": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "sd_tokenizer_dreamshaper-8": {
-      "mismatches": [],
-      "prompts": 4,
-      "tolerance": "exact"
-    },
-    "sd_unet_dreamshaper-8": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "timesteps": [
-        500
-      ],
-      "tolerance": 0.0
-    },
-    "sd_vae_decode_dreamshaper-8": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
+    "sdxs_tokenizer_text_encoder_sdxs-512-0.9": {
+      "text_encoder": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tokenizer_mismatches": 0,
       "tolerance": 0.0
     }
   },
@@ -15225,11 +15224,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo and SDXS, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "4 passed (dreamshaper-8)"
+    "reference_summary": "5 passed (sdxs-512-0.9)"
   }
 }

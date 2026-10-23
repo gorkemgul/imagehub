@@ -180,6 +180,37 @@ Records: `header_dreamshaper-8`, `sd_tokenizer_dreamshaper-8`, `sd_text_encoder_
 `e2e_dreamshaper-8` and `seed_e2e_dreamshaper-8`,
 [validation-measurements.json](validation-measurements.json).
 
+## SDXS-512
+
+`sdxs-512-0.9` uses the existing Stable Diffusion pipeline with its published one-step Euler
+schedule and TinyVAE decoder. Offline tests cover the pinned full-precision tensor headers (373
+published text-encoder, 358 U-Net, and 134 VAE tensors), exact random-weight U-Net parity, and
+exact tiny end-to-end parity at the defaults and with guidance at a non-square size. Dedicated
+real-checkpoint tests compare tokenizer and text-encoder outputs, one denoiser step, VAE decoding,
+the scheduler, and separate 512×512 public-pipeline generations at seed 0 and seed 42. CPU float32
+comparisons require exact tensor and uint8 equality. Validated on CPU in the same environment as
+above. All 5 real tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The published weights are float32. The real-checkpoint run
+took 0 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 372 / 358 / 134 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids | identical | exact |
+| CLIP text encoder | 0 | 0 |
+| U-Net single step | 0 | 0 |
+| VAE decode | 0 | 0 |
+| Euler scheduler timesteps / sigmas | 0 / 0 | 0 |
+| End to end: final pixels (512×512, 1 step, guidance 0.0, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `header_sdxs-512-0.9`, `sdxs_tokenizer_text_encoder_sdxs-512-0.9`,
+`sdxs_components_sdxs-512-0.9`, `e2e_sdxs-512-0.9` and `seed_e2e_sdxs-512-0.9`,
+[validation-measurements.json](validation-measurements.json).
+
 ## Segmind Small-SD and Tiny-SD
 
 Validated on CPU in the same environment as above. `segmind-small-sd` and `segmind-tiny-sd`, both
@@ -2403,8 +2434,8 @@ first sequence of the batch only; the native module reproduces that.
   23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, 7 passed for
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
-  `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, and 6 passed for
-  `show-o-512`. These include structural parity with random weights, end-to-end parity with
+  `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, 6 passed for
+  `show-o-512`, and 5 passed for `sdxs-512-0.9`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

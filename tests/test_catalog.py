@@ -107,6 +107,7 @@ def test_catalog_contents():
             "sdxl-lightning-8step",
             "sdxl-refiner-1.0",
             "sdxl-turbo",
+            "sdxs-512-0.9",
             "segmind-small-sd",
             "segmind-tiny-sd",
             "segmind-vega",

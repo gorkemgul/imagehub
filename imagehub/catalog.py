@@ -742,6 +742,43 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="sdxs-512-0.9",
+        task=Task.T2I,
+        family="stable-diffusion",
+        source="https://huggingface.co/IDKiro/sdxs-512-0.9",
+        repo_id="IDKiro/sdxs-512-0.9",
+        revision="c332f05f60eb4b453de513be52c2a18c48d8cfe6",
+        provenance="author",
+        catalog_id="sdxs",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        config={"defaults": {"steps": 1, "guidance": 0.0}},
+        reference={
+            "diffusers": {
+                "version": "0.40.0",
+                "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+            },
+            "transformers": {"version": "5.18.0"},
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-base-1.0",
         task=Task.T2I,
         family="stable-diffusion-xl",
