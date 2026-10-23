@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**44 architecture families, 110 published checkpoints.** A model is a separately published set of weights;
+**44 architecture families, 111 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -28,6 +28,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `bk-sdm-v2-tiny` | `stable-diffusion` | [nota-ai/bk-sdm-v2-tiny](https://huggingface.co/nota-ai/bk-sdm-v2-tiny) | `68277af` | author | full | CreativeML OpenRAIL-M | `bk-sdm` |
 | `sd-v2-1` | `stable-diffusion` | [sd2-community/stable-diffusion-2-1](https://huggingface.co/sd2-community/stable-diffusion-2-1) | `bb21548` | community mirror | full | CreativeML-OpenRAIL++-M | `stable-diffusion-2` |
 | `sd-turbo` | `stable-diffusion` | [stabilityai/sd-turbo](https://huggingface.co/stabilityai/sd-turbo) | `b261bac` | author | full | sai-nc-community (non-commercial) | `sdxl-turbo` (SD Turbo) |
+| `sdxs-512-0.9` | `stable-diffusion` | [IDKiro/sdxs-512-0.9](https://huggingface.co/IDKiro/sdxs-512-0.9) | `c332f05` | author | full | CreativeML Open RAIL++-M | `sdxs` |
 | `lcm-dreamshaper-v7` | `stable-diffusion` | [SimianLuo/LCM_Dreamshaper_v7](https://huggingface.co/SimianLuo/LCM_Dreamshaper_v7) | `a85df6a` | author | full | MIT | `lcm` |
 | `dreamlite-base` | `dreamlite` | [carlofkl/DreamLite-base](https://huggingface.co/carlofkl/DreamLite-base) | `a9a0f15` | author | full | CC-BY-NC-4.0 (non-commercial) | `dreamlite` |
 | `dreamlite-mobile` | `dreamlite` | [carlofkl/DreamLite-mobile](https://huggingface.co/carlofkl/DreamLite-mobile) | `a48c656` | author | full | CC-BY-NC-4.0 (non-commercial) | `dreamlite` |

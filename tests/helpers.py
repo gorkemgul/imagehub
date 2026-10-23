@@ -286,6 +286,24 @@ TINY_VAE_FILE_CONFIG = TINY_VAE_CONFIG | {
     "up_block_types": ["UpDecoderBlock2D"] * 4,
     "sample_size": 512,
 }
+TINY_AUTOENCODER_CONFIG = {
+    "_class_name": "AutoencoderTiny",
+    "in_channels": 3,
+    "out_channels": 3,
+    "encoder_block_out_channels": [8, 8, 8, 8],
+    "decoder_block_out_channels": [8, 8, 8, 8],
+    "latent_channels": 4,
+    "upsampling_scaling_factor": 2,
+    "num_encoder_blocks": [1, 1, 1, 1],
+    "num_decoder_blocks": [1, 1, 1, 1],
+    "latent_magnitude": 3,
+    "latent_shift": 0.5,
+    "scaling_factor": 1.0,
+    "act_fn": "relu",
+    "upsample_fn": "nearest",
+    "force_upcast": False,
+    "sample_size": 32,
+}
 TINY_UNET_FILE_CONFIG = TINY_UNET_CONFIG | {"_class_name": "UNet2DConditionModel"}
 MODEL_INDEX = {
     "_class_name": "StableDiffusionPipeline",
@@ -305,10 +323,12 @@ def write_tiny_sd(
     seed: int = 0,
     unet_config: dict[str, Any] | None = None,
     scheduler_config: dict | None = None,
+    tiny_vae: bool = False,
 ) -> Path:
     """A random-weight SD 1.x snapshot in the published diffusers layout (diffusers loads it)."""
     from imagehub.checkpoints import save_safetensors
     from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.autoencoder_tiny import AutoencoderTiny
     from imagehub.models.clip_text import CLIPTextModel
     from imagehub.models.unet_2d import UNet2DConditionModel
 
@@ -320,7 +340,12 @@ def write_tiny_sd(
     selected_scheduler = SD1_SCHEDULER | (scheduler_config or {})
     selected_unet = TINY_UNET_FILE_CONFIG | (unet_config or {})
     (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(selected_scheduler))
-    model_index = MODEL_INDEX | {"scheduler": ["diffusers", selected_scheduler["_class_name"]]}
+    vae_type = AutoencoderTiny if tiny_vae else AutoencoderKL
+    vae_config = TINY_AUTOENCODER_CONFIG if tiny_vae else TINY_VAE_FILE_CONFIG
+    model_index = MODEL_INDEX | {
+        "scheduler": ["diffusers", selected_scheduler["_class_name"]],
+        "vae": ["diffusers", vae_config["_class_name"]],
+    }
     (root / "model_index.json").write_text(json.dumps(model_index))
     for name, cls, config, weights in (
         ("text_encoder", CLIPTextModel, TINY_TEXT_FILE_CONFIG, "model.safetensors"),
@@ -330,7 +355,7 @@ def write_tiny_sd(
             selected_unet,
             "diffusion_pytorch_model.safetensors",
         ),
-        ("vae", AutoencoderKL, TINY_VAE_FILE_CONFIG, "diffusion_pytorch_model.safetensors"),
+        ("vae", vae_type, vae_config, "diffusion_pytorch_model.safetensors"),
     ):
         model = cls(config)
         for parameter in model.parameters():
