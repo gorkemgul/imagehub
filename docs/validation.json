@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-22",
+  "date": "2026-10-23",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -971,6 +971,71 @@
         "passed": true,
         "pixels_max_abs": 0,
         "seed": 42
+      }
+    },
+    {
+      "model_id": "dreamshaper-8",
+      "repo_id": "Lykon/dreamshaper-8",
+      "revision": "a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917",
+      "provenance": "author",
+      "catalog_id": "stable-diffusion-1",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "fcee0918cf5816238f4fd35ce1bdc329616b6213ada6dbf5a22953c71390aa35",
+        "scheduler/scheduler_config.json": "725c528a8f6f91d3e11a543718f1066b6d1682a147483c1a4a4aecf67fd9c824",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "52e29b35e93261515dc07bf248ec8398a729e54f1886e946f8c095ede26be29b",
+        "unet/config.json": "8125830747f921e26e263e394b8954482cf3b4b4f1beb154704ee3cc57042be8",
+        "vae/config.json": "ac5ee038bf165a245be9259ff14753de0d77d0fe2ee3ac39364c589d44410f48",
+        "text_encoder/model.safetensors": "5cd76eb3ed326974cfd66795384e890742dfdb5a80f5f4e4cb1547d51ec75d86",
+        "unet/diffusion_pytorch_model.safetensors": "89b54dc332757e6fff8caef7399e8061833d7d668d42fdbcc02b3e366921c5a6",
+        "vae/diffusion_pytorch_model.safetensors": "a02c00c3ec17e99528f0ce53bcc508729ce9f9d3e653eb1cbc99a5da0030446f"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 686,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": 0
       }
     },
     {
@@ -10192,6 +10257,37 @@
       "tolerance": 0.0
     }
   },
+  "components_dreamshaper": {
+    "sd_scheduler_dreamshaper-8": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": 4,
+      "tolerance": 0.0
+    },
+    "sd_text_encoder_dreamshaper-8": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sd_tokenizer_dreamshaper-8": {
+      "mismatches": [],
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "sd_unet_dreamshaper-8": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "sd_vae_decode_dreamshaper-8": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_sdxs": {
     "sdxs_components_sdxs-512-0.9": {
       "sigmas": {
@@ -15229,6 +15325,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "5 passed (sdxs-512-0.9)"
+    "reference_summary": "4 passed (dreamshaper-8)"
   }
 }

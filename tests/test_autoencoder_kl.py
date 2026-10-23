@@ -35,6 +35,7 @@ def test_matches_sdxl_published_tensor_layout_after_name_conversion():
         ("sdxl_configs/vae.json", "sdxl"),
         ("sd1_configs/v1-5/vae.json", "sd1"),
         ("sd1_configs/v1-1/vae.json", "sd1"),
+        ("dreamshaper_8_configs/vae.json", "sd1"),
     ],
 )
 def test_real_release_configs_match_published_tensor_layout(config_path, family):
