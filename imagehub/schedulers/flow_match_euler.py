@@ -25,10 +25,13 @@ FLOW_MATCH_DEFAULTS: dict[str, Any] = {
     "use_beta_sigmas": False,
     "time_shift_type": "exponential",
     "stochastic_sampling": False,
+    "sigma_min": None,
+    "sigma_max": None,
+    "sigma_data": 1.0,
+    "final_sigmas_type": "zero",
 }
 _REQUIRED = {
     "invert_sigmas": False,
-    "use_karras_sigmas": False,
     "use_exponential_sigmas": False,
     "stochastic_sampling": False,
 }
@@ -183,6 +186,21 @@ def _convert_to_beta(values: list[float]) -> list[float]:
     ]
 
 
+def _convert_to_karras(values: list[float], config: Mapping[str, Any]) -> list[float]:
+    sigma_min = config.get("sigma_min")
+    sigma_max = config.get("sigma_max")
+    minimum = float(sigma_min) if sigma_min is not None else values[-1]
+    maximum = float(sigma_max) if sigma_max is not None else values[0]
+    rho = 7.0
+    minimum_root = minimum ** (1 / rho)
+    maximum_root = maximum ** (1 / rho)
+    if len(values) == 1:
+        ramps = [0.0]
+    else:
+        ramps = [index / (len(values) - 1) for index in range(len(values))]
+    return [(maximum_root + ramp * (minimum_root - maximum_root)) ** rho for ramp in ramps]
+
+
 def _time_shift(
     values: list[float], mu: float, *, float32: bool, kind: str = "exponential"
 ) -> list[float]:
@@ -325,6 +343,10 @@ class FlowMatchEulerDiscreteScheduler:
 
         if self.config["use_beta_sigmas"]:
             schedule = torch.tensor(_convert_to_beta(schedule.tolist()), dtype=torch.float64)
+        elif self.config["use_karras_sigmas"]:
+            schedule = torch.tensor(
+                _convert_to_karras(schedule.tolist(), self.config), dtype=torch.float64
+            )
 
         schedule = schedule.to(torch.float32)
 
