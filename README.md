@@ -1,24 +1,15 @@
-# imagehub
+<h2 align="center">Open-weight text-to-image architectures in native PyTorch.</h2>
 
-An inference library for open-weight image generation architectures, natively reimplemented in
-PyTorch behind a single API. **PyTorch is the only required runtime dependency.** A model is added
-only once it is shown to reproduce the original implementation's output
-([validation](docs/validation.md)). On CPU in float32, outputs are bit-identical to their recorded
-reference implementations; the details are on the [validation](docs/validation.md) page.
-Architectures are linked to the
-[awesome-text-to-image-architectures](https://github.com/gorkemgul/awesome-text-to-image-architectures)
-catalog.
+imagehub provides one API for open-weight text-to-image architectures using native PyTorch reimplementations; PyTorch is the only required runtime dependency. CPU float32 outputs are bit-identical to the reference implementations; see [validation](docs/validation.md). It supports Python 3.11 and later.
 
-![sd-v1-5, seed 42](https://raw.githubusercontent.com/gorkemgul/imagehub/main/artifacts/sd-v1-5-seed42.png)
-
-## Installation
+## Install
 
 ```bash
 pip install imagehub            # torch only
 pip install "imagehub[image]"   # adds Pillow for Image.to_pil()
 ```
 
-## Usage
+## Quickstart
 
 ```bash
 python -m imagehub.pretrained sd-v1-5 checkpoints/sd-v1-5
@@ -33,31 +24,21 @@ result.images[0].save("astronaut.png")
 print(result.metadata)
 ```
 
-Downloads happen only through `imagehub.pretrained`, and only when you run it.
-
-- The validated commit is pinned.
-- Every file is checked against its size. Weight files are also checked against the sha256 the
-  Hub publishes, and all other files against their git blob sha1 (`blobId`).
-- An `imagehub_snapshot.json` manifest records what was downloaded.
-
-`pipeline()` never accesses the network.
-
-Most models take a text prompt only. `flux1-kontext-dev` also takes an optional input image
-(`image`) and edits it by instruction; without one it generates from the text alone.
-`sdxl-refiner-1.0` requires an input image (`image`, with `strength`) and refines it.
-`omnigen-v1` also takes one optional input image, which the prompt refers to with the placeholder
-`<img><|image_1|></img>`.
+Most models accept text alone. Some also accept an optional `image=` input for image-conditioned generation or editing.
 
 ```python
 from PIL import Image
-from imagehub import pipeline
-
 with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-kontext-dev") as edit:
     result = edit("Add a red hat to the scene", image=Image.open("photo.png"), seed=0)
 result.images[0].save("edited.png")
 ```
 
 ## Models
+
+The [model catalog](docs/catalog.md) lists every supported checkpoint with its source, pinned revision, and license.
+
+<details>
+<summary>All model families</summary>
 
 | Family | Checkpoints | Task | Input | Validation |
 | --- | --- | --- | --- | --- |
@@ -108,8 +89,15 @@ result.images[0].save("edited.png")
 | HiDream-I1 | `hidream-i1-dev`, `hidream-i1-fast`, `hidream-i1-full` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 and float16 weights |
 | HiDream-O1 | `hidream-o1-image` | `t2i` | T | CPU fp32 parity |
 
-[Catalog](docs/catalog.md) · [Model pages](docs/models.md) · [Validation](docs/validation.md) ·
-[Third-party notices](THIRD_PARTY_NOTICES.md)
+</details>
+
+## Validation
+
+Every listed checkpoint is validated against its reference implementation, with CPU float32 image outputs required to match bit-for-bit. The [validation documentation](docs/validation.md) describes the coverage and recorded results.
+
+## Documentation
+
+[Model catalog](docs/catalog.md) · [Model architecture notes](docs/models.md) · [Validation](docs/validation.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 
 ## Development
 
@@ -118,15 +106,8 @@ uv venv -p 3.13 .venv && uv pip install --python .venv -e ".[dev,image]"
 .venv/bin/python -m pytest
 ```
 
-Reference comparisons are optional and never download anything:
-
-```bash
-uv pip install --python .venv -e ".[dev,image,reference]"
-IMAGEHUB_REFERENCE_TESTS=1 IMAGEHUB_SD_V1_5=checkpoints/sd-v1-5 .venv/bin/python -m pytest tests/reference
-IMAGEHUB_REFERENCE_TESTS=1 IMAGEHUB_SNAPSHOT_SDXL_TURBO=checkpoints/sdxl-turbo .venv/bin/python -m pytest tests/reference/test_ref_sdxl.py
-```
+Reference comparisons are optional; install `.[dev,image,reference]` and run `IMAGEHUB_REFERENCE_TESTS=1 .venv/bin/python -m pytest tests/reference` with local checkpoint paths configured.
 
 ## License
 
-The code is licensed under Apache-2.0. Model weights are subject to their own licenses and are not
-distributed with imagehub.
+The library is licensed under Apache-2.0. Each checkpoint has its own license; see the [model catalog](docs/catalog.md).
