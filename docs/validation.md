@@ -458,12 +458,34 @@ real-checkpoint run took 21 minutes on an M2 Max (CPU).
 U-Net and VAE layouts. The suite also covers each published scheduler: trailing DDPM for
 Juggernaut, Euler for Animagine and leading DEIS for DreamShaper.
 
-Real-checkpoint validation is pending the controller run. The planned CPU float32 comparisons are
-tokenizer outputs, both text encoders, one U-Net denoising step, VAE encode/decode, a four-step
-scheduler trajectory, and separate 64×64 public-pipeline generations at seed 0 and seed 42. The
-records are `header_<id>`, `sdxl_tokenizers_<id>`, `sdxl_text_encoder_<id>`,
+The real-checkpoint run covers tokenizers, both text encoders, one U-Net denoising step, VAE
+encode/decode, a four-step scheduler trajectory, and separate 64×64 public-pipeline generations at
+seed 0 and seed 42 for each checkpoint. All 24 real tests passed (8 per checkpoint), and the
+observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one diffusers produces.
+The real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check (`text_encoder`, `text_encoder_2`, `unet`, `vae`; 196 / 517 / 1680 / 248 tensors) | all three | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (2 tokenizers, 4 prompts) | all three | identical | exact |
+| CLIP text encoder (penultimate layer) | all three | 0 | 0 |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | all three | 0 / 0 | 0 / 0 |
+| U-Net single step (t = 500) | all three | 0 | 0 |
+| VAE decode / encode | all three | 0 / 0 | 0 / 0 |
+| Scheduler trajectory (4 steps) | all three | 0 | 0 |
+| End to end: final pixels (64×64, 4 steps, guidance 5.0, seed 0) | all three | 0 | 0 |
+| End to end, seed 42 (pixels) | all three | 0 | 0 |
+
+Records: `header_<id>`, `sdxl_tokenizers_<id>`, `sdxl_text_encoder_<id>`,
 `sdxl_text_encoder_2_<id>`, `sdxl_unet_<id>`, `sdxl_vae_decode_<id>`,
-`sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`.
+`sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`,
+[validation-measurements.json](validation-measurements.json).
+
+The end-to-end runs use 64×64 output, four steps and guidance 5.0. `e2e_<id>` uses seed 0 and
+`seed_e2e_<id>` uses seed 42; their recorded pixel difference is **exactly 0** in every run.
 
 Juggernaut and Animagine are validated after their published float16 tensors are upcast to CPU
 float32. DreamShaper publishes float32 component tensors. Safety checking, watermarking, fp16
@@ -2401,7 +2423,8 @@ first sequence of the batch only; the native module reproduces that.
 - Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
 - Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 14 passed for `segmind-small-sd` and `segmind-tiny-sd` together, 9 passed   for `segmind-vega`, 18 passed for `koala-700m` and `koala-1b` together, 16 passed for `koala-lightning-700m` and `koala-lightning-1b` together, 12 passed for the three SDXL-Lightning models, 11 passed
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 24 passed for `juggernaut-xl-v9`, `animagine-xl-4.0`
+  and `dreamshaper-xl-1.0`, 14 passed for `segmind-small-sd` and `segmind-tiny-sd` together, 9 passed   for `segmind-vega`, 18 passed for `koala-700m` and `koala-1b` together, 16 passed for `koala-lightning-700m` and `koala-lightning-1b` together, 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed
