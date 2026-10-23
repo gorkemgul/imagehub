@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-22",
+  "date": "2026-10-23",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -1886,6 +1886,222 @@
           1024
         ],
         "steps": 30
+      }
+    },
+    {
+      "model_id": "juggernaut-xl-v9",
+      "repo_id": "RunDiffusion/Juggernaut-XL-v9",
+      "revision": "cf419233522daa0b9ea36c3aff98fa2cab1fb0fb",
+      "provenance": "author",
+      "catalog_id": "sdxl",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "153b1da39e7cc780003d5b25eb8d07b9c84b08cc20fd05b95652e780a15c8011",
+        "scheduler/scheduler_config.json": "db6b4739b5e23285a9552ec7c59de7ce40f6a4a3562fc1eccbd843f6444e5102",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881",
+        "tokenizer/special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "e70eb3e2b85a508e32bb81c32c13fc3f2b015548ca469b94627c2f32e445cba1",
+        "tokenizer_2/special_tokens_map.json": "c934044566ac411c4739e9cec969e061e8dcdf2bd108196a66ce917376d4d68e",
+        "text_encoder/config.json": "47ced7a4ab2ecec78818ac4e8e1578c66253c2b93861c67c0b6d6c33ce3ff829",
+        "text_encoder_2/config.json": "d9f7e7eb1e2d162908ecf7925234425c4f1c978152fd60e18e4af2c67ccebb19",
+        "unet/config.json": "73cd3f7bd618835b6d09eefd5155b84ccdeea07c32a4d201574af19bd405a5bc",
+        "vae/config.json": "bcbed358bb80da88bc8b61785b7d14c39b5be5745d813e4c6a56e9084d4dc9d2",
+        "text_encoder/model.fp16.safetensors": "698656aa4f452e1f8f38287240054a9b8d339b3051ec17d77d63bdb5605db01a",
+        "text_encoder_2/model.fp16.safetensors": "9962c194f50a9c580ebe573f2a4756d76dcd29abe15bffb0a5905509eb6a8dda",
+        "unet/diffusion_pytorch_model.fp16.safetensors": "cf1ee18eb36712683f50c1e674634875e2adf7413d7492d5f9aa7e69e1a8c17a",
+        "vae/diffusion_pytorch_model.fp16.safetensors": "6353737672c94b96174cb590f711eac6edf2fcce5b6e91aa9d73c5adc589ee48"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "animagine-xl-4.0",
+      "repo_id": "cagliostrolab/animagine-xl-4.0",
+      "revision": "2b7c1b397761bf5bd3cc42e5b39ec99314a75a96",
+      "provenance": "author",
+      "catalog_id": "sdxl",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "38099bdb63000c6ef48d1d0d86f3f439faad88ca3e21ad549a246ecc4bee4867",
+        "scheduler/scheduler_config.json": "b48856048bbe9165658ed5830ecb9199049b3546b116d5da4df3d0d0ca864279",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "7eb36a76a02551ce8583dbee08d062e672997a5fe1db82ebc642d88c7e79cc96",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "6081c0e7e9c02c78e8d932f34ef4f118c009a4321b6d708b06fb0f766dce0eca",
+        "text_encoder_2/config.json": "786ac791f8ae2168eca583978d89e97b704579e4873a2ca36e2d8b5af561f625",
+        "unet/config.json": "bc592d0b27ebb7eae3891d714a63b4866e25d18a9086197a0be0db7b2b095ebf",
+        "vae/config.json": "c766e609678a4d4de02cd678277a955ba1e5fa1a85b429312e6023aea06ffc11",
+        "text_encoder/model.safetensors": "73528dedc471ea62c5d24bab6621e2ef6890aa136ca080c53f2d205c39ab18df",
+        "text_encoder_2/model.safetensors": "1669a15b906d7a8cc7e919fa44769750e612fe580e3d8ceed60acbc212aea1ca",
+        "unet/diffusion_pytorch_model.safetensors": "3e16857a3a195315e01b47d8b76b7e932856cc71e9b5812c03f891de98551743",
+        "vae/diffusion_pytorch_model.safetensors": "6353737672c94b96174cb590f711eac6edf2fcce5b6e91aa9d73c5adc589ee48"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "dreamshaper-xl-1.0",
+      "repo_id": "Lykon/dreamshaper-xl-1-0",
+      "revision": "41e6644752a8c9aa63930e6043c4fd83c7708420",
+      "provenance": "author",
+      "catalog_id": "sdxl",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "f53514c31a572840ad7a8568d36407b234db5ecfbb57c577721e4c36dc11d1da",
+        "scheduler/scheduler_config.json": "9d2dc34f0f374e9f056431fdfa6c6098fd19e05c1227319ec363fcc8c93d93fb",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "bd62e363ff56a8423316304d64f6ddcd0062e46b8afe1b9d681ad603d5ee8221",
+        "text_encoder_2/config.json": "f0ea116a2a58770504b06725e6b5414e763e52f052f1374b2597cc1d68710318",
+        "unet/config.json": "bd8dd3c4e42d3d1ed7ea349a772751cdcf93c3e360b0aad132cf2c1df6e4524d",
+        "vae/config.json": "3166d2f607856716eb522eeb59ab81a94522d53d6ea8d8f6723a9db407d98df5",
+        "text_encoder/model.safetensors": "5c3d6454dd2d23414b56aa1b5858a72487a656937847b6fea8d0606d7a42cdbc",
+        "text_encoder_2/model.safetensors": "3a6032f63d37ae02bbc74ccd6a27440578cd71701f96532229d0154f55a8d3ff",
+        "unet/diffusion_pytorch_model.safetensors": "05e315106230f46c343d7d31c06b1b264844cd3d91342a97d8eae61dab697443",
+        "vae/diffusion_pytorch_model.safetensors": "e8aef7b00195ec3fa8caaa3434e7516eff7d658e1d30eafc9ad6b0e66e9e827e"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
       }
     },
     {
@@ -9500,6 +9716,21 @@
       ],
       "tolerance": 0.0
     },
+    "sdxl_scheduler_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "steps": 4,
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "steps": 4,
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_juggernaut-xl-v9": {
+      "max_abs": 0.0,
+      "steps": 4,
+      "tolerance": 0.0
+    },
     "sdxl_scheduler_koala-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -9709,6 +9940,45 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_2_animagine-xl-4.0": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_2_dreamshaper-xl-1.0": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_2_juggernaut-xl-v9": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_2_koala-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -9799,6 +10069,21 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_juggernaut-xl-v9": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_koala-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -9847,6 +10132,24 @@
     "sdxl_tokenizers": {
       "mismatches": [],
       "prompts": 18,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_animagine-xl-4.0": {
+      "mismatches": [],
+      "prompts": 4,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_dreamshaper-xl-1.0": {
+      "mismatches": [],
+      "prompts": 4,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_juggernaut-xl-v9": {
+      "mismatches": [],
+      "prompts": 4,
       "tokenizers": 2,
       "tolerance": "exact"
     },
@@ -9918,6 +10221,24 @@
         500,
         1
       ],
+      "tolerance": 0.0
+    },
+    "sdxl_unet_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
+      "tolerance": 0.0
+    },
+    "sdxl_unet_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
+      "tolerance": 0.0
+    },
+    "sdxl_unet_juggernaut-xl-v9": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
       "tolerance": 0.0
     },
     "sdxl_unet_koala-1b": {
@@ -10015,6 +10336,21 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sdxl_vae_decode_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_decode_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_decode_juggernaut-xl-v9": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_vae_decode_koala-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -10066,6 +10402,21 @@
       "tolerance": 0.0
     },
     "sdxl_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_juggernaut-xl-v9": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -15224,11 +15575,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo and SDXS, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo and SDXS, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler, trailing DDPM and leading DEIS for SDXL, flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "5 passed (sdxs-512-0.9)"
+    "reference_summary": "24 passed (juggernaut-xl-v9, animagine-xl-4.0, dreamshaper-xl-1.0)"
   }
 }
