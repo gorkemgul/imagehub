@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**44 architecture families, 112 published checkpoints.** A model is a separately published set of weights;
+**45 architecture families, 113 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -88,6 +88,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `kolors` | `kolors` | [Kwai-Kolors/Kolors-diffusers](https://huggingface.co/Kwai-Kolors/Kolors-diffusers) | `7e091c7` | author | full | Apache-2.0 | `kolors` |
 | `lumina-image-2.0` | `lumina2` | [Alpha-VLLM/Lumina-Image-2.0](https://huggingface.co/Alpha-VLLM/Lumina-Image-2.0) | `53504ab` | author | full | Apache-2.0 | `lumina-image-2` |
 | `lumina-next` | `lumina-next` | [Alpha-VLLM/Lumina-Next-SFT-diffusers](https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers) | `0ee5ec9` | author | full | Apache-2.0 | `lumina-next` |
+| `lumina-dimoo` | `lumina-dimoo` | [Alpha-VLLM/Lumina-DiMOO](https://huggingface.co/Alpha-VLLM/Lumina-DiMOO) | `f014549` | author | full | Apache-2.0 | `lumina-dimoo` |
 | `omnigen-v1` | `omnigen` | [Shitao/OmniGen-v1-diffusers](https://huggingface.co/Shitao/OmniGen-v1-diffusers) | `016e2f6` | author | full | MIT | `omnigen` |
 | `chroma1-hd` | `chroma` | [lodestones/Chroma1-HD](https://huggingface.co/lodestones/Chroma1-HD) | `0e0c60e` | author | full | Apache-2.0 | `chroma1-hd` |
 | `chroma1-flash` | `chroma` | [lodestones/Chroma1-Flash](https://huggingface.co/lodestones/Chroma1-Flash) | `093c4f6` | author | full | Apache-2.0 | `chroma1-flash` |

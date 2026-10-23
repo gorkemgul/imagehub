@@ -65,6 +65,7 @@ The [model catalog](docs/catalog.md) lists every supported checkpoint with its s
 | Kolors | `kolors` | `t2i` | T | CPU fp32 parity on the upcast float16 weights |
 | Lumina-Image 2.0 | `lumina-image-2.0` | `t2i` | T | CPU fp32 parity |
 | Lumina-Next | `lumina-next` | `t2i` | T | CPU fp32 parity |
+| Lumina-DiMOO | `lumina-dimoo` | `t2i` | T | Exact CPU fp32 parity tests |
 | OmniGen | `omnigen-v1` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 transformer |
 | Ovis-Image | `ovis-image-7b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 VAE weights |
 | aMUSEd | `amused-256`, `amused-512` | `t2i` | T | CPU fp32 parity |

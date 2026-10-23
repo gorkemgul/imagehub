@@ -2032,6 +2032,29 @@ and without query/key normalization) and of the rotary tables; tiny-snapshot end
 non-square sizes, five `scaling_watershed` values, proportional attention off, several seeds, one
 step); the scheduler timesteps and sigmas; and the tokenizer on a tiny vocabulary.
 
+## Lumina-DiMOO
+
+`lumina-dimoo` is loaded strictly from `Alpha-VLLM/Lumina-DiMOO` revision `f014549` and compared
+on CPU in float32 with the official `LLaDAForMultiModalGeneration` and `generate_image` at code
+revision `81344e6`. The published LLaDA weights are BF16 and are upcast on both sides; the VQ
+weights are float32. Real-checkpoint measurements are pending the real-checkpoint run.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Expected result |
+| --- | --- |
+| Tensor headers: LLaDA / VQ model (291 / 277 tensors) | 0 missing, extra or mismatched |
+| Tokenizer ids (formatted prompts, Unicode and multimodal specials) | exact |
+| Random-weight LLaDA logits and tiny end-to-end token trajectories | 0 / identical |
+| Real LLaDA logits and VQ decode | 0 / identical uint8 pixels |
+| End to end (32x32, two steps, guidance 4.0, seed 0) | identical uint8 image |
+| Separate public-pipeline seed run (seed 42) | identical uint8 image |
+
+The real end-to-end cases use 32x32 output and two steps rather than the 1024x1024, 64-step
+defaults because the 8B transformer evaluates the full image-token sequence on every step. Records:
+`header_lumina-dimoo`, `lumina_dimoo_tokenizer`, `lumina_dimoo_real_llada`,
+`lumina_dimoo_real_vq`, `e2e_lumina-dimoo` and `seed_e2e_lumina-dimoo`.
+
 ## aMUSEd
 
 `amused-256` and `amused-512` are loaded strictly from `amused/amused-256` at revision `09b6259` and
@@ -2443,7 +2466,7 @@ first sequence of the batch only; the native module reproduces that.
   for FLUX.1 schnell, Lumina-Image 2.0, Lumina-Next and AuraFlow, flow-match Euler with inverted sigmas for OmniGen, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
-  the cosine-schedule masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for
+  cosine-schedule masked-token schedulers for aMUSEd and Lumina-DiMOO, and flow-match LCM with re-noising for
   HiDream-I1 Fast and Dev, and UniPC flow prediction for HiDream-I1 Full. LlamaGen samples image tokens autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
