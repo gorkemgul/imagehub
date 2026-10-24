@@ -2507,7 +2507,7 @@ first sequence of the batch only; the native module reproduces that.
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
   `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, 6 passed for
-  `show-o-512`, and 5 passed for `sdxs-512-0.9`. These include structural parity with random weights, end-to-end parity with
+  `show-o-512`, 5 passed for `sdxs-512-0.9`, and 7 passed for `emu3-gen`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
@@ -2707,7 +2707,26 @@ published guidance path. This shortened case exercises prompt formatting, positi
 forced row and image markers, autoregressive cache updates, visual lookup and decoding without an
 impractical full 90×90 CPU generation.
 
-Real-checkpoint measurements are pending the controlled run. Records are `emu3_gen_headers`,
-`emu3_gen_language_model_random`, `emu3_gen_vision_decode_random`,
-`emu3_gen_real_components`, `e2e_emu3-gen` and `seed_e2e_emu3-gen`; the validation grouping is
-`components_emu3`.
+Validated on CPU in the same environment as above. `emu3-gen` was loaded strictly from
+`BAAI/Emu3-Gen` and compared with the official Emu3 implementation on CPU in float32. The
+published generator and vision-tokenizer weights are float32. All 7 real tests passed, and the
+observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one the official
+implementation produces. The real-checkpoint run took 2 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (291 generator / 495 vision-tokenizer tensors) | 0 missing / extra / mismatched | exact |
+| Random-weight language model with KV cache | 0 | 0 |
+| Random-weight vision decode | 0 | 0 |
+| Real checkpoint: language-model step and VQ decode | 0 | 0 |
+| Tiny end to end (uint8 pixels) | 0 | 0 |
+| End to end: final pixels (24×16, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `emu3_gen_headers`, `emu3_gen_language_model_random`, `emu3_gen_vision_decode_random`,
+`emu3_gen_real_components`, `emu3_gen_tiny_e2e`, `e2e_emu3-gen` and `seed_e2e_emu3-gen`,
+[validation-measurements.json](validation-measurements.json); the validation grouping is
+`components_emu3`, [validation.json](validation.json).
