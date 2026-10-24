@@ -9791,6 +9791,61 @@
         "passed": true,
         "tolerance": "exact"
       }
+    },
+    {
+      "model_id": "nextstep-1-large",
+      "repo_id": "stepfun-ai/NextStep-1-Large",
+      "revision": "97dd0b9e097f60e39e3ce3bbac1a3343a09547cd",
+      "provenance": "author",
+      "catalog_id": "nextstep-1",
+      "license": "Apache-2.0",
+      "reference": {
+        "repository": {
+          "url": "https://github.com/stepfun-ai/NextStep-1",
+          "revision": "a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "added_tokens.json": "28838c78e485e146b5fdd0664436b7499e11681fbe1687bf83c63f080d846ad8",
+        "config.json": "1ebd9083f8928d15ecc1f622b9d74ba5f5275693f03344e6cf60891d16a2b42f",
+        "model.safetensors.index.json": "3eea2032c1eb21c26df97fe86d3df39fd51875f4ac1539bc2d1151b0d60b9d83",
+        "model-00001-of-00012.safetensors": "06e2f2e6e8b9b432084038950bc25fba6dd8275f15f56a0b4b53831ab10605eb",
+        "model-00002-of-00012.safetensors": "5d549e73eec2782e456fdb48c10d19a4edde57e7a2e9021cb54baaef9c849563",
+        "model-00003-of-00012.safetensors": "e8fa1b3e72bad192f09818f0cb506385a982ee527b52366455b698891caa54c1",
+        "model-00004-of-00012.safetensors": "2af523f15356de789cd2533e8237eb0211f1a6f4a57bb971d0da11450fb4eedc",
+        "model-00005-of-00012.safetensors": "9509ca89556ed4d37b371f10c412f4b288abc1ccef268f966e4a655bf8d7ad18",
+        "model-00006-of-00012.safetensors": "50bc4df610e3f6eed0e63b4119e23b464260278ffaf72a98d61a0ed2ba1c31f0",
+        "model-00007-of-00012.safetensors": "41ec1f4b179721598735294e47153543288a4237ee6a2d82bd05c36a51532f2a",
+        "model-00008-of-00012.safetensors": "79fc8d8859c7943c1e37cea221888c46a94ad9f16b3917273f220c68a862d0aa",
+        "model-00009-of-00012.safetensors": "2c851a5a51dc0529b157dc404647a7664a74eee522179378b8ce4851252170df",
+        "model-00010-of-00012.safetensors": "9a695b3a1b559e6a8fdb9d63282bb49e9b9f8ff49531b3812b8901c7ef13347a",
+        "model-00011-of-00012.safetensors": "7249fc02c2a6282208b4a21b7826c39e027dccd84e32e1faa10217a6ba8f76bf",
+        "model-00012-of-00012.safetensors": "a082cf9169d30751eca0fe811faaa4e1a5c6a78831a0d4a4a49ecf7fd5029d0c",
+        "special_tokens_map.json": "ac3ca71393ebe0fa6115039cac073279e01773d88c77d463cfa6cbff2bf7d0b6",
+        "tokenizer.json": "6cedbf1f79dcb113088ee8a016fecbe16268cef08f884e3a8c65ca8964db5f72",
+        "tokenizer_config.json": "f3ad497c4bc2c607a15a96e3c10477f575d0df2705f3dda3ca2564de6ae37551",
+        "vae/checkpoint.pt": "99293255229a29297e2851858db3794497d1b0b09b20c308c1062636ea4bcdd9",
+        "vae/config.json": "80525090ac0f81db483fbf509a20c12116bbda5075b92a0fa9c86c4d962914cf",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      },
+      "tensor_header_check": null,
+      "end_to_end": {
+        "height": 64,
+        "passed": true,
+        "seed": 0,
+        "steps": 1,
+        "tolerance": "exact",
+        "width": 64
+      },
+      "seed_end_to_end": {
+        "height": 64,
+        "passed": true,
+        "seed": 42,
+        "steps": 1,
+        "tolerance": "exact",
+        "width": 64
+      }
     }
   ],
   "components": {
@@ -16029,6 +16084,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (cosmos-predict2-2b-t2i)"
+    "reference_summary": "5 passed (nextstep-1-large)"
   }
 }
