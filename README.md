@@ -78,7 +78,7 @@ The [model catalog](docs/catalog.md) lists every supported checkpoint with its s
 | HART | `hart` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
 | Show-o | `show-o-512` | `t2i` | T | CPU fp32 parity |
 | Emu3 | `emu3-gen` | `t2i` | T | CPU fp32 parity with shortened 24×16 end-to-end runs |
-| NextStep-1 | `nextstep-1-large` | `t2i` | T | Exact offline component parity; real-checkpoint tests provided |
+| NextStep-1 | `nextstep-1-large` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | PixelDiT | `pixeldit` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |

@@ -2542,7 +2542,7 @@ first sequence of the batch only; the native module reproduces that.
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
   `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, 6 passed for
-  `show-o-512`, 5 passed for `sdxs-512-0.9`, 7 passed for `emu3-gen`, and 8 passed for `cosmos-predict2-2b-t2i`. These include structural parity with random weights, end-to-end parity with
+  `show-o-512`, 5 passed for `sdxs-512-0.9`, 7 passed for `emu3-gen`, 8 passed for `cosmos-predict2-2b-t2i`, and 5 passed for `nextstep-1-large`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
@@ -2774,10 +2774,17 @@ Records: `emu3_gen_headers`, `emu3_gen_language_model_random`, `emu3_gen_vision_
 
 Offline validation checks every published transformer tensor name and shape and compares the tiny
 random-weight Qwen2 decoder and flow-matching head exactly. Unit coverage also checks patch packing,
-flow output shape, validation before loading and seeded repeatability. The opt-in real-checkpoint
-suite defines separate seed-0 and seed-42 runs through `pipeline("t2i", ...)` at 64×64 with one flow
-step. The shortened case exercises the complete prompt-to-uint8 path while bounding the large CPU
-run, but those two real-checkpoint cases are intentionally left for the external validation run.
+flow output shape, validation before loading and seeded repeatability. The real-checkpoint suite
+defines separate seed-0 and seed-42 runs through `pipeline("t2i", ...)` at 64×64 with one flow step.
+The shortened case exercises the complete prompt-to-uint8 path while bounding the large CPU run.
+
+Validated on CPU in the same environment as above. All 5 real tests passed, and the observed
+difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the
+local implementation produces a bit-identical image to the one the official implementation
+produces. The published token embedding is bfloat16 and the checkpoint config declares bfloat16, so
+both implementations load the transformer weights as bfloat16 and upcast them to float32 for this
+run; the published VAE checkpoint is float32. The real-checkpoint run took 6 minutes on an M2 Max
+(CPU).
 
 ### Comparisons (CPU, float32)
 
@@ -2786,9 +2793,9 @@ run, but those two real-checkpoint cases are intentionally left for the external
 | Published transformer layout | 0 missing / extra / mismatched | exact |
 | Random-weight Qwen2 decoder | 0 | 0 |
 | Random-weight flow-matching head | 0 | 0 |
-| End to end: uint8 image (64×64, 1 step, seed 0) | external run required | exact target |
-| End to end, seed 42 (uint8 image) | external run required | exact target |
+| End to end: uint8 image (64×64, 1 step, seed 0) | 0 | 0 |
+| End to end, seed 42 (uint8 image) | 0 | 0 |
 
-The real-checkpoint records are `e2e_nextstep-1-large` and `seed_e2e_nextstep-1-large` once the
-external validation suite runs. Generated validation records are not modified until those results
-exist.
+Records: `nextstep_qwen_random`, `nextstep_flow_random`, `e2e_nextstep-1-large` and
+`seed_e2e_nextstep-1-large`,
+[validation-measurements.json](validation-measurements.json).
