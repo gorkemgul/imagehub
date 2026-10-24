@@ -150,8 +150,10 @@ def denoise(
 @torch.inference_mode()
 def decode_latents(components: Cosmos2Components, latents: Tensor) -> Tensor:
     mean = torch.tensor(components.vae.latents_mean).view(1, -1, 1, 1).to(latents)
-    std = torch.tensor(components.vae.latents_std).view(1, -1, 1, 1).to(latents)
-    latents = latents[:, :, 0] * std / float(components.scheduler_config["sigma_data"]) + mean
+    inverse_std = 1.0 / torch.tensor(components.vae.latents_std).view(1, -1, 1, 1).to(latents)
+    latents = (
+        latents[:, :, 0] / inverse_std / float(components.scheduler_config["sigma_data"]) + mean
+    )
     image = components.vae.decode(latents.to(components.vae.decoder.conv_in.weight.dtype))
     image = (image / 2 + 0.5).clamp(0, 1).permute(0, 2, 3, 1).float().cpu()
     return (image * 255).to(torch.uint8)

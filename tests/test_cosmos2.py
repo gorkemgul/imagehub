@@ -1,9 +1,10 @@
 import pytest
 import torch
 from helpers import write_tiny_cosmos2
+from torch import nn
 
 from imagehub import pipeline
-from imagehub.backends.cosmos2 import Cosmos2Backend
+from imagehub.backends.cosmos2 import Cosmos2Backend, decode_latents
 from imagehub.exceptions import CheckpointError
 from imagehub.types import T2IRequest
 
@@ -56,6 +57,25 @@ def test_guidance_and_seed_are_repeatable_and_isolated(tiny_cosmos2):
     different = pipe("a cat", seed=12, guidance=1.0, **options)
     assert torch.equal(first.images[0].tensor, repeated.images[0].tensor)
     assert not torch.equal(first.images[0].tensor, different.images[0].tensor)
+
+
+def test_decode_uses_reference_latent_unscaling_order():
+    class CapturingVAE:
+        latents_mean = [0.0, 0.0, 0.0]
+        latents_std = [2.8184, 1.4541, 2.3275]
+        decoder = nn.Module()
+        decoder.conv_in = nn.Conv3d(3, 3, 1)
+
+        def decode(self, latents):
+            self.input = latents
+            return latents
+
+    vae = CapturingVAE()
+    components = type("Components", (), {"vae": vae, "scheduler_config": {"sigma_data": 1.0}})()
+    latents = torch.tensor([[[[[0.4414]]], [[[0.4792]]], [[[-2.3065168857574463]]]]])
+    decode_latents(components, latents)
+    inverse_std = 1.0 / torch.tensor(vae.latents_std).view(1, -1, 1, 1)
+    assert torch.equal(vae.input, latents[:, :, 0] / inverse_std)
 
 
 @pytest.mark.parametrize("grad_before", [True, False])
