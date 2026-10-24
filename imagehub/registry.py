@@ -130,6 +130,7 @@ for _task, _name, _path in (
     (Task.T2I, "cogview4", "imagehub.backends.cogview4:CogView4Backend"),
     (Task.T2I, "ideogram4", "imagehub.backends.ideogram4:Ideogram4Backend"),
     (Task.T2I, "janus", "imagehub.backends.janus:JanusBackend"),
+    (Task.T2I, "bagel", "imagehub.backends.bagel:BagelBackend"),
     (Task.T2I, "kandinsky22", "imagehub.backends.kandinsky22:Kandinsky22Backend"),
     (Task.T2I, "kandinsky21", "imagehub.backends.kandinsky21:Kandinsky21Backend"),
     (Task.T2I, "kandinsky3", "imagehub.backends.kandinsky3:Kandinsky3Backend"),

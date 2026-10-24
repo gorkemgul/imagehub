@@ -1262,6 +1262,40 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="bagel-7b-mot",
+        task=Task.T2I,
+        family="bagel",
+        source="https://huggingface.co/ByteDance-Seed/BAGEL-7B-MoT",
+        repo_id="ByteDance-Seed/BAGEL-7B-MoT",
+        revision="5019f57d168e5816e8f3f701b17cc816bb7cf24b",
+        provenance="author",
+        catalog_id="bagel",
+        format="transformers",
+        license="Apache-2.0",
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 4.0,
+                "timestep_shift": 3.0,
+            }
+        },
+        files=(
+            "config.json",
+            "llm_config.json",
+            "vit_config.json",
+            "generation_config.json",
+            "preprocessor_config.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "model.safetensors.index.json",
+            "ema.safetensors",
+            "ae.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="janus-pro-7b",
         task=Task.T2I,
         family="janus",

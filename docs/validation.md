@@ -1863,6 +1863,20 @@ package. For 1B, all 819 tensors used for image generation are byte-identical to
 The 7B checkpoint is approximately 28 GB per float32 copy. To fit the 96 GB machine, one reference
 and one native copy were loaded at a time. The full 7B validation run took 68 minutes.
 
+## BAGEL
+
+The `bagel-7b-mot` suite targets the author checkpoint at revision `5019f57` and the official
+repository at `a2fa77d`. The published-header checks cover 1,223 bfloat16 EMA tensors and 244
+float32 autoencoder tensors. Random-weight parity exercises both routes of the Qwen2
+Mixture-of-Transformers exactly, and tokenizer comparisons cover ordinary Unicode and BAGEL's
+image boundary tokens.
+
+Real-checkpoint comparisons are pending the dedicated run. They load the official
+`InterleaveInferencer` / `Bagel.generate_image` result in a subprocess before loading the native
+model. The two end-to-end records are `e2e_bagel-7b-mot` at seed 0 and
+`seed_e2e_bagel-7b-mot` at seed 42, each shortened to 64×64 and two timesteps. The published
+default remains 1024×1024 and 50 timesteps.
+
 ## Stable Diffusion 3 and 3.5
 
 Validated on CPU in the same environment as above against diffusers 0.40.0

@@ -13,6 +13,7 @@ def test_catalog_contents():
             "amused-512",
             "animagine-xl-4.0",
             "auraflow-v0.3",
+            "bagel-7b-mot",
             "bk-sdm-base",
             "bk-sdm-small",
             "bk-sdm-tiny",
