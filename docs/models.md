@@ -2888,3 +2888,40 @@ branch, so a CPU step takes minutes.
 negative prompt, caller-supplied latents, callbacks, LoRA and fp16/bf16 parity are not supported.
 
 **License.** The repository declares the MIT license. imagehub does not distribute weights.
+
+## Emu3-Gen
+
+**Checkpoint.** `emu3-gen` pins the author repository `BAAI/Emu3-Gen` to revision
+`40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72` and the required
+`BAAI/Emu3-VisionTokenizer` to `c81f916ad371289e205310a7539255e8a9396488`. Both are
+Apache-2.0. The architecture reference is the official Emu3 repository at
+`dbbf9858194d70b8c58293e219ecffe22df0f9c7`.
+
+**Architecture.** Emu3-Gen is an autoregressive multimodal decoder rather than a diffusion model.
+Its 32 Llama-style blocks use a 4096-wide hidden state, grouped-query attention with 32 query and
+eight key/value heads, SwiGLU feed-forward layers and rotary positions. Text and image control
+markers share a 184,622-token vocabulary with 32,768 visual tokens. A separate spatiotemporal VQ
+model maps the generated grid through a four-channel codebook and conditioned convolutional decoder.
+
+**Generation.** The backend formats the published BOS, image-start, grid-size and image markers,
+then samples visual tokens left to right. Row endings and image/end markers are forced at their
+published positions. Classifier-free guidance uses the official positive suffix and negative prompt.
+The VQ decoder expands each token by eight pixels and converts its `[-1, 1]` output to uint8.
+
+**Settings.** Defaults are 720×720, guidance 3.0, temperature 1.0 and top-k 2048. `width` and
+`height` must be positive multiples of eight whose product does not exceed 518,400. The backend also
+accepts `seed`, `negative_prompt` and `positive_suffix`. Unknown settings are rejected before loading.
+
+**Validation and limits.** Published layouts cover all 291 generator and 495 vision-tokenizer
+tensors. Exact random-weight comparisons cover the language model and vision decoder. Real tests
+compare components and separate seed-0 and seed-42 images through the public pipeline at 24×16;
+the deliberately small grid retains prompt formatting, guidance, constrained sampling and VQ decode
+while bounding the roughly 8.5B-parameter CPU run. Generation is limited to one prompt and one image;
+understanding, video, training, batches and fp16/bfloat16 parity are out of scope.
+
+**Memory.** The published generator is float32 and occupies about 34 GB; its seven shards plus the
+vision tokenizer total about 35.7 GB on disk. CPU validation computes the reference in a subprocess
+and releases it before native inference.
+
+**License.** The checkpoint, vision tokenizer and official code are Apache-2.0. imagehub does not
+distribute weights.

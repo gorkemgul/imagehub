@@ -32,6 +32,7 @@ def test_catalog_contents():
             "dreamlite-mobile",
             "dreamshaper-8",
             "dreamshaper-xl-1.0",
+            "emu3-gen",
             "ernie-image",
             "flux-1-lite-8b",
             "flux1-dev",

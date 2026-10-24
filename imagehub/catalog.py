@@ -3513,6 +3513,58 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="emu3-gen",
+        task=Task.T2I,
+        family="emu3",
+        source="https://huggingface.co/BAAI/Emu3-Gen",
+        repo_id="BAAI/Emu3-Gen",
+        revision="40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+        provenance="author",
+        catalog_id="emu3",
+        format="safetensors",
+        license="Apache-2.0",
+        config={
+            "defaults": {
+                "guidance": 3.0,
+                "top_k": 2048,
+                "width": 720,
+                "height": 720,
+            }
+        },
+        reference={
+            "repository": {
+                "url": "https://github.com/baaivision/Emu3",
+                "revision": "dbbf9858194d70b8c58293e219ecffe22df0f9c7",
+            }
+        },
+        files=(
+            "config.json",
+            "generation_config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00007.safetensors",
+            "model-00002-of-00007.safetensors",
+            "model-00003-of-00007.safetensors",
+            "model-00004-of-00007.safetensors",
+            "model-00005-of-00007.safetensors",
+            "model-00006-of-00007.safetensors",
+            "model-00007-of-00007.safetensors",
+            "emu3.tiktoken",
+            "emu3_vision_tokens.txt",
+            "special_tokens_map.json",
+            "tokenizer_config.json",
+        ),
+        subfolders={
+            "vision_tokenizer": SubRepo(
+                repo_id="BAAI/Emu3-VisionTokenizer",
+                revision="c81f916ad371289e205310a7539255e8a9396488",
+                files=("config.json", "preprocessor_config.json", "model.safetensors"),
+            )
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="pixeldit",
         task=Task.T2I,
         family="pixeldit",

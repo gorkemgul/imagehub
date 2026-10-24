@@ -21,7 +21,8 @@ measurements are grouped in flat
 ``components_lumina2``, ``components_lumina_next``, ``components_lumina_dimoo``,
 ``components_amused``,
 ``components_meissonic``, ``components_auraflow``,
-``components_llamagen``, ``components_show_o``, ``components_wuerstchen``, ``components_glm_image``,
+``components_llamagen``, ``components_show_o``, ``components_emu3``,
+``components_wuerstchen``, ``components_glm_image``,
 ``components_longcat_image``,
 ``components_cogview3_plus``,
 ``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
@@ -436,6 +437,9 @@ def main() -> None:
         },
         "components_show_o": {
             key: value for key, value in measured.items() if key.startswith("show_o_")
+        },
+        "components_emu3": {
+            key: value for key, value in measured.items() if key.startswith("emu3_gen_")
         },
         "components_pixeldit": {
             key: value for key, value in measured.items() if key.startswith("pixeldit_")

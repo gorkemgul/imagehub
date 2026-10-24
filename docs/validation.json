@@ -9540,6 +9540,123 @@
       }
     },
     {
+      "model_id": "emu3-gen",
+      "repo_id": "BAAI/Emu3-Gen",
+      "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+      "provenance": "author",
+      "catalog_id": "emu3",
+      "license": "Apache-2.0",
+      "reference": {
+        "repository": {
+          "url": "https://github.com/baaivision/Emu3",
+          "revision": "dbbf9858194d70b8c58293e219ecffe22df0f9c7"
+        }
+      },
+      "status": "full",
+      "files": {
+        "config.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "ed4a3ecf95a2de73989782dd55ff11d8d1c5a812459312300f6267d955b7006f"
+        },
+        "generation_config.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "a729ef4af7cf650b0b7d34d840d7ac3909d19c5d0af1b270ac43afa4da183e8e"
+        },
+        "model.safetensors.index.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "15cf63b5ebf57dd9c7de63045ed649c38b962abd112c28d86040fcc58ad1d516"
+        },
+        "model-00001-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "d6295df26a8fd366a0561f4aa797a85101d896e5f2c02c03326ed51557a9c4cd"
+        },
+        "model-00002-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "3ed302cc6f34fbbb4f8dd68edacd805021ecd67dd22d765cda0d507e83e85a94"
+        },
+        "model-00003-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "b71025f2b2c1bce4515d0e6da99b2b6336cf36d199c7bb6eb089e0277cc02c45"
+        },
+        "model-00004-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "e62ef1c47d998429ed7d614cc9cb95df04d97401186fb370130941c41970018f"
+        },
+        "model-00005-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "58cc0da755310212712fabce8581033c6ac6aaaaf0663212784a69f6f4cf014e"
+        },
+        "model-00006-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "b3ca138eba17549b2132f722703ed2a4e79d622af1bbcf9eaf0f1a7fbeea14f1"
+        },
+        "model-00007-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "adb8abb05929d844ab779f324cf5e4417482e32a018d9fc9df1f3c2da8ddad08"
+        },
+        "emu3.tiktoken": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186"
+        },
+        "emu3_vision_tokens.txt": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "9113d8c4fe12bc294103df9d46dd28f5c9a1b2f897a20c09f4fd07432b8bdba4"
+        },
+        "special_tokens_map.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "fea8d5dbfca581e0e7abee6cf844d5000f9b8efe21168fd2c3284a90ab7efc72"
+        },
+        "tokenizer_config.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "a05ad31c77abb65f2ddc34d093407c48c3be0f3aef8c15a4c580dfaa7127db0b"
+        },
+        "vision_tokenizer/config.json": {
+          "repo_id": "BAAI/Emu3-VisionTokenizer",
+          "revision": "c81f916ad371289e205310a7539255e8a9396488",
+          "sha256": "6717e1bd03d980c6b5e88aa0a47a557d193b0c33afbdb9d24e53a92593ee7473"
+        },
+        "vision_tokenizer/preprocessor_config.json": {
+          "repo_id": "BAAI/Emu3-VisionTokenizer",
+          "revision": "c81f916ad371289e205310a7539255e8a9396488",
+          "sha256": "98a019cd8820290dbdc53e7366f7e447ee55d085824b63fdb68b2d642dd9edbf"
+        },
+        "vision_tokenizer/model.safetensors": {
+          "repo_id": "BAAI/Emu3-VisionTokenizer",
+          "revision": "c81f916ad371289e205310a7539255e8a9396488",
+          "sha256": "89536431c69b08b10b449ec309f52dcea22f14b7647317f30f5715273392bbf1"
+        }
+      },
+      "tensor_header_check": null,
+      "end_to_end": {
+        "height": 16,
+        "passed": true,
+        "seed": 0,
+        "tolerance": "exact",
+        "width": 24
+      },
+      "seed_end_to_end": {
+        "height": 16,
+        "passed": true,
+        "seed": 42,
+        "tolerance": "exact",
+        "width": 24
+      }
+    },
+    {
       "model_id": "pixeldit",
       "repo_id": "nvidia/PixelDiT-1300M-1024px",
       "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
@@ -9628,49 +9745,6 @@
       },
       "seed_end_to_end": {
         "max_abs_diff": 0,
-        "passed": true,
-        "tolerance": "exact"
-      }
-    },
-    {
-      "model_id": "cosmos-predict2-2b-t2i",
-      "repo_id": "nvidia/Cosmos-Predict2-2B-Text2Image",
-      "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
-      "provenance": "author",
-      "catalog_id": "cosmos-predict2-2b-t2i",
-      "license": "NVIDIA Open Model License",
-      "reference": {
-        "diffusers": {
-          "version": "0.40.0"
-        },
-        "transformers": {
-          "version": "5.18.0"
-        }
-      },
-      "status": "full",
-      "files": {
-        "model_index.json": "26389544f44378dafebb3134caf3997fc17743f2e62584f676d0afad4f3cdc68",
-        "scheduler/scheduler_config.json": "7b2bc908263c1d074dad95779ca3840c1dc232b668ef6c872971a48cec26e10a",
-        "text_encoder/config.json": "e9c37563fd32cd99089f494b711d55cc84c409527c287733af8427e5463c6b04",
-        "text_encoder/model.safetensors.index.json": "56d18c8e7db19b994a1d8101da8a16c3b9ca692b3039d54087f057848f72b159",
-        "text_encoder/model-00001-of-00002.safetensors": "d90c625c136567ef62dc13d7fde0d54393a2b08e7400b3594d38c6a9ba12f897",
-        "text_encoder/model-00002-of-00002.safetensors": "30dea2006604226b944972536b9fc1ae40e3ef39b844140641cc450af5490158",
-        "tokenizer/config.json": "ab37994c43740513f94b3ba6233a784035a67b43c8cde83c8f31aa90468c67ce",
-        "tokenizer/special_tokens_map.json": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f",
-        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
-        "tokenizer/tokenizer.json": "71c33c3bf57bf2e19b4f8ac686ad8d182a79f7cd1a4921889437c453420223f1",
-        "tokenizer/tokenizer_config.json": "2632d1edd2266f6ca61b44dd2a5b74492fa009b9c793a294a80b724aef34ba3b",
-        "transformer/config.json": "cc4533f860778400e2af8d1e6e3247ee9dd694d5ad6de6c8420afc5a643e0fcc",
-        "transformer/diffusion_pytorch_model.safetensors": "cab2780846e8c791e9258558da8c8050cc8a9762d3fafc4f41e3c42a8ff44967",
-        "vae/config.json": "2fd4d39e7fa6b374584162a6eda5a88fbc66eea54e8490d7c0ef3353d438f97b",
-        "vae/diffusion_pytorch_model.safetensors": "d6e524b3fffede1787a74e81b30976dce5400c4439ba64222168e607ed19e793"
-      },
-      "tensor_header_check": null,
-      "end_to_end": {
-        "passed": true,
-        "tolerance": "exact"
-      },
-      "seed_end_to_end": {
         "passed": true,
         "tolerance": "exact"
       }
@@ -13910,6 +13984,33 @@
       "tolerance": 0.0
     }
   },
+  "components_emu3": {
+    "emu3_gen_headers": {
+      "extra": 0,
+      "generator_tensors": 291,
+      "mismatch": 0,
+      "missing": 0,
+      "passed": true,
+      "vision_tensors": 495
+    },
+    "emu3_gen_language_model_random": {
+      "cache": true,
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "emu3_gen_real_components": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "emu3_gen_tiny_e2e": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "emu3_gen_vision_decode_random": {
+      "passed": true,
+      "tolerance": "exact"
+    }
+  },
   "components_pixeldit": {
     "pixeldit_denoiser_step": {
       "max_abs": 0.0,
@@ -15676,79 +15777,6 @@
       "sequence": 24
     }
   },
-  "components_cosmos2": {
-    "cosmos2_fixture_header": {
-      "text_encoder": {
-        "extra": [],
-        "mismatch": [],
-        "missing": [],
-        "tensors": 195
-      },
-      "transformer": {
-        "extra": [],
-        "mismatch": [],
-        "missing": [],
-        "tensors": 567
-      },
-      "vae": {
-        "extra": [],
-        "mismatch": [],
-        "missing": [],
-        "tensors": 194
-      }
-    },
-    "cosmos2_real_text_encoder": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cosmos2_real_tokenizer": {
-      "exact": true,
-      "tolerance": "exact"
-    },
-    "cosmos2_real_transformer": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cosmos2_real_vae": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cosmos2_scheduler": {
-      "exact": true,
-      "tolerance": "exact"
-    },
-    "cosmos2_t5_random": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cosmos2_tiny_e2e_0": {
-      "passed": true,
-      "tolerance": "exact"
-    },
-    "cosmos2_tiny_e2e_42": {
-      "passed": true,
-      "tolerance": "exact"
-    },
-    "cosmos2_tokenizer": {
-      "cases": 4,
-      "exact": true,
-      "tolerance": "exact"
-    },
-    "cosmos2_transformer_random": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    },
-    "cosmos2_vae_random": {
-      "max_abs": 0.0,
-      "max_rel": 0.0,
-      "tolerance": 0.0
-    }
-  },
   "components_omnigen": {
     "omnigen_tokenizer_real": {
       "cases": 4,
@@ -15885,6 +15913,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "8 passed (cosmos-predict2-2b-t2i)"
+    "reference_summary": "7 passed (emu3-gen)"
   }
 }
