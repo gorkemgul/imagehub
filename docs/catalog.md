@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**44 architecture families, 112 published checkpoints.** A model is a separately published set of weights;
+**45 architecture families, 113 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -124,6 +124,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `hidream-i1-full` | `hidream` | [HiDream-ai/HiDream-I1-Full](https://huggingface.co/HiDream-ai/HiDream-I1-Full) | `8ccbbfb` | author | full | MIT | `hidream-i1` |
 | `hidream-o1-image` | `hidream-o1` | [HiDream-ai/HiDream-O1-Image](https://huggingface.co/HiDream-ai/HiDream-O1-Image) | `0b0901d` | author | full | MIT | `hidream-o1-image` |
 | `glm-image` | `glm-image` | [zai-org/GLM-Image](https://huggingface.co/zai-org/GLM-Image) | `2c433cc` | author | full | MIT | `glm-image` |
+| `cosmos-predict2-2b-t2i` | `cosmos2` | [nvidia/Cosmos-Predict2-2B-Text2Image](https://huggingface.co/nvidia/Cosmos-Predict2-2B-Text2Image) | `acdb5fd` | author | experimental | NVIDIA Open Model License | `cosmos-predict2-2b-t2i` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
 repository used is a community mirror. The v1.1–v1.3 fp32 weights are published only as `.bin`
@@ -134,6 +135,9 @@ validation.
 Juggernaut XL v9 publishes only float16 component files. Animagine XL 4.0 likewise publishes
 float16 component tensors, although its component filenames do not carry an `fp16` suffix. Both
 are upcast for CPU float32 validation. DreamShaper XL 1.0 publishes float32 component tensors.
+Cosmos-Predict2 is gated and requires accepting the NVIDIA Open Model License before download.
+Its transformer and VAE are float32; its two T5 encoder shards are bfloat16 and are upcast for
+CPU float32 inference.
 
 Composite checkpoints can name a base model, omit base files with `base_exclude`, and overlay their
 own files. They can also use `subfolders` to place files from a second repository in a named

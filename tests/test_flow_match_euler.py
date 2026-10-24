@@ -75,10 +75,23 @@ def test_beta_sigma_schedule():
     )
 
 
+def test_karras_sigma_schedule_uses_explicit_bounds():
+    scheduler = FlowMatchEulerDiscreteScheduler(
+        CONFIG | {"use_karras_sigmas": True, "sigma_min": 0.002, "sigma_max": 80.0}
+    )
+    scheduler.set_timesteps(4, sigmas=[0.0, 1 / 3, 2 / 3, 1.0])
+    assert scheduler.sigmas.tolist() == [
+        80.0,
+        9.723201751708984,
+        0.46997904777526855,
+        0.0020000000949949026,
+        0.0,
+    ]
+
+
 @pytest.mark.parametrize(
     ("key", "value"),
     [
-        ("use_karras_sigmas", True),
         ("use_exponential_sigmas", True),
         ("stochastic_sampling", True),
         ("time_shift_type", "cosine"),

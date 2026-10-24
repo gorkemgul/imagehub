@@ -171,7 +171,11 @@ class CosmosFeedForward(nn.Module):
     def __init__(self, dim: int, ratio: float) -> None:
         super().__init__()
         self.net = nn.ModuleList(
-            [CosmosGELU(dim, int(dim * ratio)), nn.Dropout(0.0), nn.Linear(int(dim * ratio), dim, bias=False)]
+            [
+                CosmosGELU(dim, int(dim * ratio)),
+                nn.Dropout(0.0),
+                nn.Linear(int(dim * ratio), dim, bias=False),
+            ]
         )
 
     def forward(self, x: Tensor) -> Tensor:

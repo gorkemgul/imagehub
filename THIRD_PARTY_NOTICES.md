@@ -28,6 +28,7 @@ and outputs can be compared with them.
 | [ideogram4](https://github.com/ideogram-oss/ideogram4) at `990fe1c` | Ideogram AI and contributors | Ideogram 4 transformer and text-model hidden-state selection, fp8 linear dequantization, sampler presets and prompt format | [Apache 2.0](licenses/Ideogram4-Apache-2.0.txt) |
 | [HiDream-O1-Image](https://github.com/HiDream-ai/HiDream-O1-Image) at `2c2d29f` | HiDream.ai and contributors | Pixel patch projections, timestep conditioning, mixed causal/generation attention mask and sampling order | [MIT](licenses/HiDream-O1-MIT.txt) |
 | [Meissonic](https://github.com/viiika/Meissonic) at `a9de06c` | The MeissonFlow Team and contributors | Masked-token transformer, rotary position layout, micro-conditioning and sampling order | [Apache 2.0](licenses/Meissonic-Apache-2.0.txt) |
+| [Cosmos-Predict2](https://huggingface.co/nvidia/Cosmos-Predict2-2B-Text2Image/tree/acdb5fde992a73ef0355f287977d002cbfd127e0) | NVIDIA Corporation | Published transformer, T5, WAN VAE and scheduler configuration and inference settings | [NVIDIA Open Model License](https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/) |
 
 Model weights are not distributed with imagehub; each checkpoint is downloaded by the user from the
 repository listed in the [model catalog](docs/catalog.md), and its weight license — recorded there —

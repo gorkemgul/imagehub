@@ -5,6 +5,21 @@ Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB u
 12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
 References are recorded per model in `validation.json` under `reference`.
 
+## Cosmos-Predict2
+
+`cosmos-predict2-2b-t2i` is pinned to NVIDIA revision `acdb5fd`. The offline suite strictly
+matches the 195 T5, 567 transformer, and 194 WAN VAE published tensor names and shapes. Against
+diffusers 0.40.0 and transformers 5.18.0, random-weight T5, transformer, VAE, tokenizer, Karras
+schedule, and tiny whole-pipeline comparisons are exact. The tiny end-to-end cases cover
+classifier-free guidance on and off, non-square output, seed 0 and seed 42, including the
+reference pipeline's uint8 conversion.
+
+The opt-in real-checkpoint suite separately compares tokenization, T5 conditioning, one denoiser
+step, VAE decoding, and two public `pipeline(...)` generations recorded as
+`e2e_cosmos-predict2-2b-t2i` and `seed_e2e_cosmos-predict2-2b-t2i`. Those measurements are pending
+the real-checkpoint validation run; no full CPU parity claim is made yet. The gated checkpoint's
+T5 shards are bfloat16 and are upcast to float32 on both sides.
+
 ## PixelDiT
 
 `pixeldit` is pinned to `nvidia/PixelDiT-1300M-1024px` revision `7c63b99` and the official

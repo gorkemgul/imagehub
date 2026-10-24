@@ -333,10 +333,20 @@ class T5Tokenizer:
 
         self._normalizers = self._load_normalizers(config.get("normalizer"))
         pre_tokenizer = config["pre_tokenizer"]
+        if pre_tokenizer["type"] == "Sequence":
+            items = pre_tokenizer.get("pretokenizers", [])
+            if len(items) != 2 or items[0].get("type") != "WhitespaceSplit":
+                raise ValueError("T5Tokenizer requires a Metaspace pre-tokenizer")
+            pre_tokenizer = items[1]
         if pre_tokenizer["type"] != "Metaspace":
             raise ValueError("T5Tokenizer requires a Metaspace pre-tokenizer")
         self.replacement = str(pre_tokenizer["replacement"])
-        self.add_prefix_space = bool(pre_tokenizer.get("add_prefix_space", True))
+        prepend_scheme = pre_tokenizer.get("prepend_scheme")
+        self.add_prefix_space = (
+            prepend_scheme != "never"
+            if prepend_scheme is not None
+            else bool(pre_tokenizer.get("add_prefix_space", True))
+        )
 
         added = config.get("added_tokens", [])
         self.added_ids = {str(item["content"]): int(item["id"]) for item in added}
