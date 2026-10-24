@@ -97,6 +97,8 @@ The [model catalog](docs/catalog.md) lists every supported checkpoint with its s
 
 ## Validation
 
+Every listed checkpoint is validated against its reference implementation, with CPU float32 image outputs required to match bit-for-bit. The [validation documentation](docs/validation.md) describes the coverage and recorded results.
+
 The Validation column states the evidence available for each family. Full CPU float32 validation
 requires bit-identical output from the reference implementation. The
 [validation documentation](docs/validation.md) describes the coverage and recorded results.
