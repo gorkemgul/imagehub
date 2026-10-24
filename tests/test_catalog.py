@@ -71,6 +71,7 @@ def test_catalog_contents():
             "llamagen-t2i-xl-256",
             "llamagen-t2i-xl-512",
             "longcat-image",
+            "lumina-dimoo",
             "lumina-image-2.0",
             "lumina-next",
             "meissonic",
@@ -1774,6 +1775,25 @@ def test_lumina_next_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+
+
+def test_lumina_dimoo_catalog_entry():
+    spec = model_info("lumina-dimoo")
+    assert spec.task is Task.T2I
+    assert spec.family == spec.catalog_id == "lumina-dimoo"
+    assert spec.repo_id == "Alpha-VLLM/Lumina-DiMOO"
+    assert spec.revision == "f014549e17679e41b119959754cdd9320af9bdc8"
+    assert spec.provenance == "author"
+    assert spec.format == "safetensors"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.reference["lumina-dimoo"]["git_commit"] == (
+        "81344e60545ae8d70f11039d3450717d974f831b"
+    )
+    assert spec.config == {
+        "defaults": {"steps": 64, "guidance": 4.0, "width": 1024, "height": 1024}
+    }
+    assert len(spec.files) == len(set(spec.files)) == 14
 
 
 def test_ernie_image_catalog_entry():

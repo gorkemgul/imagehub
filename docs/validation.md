@@ -2047,6 +2047,37 @@ and without query/key normalization) and of the rotary tables; tiny-snapshot end
 non-square sizes, five `scaling_watershed` values, proportional attention off, several seeds, one
 step); the scheduler timesteps and sigmas; and the tokenizer on a tiny vocabulary.
 
+## Lumina-DiMOO
+
+`lumina-dimoo` is loaded strictly from `Alpha-VLLM/Lumina-DiMOO` revision `f014549` and compared
+on CPU in float32 with the official `LLaDAForMultiModalGeneration` and `generate_image` at code
+revision `81344e6`. The published LLaDA weights are BF16 and are upcast on both sides; the VQ
+weights are float32. All 11 real-checkpoint tests passed, and the observed difference in every
+recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation
+produces a bit-identical image to the one the official implementation produces. The real-checkpoint
+run took 3 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured difference |
+| --- | --- |
+| Tensor headers: LLaDA / VQ model (291 / 277 tensors) | 0 missing, extra or mismatched |
+| Tokenizer ids (4 formatted prompts and 200 seeded fuzz strings; Unicode and multimodal specials) | 0 mismatches |
+| Random-weight LLaDA logits (published geometry and random weights) | 0 |
+| Tiny end-to-end token trajectories (guidance 0 and 2) | identical |
+| Real LLaDA logits | 0 |
+| Real VQ decode | 0 |
+| End to end (32x32, two steps, guidance 4.0, seed 0) | identical uint8 image (passed) |
+| Separate public-pipeline seed run (seed 42) | identical uint8 image (passed) |
+
+The real end-to-end cases use 32x32 output and two steps rather than the 1024x1024, 64-step
+defaults because the 8B transformer evaluates the full image-token sequence on every step. Records:
+`header_lumina-dimoo`, `lumina_dimoo_tokenizer`, `lumina_dimoo_tokenizer_fuzz`,
+`lumina_dimoo_llada_published_geometry`, `lumina_dimoo_llada_random_weights`,
+`lumina_dimoo_real_llada`, `lumina_dimoo_real_vq`, `lumina_dimoo_tiny_e2e_g0`,
+`lumina_dimoo_tiny_e2e_g2`, `e2e_lumina-dimoo` and `seed_e2e_lumina-dimoo`,
+[validation-measurements.json](validation-measurements.json).
+
 ## aMUSEd
 
 `amused-256` and `amused-512` are loaded strictly from `amused/amused-256` at revision `09b6259` and
@@ -2458,7 +2489,7 @@ first sequence of the batch only; the native module reproduces that.
   for FLUX.1 schnell, Lumina-Image 2.0, Lumina-Next and AuraFlow, flow-match Euler with inverted sigmas for OmniGen, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
-  the cosine-schedule masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for
+  cosine-schedule masked-token schedulers for aMUSEd and Lumina-DiMOO, and flow-match LCM with re-noising for
   HiDream-I1 Fast and Dev, and UniPC flow prediction for HiDream-I1 Full. LlamaGen samples image tokens autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
@@ -2480,7 +2511,7 @@ first sequence of the batch only; the native module reproduces that.
   28 passed for `pixart-alpha-xl-512`,
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`
+  `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 11 passed for `lumina-dimoo`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast`, 8 passed each
