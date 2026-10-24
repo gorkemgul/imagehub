@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-23",
+  "date": "2026-10-24",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -5722,6 +5722,61 @@
           768
         ],
         "steps": 12
+      }
+    },
+    {
+      "model_id": "lumina-dimoo",
+      "repo_id": "Alpha-VLLM/Lumina-DiMOO",
+      "revision": "f014549e17679e41b119959754cdd9320af9bdc8",
+      "provenance": "author",
+      "catalog_id": "lumina-dimoo",
+      "license": "Apache-2.0",
+      "reference": {
+        "lumina-dimoo": {
+          "repository": "Alpha-VLLM/Lumina-DiMOO",
+          "git_commit": "81344e60545ae8d70f11039d3450717d974f831b",
+          "class": "LLaDAForMultiModalGeneration/generate_image"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "005b856563821878b03bf8de78634cbe32a83934b85687eea17bfa35338eb96d",
+        "args.json": "675fd2ba77cb20465c646a259eab35c849db3e56483ee41b3cb4faf88ea6a209",
+        "config.json": "74fba9efcd6ab039916f9fe6053897e951c6f31c7b4c15239b17c33cdf99c945",
+        "generation_config.json": "9c9fc5fbd5d1e9f1776a9c30c591a38fd83237ffc0f7093ad0f16025e55e6a37",
+        "model.safetensors.index.json": "5daa832d3edd3b74c5ab4ba11917e4032d59e5f82cd2f3db845be225c8e4c8be",
+        "model-00001-of-00004.safetensors": "b9df75e5cb0e4fe6bb8d9d7c8b9bda7832fb174a49962b85ac0d4cd30f6273d5",
+        "model-00002-of-00004.safetensors": "86dc41287d14eb36093cfbdb25441dc0075d8481cf2a261291c8b2f1cd6a5a72",
+        "model-00003-of-00004.safetensors": "55539ec412c4d0f61305646cdf64d68b890d4f86be9a06b74e0a63318ef26abb",
+        "model-00004-of-00004.safetensors": "a27100ef7fcde2ac7a15a3a7eb116eecc182b7207a14f199b12a19571b8e3314",
+        "special_tokens_map.json": "d5f112ee8fc18922b8c3146844d436932b04de1573c3e9e45a346dcd67721c85",
+        "tokenizer.json": "d1e30dd1588d25682e78c74a57bc775173cc34f85f991385602812a2d498fc7d",
+        "tokenizer_config.json": "b04ab0cbf3d0e7ec4ef6170e57163b42645a1c808aa34297756c859ba9973979",
+        "vqvae/config.json": "f543c65e38300b098436a93d7b2c9e8246b47b3e9be8e0e6e37a5a5c6a050161",
+        "vqvae/diffusion_pytorch_model.safetensors": "1241a5c88b635af4f8cfb268e388ccaa70f55a458a473d68943e5c28d7b7f762"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "model": 291,
+          "vqvae": 277
+        }
+      },
+      "end_to_end": {
+        "height": 32,
+        "passed": true,
+        "seed": 0,
+        "steps": 2,
+        "width": 32
+      },
+      "seed_end_to_end": {
+        "height": 32,
+        "passed": true,
+        "seed": 42,
+        "steps": 2,
+        "width": 32
       }
     },
     {
@@ -13519,6 +13574,44 @@
       "tolerance": 0.0
     }
   },
+  "components_lumina_dimoo": {
+    "lumina_dimoo_llada_published_geometry": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_dimoo_llada_random_weights": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_dimoo_real_llada": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_dimoo_real_vq": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_dimoo_tiny_e2e_g0": {
+      "tokens_equal": true
+    },
+    "lumina_dimoo_tiny_e2e_g2": {
+      "tokens_equal": true
+    },
+    "lumina_dimoo_tokenizer": {
+      "mismatches": 0,
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "lumina_dimoo_tokenizer_fuzz": {
+      "mismatches": 0,
+      "prompts": 200,
+      "tolerance": "exact"
+    }
+  },
   "components_amused": {
     "amused-256_hidden_state_negative": {
       "max_abs": 0.0,
@@ -15671,11 +15764,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo and SDXS, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler, trailing DDPM and leading DEIS for SDXL, flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo and SDXS, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler, trailing DDPM and leading DEIS for SDXL, flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and cosine masked-token schedulers for aMUSEd and Lumina-DiMOO, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "24 passed (juggernaut-xl-v9, animagine-xl-4.0, dreamshaper-xl-1.0)"
+    "reference_summary": "11 passed (lumina-dimoo)"
   }
 }

@@ -1115,6 +1115,13 @@
     "steps": 4,
     "tolerance": 0
   },
+  "e2e_emu3-gen": {
+    "height": 16,
+    "passed": true,
+    "seed": 0,
+    "tolerance": "exact",
+    "width": 24
+  },
   "e2e_ernie_image": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -1588,6 +1595,13 @@
     "max_pixel_diff": 0,
     "passed": true,
     "steps": 8
+  },
+  "e2e_lumina-dimoo": {
+    "height": 32,
+    "passed": true,
+    "seed": 0,
+    "steps": 2,
+    "width": 32
   },
   "e2e_lumina-image-2.0": {
     "guidance": 4.0,
@@ -2431,6 +2445,31 @@
       "latents": 0.0,
       "pixels": 0
     }
+  },
+  "emu3_gen_headers": {
+    "extra": 0,
+    "generator_tensors": 291,
+    "mismatch": 0,
+    "missing": 0,
+    "passed": true,
+    "vision_tensors": 495
+  },
+  "emu3_gen_language_model_random": {
+    "cache": true,
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "emu3_gen_real_components": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "emu3_gen_tiny_e2e": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "emu3_gen_vision_decode_random": {
+    "passed": true,
+    "tolerance": "exact"
   },
   "environment": {
     "torch_threads": 12
@@ -4406,6 +4445,20 @@
       "tensors": 244
     }
   },
+  "header_lumina-dimoo": {
+    "model": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 291
+    },
+    "vqvae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 277
+    }
+  },
   "header_lumina-image-2.0": {
     "text_encoder": {
       "extra": [],
@@ -6261,6 +6314,42 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "lumina_dimoo_llada_published_geometry": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_dimoo_llada_random_weights": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_dimoo_real_llada": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_dimoo_real_vq": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "lumina_dimoo_tiny_e2e_g0": {
+    "tokens_equal": true
+  },
+  "lumina_dimoo_tiny_e2e_g2": {
+    "tokens_equal": true
+  },
+  "lumina_dimoo_tokenizer": {
+    "mismatches": 0,
+    "prompts": 4,
+    "tolerance": "exact"
+  },
+  "lumina_dimoo_tokenizer_fuzz": {
+    "mismatches": 0,
+    "prompts": 200,
+    "tolerance": "exact"
   },
   "lumina_next_text_encoder_masks": {
     "masks_match": true,
@@ -9872,6 +9961,13 @@
     "steps": 4,
     "tolerance": 0
   },
+  "seed_e2e_emu3-gen": {
+    "height": 16,
+    "passed": true,
+    "seed": 42,
+    "tolerance": "exact",
+    "width": 24
+  },
   "seed_e2e_ernie_image": {
     "max_pixel_diff": 0,
     "passed": true,
@@ -10168,6 +10264,13 @@
     "passed": true,
     "seed": 42,
     "steps": 8
+  },
+  "seed_e2e_lumina-dimoo": {
+    "height": 32,
+    "passed": true,
+    "seed": 42,
+    "steps": 2,
+    "width": 32
   },
   "seed_e2e_lumina-image-2.0": {
     "max_pixel_diff": 0,
