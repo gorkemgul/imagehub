@@ -16,9 +16,29 @@ reference pipeline's uint8 conversion.
 
 The opt-in real-checkpoint suite separately compares tokenization, T5 conditioning, one denoiser
 step, VAE decoding, and two public `pipeline(...)` generations recorded as
-`e2e_cosmos-predict2-2b-t2i` and `seed_e2e_cosmos-predict2-2b-t2i`. Those measurements are pending
-the real-checkpoint validation run; no full CPU parity claim is made yet. The gated checkpoint's
-T5 shards are bfloat16 and are upcast to float32 on both sides.
+`e2e_cosmos-predict2-2b-t2i` and `seed_e2e_cosmos-predict2-2b-t2i`. All 8 real tests passed, and
+the observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one diffusers produces.
+The gated checkpoint's T5 shards are bfloat16 and are upcast to float32 on both sides. The
+real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (T5, transformer, WAN VAE; 195 / 567 / 194 tensors) | 0 missing / extra / mismatched | exact |
+| T5 tokenizer token ids | identical | exact |
+| T5 text encoder | 0 | 0 |
+| Transformer single step | 0 | 0 |
+| WAN VAE decode | 0 | 0 |
+| Karras schedule | exact | exact |
+| End to end: final pixels (seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `cosmos2_fixture_header`, `cosmos2_tokenizer`, `cosmos2_real_tokenizer`,
+`cosmos2_real_text_encoder`, `cosmos2_real_transformer`, `cosmos2_real_vae`, `cosmos2_scheduler`,
+`e2e_cosmos-predict2-2b-t2i` and `seed_e2e_cosmos-predict2-2b-t2i`,
+[validation-measurements.json](validation-measurements.json).
 
 ## PixelDiT
 
@@ -2522,7 +2542,7 @@ first sequence of the batch only; the native module reproduces that.
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
   `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, 6 passed for
-  `show-o-512`, and 5 passed for `sdxs-512-0.9`. These include structural parity with random weights, end-to-end parity with
+  `show-o-512`, 5 passed for `sdxs-512-0.9`, and 8 passed for `cosmos-predict2-2b-t2i`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

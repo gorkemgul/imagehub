@@ -49,7 +49,7 @@ The [model catalog](docs/catalog.md) lists every supported checkpoint with its s
 | Stable Diffusion 3 and 3.5 | `sd3-medium`, `sd3.5-medium`, `sd3.5-large`, `sd3.5-large-turbo` | `t2i` | T | CPU fp32 parity |
 | DreamLite | `dreamlite-base`, `dreamlite-mobile` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 weights |
 | JoyAI-Image | `joyai-image-edit`, `joyai-image-edit-plus` | `t2i` | T, I | CPU fp32 parity on the upcast bfloat16 weights |
-| Cosmos-Predict2 | `cosmos-predict2-2b-t2i` | `t2i` | T | Exact random-weight and tiny-pipeline parity |
+| Cosmos-Predict2 | `cosmos-predict2-2b-t2i` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | FLUX.1 | `flux1-schnell`, `flux1-dev`, `flux1-krea-dev`, `flux-1-lite-8b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | FLUX.1 Kontext | `flux1-kontext-dev` | `t2i` | T, I | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | T | CPU fp32 parity |

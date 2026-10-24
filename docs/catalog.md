@@ -125,7 +125,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `hidream-i1-full` | `hidream` | [HiDream-ai/HiDream-I1-Full](https://huggingface.co/HiDream-ai/HiDream-I1-Full) | `8ccbbfb` | author | full | MIT | `hidream-i1` |
 | `hidream-o1-image` | `hidream-o1` | [HiDream-ai/HiDream-O1-Image](https://huggingface.co/HiDream-ai/HiDream-O1-Image) | `0b0901d` | author | full | MIT | `hidream-o1-image` |
 | `glm-image` | `glm-image` | [zai-org/GLM-Image](https://huggingface.co/zai-org/GLM-Image) | `2c433cc` | author | full | MIT | `glm-image` |
-| `cosmos-predict2-2b-t2i` | `cosmos2` | [nvidia/Cosmos-Predict2-2B-Text2Image](https://huggingface.co/nvidia/Cosmos-Predict2-2B-Text2Image) | `acdb5fd` | author | experimental | NVIDIA Open Model License | `cosmos-predict2-2b-t2i` |
+| `cosmos-predict2-2b-t2i` | `cosmos2` | [nvidia/Cosmos-Predict2-2B-Text2Image](https://huggingface.co/nvidia/Cosmos-Predict2-2B-Text2Image) | `acdb5fd` | author | full | NVIDIA Open Model License | `cosmos-predict2-2b-t2i` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
 repository used is a community mirror. The v1.1–v1.3 fp32 weights are published only as `.bin`
