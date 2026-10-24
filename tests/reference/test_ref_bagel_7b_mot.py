@@ -39,7 +39,7 @@ def _install_reference_stubs():
             key = k[cu_seqlens_k[index] : cu_seqlens_k[index + 1]].transpose(0, 1)[None]
             value = v[cu_seqlens_k[index] : cu_seqlens_k[index + 1]].transpose(0, 1)[None]
             output = torch.nn.functional.scaled_dot_product_attention(
-                query, key, value, is_causal=causal
+                query, key, value, is_causal=causal, enable_gqa=True
             )
             outputs.append(output[0].transpose(0, 1))
         return torch.cat(outputs)
@@ -182,6 +182,8 @@ def _reference_components(snapshot, out_path):
     from safetensors.torch import load_file
 
     llm_config = Qwen2Config.from_json_file(str(Path(snapshot) / "llm_config.json"))
+    if not hasattr(llm_config, "pad_token_id"):
+        llm_config.pad_token_id = None
     llm_config.qk_norm = True
     llm_config.tie_word_embeddings = False
     llm_config.layer_module = "Qwen2MoTDecoderLayer"
@@ -205,7 +207,9 @@ def _reference_components(snapshot, out_path):
     )
     model.vit_model.vision_model.embeddings.convert_conv2d_to_linear(vit_config)
     model.load_state_dict(load_file(str(Path(snapshot) / "ema.safetensors")), assign=True)
-    model = model.float().eval()
+    model = model.bfloat16().eval()
+    vae = vae.bfloat16().eval()
+    model.language_model.model.enable_taylorseer = False
     tokenizer = transformers.AutoTokenizer.from_pretrained(snapshot, local_files_only=True)
     token_ids = {
         "bos_token_id": 151644,
@@ -220,22 +224,23 @@ def _reference_components(snapshot, out_path):
     generation = model.prepare_vae_latent(
         context["kv_lens"], context["ropes"], [(64, 64)], token_ids
     )
-    velocity = model._forward_flow(
-        x_t=generation["packed_init_noises"],
-        timestep=torch.full((16,), 0.5),
-        packed_vae_token_indexes=generation["packed_vae_token_indexes"],
-        packed_vae_position_ids=generation["packed_vae_position_ids"],
-        packed_text_ids=generation["packed_text_ids"],
-        packed_text_indexes=generation["packed_text_indexes"],
-        packed_indexes=generation["packed_indexes"],
-        packed_position_ids=generation["packed_position_ids"],
-        packed_seqlens=generation["packed_seqlens"],
-        key_values_lens=generation["key_values_lens"],
-        past_key_values=context["past_key_values"],
-        packed_key_value_indexes=generation["packed_key_value_indexes"],
-    )
+    with torch.autocast(device_type="cpu", dtype=torch.bfloat16):
+        velocity = model._forward_flow(
+            x_t=generation["packed_init_noises"],
+            timestep=torch.full((16,), 0.5),
+            packed_vae_token_indexes=generation["packed_vae_token_indexes"],
+            packed_vae_position_ids=generation["packed_vae_position_ids"],
+            packed_text_ids=generation["packed_text_ids"],
+            packed_text_indexes=generation["packed_text_indexes"],
+            packed_indexes=generation["packed_indexes"],
+            packed_position_ids=generation["packed_position_ids"],
+            packed_seqlens=generation["packed_seqlens"],
+            key_values_lens=generation["key_values_lens"],
+            past_key_values=context["past_key_values"],
+            packed_key_value_indexes=generation["packed_key_value_indexes"],
+        )
     torch.manual_seed(321)
-    decoded = vae.decode(torch.randn(1, 16, 8, 8))
+    decoded = vae.decode(torch.randn(1, 16, 8, 8, dtype=torch.bfloat16))
     torch.save({"prompt_key": prompt_key, "velocity": velocity, "decoded": decoded}, out_path)
 
 
@@ -246,7 +251,7 @@ def test_real_components(record, tmp_path):
         {"snapshot": str(root)},
         tmp_path / "reference-components.pt",
     )
-    components = BagelComponents.load(root, device=torch.device("cpu"), dtype=torch.float32)
+    components = BagelComponents.load(root, device=torch.device("cpu"), dtype=torch.bfloat16)
     cache = _prompt_cache(components.model, components.tokenizer, PROMPT)
     torch.manual_seed(123)
     latent = torch.randn(16, 64)
@@ -254,7 +259,7 @@ def test_real_components(record, tmp_path):
     positions = torch.full((18,), cache[0][0].shape[0], dtype=torch.long)
     velocity = _flow_prediction(components.model, latent, torch.tensor(0.5), positions, grid, cache)
     torch.manual_seed(321)
-    decoded = components.vae.decode(torch.randn(1, 16, 8, 8))
+    decoded = components.vae.decode(torch.randn(1, 16, 8, 8, dtype=torch.bfloat16))
     comparisons = {
         "bagel_text_encoder": torch.equal(cache[0][0], expected["prompt_key"]),
         "bagel_denoiser": torch.equal(velocity, expected["velocity"]),
@@ -277,6 +282,8 @@ def _reference_e2e(snapshot, seed, out_path):
     from safetensors.torch import load_file
 
     llm_config = Qwen2Config.from_json_file(str(Path(snapshot) / "llm_config.json"))
+    if not hasattr(llm_config, "pad_token_id"):
+        llm_config.pad_token_id = None
     llm_config.qk_norm = True
     llm_config.tie_word_embeddings = False
     llm_config.layer_module = "Qwen2MoTDecoderLayer"
@@ -300,7 +307,8 @@ def _reference_e2e(snapshot, seed, out_path):
     )
     model.vit_model.vision_model.embeddings.convert_conv2d_to_linear(vit_config)
     model.load_state_dict(load_file(str(Path(snapshot) / "ema.safetensors")), assign=True)
-    model = model.float().eval()
+    model = model.bfloat16().eval()
+    vae = vae.bfloat16().eval()
     tokenizer = transformers.AutoTokenizer.from_pretrained(snapshot, local_files_only=True)
     inferencer = InterleaveInferencer(
         model,
@@ -316,14 +324,15 @@ def _reference_e2e(snapshot, seed, out_path):
         },
     )
     torch.manual_seed(seed)
-    image = inferencer.interleave_inference(
-        [PROMPT],
-        image_shapes=(64, 64),
-        num_timesteps=2,
-        cfg_text_scale=4.0,
-        cfg_img_scale=1.0,
-        timestep_shift=3.0,
-    )[-1]
+    with torch.autocast(device_type="cpu", dtype=torch.bfloat16):
+        image = inferencer.interleave_inference(
+            [PROMPT],
+            image_shapes=(64, 64),
+            num_timesteps=2,
+            cfg_text_scale=4.0,
+            cfg_img_scale=1.0,
+            timestep_shift=3.0,
+        )[-1]
     pixels = torch.frombuffer(bytearray(image.tobytes()), dtype=torch.uint8).reshape(64, 64, 3)
     torch.save(pixels, out_path)
 
@@ -337,7 +346,7 @@ def test_real_e2e(seed, tmp_path, record):
         tmp_path / f"reference-{seed}.pt",
     )
     actual = (
-        pipeline("t2i", backend="bagel-7b-mot", model=root, dtype=torch.float32)(
+        pipeline("t2i", backend="bagel-7b-mot", model=root, dtype=torch.bfloat16)(
             PROMPT, width=64, height=64, steps=2, seed=seed
         )
         .images[0]

@@ -67,20 +67,34 @@ class BagelAttention(nn.Module):
         self.k_norm_moe_gen = BagelRMSNorm(self.head_dim, config["rms_norm_eps"])
 
     def _route(self, value: Tensor, generated: Tensor) -> tuple[Tensor, Tensor, Tensor]:
-        q = self.q_proj(value)
-        k = self.k_proj(value)
-        v = self.v_proj(value)
-        if generated.any():
+        if not generated.any():
+            q = self.q_proj(value)
+            k = self.k_proj(value)
+            v = self.v_proj(value)
+        else:
+            text = ~generated
+            q = value.new_zeros(value.shape[0], self.heads * self.head_dim)
+            k = value.new_zeros(value.shape[0], self.kv_heads * self.head_dim)
+            v = value.new_zeros(value.shape[0], self.kv_heads * self.head_dim)
+            q[text] = self.q_proj(value[text])
+            k[text] = self.k_proj(value[text])
+            v[text] = self.v_proj(value[text])
             q[generated] = self.q_proj_moe_gen(value[generated])
             k[generated] = self.k_proj_moe_gen(value[generated])
             v[generated] = self.v_proj_moe_gen(value[generated])
         q = q.view(-1, self.heads, self.head_dim)
         k = k.view(-1, self.kv_heads, self.head_dim)
-        if generated.any():
+        if not generated.any():
+            q = self.q_norm(q)
+            k = self.k_norm(k)
+        else:
+            if not self.training:
+                q = q.float()
+                k = k.float()
             q[generated] = self.q_norm_moe_gen(q[generated])
             k[generated] = self.k_norm_moe_gen(k[generated])
-        q[~generated] = self.q_norm(q[~generated])
-        k[~generated] = self.k_norm(k[~generated])
+            q[~generated] = self.q_norm(q[~generated])
+            k[~generated] = self.k_norm(k[~generated])
         return q, k, v.view(-1, self.kv_heads, self.head_dim)
 
     def forward(
@@ -96,6 +110,8 @@ class BagelAttention(nn.Module):
         q, k, v = self._route(value, generated)
         q = q * cos[:, None] + _rotate_half(q) * sin[:, None]
         k = k * cos[:, None] + _rotate_half(k) * sin[:, None]
+        q = q.to(value.dtype)
+        k = k.to(value.dtype)
         current = (k, v)
         if past is not None:
             k, v = torch.cat((past[0], k)), torch.cat((past[1], v))
@@ -111,14 +127,17 @@ class BagelAttention(nn.Module):
                 torch.arange(q_length, device=value.device)[:, None] + offset
             )
             output = F.scaled_dot_product_attention(query, keys, values, attn_mask=mask)
-        elif not causal:
+        elif not causal and past is None:
             mask = torch.zeros(value.shape[0], k.shape[0], device=value.device, dtype=query.dtype)
             output = F.scaled_dot_product_attention(query, keys, values, attn_mask=mask[None])
         else:
             output = F.scaled_dot_product_attention(query, keys, values, is_causal=causal)
         output = output.squeeze(0).transpose(0, 1).reshape(value.shape[0], -1)
-        routed = self.o_proj(output)
-        if generated.any():
+        if not generated.any():
+            routed = self.o_proj(output)
+        else:
+            routed = output.clone()
+            routed[~generated] = self.o_proj(output[~generated])
             routed[generated] = self.o_proj_moe_gen(output[generated])
         return routed, current
 
@@ -137,7 +156,10 @@ class BagelDecoderLayer(nn.Module):
 
     @staticmethod
     def _route_norm(value: Tensor, generated: Tensor, und: nn.Module, gen: nn.Module) -> Tensor:
-        result = und(value)
+        if not generated.any():
+            return und(value)
+        result = torch.zeros_like(value)
+        result[~generated] = und(value[~generated])
         if generated.any():
             result[generated] = gen(value[generated])
         return result
@@ -160,8 +182,11 @@ class BagelDecoderLayer(nn.Module):
         normalized = self._route_norm(
             value, generated, self.post_attention_layernorm, self.post_attention_layernorm_moe_gen
         )
-        output = self.mlp(normalized)
-        if generated.any():
+        if not generated.any():
+            output = self.mlp(normalized)
+        else:
+            output = torch.zeros_like(normalized)
+            output[~generated] = self.mlp(normalized[~generated])
             output[generated] = self.mlp_moe_gen(normalized[generated])
         return value + output, present
 
@@ -349,3 +374,51 @@ class BagelAutoencoder(NextStepAutoencoder):
         }
         source.update(config or {})
         super().__init__(source)
+        self.scale_factor = float(source["scale_factor"])
+        self.latent_shift_factor = float(source["shift_factor"])
+
+    def decode(self, latents: Tensor) -> Tensor:
+        latents = latents / self.scale_factor + self.latent_shift_factor
+        decoder = self.decoder
+        hidden = decoder.conv_in(latents)
+        hidden = self._mid(decoder.mid_block, hidden)
+        for block in decoder.up_blocks:
+            for resnet in block.resnets:
+                hidden = self._resnet(resnet, hidden)
+            if block.upsamplers is not None:
+                hidden = block.upsamplers[0](hidden)
+        hidden = decoder.conv_norm_out(hidden)
+        return decoder.conv_out(hidden * torch.sigmoid(hidden))
+
+    @staticmethod
+    def _resnet(block: nn.Module, value: Tensor) -> Tensor:
+        hidden = block.norm1(value)
+        hidden = block.conv1(hidden * torch.sigmoid(hidden))
+        hidden = block.norm2(hidden)
+        hidden = block.conv2(hidden * torch.sigmoid(hidden))
+        residual = value if block.conv_shortcut is None else block.conv_shortcut(value)
+        return residual + hidden
+
+    @classmethod
+    def _mid(cls, block: nn.Module, value: Tensor) -> Tensor:
+        value = cls._resnet(block.resnets[0], value)
+        attention = block.attentions[0]
+        residual = value
+        hidden = attention.group_norm(value)
+        query = F.conv2d(hidden, attention.query.weight[:, :, None, None], attention.query.bias)
+        key = F.conv2d(hidden, attention.key.weight[:, :, None, None], attention.key.bias)
+        values = F.conv2d(hidden, attention.value.weight[:, :, None, None], attention.value.bias)
+        batch, channels, height, width = query.shape
+        query = query.permute(0, 2, 3, 1).reshape(batch, 1, height * width, channels).contiguous()
+        key = key.permute(0, 2, 3, 1).reshape(batch, 1, height * width, channels).contiguous()
+        values = values.permute(0, 2, 3, 1).reshape(
+            batch, 1, height * width, channels
+        ).contiguous()
+        hidden = F.scaled_dot_product_attention(query, key, values)
+        hidden = hidden.reshape(batch, height, width, channels).permute(0, 3, 1, 2)
+        hidden = F.conv2d(
+            hidden,
+            attention.proj_attn.weight[:, :, None, None],
+            attention.proj_attn.bias,
+        )
+        return cls._resnet(block.resnets[1], residual + hidden)
