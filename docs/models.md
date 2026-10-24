@@ -2925,3 +2925,42 @@ and releases it before native inference.
 
 **License.** The checkpoint, vision tokenizer and official code are Apache-2.0. imagehub does not
 distribute weights.
+
+# NextStep-1
+
+## NextStep-1 Large
+
+**Checkpoint.** `nextstep-1-large` pins the author repository
+`stepfun-ai/NextStep-1-Large` to revision
+`97dd0b9e097f60e39e3ce3bbac1a3343a09547cd`. The architecture reference is the official
+NextStep-1 repository at `a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0`.
+
+**Architecture.** NextStep-1 combines a 48-layer, width-5120 Qwen2.5-derived causal decoder with
+continuous image tokens. A learned input projector embeds each packed 2×2 latent patch. The final
+hidden state conditions a 12-layer adaptive-normalization MLP that integrates one new latent patch
+with flow matching, after which the patch is fed back into the decoder. A 16-channel KL
+autoencoder decodes the completed latent grid.
+
+**Generation.** Prompts use the published image-area suffix and beginning-of-image token. Image
+patches are generated left to right with a persistent key/value cache. Guidance uses positive and
+negative prompt branches; each patch is sampled by the published ODE or SDE flow update, unpacked,
+and decoded to uint8 pixels.
+
+**Settings.** Defaults are 256×256, 20 flow steps, guidance 1, timestep shift 1 and SDE sampling.
+`width` and `height` must be positive multiples of 16. The backend also accepts `seed`,
+`negative_prompt`, `steps`, `guidance`, `timestep_shift` and `sde`. Unknown settings are rejected
+before loading.
+
+**Validation and limits.** Offline tests check every published transformer tensor name and shape,
+exact tiny random-weight decoder and flow-head parity, option validation and deterministic tiny
+generation. Separate opt-in end-to-end cases compare seed 0 and seed 42 through the public pipeline
+at 64×64 with one flow step. Those deliberately short cases retain prompt formatting, causal cache,
+flow integration, latent unpacking and VAE decoding without running the very large checkpoint in
+the fast suite. Real-checkpoint tests are provided but are not run as part of this implementation
+step. Batches, image editing, training and non-float32 parity are out of scope.
+
+**Memory.** The twelve bfloat16 transformer shards total 58.3 GB (about 54.3 GiB), plus a 335 MB
+VAE checkpoint. Loading the weights upcast to CPU float32 requires substantially more memory; the
+reference end-to-end case therefore runs in a separate process and exits before native loading.
+
+**License.** The checkpoint and official code are Apache-2.0. imagehub does not distribute weights.

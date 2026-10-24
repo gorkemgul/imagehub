@@ -1742,6 +1742,14 @@
       "pixels": 0
     }
   },
+  "e2e_nextstep-1-large": {
+    "height": 64,
+    "passed": true,
+    "seed": 0,
+    "steps": 1,
+    "tolerance": "exact",
+    "width": 64
+  },
   "e2e_omnigen-v1": {
     "guidance": 2.5,
     "latents": {
@@ -6499,6 +6507,14 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "nextstep_flow_random": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "nextstep_qwen_random": {
+    "passed": true,
+    "tolerance": "exact"
+  },
   "omnigen_tokenizer_real": {
     "cases": 4,
     "matches": [
@@ -10380,6 +10396,14 @@
       1024
     ],
     "steps": 2
+  },
+  "seed_e2e_nextstep-1-large": {
+    "height": 64,
+    "passed": true,
+    "seed": 42,
+    "steps": 1,
+    "tolerance": "exact",
+    "width": 64
   },
   "seed_e2e_omnigen-v1": {
     "max_pixel_diff": 0,

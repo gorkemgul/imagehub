@@ -3652,6 +3652,58 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="nextstep-1-large",
+        task=Task.T2I,
+        family="nextstep",
+        source="https://huggingface.co/stepfun-ai/NextStep-1-Large",
+        repo_id="stepfun-ai/NextStep-1-Large",
+        revision="97dd0b9e097f60e39e3ce3bbac1a3343a09547cd",
+        provenance="author",
+        catalog_id="nextstep-1",
+        format="safetensors",
+        license="Apache-2.0",
+        config={
+            "defaults": {
+                "steps": 20,
+                "guidance": 1.0,
+                "width": 256,
+                "height": 256,
+            }
+        },
+        reference={
+            "repository": {
+                "url": "https://github.com/stepfun-ai/NextStep-1",
+                "revision": "a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0",
+            }
+        },
+        files=(
+            "added_tokens.json",
+            "config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00012.safetensors",
+            "model-00002-of-00012.safetensors",
+            "model-00003-of-00012.safetensors",
+            "model-00004-of-00012.safetensors",
+            "model-00005-of-00012.safetensors",
+            "model-00006-of-00012.safetensors",
+            "model-00007-of-00012.safetensors",
+            "model-00008-of-00012.safetensors",
+            "model-00009-of-00012.safetensors",
+            "model-00010-of-00012.safetensors",
+            "model-00011-of-00012.safetensors",
+            "model-00012-of-00012.safetensors",
+            "special_tokens_map.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "vae/checkpoint.pt",
+            "vae/config.json",
+            "vocab.json",
+        ),
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

@@ -16,6 +16,7 @@ def test_qwen_normalization_matches_reference_for_recent_combining_marks():
 def test_qwen_tiny_bpe_and_special_tokens():
     tokenizer = Qwen2Tokenizer(TOKENIZER)
 
+    assert tokenizer.add_bos_token is False
     assert tokenizer.tokenize("hi cat") == [25, 30]
     assert tokenizer.tokenize("cats") == [27, 11]
     assert tokenizer.tokenize("hi<|im_end|>cat") == [25, 33, 27]

@@ -76,6 +76,7 @@ def test_catalog_contents():
             "lumina-image-2.0",
             "lumina-next",
             "meissonic",
+            "nextstep-1-large",
             "omnigen-v1",
             "ovis-image-7b",
             "pixart-alpha-xl-1024",
@@ -150,6 +151,15 @@ def test_catalog_contents():
     assert dreamshaper.catalog_id == "stable-diffusion-1"
     assert dreamshaper.config == {"defaults": {"steps": 50, "guidance": 7.5}}
     assert dreamshaper.files == model_info("sd-v1-4").files
+
+    nextstep = model_info("nextstep-1-large")
+    assert nextstep.family == "nextstep"
+    assert nextstep.catalog_id == "nextstep-1"
+    assert nextstep.repo_id == "stepfun-ai/NextStep-1-Large"
+    assert nextstep.revision == "97dd0b9e097f60e39e3ce3bbac1a3343a09547cd"
+    assert nextstep.provenance == "author"
+    assert nextstep.license == "Apache-2.0"
+    assert len(nextstep.files) == 21
 
     bk_sdm = [model_info(f"bk-sdm-{variant}") for variant in ("base", "small", "tiny")]
     assert [spec.revision for spec in bk_sdm] == [
