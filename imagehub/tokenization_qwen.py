@@ -304,6 +304,7 @@ class Qwen2Tokenizer:
         self.pad_id = (
             self._raw_added[pad_token] if pad_token in self._raw_added else self.encoder[pad_token]
         )
+        self.add_bos_token = bool(config.get("add_bos_token", False))
 
     def _bpe(self, token: str) -> list[str]:
         cached = self._cache.get(token)

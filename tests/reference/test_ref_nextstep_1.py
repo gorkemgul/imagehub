@@ -54,6 +54,19 @@ def test_random_qwen_decoder_is_exact(record):
     assert passed
 
 
+def test_random_qwen_unmasked_decoder_is_exact():
+    config = _tiny_config()
+    reference = transformers.Qwen2Model(transformers.Qwen2Config(**config)).eval()
+    ours = NextStepModel(config).eval()
+    ours.load_state_dict(reference.state_dict(), strict=False)
+    ids = torch.randint(0, 64, (1, 7), generator=torch.Generator().manual_seed(2))
+    mask = torch.ones_like(ids, dtype=torch.bool)
+    with torch.no_grad():
+        expected = reference(ids, attention_mask=mask).last_hidden_state
+        actual, _ = ours(ours.embed(ids), mask)
+    assert torch.equal(actual, expected)
+
+
 def test_random_flow_head_is_exact(record):
     if not REFERENCE_ROOT.is_dir():
         pytest.skip("NextStep-1 reference checkout not found")
@@ -78,11 +91,25 @@ def test_random_flow_head_is_exact(record):
 
 def _reference_e2e(snapshot, seed, out_path):
     import sys
+    import types
 
+    class _Logger:
+        def __getattr__(self, _name):
+            return lambda *args, **kwargs: None
+
+    loguru = types.ModuleType("loguru")
+    loguru.logger = _Logger()
+    sys.modules["loguru"] = loguru
     sys.path.insert(0, str(REFERENCE_ROOT))
     from inference.gen_pipeline import NextStepPipeline
 
-    result = NextStepPipeline(snapshot, device="cpu", dtype=torch.float32, local_files_only=True)
+    result = NextStepPipeline(
+        snapshot,
+        vae_name_or_path=str(Path(snapshot) / "vae"),
+        device="cpu",
+        dtype=torch.float32,
+        local_files_only=True,
+    )
     image = result.generate_image(
         PROMPT, hw=(64, 64), num_sampling_steps=1, seed=seed, progress=False
     )[0]

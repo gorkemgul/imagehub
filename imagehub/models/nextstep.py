@@ -23,7 +23,7 @@ class RMSNorm(nn.Module):
     def forward(self, value: Tensor) -> Tensor:
         dtype = value.dtype
         normalized = value.float() * torch.rsqrt(
-            value.float().square().mean(-1, keepdim=True) + self.variance_epsilon
+            value.float().pow(2).mean(-1, keepdim=True) + self.variance_epsilon
         )
         return self.weight * normalized.to(dtype)
 
@@ -78,7 +78,12 @@ class Attention(nn.Module):
             .expand(-1, -1, self.groups, -1, -1)
             .reshape(batch, self.heads, values.shape[2], self.head_dim)
         )
-        output = F.scaled_dot_product_attention(query, key, values, attn_mask=attention_mask)
+        if bool(attention_mask.all()):
+            output = F.scaled_dot_product_attention(
+                query, key, values, attn_mask=None, is_causal=length > 1
+            )
+        else:
+            output = F.scaled_dot_product_attention(query, key, values, attn_mask=attention_mask)
         output = output.transpose(1, 2).contiguous().view(batch, length, -1)
         return self.o_proj(output), present
 

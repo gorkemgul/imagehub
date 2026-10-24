@@ -55,7 +55,13 @@ class NextStepComponents:
         with torch.device("meta"):
             model = NextStepModel(config)
             vae = NextStepAutoencoder(vae_config)
-        model.load_checkpoint(load_weights(root))
+        model_state = load_weights(root)
+        if config.get("torch_dtype") == "bfloat16":
+            model_state = {
+                name: value.to(torch.bfloat16) if value.is_floating_point() else value
+                for name, value in model_state.items()
+            }
+        model.load_checkpoint(model_state)
         model.init_non_persistent_buffers()
         vae.load_checkpoint(load_weights(root / "vae" / "checkpoint.pt"))
         return cls(
@@ -87,7 +93,7 @@ def generate(
     captions = [prompt] if guidance == 1 else [prompt, negative_prompt]
     rows = [
         [
-            config["bos_token_id"],
+            *([config["bos_token_id"]] if getattr(tokenizer, "add_bos_token", False) else []),
             *tokenizer.tokenize(text),
             *tokenizer.tokenize(area),
             config["boi"],
@@ -98,13 +104,6 @@ def generate(
     ids, mask = _left_pad(rows, tokenizer.pad_id, device)
     hidden, cache = model(model.embed(ids), mask)
     condition = hidden[:, -1:]
-    positions = (
-        model.generation_positions(latent_height, latent_width)
-        if config.get("use_gen_pos_embed", False)
-        else None
-    )
-    if positions is not None:
-        condition = condition + positions[:, :1]
     tokens: list[Tensor] = []
     token_dim = config["latent_channels"] * config["latent_patch_size"] ** 2
     for _ in range(latent_height * latent_width):
@@ -126,8 +125,6 @@ def generate(
         mask = torch.cat((mask, torch.ones(mask.shape[0], 1, device=device, dtype=torch.bool)), -1)
         hidden, cache = model(embedded, mask, cache)
         condition = hidden[:, -1:]
-        if positions is not None and len(tokens) < positions.shape[1]:
-            condition = condition + positions[:, len(tokens) : len(tokens) + 1]
     packed = torch.stack(tokens, 1)
     latents = model.unpatchify(packed, latent_height, latent_width)
     image = components.vae.decode(latents).float()
