@@ -47,6 +47,21 @@ def _reference_modules():
     return Emu3Config, ReferenceLM, Emu3VisionVQConfig, Emu3VisionVQModel
 
 
+def _materialize_reference_rotary_buffers(model: torch.nn.Module) -> None:
+    """Rebuild non-persistent RoPE buffers after meta-device construction."""
+    for module in model.modules():
+        if module.__class__.__name__ != "Emu3RotaryEmbedding":
+            continue
+        module.inv_freq = 1.0 / (
+            module.base ** (torch.arange(0, module.dim, 2, dtype=torch.float32) / module.dim)
+        )
+        module._set_cos_sin_cache(
+            seq_len=module.max_position_embeddings,
+            device=module.inv_freq.device,
+            dtype=torch.get_default_dtype(),
+        )
+
+
 def test_published_headers_are_exact(record):
     generator_config = json.loads((FIXTURES / "generator/config.json").read_text())
     vision_config = json.loads((FIXTURES / "vision_tokenizer/config.json").read_text())
@@ -289,6 +304,7 @@ def _reference_components(snapshot: str, out_path: str) -> None:
     with torch.device("meta"):
         model = ReferenceLM(config)
     model.load_state_dict(load_weights(root), assign=True)
+    _materialize_reference_rotary_buffers(model)
     model.eval()
     ids = torch.tensor([[151849, 64, 151852, 16, 9, 16, 151851]])
     with torch.no_grad():
@@ -337,6 +353,7 @@ def _reference_e2e(snapshot: str, seed: int, out_path: str) -> None:
     with torch.device("meta"):
         model = ReferenceLM(config)
     model.load_state_dict(load_weights(root), assign=True)
+    _materialize_reference_rotary_buffers(model)
     model.eval()
     from transformers.cache_utils import DynamicCache
 
