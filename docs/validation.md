@@ -5,6 +5,41 @@ Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB u
 12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
 References are recorded per model in `validation.json` under `reference`.
 
+## Cosmos-Predict2
+
+`cosmos-predict2-2b-t2i` is pinned to NVIDIA revision `acdb5fd`. The offline suite strictly
+matches the 195 T5, 567 transformer, and 194 WAN VAE published tensor names and shapes. Against
+diffusers 0.40.0 and transformers 5.18.0, random-weight T5, transformer, VAE, tokenizer, Karras
+schedule, and tiny whole-pipeline comparisons are exact. The tiny end-to-end cases cover
+classifier-free guidance on and off, non-square output, seed 0 and seed 42, including the
+reference pipeline's uint8 conversion.
+
+The opt-in real-checkpoint suite separately compares tokenization, T5 conditioning, one denoiser
+step, VAE decoding, and two public `pipeline(...)` generations recorded as
+`e2e_cosmos-predict2-2b-t2i` and `seed_e2e_cosmos-predict2-2b-t2i`. All 8 real tests passed, and
+the observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one diffusers produces.
+The gated checkpoint's T5 shards are bfloat16 and are upcast to float32 on both sides. The
+real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (T5, transformer, WAN VAE; 195 / 567 / 194 tensors) | 0 missing / extra / mismatched | exact |
+| T5 tokenizer token ids | identical | exact |
+| T5 text encoder | 0 | 0 |
+| Transformer single step | 0 | 0 |
+| WAN VAE decode | 0 | 0 |
+| Karras schedule | exact | exact |
+| End to end: final pixels (seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `cosmos2_fixture_header`, `cosmos2_tokenizer`, `cosmos2_real_tokenizer`,
+`cosmos2_real_text_encoder`, `cosmos2_real_transformer`, `cosmos2_real_vae`, `cosmos2_scheduler`,
+`e2e_cosmos-predict2-2b-t2i` and `seed_e2e_cosmos-predict2-2b-t2i`,
+[validation-measurements.json](validation-measurements.json).
+
 ## PixelDiT
 
 `pixeldit` is pinned to `nvidia/PixelDiT-1300M-1024px` revision `7c63b99` and the official
@@ -2507,7 +2542,7 @@ first sequence of the batch only; the native module reproduces that.
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
   `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, 6 passed for
-  `show-o-512`, 5 passed for `sdxs-512-0.9`, and 7 passed for `emu3-gen`. These include structural parity with random weights, end-to-end parity with
+  `show-o-512`, 5 passed for `sdxs-512-0.9`, 7 passed for `emu3-gen`, and 8 passed for `cosmos-predict2-2b-t2i`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

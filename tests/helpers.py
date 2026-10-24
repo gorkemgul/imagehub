@@ -2887,6 +2887,89 @@ def write_tiny_auraflow(
     return root
 
 
+COSMOS2_FIXTURES = Path(__file__).parent / "fixtures" / "cosmos2_configs"
+TINY_COSMOS2_TEXT = {
+    "architectures": ["T5EncoderModel"],
+    "d_ff": 32,
+    "d_kv": 8,
+    "d_model": 24,
+    "dense_act_fn": "relu",
+    "dropout_rate": 0.0,
+    "feed_forward_proj": "relu",
+    "is_gated_act": False,
+    "layer_norm_epsilon": 1e-6,
+    "num_heads": 3,
+    "num_layers": 2,
+    "relative_attention_max_distance": 128,
+    "relative_attention_num_buckets": 32,
+    "vocab_size": 32128,
+}
+TINY_COSMOS2_TRANSFORMER = {
+    "_class_name": "CosmosTransformer3DModel",
+    "adaln_lora_dim": 8,
+    "attention_head_dim": 12,
+    "concat_padding_mask": True,
+    "extra_pos_embed_type": None,
+    "in_channels": 16,
+    "max_size": [2, 8, 8],
+    "mlp_ratio": 2.0,
+    "num_attention_heads": 2,
+    "num_layers": 2,
+    "out_channels": 16,
+    "patch_size": [1, 2, 2],
+    "rope_scale": [1.0, 4.0, 4.0],
+    "text_embed_dim": 24,
+}
+TINY_COSMOS2_VAE = {
+    "_class_name": "AutoencoderKLWan",
+    "attn_scales": [],
+    "base_dim": 8,
+    "dim_mult": [1, 2, 2, 2],
+    "dropout": 0.0,
+    "latents_mean": [0.0] * 16,
+    "latents_std": [1.0] * 16,
+    "num_res_blocks": 1,
+    "temperal_downsample": [False, False, False],
+    "z_dim": 16,
+}
+
+
+def write_tiny_cosmos2(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight Cosmos-Predict2 snapshot in the published diffusers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl_wan import AutoencoderKLWan
+    from imagehub.models.cosmos_transformer import CosmosTransformer3DModel
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    shutil.copytree(COSMOS2_FIXTURES / "tokenizer", root / "tokenizer")
+    shutil.copytree(COSMOS2_FIXTURES / "scheduler", root / "scheduler")
+    (root / "model_index.json").write_text(
+        (COSMOS2_FIXTURES / "model_index.json").read_text(encoding="utf-8"), encoding="utf-8"
+    )
+    for name, cls, config, weights in (
+        ("text_encoder", T5EncoderModel, TINY_COSMOS2_TEXT, "model.safetensors"),
+        (
+            "transformer",
+            CosmosTransformer3DModel,
+            TINY_COSMOS2_TRANSFORMER,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKLWan, TINY_COSMOS2_VAE, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config), encoding="utf-8")
+        save_safetensors(dict(model.state_dict()), root / name / weights)
+    return root
+
+
 LUMINA_NEXT_FIXTURES = Path(__file__).parent / "fixtures" / "lumina_next_configs"
 TINY_LUMINA_NEXT_TEXT_ENCODER = {
     "architectures": ["GemmaModel"],

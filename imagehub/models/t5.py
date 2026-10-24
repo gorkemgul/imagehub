@@ -58,7 +58,11 @@ def gelu_new(hidden_states: Tensor) -> Tensor:
 
 
 def _gate_activation(name: str) -> Callable[[Tensor], Tensor]:
-    activations: dict[str, Callable[[Tensor], Tensor]] = {"gelu_new": gelu_new, "silu": F.silu}
+    activations: dict[str, Callable[[Tensor], Tensor]] = {
+        "gelu_new": gelu_new,
+        "relu": F.relu,
+        "silu": F.silu,
+    }
     return activations[name]
 
 
@@ -79,10 +83,25 @@ class T5DenseGatedActDense(nn.Module):
         return self.wo(hidden_states)
 
 
+class T5DenseActDense(nn.Module):
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__()
+        self.act = _gate_activation(config["dense_act_fn"])
+        self.wi = nn.Linear(config["d_model"], config["d_ff"], bias=False)
+        self.wo = nn.Linear(config["d_ff"], config["d_model"], bias=False)
+
+    def forward(self, hidden_states: Tensor) -> Tensor:
+        hidden_states = self.act(self.wi(hidden_states))
+        if hidden_states.dtype != self.wo.weight.dtype and self.wo.weight.dtype != torch.int8:
+            hidden_states = hidden_states.to(self.wo.weight.dtype)
+        return self.wo(hidden_states)
+
+
 class T5LayerFF(nn.Module):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
-        self.DenseReluDense = T5DenseGatedActDense(config)
+        dense = T5DenseGatedActDense if config["is_gated_act"] else T5DenseActDense
+        self.DenseReluDense = dense(config)
         self.layer_norm = T5LayerNorm(config["d_model"], config["layer_norm_epsilon"])
 
     def forward(self, hidden_states: Tensor) -> Tensor:
@@ -240,10 +259,11 @@ class T5EncoderModel(NativeModel):
         super().__init__(T5_DEFAULTS | dict(config))
         unsupported = {
             "feed-forward projection": self.config["feed_forward_proj"]
-            not in ("gated-gelu", "gated-silu"),
+            not in ("gated-gelu", "gated-silu", "relu"),
             "activation": (self.config["feed_forward_proj"], self.config["dense_act_fn"])
-            not in (("gated-gelu", "gelu_new"), ("gated-silu", "silu")),
-            "ungated feed-forward": not self.config["is_gated_act"],
+            not in (("gated-gelu", "gelu_new"), ("gated-silu", "silu"), ("relu", "relu")),
+            "feed-forward gating": self.config["is_gated_act"]
+            != self.config["feed_forward_proj"].startswith("gated-"),
         }
         for option, is_unsupported in unsupported.items():
             if is_unsupported:

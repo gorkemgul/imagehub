@@ -748,6 +748,77 @@
     "max_rel": 0.0,
     "tolerance": 0.0
   },
+  "cosmos2_fixture_header": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 195
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 567
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 194
+    }
+  },
+  "cosmos2_real_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cosmos2_real_tokenizer": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cosmos2_real_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cosmos2_real_vae": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cosmos2_scheduler": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cosmos2_t5_random": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cosmos2_tiny_e2e_0": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "cosmos2_tiny_e2e_42": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "cosmos2_tokenizer": {
+    "cases": 4,
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "cosmos2_transformer_random": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "cosmos2_vae_random": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
   "ddpm_wuerstchen_timesteps_12": {
     "exact": true,
     "tolerance": "exact"
@@ -1013,6 +1084,10 @@
     "max_pixel_diff": 0,
     "passed": true,
     "steps": 8
+  },
+  "e2e_cosmos-predict2-2b-t2i": {
+    "passed": true,
+    "tolerance": "exact"
   },
   "e2e_deepfloyd-if-i-xl": {
     "max_pixel_diff": 0,
@@ -9889,6 +9964,10 @@
     "passed": true,
     "seed": 42,
     "steps": 8
+  },
+  "seed_e2e_cosmos-predict2-2b-t2i": {
+    "passed": true,
+    "tolerance": "exact"
   },
   "seed_e2e_deepfloyd-if-i-xl": {
     "passed": true,

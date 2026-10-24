@@ -3610,6 +3610,48 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="cosmos-predict2-2b-t2i",
+        task=Task.T2I,
+        family="cosmos2",
+        source="https://huggingface.co/nvidia/Cosmos-Predict2-2B-Text2Image",
+        repo_id="nvidia/Cosmos-Predict2-2B-Text2Image",
+        revision="acdb5fde992a73ef0355f287977d002cbfd127e0",
+        provenance="author",
+        catalog_id="cosmos-predict2-2b-t2i",
+        format="diffusers",
+        gated=True,
+        license="NVIDIA Open Model License",
+        config={
+            "defaults": {
+                "steps": 35,
+                "guidance": 7.0,
+                "width": 1360,
+                "height": 768,
+                "max_sequence_length": 512,
+            }
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

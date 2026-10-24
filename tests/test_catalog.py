@@ -24,6 +24,7 @@ def test_catalog_contents():
             "chroma1-hd",
             "cogview3-plus-3b",
             "cogview4-6b",
+            "cosmos-predict2-2b-t2i",
             "deepfloyd-if-i-xl",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
@@ -840,6 +841,17 @@ def test_pixeldit_catalog_entry():
     assert "NSCLv1" in spec.license
     assert spec.files == ("LICENSE", "README.md", "config.json", "pixeldit_t2i_v1.pth")
     assert spec.subfolders["text_encoder"].revision == ("569d9809d0c8b6722d4d31b5a77a2ec7a400650a")
+
+
+def test_cosmos2_catalog_entry():
+    spec = model_info("cosmos-predict2-2b-t2i")
+    assert spec.family == "cosmos2"
+    assert spec.catalog_id == "cosmos-predict2-2b-t2i"
+    assert spec.revision == "acdb5fde992a73ef0355f287977d002cbfd127e0"
+    assert spec.provenance == "author" and spec.gated
+    assert spec.license == "NVIDIA Open Model License"
+    assert len(spec.files) == 15
+    assert not any(name in spec.files for name in ("model.pt", "tokenizer/tokenizer.pth"))
 
 
 def test_cogview3_plus_catalog_entry():

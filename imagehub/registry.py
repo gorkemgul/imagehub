@@ -141,6 +141,7 @@ for _task, _name, _path in (
     (Task.T2I, "omnigen", "imagehub.backends.omnigen:OmniGenBackend"),
     (Task.T2I, "ovis-image", "imagehub.backends.ovis_image:OvisImageBackend"),
     (Task.T2I, "prx", "imagehub.backends.prx:PRXBackend"),
+    (Task.T2I, "cosmos2", "imagehub.backends.cosmos2:Cosmos2Backend"),
 ):
     backend_registry.register(_task, _name, _path)
 

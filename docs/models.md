@@ -12,6 +12,32 @@ image input, and passing `image` to one raises an error.
 | `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
 | `omnigen-v1` | optional | editing and subject-driven generation, referenced from the prompt | `image`, `image_guidance`, `max_input_image_size`, `use_input_image_size_as_output` |
 
+# Cosmos-Predict2
+
+Catalog: [`cosmos-predict2-2b-t2i`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `cosmos-predict2-2b-t2i` · Task: `t2i`
+
+**Architecture.** Cosmos-Predict2 combines a 2B, 28-layer 3D diffusion transformer with a T5-XXL
+text encoder, a WAN causal VAE, and Karras flow-match Euler sampling. The published transformer
+and VAE are float32; the two T5 shards are bfloat16 and are upcast for CPU float32 inference.
+
+**Usage.** Accept the gated repository terms, then run
+`python -m imagehub.pretrained cosmos-predict2-2b-t2i checkpoints/cosmos-predict2-2b-t2i`.
+
+**Settings.** `steps` (35), `guidance` (7.0; 1 and below disables classifier-free guidance),
+`width` (1360), `height` (768), `negative_prompt`, `max_sequence_length` (512), `seed`, and
+`latents`. Width and height must be multiples of 16.
+
+**Validation.** Published headers match all 195 T5, 567 transformer, and 194 VAE tensors. Exact
+random-weight tests cover each component, the tokenizer, Karras schedule, guidance on and off,
+non-square output, two seeds, and whole-pipeline uint8 output. Real-checkpoint component and
+end-to-end tests are provided for the validation run.
+
+**Limits and license.** The backend supports one prompt and one image per call. Batches, image
+conditioning, video, training, callbacks, and safety-checker integration are out of scope. The
+gated weights use the NVIDIA Open Model License; review its safety and attribution conditions
+before use.
+
 # JoyAI-Image
 
 Catalog: [`joyai-image-edit`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
