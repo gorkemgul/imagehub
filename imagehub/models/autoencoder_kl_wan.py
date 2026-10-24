@@ -11,6 +11,22 @@ from torch.nn import functional as F
 
 from imagehub.checkpoints import NativeModel
 
+WAN_VAE_DEFAULTS: dict[str, Any] = {
+    "in_channels": 3,
+    "out_channels": 3,
+    "base_dim": 96,
+    "decoder_base_dim": None,
+    "z_dim": 16,
+    "dim_mult": [1, 2, 4, 4],
+    "num_res_blocks": 2,
+    "attn_scales": [],
+    "temperal_downsample": [False, True, True],
+    "dropout": 0.0,
+    "is_residual": False,
+    "latents_mean": [0.0] * 16,
+    "latents_std": [1.0] * 16,
+}
+
 
 class _CausalConv3d(nn.Conv3d):
     def __init__(
@@ -200,10 +216,10 @@ class _Decoder(nn.Module):
 
 
 class AutoencoderKLWan(NativeModel):
-    """WAN VAE specialized for the single-frame JoyAI editing pipelines."""
+    """WAN causal VAE specialized for native single-frame inference."""
 
     def __init__(self, config: Mapping[str, Any]) -> None:
-        super().__init__(dict(config))
+        super().__init__(WAN_VAE_DEFAULTS | dict(config))
         if self.config["is_residual"]:
             raise ValueError("residual WAN VAEs are not supported")
         self.encoder = _Encoder(self.config)

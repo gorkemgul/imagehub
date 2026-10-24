@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-20",
+  "date": "2026-10-24",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -974,6 +974,71 @@
       }
     },
     {
+      "model_id": "dreamshaper-8",
+      "repo_id": "Lykon/dreamshaper-8",
+      "revision": "a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917",
+      "provenance": "author",
+      "catalog_id": "stable-diffusion-1",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "fcee0918cf5816238f4fd35ce1bdc329616b6213ada6dbf5a22953c71390aa35",
+        "scheduler/scheduler_config.json": "725c528a8f6f91d3e11a543718f1066b6d1682a147483c1a4a4aecf67fd9c824",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "text_encoder/config.json": "52e29b35e93261515dc07bf248ec8398a729e54f1886e946f8c095ede26be29b",
+        "unet/config.json": "8125830747f921e26e263e394b8954482cf3b4b4f1beb154704ee3cc57042be8",
+        "vae/config.json": "ac5ee038bf165a245be9259ff14753de0d77d0fe2ee3ac39364c589d44410f48",
+        "text_encoder/model.safetensors": "5cd76eb3ed326974cfd66795384e890742dfdb5a80f5f4e4cb1547d51ec75d86",
+        "unet/diffusion_pytorch_model.safetensors": "89b54dc332757e6fff8caef7399e8061833d7d668d42fdbcc02b3e366921c5a6",
+        "vae/diffusion_pytorch_model.safetensors": "a02c00c3ec17e99528f0ce53bcc508729ce9f9d3e653eb1cbc99a5da0030446f"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "unet": 686,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 7.5,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 50,
+        "tolerance": 0
+      }
+    },
+    {
       "model_id": "segmind-small-sd",
       "repo_id": "segmind/small-sd",
       "revision": "f8b087e68071a29bbe85a4b07e6e1e8998d59aa7",
@@ -1742,6 +1807,72 @@
       }
     },
     {
+      "model_id": "sdxs-512-0.9",
+      "repo_id": "IDKiro/sdxs-512-0.9",
+      "revision": "c332f05f60eb4b453de513be52c2a18c48d8cfe6",
+      "provenance": "author",
+      "catalog_id": "sdxs",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0",
+          "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "ed9d54586fae5f6f47400c5f7fbde440c7ff50081d3b62ce4d4c3880c53f3cb9",
+        "scheduler/scheduler_config.json": "91d57030b1a965f4878c952acaaa84d6956b640697b69fc642a13d3bf83e5e9c",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "tokenizer/tokenizer_config.json": "d562b18a0c6d32a168fce3d7a342fce64579ebacffb98fb71b0affc494fc32d8",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "text_encoder/config.json": "7e33bfc475f6cf76e69b28b101993ca834d1f22ff4d35caefde32d63d4f42fba",
+        "text_encoder/model.safetensors": "cce6febb0b6d876ee5eb24af35e27e764eb4f9b1d0b7c026c8c3333d4cfc916c",
+        "unet/config.json": "d248682d3f6364e9dbd25c4ac5960735439d060fcd379aa5c6992d740648d30f",
+        "unet/diffusion_pytorch_model.safetensors": "c2afb7dbea11b64d0bfbc4d1a45854aa65408b8a74a732438225d3f2ec85c71c",
+        "vae/config.json": "ad96f19ac8241278e5a472fe8bfec939bc80addea71c17f2501019b712cda23d",
+        "vae/diffusion_pytorch_model.safetensors": "d7956d561b1efbd861ad9b03fd8f01510f9e87eddc07bdfd20837009433f6ee5"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 372,
+          "unet": 358,
+          "vae": 134
+        }
+      },
+      "end_to_end": {
+        "guidance": 0.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 0.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          512,
+          512
+        ],
+        "steps": 1,
+        "tolerance": 0
+      }
+    },
+    {
       "model_id": "sdxl-base-1.0",
       "repo_id": "stabilityai/stable-diffusion-xl-base-1.0",
       "revision": "462165984030d82259a11f4367a4eed129e94a7b",
@@ -1820,6 +1951,222 @@
           1024
         ],
         "steps": 30
+      }
+    },
+    {
+      "model_id": "juggernaut-xl-v9",
+      "repo_id": "RunDiffusion/Juggernaut-XL-v9",
+      "revision": "cf419233522daa0b9ea36c3aff98fa2cab1fb0fb",
+      "provenance": "author",
+      "catalog_id": "sdxl",
+      "license": "CreativeML-OpenRAIL-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "153b1da39e7cc780003d5b25eb8d07b9c84b08cc20fd05b95652e780a15c8011",
+        "scheduler/scheduler_config.json": "db6b4739b5e23285a9552ec7c59de7ce40f6a4a3562fc1eccbd843f6444e5102",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881",
+        "tokenizer/special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "e70eb3e2b85a508e32bb81c32c13fc3f2b015548ca469b94627c2f32e445cba1",
+        "tokenizer_2/special_tokens_map.json": "c934044566ac411c4739e9cec969e061e8dcdf2bd108196a66ce917376d4d68e",
+        "text_encoder/config.json": "47ced7a4ab2ecec78818ac4e8e1578c66253c2b93861c67c0b6d6c33ce3ff829",
+        "text_encoder_2/config.json": "d9f7e7eb1e2d162908ecf7925234425c4f1c978152fd60e18e4af2c67ccebb19",
+        "unet/config.json": "73cd3f7bd618835b6d09eefd5155b84ccdeea07c32a4d201574af19bd405a5bc",
+        "vae/config.json": "bcbed358bb80da88bc8b61785b7d14c39b5be5745d813e4c6a56e9084d4dc9d2",
+        "text_encoder/model.fp16.safetensors": "698656aa4f452e1f8f38287240054a9b8d339b3051ec17d77d63bdb5605db01a",
+        "text_encoder_2/model.fp16.safetensors": "9962c194f50a9c580ebe573f2a4756d76dcd29abe15bffb0a5905509eb6a8dda",
+        "unet/diffusion_pytorch_model.fp16.safetensors": "cf1ee18eb36712683f50c1e674634875e2adf7413d7492d5f9aa7e69e1a8c17a",
+        "vae/diffusion_pytorch_model.fp16.safetensors": "6353737672c94b96174cb590f711eac6edf2fcce5b6e91aa9d73c5adc589ee48"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "animagine-xl-4.0",
+      "repo_id": "cagliostrolab/animagine-xl-4.0",
+      "revision": "2b7c1b397761bf5bd3cc42e5b39ec99314a75a96",
+      "provenance": "author",
+      "catalog_id": "sdxl",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "38099bdb63000c6ef48d1d0d86f3f439faad88ca3e21ad549a246ecc4bee4867",
+        "scheduler/scheduler_config.json": "b48856048bbe9165658ed5830ecb9199049b3546b116d5da4df3d0d0ca864279",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "7eb36a76a02551ce8583dbee08d062e672997a5fe1db82ebc642d88c7e79cc96",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "6081c0e7e9c02c78e8d932f34ef4f118c009a4321b6d708b06fb0f766dce0eca",
+        "text_encoder_2/config.json": "786ac791f8ae2168eca583978d89e97b704579e4873a2ca36e2d8b5af561f625",
+        "unet/config.json": "bc592d0b27ebb7eae3891d714a63b4866e25d18a9086197a0be0db7b2b095ebf",
+        "vae/config.json": "c766e609678a4d4de02cd678277a955ba1e5fa1a85b429312e6023aea06ffc11",
+        "text_encoder/model.safetensors": "73528dedc471ea62c5d24bab6621e2ef6890aa136ca080c53f2d205c39ab18df",
+        "text_encoder_2/model.safetensors": "1669a15b906d7a8cc7e919fa44769750e612fe580e3d8ceed60acbc212aea1ca",
+        "unet/diffusion_pytorch_model.safetensors": "3e16857a3a195315e01b47d8b76b7e932856cc71e9b5812c03f891de98551743",
+        "vae/diffusion_pytorch_model.safetensors": "6353737672c94b96174cb590f711eac6edf2fcce5b6e91aa9d73c5adc589ee48"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      }
+    },
+    {
+      "model_id": "dreamshaper-xl-1.0",
+      "repo_id": "Lykon/dreamshaper-xl-1-0",
+      "revision": "41e6644752a8c9aa63930e6043c4fd83c7708420",
+      "provenance": "author",
+      "catalog_id": "sdxl",
+      "license": "CreativeML-OpenRAIL++-M",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "f53514c31a572840ad7a8568d36407b234db5ecfbb57c577721e4c36dc11d1da",
+        "scheduler/scheduler_config.json": "9d2dc34f0f374e9f056431fdfa6c6098fd19e05c1227319ec363fcc8c93d93fb",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/tokenizer_config.json": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+        "tokenizer/special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+        "tokenizer_2/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer_2/tokenizer_config.json": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+        "tokenizer_2/special_tokens_map.json": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+        "text_encoder/config.json": "bd62e363ff56a8423316304d64f6ddcd0062e46b8afe1b9d681ad603d5ee8221",
+        "text_encoder_2/config.json": "f0ea116a2a58770504b06725e6b5414e763e52f052f1374b2597cc1d68710318",
+        "unet/config.json": "bd8dd3c4e42d3d1ed7ea349a772751cdcf93c3e360b0aad132cf2c1df6e4524d",
+        "vae/config.json": "3166d2f607856716eb522eeb59ab81a94522d53d6ea8d8f6723a9db407d98df5",
+        "text_encoder/model.safetensors": "5c3d6454dd2d23414b56aa1b5858a72487a656937847b6fea8d0606d7a42cdbc",
+        "text_encoder_2/model.safetensors": "3a6032f63d37ae02bbc74ccd6a27440578cd71701f96532229d0154f55a8d3ff",
+        "unet/diffusion_pytorch_model.safetensors": "05e315106230f46c343d7d31c06b1b264844cd3d91342a97d8eae61dab697443",
+        "vae/diffusion_pytorch_model.safetensors": "e8aef7b00195ec3fa8caaa3434e7516eff7d658e1d30eafc9ad6b0e66e9e827e"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 517,
+          "unet": 1680,
+          "vae": 248
+        }
+      },
+      "end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 0,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
+      },
+      "seed_end_to_end": {
+        "guidance": 5.0,
+        "passed": true,
+        "pixels_max_abs": 0,
+        "seed": 42,
+        "size": [
+          64,
+          64
+        ],
+        "steps": 4,
+        "tolerance": 0
       }
     },
     {
@@ -3883,6 +4230,70 @@
       }
     },
     {
+      "model_id": "flux-1-lite-8b",
+      "repo_id": "Freepik/flux.1-lite-8B",
+      "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+      "provenance": "author",
+      "catalog_id": "flux-1",
+      "license": "FLUX.1-dev Non-Commercial License",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "cd800176008d6a0c01ef766b869077d9cca3c0179c1e6e6c8f2f7ab9f9010390",
+        "scheduler/scheduler_config.json": "390beb09da68ea97c5db68686777cc2ec14722709558a6b8563bb22436cced8e",
+        "text_encoder/config.json": "aa2de0e8a7e79c8dc4fa87cbe26fa67ccafcb473d1958f6dab827c3dbab1ea2a",
+        "text_encoder/model.safetensors": "893d67a23f4693ed42cdab4cbad7fe3e727cf59609c40da28a46b5470f9ed082",
+        "text_encoder_2/config.json": "acc77b429359ab6e8b16b606a10f220bc6972176e56a25a9ea053de38a250582",
+        "text_encoder_2/model.safetensors.index.json": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a",
+        "text_encoder_2/model-00001-of-00002.safetensors": "ec87bffd1923e8b2774a6d240c922a41f6143081d52cf83b8fe39e9d838c893e",
+        "text_encoder_2/model-00002-of-00002.safetensors": "a5640855b301fcdbceddfa90ae8066cd9414aff020552a201a255ecf2059da00",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+        "tokenizer/tokenizer_config.json": "42f7827770491fb6c61962b9be49cb0552a93c17140d74098631861d90d5fd0c",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
+        "tokenizer_2/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer_2/tokenizer.json": "f5dfec163765e18e270537fe896c49f5fad74db1525641d9b255a3008b999596",
+        "tokenizer_2/tokenizer_config.json": "00ded71621afa8f055c4dccf1805d6f2cab12eebe5fd61a95491a009c8c13878",
+        "transformer/config.json": "dd013a71c638a8b1052dfbe1ddb54f1e0163e003d4563e216d12009d4607f4fa",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "92e7ad7c215ea34f4c8bdefc916dbec0988409581e9e1c45a4900aa083b69372",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "21f05025dd4a595032de998567ce2faf602e1791f1ef453bd0267097f4d2aa1f",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "ba73200cd18366d6b967a66862f4bcc50737a910024611686bf2b2ddc6e5350d",
+        "vae/config.json": "fa6d06fa45bd6bafcaa565cbc6a044f292ec1e188e7818562cc255de62a63dc8",
+        "vae/diffusion_pytorch_model.safetensors": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 219,
+          "transformer": 808,
+          "vae": 244
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 2
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 2
+      }
+    },
+    {
       "model_id": "flux1-kontext-dev",
       "repo_id": "black-forest-labs/FLUX.1-Kontext-dev",
       "revision": "24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
@@ -5311,6 +5722,61 @@
           768
         ],
         "steps": 12
+      }
+    },
+    {
+      "model_id": "lumina-dimoo",
+      "repo_id": "Alpha-VLLM/Lumina-DiMOO",
+      "revision": "f014549e17679e41b119959754cdd9320af9bdc8",
+      "provenance": "author",
+      "catalog_id": "lumina-dimoo",
+      "license": "Apache-2.0",
+      "reference": {
+        "lumina-dimoo": {
+          "repository": "Alpha-VLLM/Lumina-DiMOO",
+          "git_commit": "81344e60545ae8d70f11039d3450717d974f831b",
+          "class": "LLaDAForMultiModalGeneration/generate_image"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "005b856563821878b03bf8de78634cbe32a83934b85687eea17bfa35338eb96d",
+        "args.json": "675fd2ba77cb20465c646a259eab35c849db3e56483ee41b3cb4faf88ea6a209",
+        "config.json": "74fba9efcd6ab039916f9fe6053897e951c6f31c7b4c15239b17c33cdf99c945",
+        "generation_config.json": "9c9fc5fbd5d1e9f1776a9c30c591a38fd83237ffc0f7093ad0f16025e55e6a37",
+        "model.safetensors.index.json": "5daa832d3edd3b74c5ab4ba11917e4032d59e5f82cd2f3db845be225c8e4c8be",
+        "model-00001-of-00004.safetensors": "b9df75e5cb0e4fe6bb8d9d7c8b9bda7832fb174a49962b85ac0d4cd30f6273d5",
+        "model-00002-of-00004.safetensors": "86dc41287d14eb36093cfbdb25441dc0075d8481cf2a261291c8b2f1cd6a5a72",
+        "model-00003-of-00004.safetensors": "55539ec412c4d0f61305646cdf64d68b890d4f86be9a06b74e0a63318ef26abb",
+        "model-00004-of-00004.safetensors": "a27100ef7fcde2ac7a15a3a7eb116eecc182b7207a14f199b12a19571b8e3314",
+        "special_tokens_map.json": "d5f112ee8fc18922b8c3146844d436932b04de1573c3e9e45a346dcd67721c85",
+        "tokenizer.json": "d1e30dd1588d25682e78c74a57bc775173cc34f85f991385602812a2d498fc7d",
+        "tokenizer_config.json": "b04ab0cbf3d0e7ec4ef6170e57163b42645a1c808aa34297756c859ba9973979",
+        "vqvae/config.json": "f543c65e38300b098436a93d7b2c9e8246b47b3e9be8e0e6e37a5a5c6a050161",
+        "vqvae/diffusion_pytorch_model.safetensors": "1241a5c88b635af4f8cfb268e388ccaa70f55a458a473d68943e5c28d7b7f762"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "model": 291,
+          "vqvae": 277
+        }
+      },
+      "end_to_end": {
+        "height": 32,
+        "passed": true,
+        "seed": 0,
+        "steps": 2,
+        "width": 32
+      },
+      "seed_end_to_end": {
+        "height": 32,
+        "passed": true,
+        "seed": 42,
+        "steps": 2,
+        "width": 32
       }
     },
     {
@@ -8981,6 +9447,216 @@
       }
     },
     {
+      "model_id": "show-o-512",
+      "repo_id": "showlab/show-o-512x512",
+      "revision": "dbe757d951099968fb102d249d35a764528df2dd",
+      "provenance": "author",
+      "catalog_id": "show-o",
+      "license": "Apache-2.0",
+      "reference": {
+        "repository": {
+          "url": "https://github.com/showlab/Show-o",
+          "revision": "45a5a2de01d1ebd10cd5864d29310a76476cdf23"
+        }
+      },
+      "status": "full",
+      "files": {
+        "config.json": {
+          "repo_id": "showlab/show-o-512x512",
+          "revision": "dbe757d951099968fb102d249d35a764528df2dd",
+          "sha256": "fa1bd4b6b1290e23203ae050282c3c23ffa44e9f714e5fe545f145a1a4584c7e"
+        },
+        "pytorch_model.safetensors": {
+          "repo_id": "showlab/show-o-512x512",
+          "revision": "dbe757d951099968fb102d249d35a764528df2dd",
+          "sha256": "638739e52da4f5cba220b7cd59c04819f852dda180124c5a32c9c48b35a7299f"
+        },
+        "vq/config.json": {
+          "repo_id": "showlab/magvitv2",
+          "revision": "5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d",
+          "sha256": "75b8e650dce094065e2da4983c323f8ca943ed76b8ec8960aef99dafa3d04e6d"
+        },
+        "vq/pytorch_model.safetensors": {
+          "repo_id": "showlab/magvitv2",
+          "revision": "5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d",
+          "sha256": "79656bf974d99c215465a61df5e93b97e03282b0941f62f6294719527873b778"
+        },
+        "tokenizer/added_tokens.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "eca8e90d1be6af3afeb1a37f070f9492645c551a9fb2e1ce2a4a8b21f04ffc8b"
+        },
+        "tokenizer/config.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "2fe52126434075e8a23aca5bfed8cca8aff7051779e6f11c76de9e9e9923dcef"
+        },
+        "tokenizer/merges.txt": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "6f50ab5a5a509a1c309d6171f339b196a900dc9c99ad0408ff23bb615fdae7ad"
+        },
+        "tokenizer/tokenizer.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "337da36be7a71a6e88aa9148967a7bc8736f4b47c7de8e19ba92b89e80734cfc"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "001d5ef96609ff1bc02c1b7edabf97d4617c450620cf8dfbbad97c27cd9b5cb6"
+        },
+        "tokenizer/vocab.json": {
+          "repo_id": "microsoft/phi-1_5",
+          "revision": "77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+          "sha256": "3ba3c3109ff33976c4bd966589c11ee14fcaa1f4c9e5e154c2ed7f99d80709e7"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "showo": 437,
+          "vq": 382
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 2
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 2
+      }
+    },
+    {
+      "model_id": "emu3-gen",
+      "repo_id": "BAAI/Emu3-Gen",
+      "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+      "provenance": "author",
+      "catalog_id": "emu3",
+      "license": "Apache-2.0",
+      "reference": {
+        "repository": {
+          "url": "https://github.com/baaivision/Emu3",
+          "revision": "dbbf9858194d70b8c58293e219ecffe22df0f9c7"
+        }
+      },
+      "status": "full",
+      "files": {
+        "config.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "ed4a3ecf95a2de73989782dd55ff11d8d1c5a812459312300f6267d955b7006f"
+        },
+        "generation_config.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "a729ef4af7cf650b0b7d34d840d7ac3909d19c5d0af1b270ac43afa4da183e8e"
+        },
+        "model.safetensors.index.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "15cf63b5ebf57dd9c7de63045ed649c38b962abd112c28d86040fcc58ad1d516"
+        },
+        "model-00001-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "d6295df26a8fd366a0561f4aa797a85101d896e5f2c02c03326ed51557a9c4cd"
+        },
+        "model-00002-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "3ed302cc6f34fbbb4f8dd68edacd805021ecd67dd22d765cda0d507e83e85a94"
+        },
+        "model-00003-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "b71025f2b2c1bce4515d0e6da99b2b6336cf36d199c7bb6eb089e0277cc02c45"
+        },
+        "model-00004-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "e62ef1c47d998429ed7d614cc9cb95df04d97401186fb370130941c41970018f"
+        },
+        "model-00005-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "58cc0da755310212712fabce8581033c6ac6aaaaf0663212784a69f6f4cf014e"
+        },
+        "model-00006-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "b3ca138eba17549b2132f722703ed2a4e79d622af1bbcf9eaf0f1a7fbeea14f1"
+        },
+        "model-00007-of-00007.safetensors": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "adb8abb05929d844ab779f324cf5e4417482e32a018d9fc9df1f3c2da8ddad08"
+        },
+        "emu3.tiktoken": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186"
+        },
+        "emu3_vision_tokens.txt": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "9113d8c4fe12bc294103df9d46dd28f5c9a1b2f897a20c09f4fd07432b8bdba4"
+        },
+        "special_tokens_map.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "fea8d5dbfca581e0e7abee6cf844d5000f9b8efe21168fd2c3284a90ab7efc72"
+        },
+        "tokenizer_config.json": {
+          "repo_id": "BAAI/Emu3-Gen",
+          "revision": "40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+          "sha256": "a05ad31c77abb65f2ddc34d093407c48c3be0f3aef8c15a4c580dfaa7127db0b"
+        },
+        "vision_tokenizer/config.json": {
+          "repo_id": "BAAI/Emu3-VisionTokenizer",
+          "revision": "c81f916ad371289e205310a7539255e8a9396488",
+          "sha256": "6717e1bd03d980c6b5e88aa0a47a557d193b0c33afbdb9d24e53a92593ee7473"
+        },
+        "vision_tokenizer/preprocessor_config.json": {
+          "repo_id": "BAAI/Emu3-VisionTokenizer",
+          "revision": "c81f916ad371289e205310a7539255e8a9396488",
+          "sha256": "98a019cd8820290dbdc53e7366f7e447ee55d085824b63fdb68b2d642dd9edbf"
+        },
+        "vision_tokenizer/model.safetensors": {
+          "repo_id": "BAAI/Emu3-VisionTokenizer",
+          "revision": "c81f916ad371289e205310a7539255e8a9396488",
+          "sha256": "89536431c69b08b10b449ec309f52dcea22f14b7647317f30f5715273392bbf1"
+        }
+      },
+      "tensor_header_check": null,
+      "end_to_end": {
+        "height": 16,
+        "passed": true,
+        "seed": 0,
+        "tolerance": "exact",
+        "width": 24
+      },
+      "seed_end_to_end": {
+        "height": 16,
+        "passed": true,
+        "seed": 42,
+        "tolerance": "exact",
+        "width": 24
+      }
+    },
+    {
       "model_id": "pixeldit",
       "repo_id": "nvidia/PixelDiT-1300M-1024px",
       "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
@@ -9069,6 +9745,49 @@
       },
       "seed_end_to_end": {
         "max_abs_diff": 0,
+        "passed": true,
+        "tolerance": "exact"
+      }
+    },
+    {
+      "model_id": "cosmos-predict2-2b-t2i",
+      "repo_id": "nvidia/Cosmos-Predict2-2B-Text2Image",
+      "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+      "provenance": "author",
+      "catalog_id": "cosmos-predict2-2b-t2i",
+      "license": "NVIDIA Open Model License",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "26389544f44378dafebb3134caf3997fc17743f2e62584f676d0afad4f3cdc68",
+        "scheduler/scheduler_config.json": "7b2bc908263c1d074dad95779ca3840c1dc232b668ef6c872971a48cec26e10a",
+        "text_encoder/config.json": "e9c37563fd32cd99089f494b711d55cc84c409527c287733af8427e5463c6b04",
+        "text_encoder/model.safetensors.index.json": "56d18c8e7db19b994a1d8101da8a16c3b9ca692b3039d54087f057848f72b159",
+        "text_encoder/model-00001-of-00002.safetensors": "d90c625c136567ef62dc13d7fde0d54393a2b08e7400b3594d38c6a9ba12f897",
+        "text_encoder/model-00002-of-00002.safetensors": "30dea2006604226b944972536b9fc1ae40e3ef39b844140641cc450af5490158",
+        "tokenizer/config.json": "ab37994c43740513f94b3ba6233a784035a67b43c8cde83c8f31aa90468c67ce",
+        "tokenizer/special_tokens_map.json": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f",
+        "tokenizer/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer/tokenizer.json": "71c33c3bf57bf2e19b4f8ac686ad8d182a79f7cd1a4921889437c453420223f1",
+        "tokenizer/tokenizer_config.json": "2632d1edd2266f6ca61b44dd2a5b74492fa009b9c793a294a80b724aef34ba3b",
+        "transformer/config.json": "cc4533f860778400e2af8d1e6e3247ee9dd694d5ad6de6c8420afc5a643e0fcc",
+        "transformer/diffusion_pytorch_model.safetensors": "cab2780846e8c791e9258558da8c8050cc8a9762d3fafc4f41e3c42a8ff44967",
+        "vae/config.json": "2fd4d39e7fa6b374584162a6eda5a88fbc66eea54e8490d7c0ef3353d438f97b",
+        "vae/diffusion_pytorch_model.safetensors": "d6e524b3fffede1787a74e81b30976dce5400c4439ba64222168e607ed19e793"
+      },
+      "tensor_header_check": null,
+      "end_to_end": {
+        "passed": true,
+        "tolerance": "exact"
+      },
+      "seed_end_to_end": {
         "passed": true,
         "tolerance": "exact"
       }
@@ -9275,6 +9994,21 @@
         50,
         30
       ],
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "steps": 4,
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "steps": 4,
+      "tolerance": 0.0
+    },
+    "sdxl_scheduler_juggernaut-xl-v9": {
+      "max_abs": 0.0,
+      "steps": 4,
       "tolerance": 0.0
     },
     "sdxl_scheduler_koala-1b": {
@@ -9486,6 +10220,45 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_2_animagine-xl-4.0": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_2_dreamshaper-xl-1.0": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_2_juggernaut-xl-v9": {
+      "hidden_states": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "text_embeds": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_2_koala-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -9576,6 +10349,21 @@
       },
       "tolerance": 0.0
     },
+    "sdxl_text_encoder_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_text_encoder_juggernaut-xl-v9": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_text_encoder_koala-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -9624,6 +10412,24 @@
     "sdxl_tokenizers": {
       "mismatches": [],
       "prompts": 18,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_animagine-xl-4.0": {
+      "mismatches": [],
+      "prompts": 4,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_dreamshaper-xl-1.0": {
+      "mismatches": [],
+      "prompts": 4,
+      "tokenizers": 2,
+      "tolerance": "exact"
+    },
+    "sdxl_tokenizers_juggernaut-xl-v9": {
+      "mismatches": [],
+      "prompts": 4,
       "tokenizers": 2,
       "tolerance": "exact"
     },
@@ -9695,6 +10501,24 @@
         500,
         1
       ],
+      "tolerance": 0.0
+    },
+    "sdxl_unet_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
+      "tolerance": 0.0
+    },
+    "sdxl_unet_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
+      "tolerance": 0.0
+    },
+    "sdxl_unet_juggernaut-xl-v9": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timestep": 500,
       "tolerance": 0.0
     },
     "sdxl_unet_koala-1b": {
@@ -9792,6 +10616,21 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "sdxl_vae_decode_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_decode_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_decode_juggernaut-xl-v9": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "sdxl_vae_decode_koala-1b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -9843,6 +10682,21 @@
       "tolerance": 0.0
     },
     "sdxl_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_animagine-xl-4.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_dreamshaper-xl-1.0": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sdxl_vae_encode_juggernaut-xl-v9": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -9966,6 +10820,66 @@
     "sd_turbo_vae_encode": {
       "max_abs": 0.0,
       "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
+  "components_dreamshaper": {
+    "sd_scheduler_dreamshaper-8": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "steps": 4,
+      "tolerance": 0.0
+    },
+    "sd_text_encoder_dreamshaper-8": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "sd_tokenizer_dreamshaper-8": {
+      "mismatches": [],
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "sd_unet_dreamshaper-8": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "timesteps": [
+        500
+      ],
+      "tolerance": 0.0
+    },
+    "sd_vae_decode_dreamshaper-8": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
+  "components_sdxs": {
+    "sdxs_components_sdxs-512-0.9": {
+      "sigmas": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "timesteps": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tolerance": 0.0,
+      "unet": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "vae_decode": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      }
+    },
+    "sdxs_tokenizer_text_encoder_sdxs-512-0.9": {
+      "text_encoder": {
+        "max_abs": 0.0,
+        "max_rel": 0.0
+      },
+      "tokenizer_mismatches": 0,
       "tolerance": 0.0
     }
   },
@@ -10795,6 +11709,11 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "flux1_clip_flux-1-lite-8b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "flux1_clip_flux1-dev": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -10837,6 +11756,11 @@
       "mu": 1.15,
       "tolerance": "exact"
     },
+    "flux1_scheduler_flux-1-lite-8b": {
+      "exact": true,
+      "mu": 1.15,
+      "tolerance": "exact"
+    },
     "flux1_scheduler_flux1-dev": {
       "exact": true,
       "mu": 1.15,
@@ -10848,6 +11772,11 @@
       "tolerance": "exact"
     },
     "flux1_t5": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "flux1_t5_flux-1-lite-8b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -10874,7 +11803,16 @@
       "exact": true,
       "tolerance": "exact"
     },
+    "flux1_tokenizers_flux-1-lite-8b": {
+      "exact": true,
+      "tolerance": "exact"
+    },
     "flux1_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "flux1_transformer_flux-1-lite-8b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -10894,6 +11832,11 @@
       "max_rel": 0.0,
       "tolerance": 0.0
     },
+    "flux1_vae_decode_flux-1-lite-8b": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
     "flux1_vae_decode_flux1-dev": {
       "max_abs": 0.0,
       "max_rel": 0.0,
@@ -10905,6 +11848,11 @@
       "tolerance": 0.0
     },
     "flux1_vae_encode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "flux1_vae_encode_flux-1-lite-8b": {
       "max_abs": 0.0,
       "max_rel": 0.0,
       "tolerance": 0.0
@@ -12786,6 +13734,44 @@
       "tolerance": 0.0
     }
   },
+  "components_lumina_dimoo": {
+    "lumina_dimoo_llada_published_geometry": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_dimoo_llada_random_weights": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_dimoo_real_llada": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_dimoo_real_vq": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "lumina_dimoo_tiny_e2e_g0": {
+      "tokens_equal": true
+    },
+    "lumina_dimoo_tiny_e2e_g2": {
+      "tokens_equal": true
+    },
+    "lumina_dimoo_tokenizer": {
+      "mismatches": 0,
+      "prompts": 4,
+      "tolerance": "exact"
+    },
+    "lumina_dimoo_tokenizer_fuzz": {
+      "mismatches": 0,
+      "prompts": 200,
+      "tolerance": "exact"
+    }
+  },
   "components_amused": {
     "amused-256_hidden_state_negative": {
       "max_abs": 0.0,
@@ -13023,6 +14009,49 @@
     "hart_tokenizer": {
       "cases": 4,
       "passed": true
+    }
+  },
+  "components_show_o": {
+    "show_o_phi_logits": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "show_o_tokenizer": {
+      "identical": true,
+      "prompts": 5
+    },
+    "show_o_vq_decode": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
+  "components_emu3": {
+    "emu3_gen_headers": {
+      "extra": 0,
+      "generator_tensors": 291,
+      "mismatch": 0,
+      "missing": 0,
+      "passed": true,
+      "vision_tensors": 495
+    },
+    "emu3_gen_language_model_random": {
+      "cache": true,
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "emu3_gen_real_components": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "emu3_gen_tiny_e2e": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "emu3_gen_vision_decode_random": {
+      "passed": true,
+      "tolerance": "exact"
     }
   },
   "components_pixeldit": {
@@ -14791,6 +15820,79 @@
       "sequence": 24
     }
   },
+  "components_cosmos2": {
+    "cosmos2_fixture_header": {
+      "text_encoder": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 195
+      },
+      "transformer": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 567
+      },
+      "vae": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 194
+      }
+    },
+    "cosmos2_real_text_encoder": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cosmos2_real_tokenizer": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "cosmos2_real_transformer": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cosmos2_real_vae": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cosmos2_scheduler": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "cosmos2_t5_random": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cosmos2_tiny_e2e_0": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "cosmos2_tiny_e2e_42": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "cosmos2_tokenizer": {
+      "cases": 4,
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "cosmos2_transformer_random": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    },
+    "cosmos2_vae_random": {
+      "max_abs": 0.0,
+      "max_rel": 0.0,
+      "tolerance": 0.0
+    }
+  },
   "components_omnigen": {
     "omnigen_tokenizer_real": {
       "cases": 4,
@@ -14922,11 +16024,11 @@
     "MPS and CUDA runs are smoke tests (finite output, shape, CPU difference recorded); no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler for SDXL, flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler with trailing spacing for SD-Turbo and SDXS, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, Euler, trailing DDPM and leading DEIS for SDXL, flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift for FLUX.1 schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, Qwen-Image 2.1 and LongCat-Image, flow-match Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, DPM-Solver++ for PixArt and Sana (flow sigmas), and cosine masked-token schedulers for aMUSEd and Lumina-DiMOO, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "16 passed (koala-lightning-700m, koala-lightning-1b)"
+    "reference_summary": "8 passed (cosmos-predict2-2b-t2i)"
   }
 }

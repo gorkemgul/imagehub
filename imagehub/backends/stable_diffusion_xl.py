@@ -34,6 +34,8 @@ from imagehub.image import Image, as_pil
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.ddpm import DDPMScheduler
+from imagehub.schedulers.deis_multistep import DEISMultistepScheduler
 from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.euler_ancestral import EulerAncestralDiscreteScheduler
@@ -79,6 +81,10 @@ def _scheduler(config: dict[str, Any]) -> tuple[Any, str]:
         return EDMDPMSolverMultistepScheduler(config), "edm_dpmsolver_multistep"
     if class_name == "LCMScheduler":
         return LCMScheduler.from_config(config), "lcm"
+    if class_name == "DDPMScheduler":
+        return DDPMScheduler(config), "ddpm"
+    if class_name == "DEISMultistepScheduler":
+        return DEISMultistepScheduler(config), "deis"
     raise ValueError(f"Unsupported SDXL scheduler {class_name}")
 
 
@@ -225,7 +231,7 @@ def denoise(
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
         if isinstance(scheduler, LCMScheduler):
             latents, _ = scheduler.step(noise, timestep, latents, generator=generator)
-        elif isinstance(scheduler, EulerAncestralDiscreteScheduler):
+        elif isinstance(scheduler, (DDPMScheduler, EulerAncestralDiscreteScheduler)):
             latents = scheduler.step(noise, timestep, latents, generator=generator)
         else:
             latents = scheduler.step(noise, timestep, latents)

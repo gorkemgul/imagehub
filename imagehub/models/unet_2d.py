@@ -118,17 +118,18 @@ class FeedForward(nn.Module):
 
 
 class TransformerBlock(nn.Module):
-    def __init__(self, dim: int, context_dim: int, heads: int) -> None:
+    def __init__(self, dim: int, context_dim: int, heads: int, only_cross_attention: bool) -> None:
         super().__init__()
+        self.only_cross_attention = only_cross_attention
         self.norm1 = nn.LayerNorm(dim)
-        self.attn1 = CrossAttention(dim, dim, heads)
+        self.attn1 = CrossAttention(dim, context_dim if only_cross_attention else dim, heads)
         self.norm2 = nn.LayerNorm(dim)
         self.attn2 = CrossAttention(dim, context_dim, heads)
         self.norm3 = nn.LayerNorm(dim)
         self.ff = FeedForward(dim)
 
     def forward(self, x: Tensor, context: Tensor) -> Tensor:
-        x = self.attn1(self.norm1(x)) + x
+        x = self.attn1(self.norm1(x), context if self.only_cross_attention else None) + x
         x = self.attn2(self.norm2(x), context) + x
         return self.ff(self.norm3(x)) + x
 
@@ -144,6 +145,7 @@ class SpatialTransformer(nn.Module):
         groups: int,
         layers: int,
         linear_projection: bool,
+        only_cross_attention: bool,
     ) -> None:
         super().__init__()
         self.linear_projection = linear_projection
@@ -151,7 +153,8 @@ class SpatialTransformer(nn.Module):
         projection = nn.Linear if linear_projection else lambda x, y: nn.Conv2d(x, y, 1)
         self.proj_in = projection(channels, channels)
         self.transformer_blocks = nn.ModuleList(
-            TransformerBlock(channels, context_dim, heads) for _ in range(layers)
+            TransformerBlock(channels, context_dim, heads, only_cross_attention)
+            for _ in range(layers)
         )
         self.proj_out = projection(channels, channels)
 
@@ -184,6 +187,7 @@ def _transformers(
     context_dim: int,
     heads: int,
     layers: int | Sequence[int],
+    only_cross_attention: bool = False,
 ) -> nn.ModuleList:
     depths = [layers] * count if isinstance(layers, int) else [int(v) for v in layers]
     if len(depths) != count:
@@ -198,6 +202,7 @@ def _transformers(
             cfg["norm_num_groups"],
             depth,
             cfg["use_linear_projection"],
+            only_cross_attention,
         )
         for depth in depths
     )
@@ -339,6 +344,7 @@ class DownBlock(nn.Module):
         context_dim: int,
         heads: int,
         transformer_layers: int,
+        only_cross_attention: bool = False,
     ) -> None:
         super().__init__()
         self.resnets = nn.ModuleList(
@@ -364,6 +370,7 @@ class DownBlock(nn.Module):
                 context_dim=context_dim,
                 heads=heads,
                 layers=transformer_layers,
+                only_cross_attention=only_cross_attention,
             )
         else:
             self.attentions = None
@@ -406,6 +413,7 @@ class UpBlock(nn.Module):
         context_dim: int,
         heads: int,
         transformer_layers: int,
+        only_cross_attention: bool = False,
     ) -> None:
         super().__init__()
         layers = layers + 1
@@ -434,6 +442,7 @@ class UpBlock(nn.Module):
                 context_dim=context_dim,
                 heads=heads,
                 layers=transformer_layers,
+                only_cross_attention=only_cross_attention,
             )
         else:
             self.attentions = None
@@ -684,6 +693,7 @@ class UNet2DConditionModel(NativeModel):
             if key in (
                 "encoder_hid_dim",
                 "encoder_hid_dim_type",
+                "only_cross_attention",
                 "resnet_time_scale_shift",
                 "act_fn",
                 "class_embed_type",
@@ -739,6 +749,9 @@ class UNet2DConditionModel(NativeModel):
         )
         heads = per_block(head_config, "attention heads")
         context_dims = per_block(cfg["cross_attention_dim"], "cross_attention_dim")
+        only_cross = per_block(cfg["only_cross_attention"], "only_cross_attention")
+        if not all(isinstance(value, bool) for value in only_cross):
+            raise ValueError("U-Net only_cross_attention values must be booleans")
         temb = cfg["time_embedding_dim"] or ch[0] * 4
         self.conv_in = nn.Conv2d(cfg["in_channels"], ch[0], 3, padding=1)
         self.time_embedding = TimestepEmbedding(
@@ -761,6 +774,7 @@ class UNet2DConditionModel(NativeModel):
                     context_dim=context_dims[i],
                     heads=heads[i],
                     transformer_layers=transformer_layers[i],
+                    only_cross_attention=only_cross[i],
                 )
             )
         self.mid_block = MidBlock(
@@ -784,6 +798,7 @@ class UNet2DConditionModel(NativeModel):
                 )
         rev_heads = list(reversed(heads))
         rev_context_dims = list(reversed(context_dims))
+        rev_only_cross = list(reversed(only_cross))
         self.up_blocks = nn.ModuleList()
         out_ch = rev[0]
         for i, kind in enumerate(cfg["up_block_types"]):
@@ -802,6 +817,7 @@ class UNet2DConditionModel(NativeModel):
                     context_dim=rev_context_dims[i],
                     heads=rev_heads[i],
                     transformer_layers=rev_transformer_layers[i],
+                    only_cross_attention=rev_only_cross[i],
                 )
             )
         self.add_embedding: nn.Module

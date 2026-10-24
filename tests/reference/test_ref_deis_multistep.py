@@ -26,10 +26,12 @@ CONFIG = {
 }
 
 
+@pytest.mark.parametrize("spacing", ["linspace", "leading"])
 @pytest.mark.parametrize("steps", [4, 14, 20, 50])
-def test_deis_trajectory_matches_reference(steps):
-    expected_scheduler = diffusers.DEISMultistepScheduler.from_config(CONFIG)
-    actual_scheduler = DEISMultistepScheduler(CONFIG)
+def test_deis_trajectory_matches_reference(steps, spacing):
+    config = CONFIG | {"timestep_spacing": spacing}
+    expected_scheduler = diffusers.DEISMultistepScheduler.from_config(config)
+    actual_scheduler = DEISMultistepScheduler(config)
     expected_scheduler.set_timesteps(steps)
     actual_scheduler.set_timesteps(steps)
     assert torch.equal(actual_scheduler.timesteps, expected_scheduler.timesteps)

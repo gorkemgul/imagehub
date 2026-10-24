@@ -92,6 +92,25 @@ def test_playground_uses_model_guidance_and_edm_scheduler(tiny_playground):
     assert result.metadata["scheduler"] == "edm_dpmsolver_multistep"
 
 
+@pytest.mark.parametrize(
+    ("model_id", "fixture", "scheduler_name"),
+    [
+        ("juggernaut-xl-v9", "juggernaut_xl_v9_configs", "ddpm"),
+        ("dreamshaper-xl-1.0", "dreamshaper_xl_1_configs", "deis"),
+    ],
+)
+def test_finetunes_use_published_schedulers(tmp_path, model_id, fixture, scheduler_name):
+    config = json.loads(
+        (Path(__file__).parent / "fixtures" / fixture / "scheduler.json").read_text()
+    )
+    root = write_tiny_sdxl(tmp_path / f"tiny-{model_id}", scheduler_config=config, sample_size=4)
+    result = pipeline("t2i", backend=model_id, model=root)(
+        "a cat", seed=7, steps=2, width=32, height=32
+    )
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["scheduler"] == scheduler_name
+
+
 def test_lightning_uses_scheduler_overrides_and_model_defaults(tiny_sdxl):
     backend = StableDiffusionXLBackend(tiny_sdxl, model_id="sdxl-lightning-2step").load()
     assert backend.components is not None

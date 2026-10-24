@@ -63,6 +63,12 @@ def test_matches_sdxl_text_encoder_layouts():
         ),
         (CLIPTextModel, "sd1_configs/v1-5/text_encoder.json", "text_encoder", "sd1"),
         (CLIPTextModel, "sd1_configs/v1-1/text_encoder.json", "text_encoder", "sd1"),
+        (
+            CLIPTextModel,
+            "dreamshaper_8_configs/text_encoder.json",
+            "text_encoder",
+            "sd1",
+        ),
         (CLIPTextModel, "ssd1b_configs/text_encoder.json", "text_encoder", "ssd1b"),
         (
             CLIPTextModelWithProjection,

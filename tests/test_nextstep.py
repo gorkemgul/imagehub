@@ -109,4 +109,3 @@ def test_tiny_generation_is_repeatable():
     second = generate(components, "cat", generator=torch.Generator().manual_seed(5), **options)
     assert torch.equal(first, second)
     assert first.shape == (1, 3, 16, 16)
-

@@ -3,12 +3,13 @@
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
 measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.1,
 Kandinsky 2.2, Kandinsky 3,
-Kandinsky 5, Stable Cascade, PixArt, Sana, Lumina-Image 2.0, Lumina-Next, aMUSEd,
+Kandinsky 5, Stable Cascade, PixArt, Sana, Lumina-Image 2.0, Lumina-Next, Lumina-DiMOO, aMUSEd,
 Meissonic, AuraFlow,
-LlamaGen,
+LlamaGen, Show-o,
 Wuerstchen v2, LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen
 measurements are grouped in flat
-``components_segmind_sd``, ``components_bk_sdm``, ``components_bk_sdm_v2``,
+``components_dreamshaper``,
+``components_sdxs``, ``components_segmind_sd``, ``components_bk_sdm``, ``components_bk_sdm_v2``,
 ``components_sdxl``, ``components_qwen_image``, ``components_sd3``,
 ``components_flux1``,
 ``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
@@ -17,13 +18,15 @@ measurements are grouped in flat
 ``components_ldm``,
 ``components_kandinsky5``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
-``components_lumina2``, ``components_lumina_next``, ``components_amused``,
+``components_lumina2``, ``components_lumina_next``, ``components_lumina_dimoo``,
+``components_amused``,
 ``components_meissonic``, ``components_auraflow``,
-``components_llamagen``, ``components_wuerstchen``, ``components_glm_image``,
+``components_llamagen``, ``components_show_o``, ``components_emu3``,
+``components_wuerstchen``, ``components_glm_image``,
 ``components_longcat_image``,
 ``components_cogview3_plus``,
 ``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
-``components_hidream_o1`` and ``components_omnigen`` mappings: the base
+``components_hidream_o1``, ``components_cosmos2`` and ``components_omnigen`` mappings: the base
 model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
 entry may also contain its
 own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
@@ -59,20 +62,21 @@ LIMITS = [
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
     "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind "
     "Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler "
-    "with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, "
-    "Euler for SDXL, "
+    "with trailing spacing for SD-Turbo and SDXS, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, "
+    "Euler, trailing DDPM and leading DEIS for SDXL, "
     "flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift "
     "for FLUX.1 "
-    "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 "
-    "and LongCat-Image, flow-match "
+    "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, "
+    "Qwen-Image 2.1 and LongCat-Image, flow-match "
     "Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, "
     "and linear shifting for "
     "CogView4, shifted-SNR "
     "DDIM for CogView3-Plus, DDPM for "
     "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and "
     "Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, "
-    "DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for "
-    "aMUSEd, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen samples image tokens "
+    "DPM-Solver++ for PixArt and Sana (flow sigmas), and cosine masked-token schedulers for "
+    "aMUSEd and Lumina-DiMOO, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen "
+    "samples image tokens "
     "autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
@@ -289,6 +293,14 @@ def main() -> None:
         "components_sd_turbo": {
             key: value for key, value in measured.items() if key in SD_TURBO_COMPONENT_KEYS
         },
+        "components_dreamshaper": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith("sd_") and "dreamshaper-8" in key
+        },
+        "components_sdxs": {
+            key: value for key, value in measured.items() if key.startswith("sdxs_")
+        },
         "components_segmind_sd": {
             key: value
             for key, value in measured.items()
@@ -406,6 +418,9 @@ def main() -> None:
             for key, value in measured.items()
             if key.startswith(("lumina_next_", "gemma1_", "e2e_watershed_lumina"))
         },
+        "components_lumina_dimoo": {
+            key: value for key, value in measured.items() if key.startswith("lumina_dimoo_")
+        },
         "components_amused": {
             key: value for key, value in measured.items() if key.startswith(("amused_", "amused-"))
         },
@@ -419,6 +434,12 @@ def main() -> None:
         },
         "components_hart": {
             key: value for key, value in measured.items() if key.startswith("hart_")
+        },
+        "components_show_o": {
+            key: value for key, value in measured.items() if key.startswith("show_o_")
+        },
+        "components_emu3": {
+            key: value for key, value in measured.items() if key.startswith("emu3_gen_")
         },
         "components_pixeldit": {
             key: value for key, value in measured.items() if key.startswith("pixeldit_")
@@ -456,6 +477,9 @@ def main() -> None:
         },
         "components_hidream_o1": {
             key: value for key, value in measured.items() if key.startswith("hidream_o1_")
+        },
+        "components_cosmos2": {
+            key: value for key, value in measured.items() if key.startswith("cosmos2_")
         },
         "components_omnigen": {
             key: value for key, value in measured.items() if key.startswith("omnigen_")

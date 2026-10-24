@@ -1,7 +1,8 @@
-"""Second-order DEIS scheduler for the published Segmind Small-SD configuration."""
+"""Second-order DEIS scheduler for published Stable Diffusion configurations."""
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from typing import Any
 
@@ -37,11 +38,12 @@ _IGNORED_COMPATIBILITY_KEYS = {
     "clip_sample_range",
     "set_alpha_to_one",
     "skip_prk_steps",
+    "interpolation_type",
 }
 
 
 class DEISMultistepScheduler:
-    """The second-order log-rho DEIS mode used by Small-SD."""
+    """The second-order log-rho DEIS mode used by Small-SD and DreamShaper."""
 
     init_noise_sigma = 1.0
 
@@ -72,13 +74,16 @@ class DEISMultistepScheduler:
             "use_beta_sigmas": False,
             "use_flow_sigmas": False,
             "flow_shift": 1.0,
-            "timestep_spacing": "linspace",
             "use_dynamic_shifting": False,
             "time_shift_type": "exponential",
         }
         for key, expected in required.items():
             if cfg[key] != expected:
                 raise ValueError(f"Unsupported DEIS setting {key}={cfg[key]!r}")
+        if cfg["timestep_spacing"] not in ("linspace", "leading"):
+            raise ValueError(
+                f"Unsupported DEIS setting timestep_spacing={cfg['timestep_spacing']!r}"
+            )
         if cfg["beta_schedule"] == "scaled_linear":
             betas = (
                 torch.linspace(
@@ -116,12 +121,23 @@ class DEISMultistepScheduler:
         count = self.config["num_train_timesteps"]
         if type(num_inference_steps) is not int or not 0 < num_inference_steps <= count:
             raise ValueError(f"num_inference_steps must be an int in [1, {count}]")
-        timesteps = (
-            torch.linspace(0, count - 1, num_inference_steps + 1, dtype=torch.float64)
-            .round()
-            .flip(0)[:-1]
-            .to(torch.int64)
-        )
+        if self.config["timestep_spacing"] == "linspace":
+            timesteps = (
+                torch.linspace(0, count - 1, num_inference_steps + 1, dtype=torch.float64)
+                .round()
+                .flip(0)[:-1]
+                .to(torch.int64)
+            )
+        elif self.config["timestep_spacing"] == "leading":
+            step_ratio = count // (num_inference_steps + 1)
+            timesteps = (
+                torch.arange(num_inference_steps + 1, dtype=torch.int64).flip(0)[:-1] * step_ratio
+                + self.config["steps_offset"]
+            )
+        else:
+            raise ValueError(
+                f"Unsupported DEIS setting timestep_spacing={self.config['timestep_spacing']!r}"
+            )
         sigmas = self._training_sigmas[timesteps]
         sigma_last = self._training_sigmas[0]
         self.timesteps = timesteps
@@ -163,7 +179,12 @@ class DEISMultistepScheduler:
         rho_t, rho_s0, rho_s1 = sigma_t / alpha_t, sigma_s0 / alpha_s0, sigma_s1 / alpha_s1
 
         def integral(t: Tensor, b: Tensor, c: Tensor) -> Tensor:
-            return t * (-torch.log(c) + torch.log(t) - 1) / (torch.log(b) - torch.log(c))
+            # The reference applies NumPy's float32 logarithm to these scalar CPU tensors.
+            # Rounding the standard-library result back to the input dtype is bit-identical.
+            def log(value: Tensor) -> Tensor:
+                return torch.tensor(math.log(float(value)), dtype=value.dtype, device=value.device)
+
+            return t * (-log(c) + log(t) - 1) / (log(b) - log(c))
 
         coef1 = integral(rho_t, rho_s0, rho_s1) - integral(rho_s0, rho_s0, rho_s1)
         coef2 = integral(rho_t, rho_s1, rho_s0) - integral(rho_s0, rho_s1, rho_s0)

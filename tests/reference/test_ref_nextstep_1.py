@@ -83,8 +83,12 @@ def _reference_e2e(snapshot, seed, out_path):
     from inference.gen_pipeline import NextStepPipeline
 
     result = NextStepPipeline(snapshot, device="cpu", dtype=torch.float32, local_files_only=True)
-    image = result.generate_image(PROMPT, hw=(64, 64), num_sampling_steps=1, seed=seed, progress=False)[0]
-    torch.save(torch.frombuffer(bytearray(image.tobytes()), dtype=torch.uint8).reshape(64, 64, 3), out_path)
+    image = result.generate_image(
+        PROMPT, hw=(64, 64), num_sampling_steps=1, seed=seed, progress=False
+    )[0]
+    torch.save(
+        torch.frombuffer(bytearray(image.tobytes()), dtype=torch.uint8).reshape(64, 64, 3), out_path
+    )
 
 
 @pytest.mark.parametrize("seed", [0, 42])
@@ -95,9 +99,13 @@ def test_real_e2e(seed, tmp_path, record):
         {"snapshot": str(root), "seed": seed},
         tmp_path / f"reference-{seed}.pt",
     )
-    actual = pipeline("t2i", backend="nextstep-1-large", model=root)(
-        PROMPT, width=64, height=64, steps=1, seed=seed
-    ).images[0].tensor
+    actual = (
+        pipeline("t2i", backend="nextstep-1-large", model=root)(
+            PROMPT, width=64, height=64, steps=1, seed=seed
+        )
+        .images[0]
+        .tensor
+    )
     passed = torch.equal(actual, expected)
     record(
         ("e2e_nextstep-1-large" if seed == 0 else "seed_e2e_nextstep-1-large"),

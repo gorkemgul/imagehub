@@ -11,6 +11,7 @@ def test_catalog_contents():
         "t2i": (
             "amused-256",
             "amused-512",
+            "animagine-xl-4.0",
             "auraflow-v0.3",
             "bk-sdm-base",
             "bk-sdm-small",
@@ -23,12 +24,17 @@ def test_catalog_contents():
             "chroma1-hd",
             "cogview3-plus-3b",
             "cogview4-6b",
+            "cosmos-predict2-2b-t2i",
             "deepfloyd-if-i-xl",
             "dmd2-sdxl-1step",
             "dmd2-sdxl-4step",
             "dreamlite-base",
             "dreamlite-mobile",
+            "dreamshaper-8",
+            "dreamshaper-xl-1.0",
+            "emu3-gen",
             "ernie-image",
+            "flux-1-lite-8b",
             "flux1-dev",
             "flux1-kontext-dev",
             "flux1-krea-dev",
@@ -50,6 +56,7 @@ def test_catalog_contents():
             "janus-pro-7b",
             "joyai-image-edit",
             "joyai-image-edit-plus",
+            "juggernaut-xl-v9",
             "kandinsky-2-1",
             "kandinsky-2.2",
             "kandinsky-3",
@@ -65,9 +72,11 @@ def test_catalog_contents():
             "llamagen-t2i-xl-256",
             "llamagen-t2i-xl-512",
             "longcat-image",
+            "lumina-dimoo",
             "lumina-image-2.0",
             "lumina-next",
             "meissonic",
+            "nextstep-1-large",
             "omnigen-v1",
             "ovis-image-7b",
             "pixart-alpha-xl-1024",
@@ -105,9 +114,11 @@ def test_catalog_contents():
             "sdxl-lightning-8step",
             "sdxl-refiner-1.0",
             "sdxl-turbo",
+            "sdxs-512-0.9",
             "segmind-small-sd",
             "segmind-tiny-sd",
             "segmind-vega",
+            "show-o-512",
             "ssd-1b",
             "stable-cascade",
             "stable-cascade-lite",
@@ -132,6 +143,23 @@ def test_catalog_contents():
         assert not any(
             name.startswith(("safety_checker/", "feature_extractor/")) for name in spec.files
         )
+
+    dreamshaper = model_info("dreamshaper-8")
+    assert dreamshaper.repo_id == "Lykon/dreamshaper-8"
+    assert dreamshaper.revision == "a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917"
+    assert dreamshaper.provenance == "author"
+    assert dreamshaper.catalog_id == "stable-diffusion-1"
+    assert dreamshaper.config == {"defaults": {"steps": 50, "guidance": 7.5}}
+    assert dreamshaper.files == model_info("sd-v1-4").files
+
+    nextstep = model_info("nextstep-1-large")
+    assert nextstep.family == "nextstep"
+    assert nextstep.catalog_id == "nextstep-1"
+    assert nextstep.repo_id == "stepfun-ai/NextStep-1-Large"
+    assert nextstep.revision == "97dd0b9e097f60e39e3ce3bbac1a3343a09547cd"
+    assert nextstep.provenance == "author"
+    assert nextstep.license == "Apache-2.0"
+    assert len(nextstep.files) == 21
 
     bk_sdm = [model_info(f"bk-sdm-{variant}") for variant in ("base", "small", "tiny")]
     assert [spec.revision for spec in bk_sdm] == [
@@ -523,6 +551,38 @@ def test_catalog_contents():
     assert len(set(playground.files)) == len(playground.files) == 18
     assert not any("fp16" in name or name.endswith((".onnx", ".ckpt")) for name in playground.files)
 
+    fine_tunes = {
+        model_id: model_info(model_id)
+        for model_id in ("juggernaut-xl-v9", "animagine-xl-4.0", "dreamshaper-xl-1.0")
+    }
+    assert [fine_tunes[model_id].revision for model_id in fine_tunes] == [
+        "cf419233522daa0b9ea36c3aff98fa2cab1fb0fb",
+        "2b7c1b397761bf5bd3cc42e5b39ec99314a75a96",
+        "41e6644752a8c9aa63930e6043c4fd83c7708420",
+    ]
+    for spec in fine_tunes.values():
+        assert spec.family == "stable-diffusion-xl"
+        assert spec.catalog_id == "sdxl"
+        assert spec.provenance == "author"
+        assert spec.format == "diffusers"
+        assert spec.reference == {
+            "diffusers": {"version": "0.40.0"},
+            "transformers": {"version": "5.18.0"},
+        }
+        assert len(set(spec.files)) == len(spec.files) == 18
+        assert not any(name.endswith((".bin", ".ckpt")) for name in spec.files)
+    assert fine_tunes["juggernaut-xl-v9"].repo_id == "RunDiffusion/Juggernaut-XL-v9"
+    assert fine_tunes["juggernaut-xl-v9"].license == "CreativeML-OpenRAIL-M"
+    assert fine_tunes["juggernaut-xl-v9"].config == {"precision": "float16"}
+    assert sum("fp16" in name for name in fine_tunes["juggernaut-xl-v9"].files) == 4
+    assert fine_tunes["animagine-xl-4.0"].repo_id == "cagliostrolab/animagine-xl-4.0"
+    assert fine_tunes["animagine-xl-4.0"].license == "CreativeML-OpenRAIL++-M"
+    assert fine_tunes["animagine-xl-4.0"].config == {"precision": "float16"}
+    assert not any("fp16" in name for name in fine_tunes["animagine-xl-4.0"].files)
+    assert fine_tunes["dreamshaper-xl-1.0"].repo_id == "Lykon/dreamshaper-xl-1-0"
+    assert fine_tunes["dreamshaper-xl-1.0"].license == "CreativeML-OpenRAIL++-M"
+    assert fine_tunes["dreamshaper-xl-1.0"].config == {"precision": "float32"}
+
     for model_id in ("sd3-medium", "sd3.5-medium", "sd3.5-large", "sd3.5-large-turbo"):
         spec = model_info(model_id)
         assert spec.task is Task.T2I
@@ -791,6 +851,17 @@ def test_pixeldit_catalog_entry():
     assert "NSCLv1" in spec.license
     assert spec.files == ("LICENSE", "README.md", "config.json", "pixeldit_t2i_v1.pth")
     assert spec.subfolders["text_encoder"].revision == ("569d9809d0c8b6722d4d31b5a77a2ec7a400650a")
+
+
+def test_cosmos2_catalog_entry():
+    spec = model_info("cosmos-predict2-2b-t2i")
+    assert spec.family == "cosmos2"
+    assert spec.catalog_id == "cosmos-predict2-2b-t2i"
+    assert spec.revision == "acdb5fde992a73ef0355f287977d002cbfd127e0"
+    assert spec.provenance == "author" and spec.gated
+    assert spec.license == "NVIDIA Open Model License"
+    assert len(spec.files) == 15
+    assert not any(name in spec.files for name in ("model.pt", "tokenizer/tokenizer.pth"))
 
 
 def test_cogview3_plus_catalog_entry():
@@ -1715,6 +1786,25 @@ def test_lumina_next_catalog_entry():
         "vae/config.json",
         "vae/diffusion_pytorch_model.safetensors",
     )
+
+
+def test_lumina_dimoo_catalog_entry():
+    spec = model_info("lumina-dimoo")
+    assert spec.task is Task.T2I
+    assert spec.family == spec.catalog_id == "lumina-dimoo"
+    assert spec.repo_id == "Alpha-VLLM/Lumina-DiMOO"
+    assert spec.revision == "f014549e17679e41b119959754cdd9320af9bdc8"
+    assert spec.provenance == "author"
+    assert spec.format == "safetensors"
+    assert spec.license == "Apache-2.0"
+    assert not spec.gated
+    assert spec.reference["lumina-dimoo"]["git_commit"] == (
+        "81344e60545ae8d70f11039d3450717d974f831b"
+    )
+    assert spec.config == {
+        "defaults": {"steps": 64, "guidance": 4.0, "width": 1024, "height": 1024}
+    }
+    assert len(spec.files) == len(set(spec.files)) == 14
 
 
 def test_ernie_image_catalog_entry():

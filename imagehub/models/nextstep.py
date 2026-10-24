@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import Tensor, nn
@@ -162,7 +162,8 @@ class TimestepEmbedder(nn.Module):
         )
         args = timestep[:, None].float() * frequencies[None]
         value = torch.cat((args.cos(), args.sin()), -1)
-        return self.mlp(value.to(self.mlp[0].weight.dtype))
+        dtype = cast(torch.dtype, self.mlp[0].weight.dtype)
+        return self.mlp(value.to(dtype))
 
 
 class ResBlock(nn.Module):
@@ -265,6 +266,8 @@ class FlowMatchingHead(nn.Module):
 
 class NextStepModel(NativeModel):
     """NextStep-1 with the published top-level tensor layout."""
+
+    gen_pos_embed: Tensor
 
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(config)

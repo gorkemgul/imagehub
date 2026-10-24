@@ -5,6 +5,41 @@ Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB u
 12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
 References are recorded per model in `validation.json` under `reference`.
 
+## Cosmos-Predict2
+
+`cosmos-predict2-2b-t2i` is pinned to NVIDIA revision `acdb5fd`. The offline suite strictly
+matches the 195 T5, 567 transformer, and 194 WAN VAE published tensor names and shapes. Against
+diffusers 0.40.0 and transformers 5.18.0, random-weight T5, transformer, VAE, tokenizer, Karras
+schedule, and tiny whole-pipeline comparisons are exact. The tiny end-to-end cases cover
+classifier-free guidance on and off, non-square output, seed 0 and seed 42, including the
+reference pipeline's uint8 conversion.
+
+The opt-in real-checkpoint suite separately compares tokenization, T5 conditioning, one denoiser
+step, VAE decoding, and two public `pipeline(...)` generations recorded as
+`e2e_cosmos-predict2-2b-t2i` and `seed_e2e_cosmos-predict2-2b-t2i`. All 8 real tests passed, and
+the observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one diffusers produces.
+The gated checkpoint's T5 shards are bfloat16 and are upcast to float32 on both sides. The
+real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (T5, transformer, WAN VAE; 195 / 567 / 194 tensors) | 0 missing / extra / mismatched | exact |
+| T5 tokenizer token ids | identical | exact |
+| T5 text encoder | 0 | 0 |
+| Transformer single step | 0 | 0 |
+| WAN VAE decode | 0 | 0 |
+| Karras schedule | exact | exact |
+| End to end: final pixels (seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `cosmos2_fixture_header`, `cosmos2_tokenizer`, `cosmos2_real_tokenizer`,
+`cosmos2_real_text_encoder`, `cosmos2_real_transformer`, `cosmos2_real_vae`, `cosmos2_scheduler`,
+`e2e_cosmos-predict2-2b-t2i` and `seed_e2e_cosmos-predict2-2b-t2i`,
+[validation-measurements.json](validation-measurements.json).
+
 ## PixelDiT
 
 `pixeldit` is pinned to `nvidia/PixelDiT-1300M-1024px` revision `7c63b99` and the official
@@ -149,6 +184,67 @@ For each of the five checkpoints, the tensor names and shapes of three component
 `prepare_state_dict`. Across all 5 × 3 components, missing, extra and shape-mismatched tensors are
 **0**. Tensor counts: 196 / 686 / 248 (after dropping `text_model.embeddings.position_ids`).
 Record: `tensor_header_check`, [validation.json](validation.json).
+
+### DreamShaper 8
+
+Validated on CPU in the same environment as above. `dreamshaper-8`, `full` in the catalog, reuses
+the Stable Diffusion 1.x components and the published second-order DEIS scheduler. Its published
+float32 safetensors headers contain the supported CLIP, U-Net and VAE layouts and were loaded
+strictly. The reference suite checks strict headers, tokenizer ids, CLIP output, one U-Net step, VAE
+decode, the DEIS trajectory, and separate default 512×512 public-pipeline generations at seeds 0
+and 42. All 4 real tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The published weights are float32, so no upcast is involved.
+The real-checkpoint run took 5 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 196 / 686 / 248 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (4 prompts) | identical | exact |
+| CLIP text encoder | 0 | 0 |
+| U-Net single step (t = 500) | 0 | 0 |
+| VAE decode | 0 | 0 |
+| Published DEIS trajectory (4 steps) | 0 | 0 |
+| End to end: final pixels (512×512, 50 steps, guidance 7.5, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `header_dreamshaper-8`, `sd_tokenizer_dreamshaper-8`, `sd_text_encoder_dreamshaper-8`,
+`sd_unet_dreamshaper-8`, `sd_vae_decode_dreamshaper-8`, `sd_scheduler_dreamshaper-8`,
+`e2e_dreamshaper-8` and `seed_e2e_dreamshaper-8`,
+[validation-measurements.json](validation-measurements.json).
+
+## SDXS-512
+
+`sdxs-512-0.9` uses the existing Stable Diffusion pipeline with its published one-step Euler
+schedule and TinyVAE decoder. Offline tests cover the pinned full-precision tensor headers (373
+published text-encoder, 358 U-Net, and 134 VAE tensors), exact random-weight U-Net parity, and
+exact tiny end-to-end parity at the defaults and with guidance at a non-square size. Dedicated
+real-checkpoint tests compare tokenizer and text-encoder outputs, one denoiser step, VAE decoding,
+the scheduler, and separate 512×512 public-pipeline generations at seed 0 and seed 42. CPU float32
+comparisons require exact tensor and uint8 equality. Validated on CPU in the same environment as
+above. All 5 real tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one diffusers produces. The published weights are float32. The real-checkpoint run
+took 0 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (`text_encoder`, `unet`, `vae`; 372 / 358 / 134 tensors) | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids | identical | exact |
+| CLIP text encoder | 0 | 0 |
+| U-Net single step | 0 | 0 |
+| VAE decode | 0 | 0 |
+| Euler scheduler timesteps / sigmas | 0 / 0 | 0 |
+| End to end: final pixels (512×512, 1 step, guidance 0.0, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `header_sdxs-512-0.9`, `sdxs_tokenizer_text_encoder_sdxs-512-0.9`,
+`sdxs_components_sdxs-512-0.9`, `e2e_sdxs-512-0.9` and `seed_e2e_sdxs-512-0.9`,
+[validation-measurements.json](validation-measurements.json).
 
 ## Segmind Small-SD and Tiny-SD
 
@@ -419,6 +515,46 @@ and guidance 2.0. Its Euler ancestral scheduler draws the per-step ancestral noi
 seeded CPU generator as the initial noise. `playground-v2` and `playground-v2.5` use 1024×1024, 30 steps and guidance
 3.0; 30 steps are used instead of the default 50 to keep CPU runtime reasonable. The `playground-v2`
 real-checkpoint run took 21 minutes on an M2 Max (CPU).
+
+### Community fine-tunes
+
+`juggernaut-xl-v9`, `animagine-xl-4.0` and `dreamshaper-xl-1.0` target diffusers 0.40.0
+`StableDiffusionXLPipeline`. Their pinned published headers match the existing SDXL text encoders,
+U-Net and VAE layouts. The suite also covers each published scheduler: trailing DDPM for
+Juggernaut, Euler for Animagine and leading DEIS for DreamShaper.
+
+The real-checkpoint run covers tokenizers, both text encoders, one U-Net denoising step, VAE
+encode/decode, a four-step scheduler trajectory, and separate 64×64 public-pipeline generations at
+seed 0 and seed 42 for each checkpoint. All 24 real tests passed (8 per checkpoint), and the
+observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one diffusers produces.
+The real-checkpoint run took 1 minute on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Checkpoint | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Tensor header check (`text_encoder`, `text_encoder_2`, `unet`, `vae`; 196 / 517 / 1680 / 248 tensors) | all three | 0 missing / extra / mismatched | exact |
+| Tokenizer token ids (2 tokenizers, 4 prompts) | all three | identical | exact |
+| CLIP text encoder (penultimate layer) | all three | 0 | 0 |
+| OpenCLIP bigG text encoder (penultimate layer and pooled output) | all three | 0 / 0 | 0 / 0 |
+| U-Net single step (t = 500) | all three | 0 | 0 |
+| VAE decode / encode | all three | 0 / 0 | 0 / 0 |
+| Scheduler trajectory (4 steps) | all three | 0 | 0 |
+| End to end: final pixels (64×64, 4 steps, guidance 5.0, seed 0) | all three | 0 | 0 |
+| End to end, seed 42 (pixels) | all three | 0 | 0 |
+
+Records: `header_<id>`, `sdxl_tokenizers_<id>`, `sdxl_text_encoder_<id>`,
+`sdxl_text_encoder_2_<id>`, `sdxl_unet_<id>`, `sdxl_vae_decode_<id>`,
+`sdxl_vae_encode_<id>`, `sdxl_scheduler_<id>`, `e2e_<id>` and `seed_e2e_<id>`,
+[validation-measurements.json](validation-measurements.json).
+
+The end-to-end runs use 64×64 output, four steps and guidance 5.0. `e2e_<id>` uses seed 0 and
+`seed_e2e_<id>` uses seed 42; their recorded pixel difference is **exactly 0** in every run.
+
+Juggernaut and Animagine are validated after their published float16 tensors are upcast to CPU
+float32. DreamShaper publishes float32 component tensors. Safety checking, watermarking, fp16
+arithmetic parity and duplicate single-file checkpoints are excluded.
 
 ### Segmind-Vega
 
@@ -760,6 +896,50 @@ The reference and native transformers, about 48 GB each in float32, were never l
 Each test ran the reference first, saved its outputs, freed it, then ran the native model. Schnell's
 component and seed tests took 11 minutes and its fixed-latent end-to-end test took 13 minutes. The
 full dev run took 25 minutes. The Krea [dev] real-checkpoint run took about 30 minutes on an M2 Max (CPU).
+
+### Flux.1-Lite 8B
+
+The dedicated Flux.1-Lite suite targets diffusers 0.40.0 `FluxPipeline` and the ungated
+`Freepik/flux.1-lite-8B` checkpoint at revision `16b9373`. The published bfloat16 weights are
+upcast to float32 on both sides. Config and safetensors-header fixtures verify the reduced
+8-double-stream / 38-single-stream transformer layout; the existing FLUX.1 random-weight and tiny
+pipeline tests cover exact configurable-module and generation-loop parity.
+
+The real-checkpoint run compared strict headers for all four weighted components, tokenizer ids,
+CLIP and T5 outputs, a transformer denoising step, VAE encode/decode, the dynamically shifted
+scheduler, and two separate public-pipeline image runs. `e2e_flux-1-lite-8b`
+uses seed 0 and `seed_e2e_flux-1-lite-8b` uses seed 42; both use two steps, guidance 3.5 and 64x64
+output. The reference images are produced in a subprocess that exits before the native pipeline
+loads.
+
+All 6 real tests passed, and the observed difference in every recorded comparison is **exactly 0**
+(0 means exact): on CPU in float32, on the upcast bfloat16 weights, the local implementation
+produces a bit-identical image to the one diffusers produces. The real-checkpoint run took 3
+minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32, upcast bfloat16 weights)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header names and shapes (`text_encoder`, `text_encoder_2`, `transformer`, `vae`; 196 / 219 / 808 / 244 tensors) | 0 missing / extra / mismatched | exact |
+| CLIP and T5 tokenizer token ids (77 and 512 tokens) | identical | exact |
+| CLIP pooled output / T5 last hidden state | 0 / 0 | 0 / 0 |
+| Transformer single step (random conditioning, timestep 0.5, guidance 3.5) | 0 | 0 |
+| VAE decode / encode (8×8 latents, 64×64 image) | 0 / 0 | 0 / 0 |
+| Flow-match Euler scheduler (dynamic shifting, mu 1.15) | exact | exact |
+| End to end: final pixels (64×64, 2 steps, guidance 3.5, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels, same settings) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse" with 512 text tokens.
+Two steps and 64x64 output are used instead of the 28-step, 1024x1024 model-card defaults only to
+shorten the CPU run.
+
+Records: `header_flux-1-lite-8b`, `flux1_tokenizers_flux-1-lite-8b`,
+`flux1_clip_flux-1-lite-8b`, `flux1_t5_flux-1-lite-8b`,
+`flux1_transformer_flux-1-lite-8b`, `flux1_vae_decode_flux-1-lite-8b`,
+`flux1_vae_encode_flux-1-lite-8b`, `flux1_scheduler_flux-1-lite-8b`,
+`e2e_flux-1-lite-8b` and `seed_e2e_flux-1-lite-8b`,
+[validation-measurements.json](validation-measurements.json).
 
 ## JoyAI-Image
 
@@ -1887,6 +2067,37 @@ and without query/key normalization) and of the rotary tables; tiny-snapshot end
 non-square sizes, five `scaling_watershed` values, proportional attention off, several seeds, one
 step); the scheduler timesteps and sigmas; and the tokenizer on a tiny vocabulary.
 
+## Lumina-DiMOO
+
+`lumina-dimoo` is loaded strictly from `Alpha-VLLM/Lumina-DiMOO` revision `f014549` and compared
+on CPU in float32 with the official `LLaDAForMultiModalGeneration` and `generate_image` at code
+revision `81344e6`. The published LLaDA weights are BF16 and are upcast on both sides; the VQ
+weights are float32. All 11 real-checkpoint tests passed, and the observed difference in every
+recorded comparison is **exactly 0** (0 means exact): on CPU in float32, the local implementation
+produces a bit-identical image to the one the official implementation produces. The real-checkpoint
+run took 3 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Measured difference |
+| --- | --- |
+| Tensor headers: LLaDA / VQ model (291 / 277 tensors) | 0 missing, extra or mismatched |
+| Tokenizer ids (4 formatted prompts and 200 seeded fuzz strings; Unicode and multimodal specials) | 0 mismatches |
+| Random-weight LLaDA logits (published geometry and random weights) | 0 |
+| Tiny end-to-end token trajectories (guidance 0 and 2) | identical |
+| Real LLaDA logits | 0 |
+| Real VQ decode | 0 |
+| End to end (32x32, two steps, guidance 4.0, seed 0) | identical uint8 image (passed) |
+| Separate public-pipeline seed run (seed 42) | identical uint8 image (passed) |
+
+The real end-to-end cases use 32x32 output and two steps rather than the 1024x1024, 64-step
+defaults because the 8B transformer evaluates the full image-token sequence on every step. Records:
+`header_lumina-dimoo`, `lumina_dimoo_tokenizer`, `lumina_dimoo_tokenizer_fuzz`,
+`lumina_dimoo_llada_published_geometry`, `lumina_dimoo_llada_random_weights`,
+`lumina_dimoo_real_llada`, `lumina_dimoo_real_vq`, `lumina_dimoo_tiny_e2e_g0`,
+`lumina_dimoo_tiny_e2e_g2`, `e2e_lumina-dimoo` and `seed_e2e_lumina-dimoo`,
+[validation-measurements.json](validation-measurements.json).
+
 ## aMUSEd
 
 `amused-256` and `amused-512` are loaded strictly from `amused/amused-256` at revision `09b6259` and
@@ -2298,7 +2509,7 @@ first sequence of the batch only; the native module reproduces that.
   for FLUX.1 schnell, Lumina-Image 2.0, Lumina-Next and AuraFlow, flow-match Euler with inverted sigmas for OmniGen, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 and LongCat-Image, flow-match
   Euler with exponential shifting for Krea 2 and linear shifting for CogView4, shifted-SNR DDIM for CogView3-Plus, DDPM for HunyuanDiT,
   UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and Wuerstchen v2, DPM-Solver++ for PixArt and Sana (flow sigmas), and
-  the cosine-schedule masked-token scheduler for aMUSEd, and flow-match LCM with re-noising for
+  cosine-schedule masked-token schedulers for aMUSEd and Lumina-DiMOO, and flow-match LCM with re-noising for
   HiDream-I1 Fast and Dev, and UniPC flow prediction for HiDream-I1 Full. LlamaGen samples image tokens autoregressively and has no scheduler.
 - No image quality benchmark (FID, CLIP score) was run.
 - Only text-to-image generation is supported. SD 1.x img2img is not implemented.
@@ -2307,19 +2518,20 @@ first sequence of the batch only; the native module reproduces that.
 
 - Regular tests: 630 passed, 500 skipped (the skipped ones are the optional reference tests). Tests do
   not download models from the network.
-- Reference tests (CPU): 34 passed for SD 1.x and 25 passed, 2 skipped for the SDXL family
-  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 14 passed for `segmind-small-sd` and `segmind-tiny-sd` together, 9 passed   for `segmind-vega`, 18 passed for `koala-700m` and `koala-1b` together, 16 passed for `koala-lightning-700m` and `koala-lightning-1b` together, 12 passed for the three SDXL-Lightning models, 11 passed
+- Reference tests (CPU): 34 passed for SD 1.x, 4 passed for `dreamshaper-8`, and 25 passed, 2 skipped for the SDXL family
+  (`sdxl-base-1.0`, `ssd-1b`, `sdxl-turbo`), 24 passed for `juggernaut-xl-v9`, `animagine-xl-4.0`
+  and `dreamshaper-xl-1.0`, 14 passed for `segmind-small-sd` and `segmind-tiny-sd` together, 9 passed   for `segmind-vega`, 18 passed for `koala-700m` and `koala-1b` together, 16 passed for `koala-lightning-700m` and `koala-lightning-1b` together, 12 passed for the three SDXL-Lightning models, 11 passed
   for `sdxl-refiner-1.0`, 4 passed for `hyper-sdxl-1step`, 8 passed for `dmd2-sdxl-4step` and `dmd2-sdxl-1step`,
   8 passed for `playground-v2`, 8 passed, 1 skipped for `playground-v2.5`, 9 passed for `z-image-turbo`, 8 passed for `z-image`,
   6 passed for `janus-pro-1b`, 9 passed for `janus-pro-7b`, 9 passed for `qwen-image-2.1`, 6 passed
   for `qwen-image`, 7 passed for `flux2-klein-4b`, 7 passed for `flux2-klein-9b`, 8 passed each for `flux1-schnell`,
-  `flux1-dev` and `flux1-krea-dev`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
+  `flux1-dev` and `flux1-krea-dev`, 6 passed for `flux-1-lite-8b`, 7 passed for `flux1-kontext-dev`, 15 passed for `hunyuan-dit-v1.1-distilled`, 10 passed each for `hunyuan-dit-v1.2` and `hunyuan-dit-v1.2-distilled`, 4 passed for `kandinsky-2-1`, 5 passed for `kandinsky-2.2`, 7 passed for `kandinsky-3`, 6 passed for `kandinsky-5-t2i-lite`, 7 passed each
   for `stable-cascade` and `stable-cascade-lite`, 19 passed
   for `pixart-sigma-xl-1024` and `pixart-alpha-xl-1024`, 7 passed for `pixart-lcm-xl-1024`,
   28 passed for `pixart-alpha-xl-512`,
   `pixart-sigma-256`, `pixart-sigma-512` and `pixart-sigma-2k` together, 7 passed for
   `krea2-turbo`, 8 passed for `longcat-image`, 9 passed for
-  `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`
+  `cogview4-6b`, 8 passed for `cogview3-plus-3b`, 7 passed for `ideogram4-fp8`, 9 passed for `sd-turbo`, 8 passed for `lumina-image-2.0`, 11 passed for `lumina-next`, 11 passed for `lumina-dimoo`, 7 passed for `kolors`, 7 passed for `auraflow-v0.3`, 7 passed for `wuerstchen-v2`, 63 passed for `llamagen-t2i-xl-256` and `llamagen-t2i-xl-512` together, 8 passed for `sd-v2-1`, 7 passed each for `sana-600m-1024` and `sana-1600m-1024`, 19 passed for `sana-sprint-1.6b-1024`
   and `sana-1.5-4.8b-1024` together, 7 passed each for `amused-256` and
   `amused-512`, 12 passed for `omnigen-v1`, 8 passed for `glm-image`, 7 passed for
   `lcm-dreamshaper-v7`, 5 passed for `ldm-text2im-large-256`, 8 passed for `ernie-image`, 8 passed for `hidream-i1-fast`, 8 passed each
@@ -2329,9 +2541,9 @@ first sequence of the batch only; the native module reproduces that.
   23 passed for `joyai-image-edit` and `joyai-image-edit-plus` together, 7 passed for
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
-  `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`. These include structural
-  parity with random weights, end-to-end parity with a small model, real-checkpoint parity and
-  tokenizer fuzz tests.
+  `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, 6 passed for
+  `show-o-512`, 5 passed for `sdxs-512-0.9`, 7 passed for `emu3-gen`, and 8 passed for `cosmos-predict2-2b-t2i`. These include structural parity with random weights, end-to-end parity with
+  a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.
 - MPS smoke test: 1 passed.
@@ -2478,3 +2690,105 @@ of the 50-step default only to shorten the CPU run. Records: `header_ovis-image-
 [validation-measurements.json](validation-measurements.json); `tensor_header_check`,
 `end_to_end` and `seed_end_to_end` under `ovis-image-7b` and `tests.reference_summary`,
 [validation.json](validation.json).
+
+## Show-o
+
+`show-o-512` is pinned to `showlab/show-o-512x512` revision `dbe757d951099968fb102d249d35a764528df2dd`,
+with `showlab/magvitv2` revision `5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d` and the
+`microsoft/phi-1_5` tokenizer at revision `77aa61eeac94fbf33d492b9f2744c98b42d5b5eb`.
+The CPU float32 reference is the official `Showo` class and its `t2i_generate` method at repository
+revision `45a5a2de01d1ebd10cd5864d29310a76476cdf23`.
+
+Offline validation checks all 437 Show-o and 382 MAGVIT-v2 published tensor names and shapes, exact
+CodeGen tokenizer output, random-weight Phi attention and MLP, exact MAGVIT-v2 decoding, and exact
+tiny discrete-denoising output. Real-checkpoint tests separately compare Phi logits, VQ decoding,
+and public-pipeline uint8 images at seed 0 and seed 42. Both end-to-end cases use two steps rather
+than the 18-step default to keep the CPU run short; guidance 10 and 512×512 output remain unchanged.
+All 6 real-checkpoint tests passed, and the observed difference in every recorded comparison is
+**exactly 0** (0 means exact): on CPU in float32, the local implementation produces a bit-identical
+image to the one the official Show-o implementation produces. The real-checkpoint run took 1 minute
+on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check: `showo`, `vq` (437 / 382 tensors) | 0 missing / extra / mismatched | exact |
+| CodeGen tokenizer token ids (5 prompts) | identical | exact |
+| Phi logits | 0 | 0 |
+| MAGVIT-v2 decode | 0 | 0 |
+| End to end: uint8 image (512×512, 2 steps, guidance 10, seed 0) | 0 | 0 |
+| End to end, seed 42 (uint8 image) | 0 | 0 |
+
+The end-to-end runs keep every pipeline default (guidance 10, 512×512) and use 2 steps instead of
+the 18-step default only to shorten the CPU run. Records: `header_show-o-512`, `show_o_tokenizer`,
+`show_o_phi_logits`, `show_o_vq_decode`, `e2e_show-o-512` and `seed_e2e_show-o-512`,
+[validation-measurements.json](validation-measurements.json); `tensor_header_check`,
+`end_to_end` and `seed_end_to_end` under `show-o-512` and `tests.reference_summary`,
+[validation.json](validation.json).
+
+## Emu3-Gen
+
+`emu3-gen` pins `BAAI/Emu3-Gen` revision
+`40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72`, its vision tokenizer revision
+`c81f916ad371289e205310a7539255e8a9396488`, and the official Emu3 implementation revision
+`dbbf9858194d70b8c58293e219ecffe22df0f9c7`.
+
+Offline validation checks every published generator and vision-tokenizer tensor name and shape and
+compares tiny random-weight language-model and VQ-decoder outputs exactly. The real-checkpoint suite
+checks a language-model step and VQ decode, then performs separate seed-0 and seed-42 runs through
+`pipeline("t2i", ...)`. End-to-end runs use a 2×3 visual-token grid (24×16 pixels), top-k 1 and the
+published guidance path. This shortened case exercises prompt formatting, positive/negative passes,
+forced row and image markers, autoregressive cache updates, visual lookup and decoding without an
+impractical full 90×90 CPU generation.
+
+Validated on CPU in the same environment as above. `emu3-gen` was loaded strictly from
+`BAAI/Emu3-Gen` and compared with the official Emu3 implementation on CPU in float32. The
+published generator and vision-tokenizer weights are float32. All 7 real tests passed, and the
+observed difference in every recorded comparison is **exactly 0** (0 means exact): on CPU in
+float32, the local implementation produces a bit-identical image to the one the official
+implementation produces. The real-checkpoint run took 2 minutes on an M2 Max (CPU).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Tensor header check (291 generator / 495 vision-tokenizer tensors) | 0 missing / extra / mismatched | exact |
+| Random-weight language model with KV cache | 0 | 0 |
+| Random-weight vision decode | 0 | 0 |
+| Real checkpoint: language-model step and VQ decode | 0 | 0 |
+| Tiny end to end (uint8 pixels) | 0 | 0 |
+| End to end: final pixels (24×16, seed 0) | 0 | 0 |
+| End to end, seed 42 (pixels) | 0 | 0 |
+
+Records: `emu3_gen_headers`, `emu3_gen_language_model_random`, `emu3_gen_vision_decode_random`,
+`emu3_gen_real_components`, `emu3_gen_tiny_e2e`, `e2e_emu3-gen` and `seed_e2e_emu3-gen`,
+[validation-measurements.json](validation-measurements.json); the validation grouping is
+`components_emu3`, [validation.json](validation.json).
+
+## NextStep-1 Large
+
+`nextstep-1-large` pins `stepfun-ai/NextStep-1-Large` revision
+`97dd0b9e097f60e39e3ce3bbac1a3343a09547cd` and the official implementation revision
+`a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0`.
+
+Offline validation checks every published transformer tensor name and shape and compares the tiny
+random-weight Qwen2 decoder and flow-matching head exactly. Unit coverage also checks patch packing,
+flow output shape, validation before loading and seeded repeatability. The opt-in real-checkpoint
+suite defines separate seed-0 and seed-42 runs through `pipeline("t2i", ...)` at 64×64 with one flow
+step. The shortened case exercises the complete prompt-to-uint8 path while bounding the large CPU
+run, but those two real-checkpoint cases are intentionally left for the external validation run.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Published transformer layout | 0 missing / extra / mismatched | exact |
+| Random-weight Qwen2 decoder | 0 | 0 |
+| Random-weight flow-matching head | 0 | 0 |
+| End to end: uint8 image (64×64, 1 step, seed 0) | external run required | exact target |
+| End to end, seed 42 (uint8 image) | external run required | exact target |
+
+The real-checkpoint records are `e2e_nextstep-1-large` and `seed_e2e_nextstep-1-large` once the
+external validation suite runs. Generated validation records are not modified until those results
+exist.

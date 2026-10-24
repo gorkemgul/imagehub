@@ -1,0 +1,614 @@
+{
+"decoder.layers.0.bias": [
+64
+],
+"decoder.layers.0.weight": [
+64,
+4,
+3,
+3
+],
+"decoder.layers.11.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.12.conv.0.bias": [
+64
+],
+"decoder.layers.12.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.12.conv.2.bias": [
+64
+],
+"decoder.layers.12.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.12.conv.4.bias": [
+64
+],
+"decoder.layers.12.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.13.conv.0.bias": [
+64
+],
+"decoder.layers.13.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.13.conv.2.bias": [
+64
+],
+"decoder.layers.13.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.13.conv.4.bias": [
+64
+],
+"decoder.layers.13.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.14.conv.0.bias": [
+64
+],
+"decoder.layers.14.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.14.conv.2.bias": [
+64
+],
+"decoder.layers.14.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.14.conv.4.bias": [
+64
+],
+"decoder.layers.14.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.16.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.17.conv.0.bias": [
+64
+],
+"decoder.layers.17.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.17.conv.2.bias": [
+64
+],
+"decoder.layers.17.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.17.conv.4.bias": [
+64
+],
+"decoder.layers.17.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.18.bias": [
+3
+],
+"decoder.layers.18.weight": [
+3,
+64,
+3,
+3
+],
+"decoder.layers.2.conv.0.bias": [
+64
+],
+"decoder.layers.2.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.2.conv.2.bias": [
+64
+],
+"decoder.layers.2.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.2.conv.4.bias": [
+64
+],
+"decoder.layers.2.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.3.conv.0.bias": [
+64
+],
+"decoder.layers.3.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.3.conv.2.bias": [
+64
+],
+"decoder.layers.3.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.3.conv.4.bias": [
+64
+],
+"decoder.layers.3.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.4.conv.0.bias": [
+64
+],
+"decoder.layers.4.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.4.conv.2.bias": [
+64
+],
+"decoder.layers.4.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.4.conv.4.bias": [
+64
+],
+"decoder.layers.4.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.6.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.7.conv.0.bias": [
+64
+],
+"decoder.layers.7.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.7.conv.2.bias": [
+64
+],
+"decoder.layers.7.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.7.conv.4.bias": [
+64
+],
+"decoder.layers.7.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.8.conv.0.bias": [
+64
+],
+"decoder.layers.8.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.8.conv.2.bias": [
+64
+],
+"decoder.layers.8.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.8.conv.4.bias": [
+64
+],
+"decoder.layers.8.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.9.conv.0.bias": [
+64
+],
+"decoder.layers.9.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.9.conv.2.bias": [
+64
+],
+"decoder.layers.9.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"decoder.layers.9.conv.4.bias": [
+64
+],
+"decoder.layers.9.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.0.bias": [
+64
+],
+"encoder.layers.0.weight": [
+64,
+3,
+3,
+3
+],
+"encoder.layers.1.conv.0.bias": [
+64
+],
+"encoder.layers.1.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.1.conv.2.bias": [
+64
+],
+"encoder.layers.1.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.1.conv.4.bias": [
+64
+],
+"encoder.layers.1.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.10.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.11.conv.0.bias": [
+64
+],
+"encoder.layers.11.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.11.conv.2.bias": [
+64
+],
+"encoder.layers.11.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.11.conv.4.bias": [
+64
+],
+"encoder.layers.11.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.12.conv.0.bias": [
+64
+],
+"encoder.layers.12.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.12.conv.2.bias": [
+64
+],
+"encoder.layers.12.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.12.conv.4.bias": [
+64
+],
+"encoder.layers.12.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.13.conv.0.bias": [
+64
+],
+"encoder.layers.13.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.13.conv.2.bias": [
+64
+],
+"encoder.layers.13.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.13.conv.4.bias": [
+64
+],
+"encoder.layers.13.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.14.bias": [
+4
+],
+"encoder.layers.14.weight": [
+4,
+64,
+3,
+3
+],
+"encoder.layers.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.3.conv.0.bias": [
+64
+],
+"encoder.layers.3.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.3.conv.2.bias": [
+64
+],
+"encoder.layers.3.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.3.conv.4.bias": [
+64
+],
+"encoder.layers.3.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.4.conv.0.bias": [
+64
+],
+"encoder.layers.4.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.4.conv.2.bias": [
+64
+],
+"encoder.layers.4.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.4.conv.4.bias": [
+64
+],
+"encoder.layers.4.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.5.conv.0.bias": [
+64
+],
+"encoder.layers.5.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.5.conv.2.bias": [
+64
+],
+"encoder.layers.5.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.5.conv.4.bias": [
+64
+],
+"encoder.layers.5.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.6.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.7.conv.0.bias": [
+64
+],
+"encoder.layers.7.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.7.conv.2.bias": [
+64
+],
+"encoder.layers.7.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.7.conv.4.bias": [
+64
+],
+"encoder.layers.7.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.8.conv.0.bias": [
+64
+],
+"encoder.layers.8.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.8.conv.2.bias": [
+64
+],
+"encoder.layers.8.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.8.conv.4.bias": [
+64
+],
+"encoder.layers.8.conv.4.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.9.conv.0.bias": [
+64
+],
+"encoder.layers.9.conv.0.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.9.conv.2.bias": [
+64
+],
+"encoder.layers.9.conv.2.weight": [
+64,
+64,
+3,
+3
+],
+"encoder.layers.9.conv.4.bias": [
+64
+],
+"encoder.layers.9.conv.4.weight": [
+64,
+64,
+3,
+3
+]
+}

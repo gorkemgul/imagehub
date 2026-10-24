@@ -22,7 +22,7 @@ def test_family_and_model_aliases_are_registered():
     assert "janus-pro-1b" in names
     assert {"sd3.5-medium", "sd3.5-large"} <= set(names)
     assert {"qwen-image", "qwen-image-2.1"} <= set(names)
-    assert {"flux1-dev", "flux1-kontext-dev", "flux1-krea-dev"} <= set(names)
+    assert {"flux-1-lite-8b", "flux1-dev", "flux1-kontext-dev", "flux1-krea-dev"} <= set(names)
     assert {"flux2", "flux2-klein-4b", "flux2-klein-9b"} <= set(names)
     assert {
         "hunyuan-dit",
@@ -60,6 +60,7 @@ def test_family_and_model_aliases_are_registered():
     assert {"amused", "amused-256", "amused-512"} <= set(names)
     assert "meissonic" in names
     assert {"llamagen", "llamagen-t2i-xl-256", "llamagen-t2i-xl-512"} <= set(names)
+    assert {"nextstep", "nextstep-1-large"} <= set(names)
     assert {"stable_cascade", "stable-cascade", "stable-cascade-lite"} <= set(names)
     assert {"wuerstchen", "wuerstchen-v2"} <= set(names)
     assert {"omnigen", "omnigen-v1"} <= set(names)
