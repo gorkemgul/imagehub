@@ -98,7 +98,8 @@ def _apply_rope(
         ],
         dim=-1,
     ).reshape(2, *query.shape)
-    return rotated.to(query.dtype).unbind(0)
+    rotated_query, rotated_key = rotated.to(query.dtype).unbind(0)
+    return rotated_query, rotated_key
 
 
 class InfinitySelfAttention(nn.Module):

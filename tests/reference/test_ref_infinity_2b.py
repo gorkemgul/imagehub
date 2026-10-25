@@ -16,10 +16,10 @@ from infinity_driver import _fused_norm, _Quantizer, reference_modules
 from imagehub import pipeline
 from imagehub.backends.infinity import InfinityComponents, encode_prompt
 from imagehub.models.infinity import (
-    _rope_cache,
     InfinityCrossAttention,
     InfinitySelfAttention,
     InfinityTransformer,
+    _rope_cache,
 )
 from imagehub.models.infinity_vae import InfinityDecoder, InfinityVAE
 from imagehub.models.t5 import T5EncoderModel
