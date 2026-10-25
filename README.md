@@ -90,7 +90,7 @@ The [model catalog](docs/catalog.md) lists every supported checkpoint with its s
 | Qwen-Image | `qwen-image`, `qwen-image-2.1` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | T | CPU fp32 parity |
-| BAGEL | `bagel-7b-mot` | `t2i` | T | Exact random-weight parity; shortened real-checkpoint validation suite included |
+| BAGEL | `bagel-7b-mot` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | HiDream-I1 | `hidream-i1-dev`, `hidream-i1-fast`, `hidream-i1-full` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 and float16 weights |
 | HiDream-O1 | `hidream-o1-image` | `t2i` | T | CPU fp32 parity |
 
