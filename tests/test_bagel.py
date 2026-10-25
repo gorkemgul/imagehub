@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import torch
 
-from imagehub.backends.bagel import BagelBackend, BagelComponents, generate
+from imagehub.backends.bagel import BagelBackend, BagelComponents, _to_pixels, generate
 from imagehub.models.bagel import BagelAutoencoder, BagelModel
 from imagehub.types import T2IRequest
 
@@ -100,3 +100,13 @@ def test_tiny_generation_is_repeatable_and_restores_grad_mode():
     second = generate(components, "cat", generator=torch.Generator().manual_seed(5), **options)
     assert torch.equal(first, second)
     assert first.shape == (1, 3, 16, 16)
+
+
+def test_bfloat16_pixel_conversion_keeps_decoder_dtype():
+    decoded = torch.tensor([[[[-0.247]]]], dtype=torch.bfloat16)
+    expected = (decoded * 0.5 + 0.5).clamp(0, 1).mul(255).to(torch.uint8)
+    promoted = (decoded.float() * 0.5 + 0.5).clamp(0, 1).mul(255).to(torch.uint8)
+
+    assert torch.equal(_to_pixels(decoded), expected)
+    assert expected.item() == 96
+    assert promoted.item() == 95

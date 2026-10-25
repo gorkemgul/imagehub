@@ -364,7 +364,7 @@ class BagelAutoencoder(NextStepAutoencoder):
     """BAGEL's frozen FLUX autoencoder with its published legacy keys."""
 
     def __init__(self, config: Mapping[str, Any] | None = None) -> None:
-        source = {
+        source: dict[str, Any] = {
             "ch": 128,
             "ch_mult": [1, 2, 4, 4],
             "num_res_blocks": 2,
@@ -379,7 +379,7 @@ class BagelAutoencoder(NextStepAutoencoder):
 
     def decode(self, latents: Tensor) -> Tensor:
         latents = latents / self.scale_factor + self.latent_shift_factor
-        decoder = self.decoder
+        decoder: Any = self.decoder
         hidden = decoder.conv_in(latents)
         hidden = self._mid(decoder.mid_block, hidden)
         for block in decoder.up_blocks:
@@ -391,7 +391,7 @@ class BagelAutoencoder(NextStepAutoencoder):
         return decoder.conv_out(hidden * torch.sigmoid(hidden))
 
     @staticmethod
-    def _resnet(block: nn.Module, value: Tensor) -> Tensor:
+    def _resnet(block: Any, value: Tensor) -> Tensor:
         hidden = block.norm1(value)
         hidden = block.conv1(hidden * torch.sigmoid(hidden))
         hidden = block.norm2(hidden)
@@ -400,7 +400,7 @@ class BagelAutoencoder(NextStepAutoencoder):
         return residual + hidden
 
     @classmethod
-    def _mid(cls, block: nn.Module, value: Tensor) -> Tensor:
+    def _mid(cls, block: Any, value: Tensor) -> Tensor:
         value = cls._resnet(block.resnets[0], value)
         attention = block.attentions[0]
         residual = value
@@ -411,9 +411,7 @@ class BagelAutoencoder(NextStepAutoencoder):
         batch, channels, height, width = query.shape
         query = query.permute(0, 2, 3, 1).reshape(batch, 1, height * width, channels).contiguous()
         key = key.permute(0, 2, 3, 1).reshape(batch, 1, height * width, channels).contiguous()
-        values = values.permute(0, 2, 3, 1).reshape(
-            batch, 1, height * width, channels
-        ).contiguous()
+        values = values.permute(0, 2, 3, 1).reshape(batch, 1, height * width, channels).contiguous()
         hidden = F.scaled_dot_product_attention(query, key, values)
         hidden = hidden.reshape(batch, height, width, channels).permute(0, 3, 1, 2)
         hidden = F.conv2d(

@@ -89,6 +89,10 @@ def _flow_prediction(
     return model.llm2vae(output[1:-1])
 
 
+def _to_pixels(image: Tensor) -> Tensor:
+    return (image * 0.5 + 0.5).clamp(0, 1).mul(255).to(torch.uint8)
+
+
 @torch.inference_mode()
 def generate(
     components: BagelComponents,
@@ -141,8 +145,8 @@ def generate(
         1, 16, latent_height * patch, latent_width * patch
     )
     vae_dtype = next(components.vae.parameters()).dtype
-    image = components.vae.decode(latent.to(vae_dtype)).float()
-    return (image * 0.5 + 0.5).clamp(0, 1).mul(255).to(torch.uint8)
+    image = components.vae.decode(latent.to(vae_dtype))
+    return _to_pixels(image)
 
 
 class BagelBackend(TextToImageBackend):
