@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 import torch
 
+import imagehub.backends.bagel as bagel_backend
 from imagehub.backends.bagel import BagelBackend, BagelComponents, _to_pixels, generate
 from imagehub.models.bagel import BagelAutoencoder, BagelModel
 from imagehub.types import T2IRequest
@@ -80,26 +81,47 @@ class _Tokenizer:
         return [7, 8]
 
 
-def test_tiny_generation_is_repeatable_and_restores_grad_mode():
+def test_tiny_generation_is_repeatable_and_restores_grad_mode(monkeypatch):
     torch.manual_seed(0)
-    model = BagelModel(_tiny_config()).eval()
-    vae = BagelAutoencoder({"ch": 32, "ch_mult": [1, 1, 1, 1], "num_res_blocks": 1}).eval()
+    model = BagelModel(_tiny_config()).bfloat16().eval()
+    vae = (
+        BagelAutoencoder({"ch": 32, "ch_mult": [1, 1, 1, 1], "num_res_blocks": 1}).bfloat16().eval()
+    )
     components = BagelComponents(_Tokenizer(), model, vae)
     options = dict(
         width=16,
         height=16,
-        guidance=1.0,
+        guidance=4.0,
         steps=2,
         timestep_shift=1.0,
         cfg_interval=(0.4, 1.0),
         cfg_renorm_min=0.0,
     )
+    caches = []
+    decode_dtypes = []
+    original = bagel_backend._flow_prediction
+    original_decode = vae.decode
+
+    def record_cache(model, latent, timestep, positions, latent_positions, cache):
+        caches.append(cache)
+        return original(model, latent, timestep, positions, latent_positions, cache)
+
+    monkeypatch.setattr(bagel_backend, "_flow_prediction", record_cache)
+
+    def record_decode(latent):
+        decode_dtypes.append(latent.dtype)
+        return original_decode(latent)
+
+    monkeypatch.setattr(vae, "decode", record_decode)
     with torch.enable_grad():
         first = generate(components, "cat", generator=torch.Generator().manual_seed(5), **options)
         assert torch.is_grad_enabled()
     second = generate(components, "cat", generator=torch.Generator().manual_seed(5), **options)
     assert torch.equal(first, second)
     assert first.shape == (1, 3, 16, 16)
+    assert all(key.shape[0] > 0 for key, _ in caches[0])
+    assert all(key.shape[0] == 0 for key, _ in caches[1])
+    assert decode_dtypes == [torch.float32, torch.float32]
 
 
 def test_bfloat16_pixel_conversion_keeps_decoder_dtype():

@@ -110,6 +110,7 @@ def generate(
     model = components.model
     device = model.vae2llm.weight.device
     cache = _prompt_cache(model, components.tokenizer, prompt)
+    unconditioned_cache = [(key[:0], value[:0]) for key, value in cache]
     latent_height, latent_width = height // 16, width // 16
     token_dim = model.vae2llm.in_features
     latent = torch.randn(
@@ -133,7 +134,7 @@ def generate(
         velocity = _flow_prediction(model, latent, current, packed_positions, grid, cache)
         if guidance > 1 and current > cfg_interval[0] and current <= cfg_interval[1]:
             unconditional = _flow_prediction(
-                model, latent, current, unconditioned_positions, grid, None
+                model, latent, current, unconditioned_positions, grid, unconditioned_cache
             )
             guided = unconditional + guidance * (velocity - unconditional)
             scale = (velocity.norm() / (guided.norm() + 1e-8)).clamp(min=cfg_renorm_min, max=1.0)
@@ -145,7 +146,9 @@ def generate(
         1, 16, latent_height * patch, latent_width * patch
     )
     vae_dtype = next(components.vae.parameters()).dtype
-    image = components.vae.decode(latent.to(vae_dtype))
+    use_autocast = device.type in {"cpu", "cuda"} and vae_dtype != torch.float32
+    with torch.autocast(device.type, dtype=vae_dtype, enabled=use_autocast):
+        image = components.vae.decode(latent if use_autocast else latent.to(vae_dtype))
     return _to_pixels(image)
 
 
