@@ -8097,6 +8097,96 @@
       }
     },
     {
+      "model_id": "infinity-2b",
+      "repo_id": "FoundationVision/Infinity",
+      "revision": "e7108923249fb3c836ebfbc3f4b4d318d6131293",
+      "provenance": "author",
+      "catalog_id": "infinity",
+      "license": "MIT",
+      "reference": {
+        "Infinity": {
+          "commit": "9f9fcd1de7ead377ddf1106db1249a35f3a59143"
+        }
+      },
+      "status": "full",
+      "files": {
+        "infinity_2b_reg.pth": {
+          "repo_id": "FoundationVision/Infinity",
+          "revision": "e7108923249fb3c836ebfbc3f4b4d318d6131293",
+          "sha256": "d5958b37e7ecb914230cd2b8c28aae0ec108ce08b315720bc3dc52596cc5b3a7"
+        },
+        "infinity_vae_d32reg.pth": {
+          "repo_id": "FoundationVision/Infinity",
+          "revision": "e7108923249fb3c836ebfbc3f4b4d318d6131293",
+          "sha256": "7a37fa3ea1b2a1ebd23de61d91a5e68202825e5a67edaef4b7c55f5fd5b9cf26"
+        },
+        "text_encoder/config.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "ed9df0075dda91de9e9431f193203a3f869189e4effa3fc00cf9d41864f514ba"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "4af536474e3441bab3996748fcf730cd47bb4bd66842efda0acdcfdcaa7c7429"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "99196ddfbe886e8ef860f52de979df64890edfc792c3d94ce0502991f347dd18"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "c0c677ddeb21009b6efd97146f37fc3a0396707fb5e63ade7aff64884dce9806"
+        },
+        "text_encoder/spiece.model": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "text_encoder/tokenizer.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "fe2ebbbbde2985be723e0ce18217853e4020c5e9d35bd07be2c27ab9d3ead57a"
+        },
+        "text_encoder/tokenizer_config.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "ef30e0628a2d067c5d9d02d98cbf9a2040f4a51883e5d16e1809eea548db0eff"
+        },
+        "text_encoder/special_tokens_map.json": {
+          "repo_id": "google/flan-t5-xl",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f"
+        }
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 219,
+          "transformer": 694,
+          "vae": 302
+        }
+      },
+      "end_to_end": {
+        "height": 256,
+        "passed": true,
+        "scales": 7,
+        "seed": 0,
+        "width": 256
+      },
+      "seed_end_to_end": {
+        "height": 256,
+        "passed": true,
+        "scales": 7,
+        "seed": 42,
+        "width": 256
+      }
+    },
+    {
       "model_id": "wuerstchen-v2",
       "repo_id": "warp-ai/wuerstchen",
       "revision": "c3da41406ddd4d9c48c49aa93981a82354351b83",
@@ -14108,6 +14198,25 @@
       "ids": "16x16"
     }
   },
+  "components_infinity": {
+    "infinity_cross_attention_random_weights": {
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "infinity_self_attention_random_weights": {
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "infinity_transformer_random_weights": {
+      "first_scale_equal": true,
+      "later_scales_equal": true,
+      "max_abs": 0.0
+    },
+    "infinity_vae_decoder_random_weights": {
+      "equal": true,
+      "max_abs": 0.0
+    }
+  },
   "components_hart": {
     "hart_block_random": {
       "passed": true,
@@ -16158,6 +16267,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "6 passed (bagel-7b-mot)"
+    "reference_summary": "8 passed (infinity-2b)"
   }
 }

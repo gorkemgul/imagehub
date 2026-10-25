@@ -759,6 +759,12 @@
       "max_rel": 0.0
     }
   },
+  "components_infinity-2b": {
+    "first_scale_loaded": true,
+    "text_encoder_equal": true,
+    "tokenizer_equal": true,
+    "vae_decoder_loaded": true
+  },
   "conditioning_joyai-image-edit": {
     "max_abs": 0.0,
     "max_rel": 0.0,
@@ -1491,6 +1497,13 @@
       512
     ],
     "steps": 4
+  },
+  "e2e_infinity-2b": {
+    "height": 256,
+    "passed": true,
+    "scales": 7,
+    "seed": 0,
+    "width": 256
   },
   "e2e_janus-pro-1b": {
     "num_images": 1,
@@ -4123,6 +4136,26 @@
       "tensors": 251
     }
   },
+  "header_infinity-2b": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 694
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 302
+    }
+  },
   "header_janus-pro-1b": {
     "extra": [],
     "mismatch": [],
@@ -5827,6 +5860,23 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "infinity_cross_attention_random_weights": {
+    "equal": true,
+    "max_abs": 0.0
+  },
+  "infinity_self_attention_random_weights": {
+    "equal": true,
+    "max_abs": 0.0
+  },
+  "infinity_transformer_random_weights": {
+    "first_scale_equal": true,
+    "later_scales_equal": true,
+    "max_abs": 0.0
+  },
+  "infinity_vae_decoder_random_weights": {
+    "equal": true,
+    "max_abs": 0.0
   },
   "janus_language_model": {
     "max_abs": 0.0,
@@ -10231,6 +10281,13 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "seed_e2e_infinity-2b": {
+    "height": 256,
+    "passed": true,
+    "scales": 7,
+    "seed": 42,
+    "width": 256
   },
   "seed_e2e_janus-pro-1b": {
     "passed": true,
