@@ -1989,6 +1989,50 @@ equality on these devices.
 Model License; see the license. imagehub does not distribute weights.
 
 
+# BAGEL
+
+Catalog: [`bagel`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `bagel-7b-mot` · Task: `t2i`
+
+**Architecture.** BAGEL is a unified 14B-parameter Mixture-of-Transformers with about 7B active
+parameters per token. Text and image-boundary tokens use the Qwen2 understanding expert while
+latent patches use a separate generation expert; both routes share one attention sequence. A
+rectified-flow head predicts 2×2 patches of 16-channel FLUX VAE latents. The published SigLIP
+vision branch is loaded strictly but is not executed for text-only generation.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained bagel-7b-mot checkpoints/bagel-7b-mot
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="bagel-7b-mot", model="checkpoints/bagel-7b-mot"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The supported options are `width` and `height` (1024, multiples of 16 up to 1024),
+`steps` (50), `guidance` (4), `timestep_shift` (3), `cfg_interval` ((0.4, 1.0)),
+`cfg_renorm_min` (0) and `seed`. The release is bfloat16 and needs roughly 30 GB just for model
+weights. Unrecognized settings raise an error before loading.
+
+**Validation.** The reference suite uses the official `InterleaveInferencer` and
+`Bagel.generate_image`. Its end-to-end checks use two flow timesteps at 64×64 for seeds 0 and 42;
+these deliberately shortened runs validate ordering and determinism without attempting the
+release's expensive 50-step 1024×1024 default. Real-checkpoint results are pending the dedicated
+validation run.
+
+**Out of scope.** Image understanding, image editing, interleaved multi-image generation,
+reasoning-token generation, quantized loading and TaylorSeer acceleration are not supported.
+
+**License.** The code and weights are Apache-2.0. imagehub does not distribute weights.
+
+
 # Playground v2
 
 Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

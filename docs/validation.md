@@ -1863,6 +1863,25 @@ package. For 1B, all 819 tensors used for image generation are byte-identical to
 The 7B checkpoint is approximately 28 GB per float32 copy. To fit the 96 GB machine, one reference
 and one native copy were loaded at a time. The full 7B validation run took 68 minutes.
 
+## BAGEL
+
+The `bagel-7b-mot` suite targets the author checkpoint at revision `5019f57` and the official
+repository at `a2fa77d`. The published-header checks cover 1,223 bfloat16 EMA tensors and 244
+float32 autoencoder tensors. Random-weight parity exercises both routes of the Qwen2
+Mixture-of-Transformers exactly, and tokenizer comparisons cover ordinary Unicode and BAGEL's
+image boundary tokens.
+
+The real-checkpoint suite loads the official `InterleaveInferencer` / `Bagel.generate_image`
+result in a subprocess before loading the native model. All 6 real tests passed, and the observed
+difference in every recorded comparison is **exactly 0** (0 means exact). The published header
+check covers 1,467 tensors with 0 missing, extra and shape-mismatched entries
+(`header_bagel-7b-mot`); the tokenizer produces identical ids on three fixed prompts
+(`bagel_tokenizer`); the prompt embedding, one flow step and the VAE decode are exact
+(`bagel_text_encoder`, `bagel_denoiser`, `bagel_vae_decode`). The two end-to-end records are
+`e2e_bagel-7b-mot` at seed 0 and `seed_e2e_bagel-7b-mot` at seed 42, each shortened to 64×64 and
+two timesteps, and both produce uint8 images identical to the reference. The published default
+remains 1024×1024 and 50 timesteps. The real-checkpoint run took 15 minutes on an M2 Max (CPU).
+
 ## Stable Diffusion 3 and 3.5
 
 Validated on CPU in the same environment as above against diffusers 0.40.0
@@ -2542,7 +2561,7 @@ first sequence of the batch only; the native module reproduces that.
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
   `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, 6 passed for
-  `show-o-512`, 5 passed for `sdxs-512-0.9`, 7 passed for `emu3-gen`, 8 passed for `cosmos-predict2-2b-t2i`, and 5 passed for `nextstep-1-large`. These include structural parity with random weights, end-to-end parity with
+  `show-o-512`, 5 passed for `sdxs-512-0.9`, 7 passed for `emu3-gen`, 8 passed for `cosmos-predict2-2b-t2i`, 5 passed for `nextstep-1-large`, and 6 passed for `bagel-7b-mot`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

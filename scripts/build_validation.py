@@ -142,6 +142,13 @@ CHROMA_COMPONENT_KEYS = (
     "chroma_scheduler",
 )
 JANUS_COMPONENT_KEYS = ("janus_language_model", "janus_vq_decode")
+BAGEL_COMPONENT_KEYS = (
+    "bagel_mot_random",
+    "bagel_tokenizer",
+    "bagel_text_encoder",
+    "bagel_denoiser",
+    "bagel_vae_decode",
+)
 SD3_COMPONENT_KEYS = (
     "sd3_tokenizers",
     "sd3_text_encoder",
@@ -347,6 +354,9 @@ def main() -> None:
                 for spec in MODEL_CATALOG.values()
                 if spec.family == "janus" and spec.id != "janus-pro-1b"
             )
+        },
+        "components_bagel": {
+            key: value for key, value in measured.items() if key in BAGEL_COMPONENT_KEYS
         },
         "components_sd3": {
             key: value

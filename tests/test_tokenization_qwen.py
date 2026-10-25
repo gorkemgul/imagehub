@@ -1,4 +1,5 @@
 import json
+import shutil
 from pathlib import Path
 
 import torch
@@ -25,7 +26,7 @@ def test_qwen_tiny_bpe_and_special_tokens():
 
 def test_qwen_slow_tokenizer_files(tmp_path):
     for name in ("vocab.json", "merges.txt"):
-        (tmp_path / name).hardlink_to(TOKENIZER / name)
+        shutil.copyfile(TOKENIZER / name, tmp_path / name)
     data = json.loads((TOKENIZER / "tokenizer.json").read_text(encoding="utf-8"))
     config = json.loads((TOKENIZER / "tokenizer_config.json").read_text(encoding="utf-8"))
     config["added_tokens_decoder"] = {
