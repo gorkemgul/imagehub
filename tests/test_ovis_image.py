@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -37,7 +38,7 @@ def test_ovis_image_tokenizer_uses_byte_level_newline(tmp_path: Path) -> None:
         "tokenizer.json": "tokenizer_tokenizer.json",
         "tokenizer_config.json": "tokenizer_tokenizer_config.json",
     }.items():
-        (tmp_path / destination).hardlink_to(fixture / source)
+        shutil.copyfile(fixture / source, tmp_path / destination)
     tokenizer = Qwen2Tokenizer(tmp_path)
     assert tokenizer.tokenize("line1\nline2") == [1056, 16, 198, 1056, 17]
 
