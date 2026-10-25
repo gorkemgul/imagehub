@@ -6,6 +6,7 @@ import json
 import struct
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any, cast
 
 import pytest
 import torch
@@ -13,14 +14,16 @@ from helpers import reference_in_subprocess, snapshot_dir
 from infinity_driver import _fused_norm, _Quantizer, reference_modules
 
 from imagehub import pipeline
-from imagehub.backends.infinity import InfinityComponents
+from imagehub.backends.infinity import InfinityComponents, encode_prompt
 from imagehub.models.infinity import (
+    _rope_cache,
     InfinityCrossAttention,
     InfinitySelfAttention,
     InfinityTransformer,
 )
 from imagehub.models.infinity_vae import InfinityDecoder, InfinityVAE
 from imagehub.models.t5 import T5EncoderModel
+from imagehub.tokenization_t5 import T5Tokenizer
 
 pytestmark = pytest.mark.reference
 MODEL_ID = "infinity-2b"
@@ -114,7 +117,6 @@ def test_random_transformer_first_scale_is_exact(record):
             condition, schedule, True
         )
         _, actual = ours.stage_logits(native_stage, adaptive, pooled, native_condition, schedule, 0)
-        ours.end_generation()
 
         unconditioned = reference.cfg_uncond[:5]
         reference_compact = torch.cat((compact, unconditioned))
@@ -144,10 +146,48 @@ def test_random_transformer_first_scale_is_exact(record):
                 0,
             )
         expected = reference.get_logits(stage, reference_pooled)
+        offset = 0
+        for scale_index, (_, height, width) in enumerate(schedule):
+            cosine, sine = _rope_cache(schedule, 32, scale_index, CPU, 64)
+            length = height * width
+            rope = reference.rope2d_freqs_grid[str(schedule)][:, 0, 0, 0, offset : offset + length]
+            assert torch.equal(cosine, rope[0])
+            assert torch.equal(sine, rope[1])
+            offset += length
+        later_equal = []
+        for scale_index, (_, height, width) in enumerate(schedule[1:], start=1):
+            next_codes = torch.randn(1, height * width, 32)
+            native_stage = ours.next_stage(next_codes, 2)
+            _, actual_scale = ours.stage_logits(
+                native_stage, adaptive, pooled, native_condition, schedule, scale_index
+            )
+
+            stage = reference.word_embed(reference.norm0_ve(next_codes)).repeat(2, 1, 1)
+            stage = reference.add_lvl_embeding(stage, scale_index, schedule)
+            for block in reference.blocks:
+                stage = block(
+                    stage,
+                    reference_adaptive,
+                    reference_condition,
+                    None,
+                    None,
+                    schedule,
+                    reference.rope2d_freqs_grid,
+                    scale_index,
+                )
+            expected_scale = reference.get_logits(stage, reference_pooled)
+            later_equal.append(torch.equal(actual_scale, expected_scale))
         for block in reference.unregistered_blocks:
             block.sa.kv_caching(False)
+        ours.end_generation()
     assert torch.equal(actual, expected)
-    record("infinity_transformer_random_weights", first_scale_equal=True, max_abs=0.0)
+    assert all(later_equal)
+    record(
+        "infinity_transformer_random_weights",
+        first_scale_equal=True,
+        later_scales_equal=True,
+        max_abs=0.0,
+    )
 
 
 def test_random_vae_decoder_is_exact(record):
@@ -283,9 +323,23 @@ def test_tokenizer_text_encoder_and_first_scale_load(record):
 
 
 def _e2e(root, tmp_path, record, seed, key):
+    text_encoder = T5EncoderModel.from_pretrained(
+        root / "text_encoder", device=CPU, dtype=torch.float32
+    )
+    tokenizer = T5Tokenizer(root / "text_encoder")
+    text_components = SimpleNamespace(tokenizer=tokenizer, text_encoder=text_encoder)
+    condition_path = tmp_path / "condition.pt"
+    torch.save(encode_prompt(cast(Any, text_components), PROMPT, CPU), condition_path)
+    del text_components, text_encoder, tokenizer
+    gc.collect()
     expected = reference_in_subprocess(
         "infinity_driver.reference_image",
-        {"snapshot": str(root), "prompt": PROMPT, "seed": seed},
+        {
+            "snapshot": str(root),
+            "prompt": PROMPT,
+            "seed": seed,
+            "condition_path": str(condition_path),
+        },
         tmp_path / f"reference-{seed}.pt",
     )
     actual = (

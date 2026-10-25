@@ -26,12 +26,14 @@ INFINITY_2B_CONFIG: dict[str, Any] = {
     "block_chunks": 8,
     "norm_eps": 1e-6,
     "level_count": 15,
+    "rope_size": 64,
 }
 
 
 def _rms_norm(value: Tensor, weight: Tensor, eps: float) -> Tensor:
-    normalized = value.float() * torch.rsqrt(value.float().square().mean(-1, keepdim=True) + eps)
-    return normalized.to(value.dtype) * weight
+    source = value.float()
+    normalized = source * torch.rsqrt(source.pow(2).mean(-1, keepdim=True).add_(eps))
+    return (normalized * weight).to(value.dtype)
 
 
 class InfinityRMSNorm(nn.Module):
@@ -58,16 +60,19 @@ class InfinityFFN(nn.Module):
 
 
 def _rope_cache(
-    schedule: ScaleSchedule, head_dim: int, scale_index: int, device: torch.device
+    schedule: ScaleSchedule,
+    head_dim: int,
+    scale_index: int,
+    device: torch.device,
+    rope_size: int,
 ) -> tuple[Tensor, Tensor]:
-    _, final_height, final_width = schedule[-1]
     _, height, width = schedule[scale_index]
     half = head_dim // 2
     inverse = 1.0 / (
         10000.0 ** (torch.arange(0, half, 2, device=device, dtype=torch.float32) / half)
     )
-    y = (torch.arange(height, device=device) * (final_height / height)).round()
-    x = (torch.arange(width, device=device) * (final_width / width)).round()
+    y = (torch.arange(height, device=device) * (rope_size / height)).round()
+    x = (torch.arange(width, device=device) * (rope_size / width)).round()
     positions = torch.cat(
         [
             y[:, None, None].expand(height, width, inverse.numel()),
@@ -80,33 +85,30 @@ def _rope_cache(
 
 
 def _apply_rope(
-    query: Tensor, key: Tensor, schedule: ScaleSchedule, scale_index: int
+    query: Tensor, key: Tensor, schedule: ScaleSchedule, scale_index: int, rope_size: int
 ) -> tuple[Tensor, Tensor]:
-    cosine, sine = _rope_cache(schedule, query.shape[-1], scale_index, query.device)
-    cosine = cosine[None, None]
-    sine = sine[None, None]
-
-    def rotate(value: Tensor) -> Tensor:
-        pairs = value.float().reshape(*value.shape[:-1], -1, 2)
-        result = torch.stack(
-            [
-                cosine * pairs[..., 0] - sine * pairs[..., 1],
-                sine * pairs[..., 0] + cosine * pairs[..., 1],
-            ],
-            dim=-1,
-        )
-        return result.flatten(-2).to(value.dtype)
-
-    return rotate(query), rotate(key)
+    cosine, sine = _rope_cache(schedule, query.shape[-1], scale_index, query.device, rope_size)
+    pairs = torch.stack((query, key)).float().reshape(2, *query.shape[:-1], -1, 2)
+    cosine = cosine[None, None, None]
+    sine = sine[None, None, None]
+    rotated = torch.stack(
+        [
+            cosine * pairs[..., 0] - sine * pairs[..., 1],
+            sine * pairs[..., 0] + cosine * pairs[..., 1],
+        ],
+        dim=-1,
+    ).reshape(2, *query.shape)
+    return rotated.to(query.dtype).unbind(0)
 
 
 class InfinitySelfAttention(nn.Module):
     zero_k_bias: Tensor
 
-    def __init__(self, channels: int, heads: int) -> None:
+    def __init__(self, channels: int, heads: int, rope_size: int = 64) -> None:
         super().__init__()
         self.num_heads = heads
         self.head_dim = channels // heads
+        self.rope_size = rope_size
         self.mat_qkv = nn.Linear(channels, channels * 3, bias=False)
         self.q_bias = nn.Parameter(torch.zeros(channels))
         self.v_bias = nn.Parameter(torch.zeros(channels))
@@ -137,10 +139,11 @@ class InfinitySelfAttention(nn.Module):
         )
         query, key, val = qkv.permute(2, 0, 3, 1, 4).unbind(0)
         scale = self.scale_mul_1H11.clamp_max(math.log(100.0)).exp()
-        query = F.normalize(query, dim=-1, eps=1e-12) * scale
-        key = F.normalize(key, dim=-1, eps=1e-12)
+        query = (F.normalize(query, dim=-1, eps=1e-12) * scale).contiguous()
+        key = F.normalize(key, dim=-1, eps=1e-12).contiguous()
+        val = val.contiguous()
         if schedule is not None:
-            query, key = _apply_rope(query, key, schedule, scale_index)
+            query, key = _apply_rope(query, key, schedule, scale_index, self.rope_size)
         if self.caching:
             if self.cached_k is not None:
                 key = torch.cat((self.cached_k, key), dim=2)
@@ -209,6 +212,7 @@ class InfinityCrossAttention(nn.Module):
                 key.transpose(0, 1).unsqueeze(0),
                 value.transpose(0, 1).unsqueeze(0),
                 dropout_p=0.0,
+                scale=1.0 / math.sqrt(self.head_dim),
             )
             outputs.append(output.transpose(1, 2).reshape(1, query_length, -1).to(output_dtype))
         return self.proj_drop(self.proj(torch.cat(outputs)))
@@ -236,7 +240,7 @@ class InfinityBlock(nn.Module):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
         channels = config["embed_dim"]
-        self.sa = InfinitySelfAttention(channels, config["num_heads"])
+        self.sa = InfinitySelfAttention(channels, config["num_heads"], config["rope_size"])
         self.ca = InfinityCrossAttention(channels, channels, config["num_heads"])
         hidden = round(channels * config["mlp_ratio"] / 256) * 256
         self.ffn = InfinityFFN(channels, hidden)

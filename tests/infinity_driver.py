@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib
+import importlib.machinery
 import math
 import sys
 import types
@@ -70,7 +71,8 @@ def _install_stubs() -> None:
     pytz = types.ModuleType("pytz")
     pytz.timezone = lambda _name: None
     sys.modules["pytz"] = pytz
-    sys.modules["imageio"] = types.ModuleType("imageio")
+    imageio = types.ModuleType("imageio")
+    sys.modules["imageio"] = imageio
     timm = types.ModuleType("timm")
     timm_models = types.ModuleType("timm.models")
     timm_layers = types.ModuleType("timm.models.layers")
@@ -97,6 +99,17 @@ def _install_stubs() -> None:
         RuntimeError("unused rearrange path")
     )
     sys.modules["einops"] = einops
+    for module in (
+        pytz,
+        imageio,
+        timm,
+        timm_models,
+        timm_layers,
+        timm_loss,
+        flash,
+        einops,
+    ):
+        module.__spec__ = importlib.machinery.ModuleSpec(module.__name__, loader=None)
 
 
 def reference_modules():
@@ -146,13 +159,40 @@ class _ReferenceVAE:
         return self.decoder(latent).clamp(-1, 1)
 
 
-def reference_image(snapshot: str, prompt: str, seed: int, out_path: str) -> None:
+def reference_image(
+    snapshot: str,
+    prompt: str,
+    seed: int,
+    out_path: str,
+    condition_path: str | None = None,
+) -> None:
     """Run the original ``Infinity.autoregressive_infer_cfg`` on its smallest schedule."""
-    from transformers import AutoTokenizer, T5EncoderModel
+    root = Path(snapshot)
+    if condition_path is None:
+        from transformers import AutoTokenizer, T5EncoderModel
+
+        text_root = root / "text_encoder"
+        tokenizer = AutoTokenizer.from_pretrained(text_root, legacy=True)
+        encoder = T5EncoderModel.from_pretrained(text_root, torch_dtype=torch.float32).eval()
+        tokens = tokenizer(
+            text=[prompt],
+            max_length=512,
+            padding="max_length",
+            truncation=True,
+            return_tensors="pt",
+        )
+        features = encoder(
+            input_ids=tokens.input_ids, attention_mask=tokens.attention_mask
+        ).last_hidden_state.float()
+        lengths = tokens.attention_mask.sum(-1).tolist()
+        compact = torch.cat([row[:length] for row, length in zip(features, lengths, strict=True)])
+        cumulative = F.pad(tokens.attention_mask.sum(-1, dtype=torch.int32).cumsum(0), (1, 0))
+        condition = compact, lengths, cumulative, max(lengths)
+    else:
+        condition = torch.load(condition_path, map_location="cpu", weights_only=True)
 
     basic, vae_module = reference_modules()
     infinity_module = importlib.import_module("infinity.models.infinity")
-    root = Path(snapshot)
     cnn = {
         "cnn_type": "2d",
         "conv_in_out_2d": "no",
@@ -216,23 +256,6 @@ def reference_image(snapshot: str, prompt: str, seed: int, out_path: str) -> Non
         block.fused_norm_func = _fused_norm
     model.head_nm.fused_norm_func = _fused_norm
 
-    text_root = root / "text_encoder"
-    tokenizer = AutoTokenizer.from_pretrained(text_root, legacy=True)
-    encoder = T5EncoderModel.from_pretrained(text_root, torch_dtype=torch.float32).eval()
-    tokens = tokenizer(
-        text=[prompt],
-        max_length=512,
-        padding="max_length",
-        truncation=True,
-        return_tensors="pt",
-    )
-    features = encoder(
-        input_ids=tokens.input_ids, attention_mask=tokens.attention_mask
-    ).last_hidden_state.float()
-    lengths = tokens.attention_mask.sum(-1).tolist()
-    compact = torch.cat([row[:length] for row, length in zip(features, lengths, strict=True)])
-    cumulative = F.pad(tokens.attention_mask.sum(-1, dtype=torch.int32).cumsum(0), (1, 0))
-    condition = compact, lengths, cumulative, max(lengths)
     schedule = tuple((1, size, size) for size in (1, 2, 4, 6, 8, 12, 16))
     with torch.inference_mode():
         _, _, images = model.autoregressive_infer_cfg(
