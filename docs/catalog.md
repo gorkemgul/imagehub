@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**49 architecture families, 117 published checkpoints.** A model is a separately published set of weights;
+**50 architecture families, 118 published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
@@ -101,6 +101,7 @@ tested with the original weights. Models are `full` unless noted otherwise.
 | `prx-512-t2i-sft` | `prx` | [Photoroom/prx-512-t2i-sft](https://huggingface.co/Photoroom/prx-512-t2i-sft) | `2996423` | author | full | Apache-2.0 | `prx` |
 | `llamagen-t2i-xl-256` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
 | `llamagen-t2i-xl-512` | `llamagen` | [peizesun/llamagen_t2i](https://huggingface.co/peizesun/llamagen_t2i) | `276f5c5` | author | full | MIT | `llamagen` |
+| `infinity-2b` | `infinity` | [FoundationVision/Infinity](https://huggingface.co/FoundationVision/Infinity) | `e710892` | author | full | MIT | `infinity` |
 | `hart` | `hart` | [mit-han-lab/hart-0.7b-1024px](https://huggingface.co/mit-han-lab/hart-0.7b-1024px) | `b1521ff` | author | full | MIT | `hart` |
 | `show-o-512` | `show-o` | [showlab/show-o-512x512](https://huggingface.co/showlab/show-o-512x512) | `dbe757d` | author | full | Apache-2.0 | `show-o` |
 | `emu3-gen` | `emu3` | [BAAI/Emu3-Gen](https://huggingface.co/BAAI/Emu3-Gen) | `40b3bb8` | author | full | Apache-2.0 | `emu3` |
@@ -159,6 +160,10 @@ LlamaGen uses the same mechanism for its text encoder: `google/flan-t5-xl` at re
 into the snapshot's `text_encoder/` subfolder, while the GPT and VQ-16 PyTorch checkpoints of
 `peizesun/llamagen_t2i` (`format` `pytorch`, loaded with `weights_only=True`) stay at the root.
 The Flan-T5 shards also hold the decoder, which imagehub never reads.
+
+Infinity-2B also places `google/flan-t5-xl` at revision `7d6315d` in `text_encoder/`.
+`infinity_2b_reg.pth` and `infinity_vae_d32reg.pth` remain at the snapshot root and are loaded as
+weights-only PyTorch archives; training-only VAE perceptual tensors are verified but not loaded.
 
 The `hyper-sdxl-1step` model card has no license metadata. The `ByteDance/Hyper-SD` repository's
 license file covers only the FLUX-related files, so the Hyper-SDXL weights are recorded as

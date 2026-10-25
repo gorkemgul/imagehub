@@ -2371,6 +2371,31 @@ The prompt is lower-cased and stripped before tokenization; the reference's defa
 cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the script's
 `use_text_preprocessing=False` behavior.
 
+## Infinity
+
+`infinity-2b` loads `infinity_2b_reg.pth` and `infinity_vae_d32reg.pth` from
+`FoundationVision/Infinity` revision `e710892`, plus Flan-T5-XL revision `7d6315d`. The reference
+is the original `Infinity`, `Infinity.autoregressive_infer_cfg` and bitwise VAE decoder at commit
+`9f9fcd1`. Tests are in `tests/reference/test_ref_infinity_2b.py`; the original real-checkpoint
+pipeline runs in a subprocess so its large modules are freed before imagehub loads its copies.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance |
+| --- | --- |
+| Tensor headers: transformer (694 tensors), VAE archive (302 tensors; 33 training-only perceptual tensors and one deterministic mask excluded), Flan-T5 encoder | 0 missing, extra or mismatched |
+| Flan-T5 tokenizer ids, attention mask and encoder output | exact |
+| Random-weight self-attention and compact cross-attention | 0 |
+| Random-weight bitwise VAE decoder | 0 |
+| Strict real transformer, text encoder and VAE load; first scale exercised by end to end | exact |
+| End to end, official seven-scale 256x256 schedule, guidance 3.0, temperature 0.5, top-k 900, top-p 0.97, seed 0 | identical uint8 image |
+| Separate public-pipeline seed run with seed 42 and the same shortened schedule | identical uint8 image |
+
+The 256x256 comparison is the smallest schedule published for Infinity-2B and is intentionally
+used instead of the 13-scale 1024x1024 default so a CPU reference run finishes in minutes. Unit
+tests additionally cover a random tiny snapshot, strict loading, sampling option validation,
+repeatability, request isolation and restoration of the caller's autograd mode.
+
 ## HiDream-I1
 
 `hidream-i1-fast`, `hidream-i1-dev` (revision `0fad2ea`) and `hidream-i1-full` (revision `8ccbbfb`) are the HiDream-I1 repositories plus

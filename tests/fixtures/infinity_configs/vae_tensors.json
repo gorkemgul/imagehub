@@ -1,0 +1,2098 @@
+{
+  "tensors": {
+    "encoder.conv_in.conv.weight": {
+      "shape": [
+        128,
+        3,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.conv_in.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.0.norm1.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.0.norm1.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.0.conv1.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.0.conv1.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.0.norm2.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.0.norm2.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.0.conv2.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.0.conv2.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.1.norm1.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.1.norm1.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.1.conv1.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.1.conv1.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.1.norm2.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.1.norm2.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.1.conv2.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.block.1.conv2.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.downsample.conv.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.0.downsample.conv.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.norm1.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.norm1.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.conv1.conv.weight": {
+      "shape": [
+        256,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.conv1.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.norm2.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.norm2.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.conv2.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.conv2.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.nin_shortcut.conv.weight": {
+      "shape": [
+        256,
+        128,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.0.nin_shortcut.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.1.norm1.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.1.norm1.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.1.conv1.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.1.conv1.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.1.norm2.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.1.norm2.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.1.conv2.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.block.1.conv2.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.downsample.conv.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.1.downsample.conv.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.norm1.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.norm1.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.conv1.conv.weight": {
+      "shape": [
+        512,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.nin_shortcut.conv.weight": {
+      "shape": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.0.nin_shortcut.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.1.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.1.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.1.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.1.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.1.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.1.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.1.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.block.1.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.downsample.conv.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.2.downsample.conv.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.0.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.0.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.0.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.0.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.0.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.0.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.0.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.0.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.1.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.1.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.1.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.1.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.1.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.1.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.1.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.block.1.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.downsample.conv.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.3.downsample.conv.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.0.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.0.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.0.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.0.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.0.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.0.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.0.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.0.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.1.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.1.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.1.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.1.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.1.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.1.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.1.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.down.4.block.1.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_1.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_1.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_1.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_1.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_1.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_1.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_1.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_1.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_2.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_2.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_2.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_2.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_2.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_2.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_2.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.mid.block_2.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.norm_out.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.norm_out.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "encoder.conv_out.conv.weight": {
+      "shape": [
+        32,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "encoder.conv_out.conv.bias": {
+      "shape": [
+        32
+      ],
+      "dtype": "float32"
+    },
+    "decoder.conv_in.conv.weight": {
+      "shape": [
+        512,
+        32,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.conv_in.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_1.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_1.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_1.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_1.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_1.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_1.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_1.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_1.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_2.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_2.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_2.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_2.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_2.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_2.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_2.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.mid.block_2.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.norm1.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.norm1.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.conv1.conv.weight": {
+      "shape": [
+        128,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.conv1.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.norm2.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.norm2.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.conv2.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.conv2.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.nin_shortcut.conv.weight": {
+      "shape": [
+        128,
+        256,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.0.nin_shortcut.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.1.norm1.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.1.norm1.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.1.conv1.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.1.conv1.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.1.norm2.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.1.norm2.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.1.conv2.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.1.conv2.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.2.norm1.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.2.norm1.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.2.conv1.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.2.conv1.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.2.norm2.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.2.norm2.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.2.conv2.conv.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.0.block.2.conv2.conv.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.conv1.conv.weight": {
+      "shape": [
+        256,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.conv1.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.norm2.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.norm2.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.conv2.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.conv2.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.nin_shortcut.conv.weight": {
+      "shape": [
+        256,
+        512,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.0.nin_shortcut.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.1.norm1.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.1.norm1.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.1.conv1.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.1.conv1.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.1.norm2.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.1.norm2.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.1.conv2.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.1.conv2.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.2.norm1.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.2.norm1.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.2.conv1.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.2.conv1.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.2.norm2.norm.weight": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.2.norm2.norm.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.2.conv2.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.block.2.conv2.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.upsample.conv.conv.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.1.upsample.conv.conv.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.0.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.0.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.0.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.0.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.0.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.0.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.0.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.0.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.1.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.1.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.1.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.1.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.1.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.1.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.1.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.1.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.2.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.2.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.2.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.2.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.2.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.2.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.2.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.block.2.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.upsample.conv.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.2.upsample.conv.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.0.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.0.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.0.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.0.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.0.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.0.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.0.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.0.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.1.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.1.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.1.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.1.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.1.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.1.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.1.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.1.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.2.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.2.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.2.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.2.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.2.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.2.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.2.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.block.2.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.upsample.conv.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.3.upsample.conv.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.0.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.0.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.0.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.0.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.0.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.0.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.0.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.0.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.1.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.1.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.1.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.1.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.1.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.1.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.1.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.1.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.2.norm1.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.2.norm1.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.2.conv1.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.2.conv1.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.2.norm2.norm.weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.2.norm2.norm.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.2.conv2.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.block.2.conv2.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.upsample.conv.conv.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.up.4.upsample.conv.conv.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "decoder.norm_out.norm.weight": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.norm_out.norm.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "decoder.conv_out.conv.weight": {
+      "shape": [
+        3,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "decoder.conv_out.conv.bias": {
+      "shape": [
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.scaling_layer.shift": {
+      "shape": [
+        1,
+        3,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.scaling_layer.scale": {
+      "shape": [
+        1,
+        3,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice1.0.weight": {
+      "shape": [
+        64,
+        3,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice1.0.bias": {
+      "shape": [
+        64
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice1.2.weight": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice1.2.bias": {
+      "shape": [
+        64
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice2.5.weight": {
+      "shape": [
+        128,
+        64,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice2.5.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice2.7.weight": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice2.7.bias": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice3.10.weight": {
+      "shape": [
+        256,
+        128,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice3.10.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice3.12.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice3.12.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice3.14.weight": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice3.14.bias": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice4.17.weight": {
+      "shape": [
+        512,
+        256,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice4.17.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice4.19.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice4.19.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice4.21.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice4.21.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice5.24.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice5.24.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice5.26.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice5.26.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice5.28.weight": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.net.slice5.28.bias": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.lin0.model.1.weight": {
+      "shape": [
+        1,
+        64,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.lin1.model.1.weight": {
+      "shape": [
+        1,
+        128,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.lin2.model.1.weight": {
+      "shape": [
+        1,
+        256,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.lin3.model.1.weight": {
+      "shape": [
+        1,
+        512,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "perceptual_model.lin4.model.1.weight": {
+      "shape": [
+        1,
+        512,
+        1,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "quantizer.lfq.mask": {
+      "shape": [
+        32
+      ],
+      "dtype": "int64"
+    }
+  }
+}

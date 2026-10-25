@@ -2669,6 +2669,55 @@ tokens or caption embeddings are not supported.
 **License.** The repository declares the MIT license and the text encoder is Apache-2.0.
 imagehub does not distribute weights.
 
+# Infinity
+
+Catalog: [`infinity`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `infinity-2b` · Task: `t2i`
+
+**Architecture.** Infinity is a bitwise next-scale autoregressive model. Flan-T5-XL encodes the
+prompt, and a 32-layer, width-2048 transformer cross-attends to the compact text features while
+predicting a pyramid of latent grids. Each grid position contains 32 independently sampled bits;
+binary spherical quantization converts them to a unit-length latent vector. Residual grids are
+upsampled and accumulated, and the d32 regularized image tokenizer decodes the final latent grid
+with 16x spatial upsampling.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained infinity-2b checkpoints/infinity-2b
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="infinity-2b", model="checkpoints/infinity-2b", device="cpu"
+) as pipe:
+    result = pipe("an intricate mechanical hummingbird", seed=42, width=256, height=256)
+    result.images[0].save("hummingbird.png")
+```
+
+The snapshot holds `infinity_2b_reg.pth` and `infinity_vae_d32reg.pth` at its root and the pinned
+Flan-T5-XL config, tokenizer and two safetensors shards in `text_encoder/`.
+
+**Settings.** Defaults follow the published reproduction script: guidance 3.0, temperature 0.5,
+top-k 900, top-p 0.97 and 1024x1024. `width` and `height` must be equal and one of 256, 512 or
+1024; these select the official 7-, 10- or 13-scale schedule. The other supported option is
+`seed`. Guidance 1.0 disables the unconditional batch. Unrecognized settings raise an error
+before weights are loaded.
+
+**Validation and limits.** CPU float32 is the parity target. Real-checkpoint end-to-end tests use
+the smallest official seven-scale schedule (256x256) for both seed 0 and seed 42; the public
+1024x1024 default is substantially slower. Batch generation, negative prompts, prompt rewriting,
+the 125M and 8B releases, FlexAttention, fused kernels and reduced-precision parity are outside
+the supported surface.
+
+**Memory.** The checkpoint downloads are about 9.7 GB for the transformer and VAE plus 11 GB for
+the full Flan-T5-XL sequence-to-sequence archive. Only its encoder tensors are loaded. Component
+and end-to-end reference comparisons isolate the original implementation in a subprocess.
+
+**License.** The code repository and model card declare MIT. imagehub does not distribute weights.
+
 # HART
 
 Catalog: [`hart`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

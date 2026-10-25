@@ -3177,6 +3177,75 @@ def write_tiny_llamagen(
     return root
 
 
+TINY_INFINITY_TRANSFORMER = {
+    "depth": 2,
+    "embed_dim": 64,
+    "num_heads": 4,
+    "mlp_ratio": 4.0,
+    "text_channels": 32,
+    "text_max_length": 512,
+    "bit_channels": 4,
+    "block_chunks": 1,
+    "level_count": 15,
+}
+TINY_INFINITY_VAE = {
+    "base_channels": 32,
+    "channel_multipliers": (1, 1, 1, 1, 1),
+    "num_res_blocks": 1,
+    "latent_channels": 4,
+    "patch_size": 16,
+}
+
+
+def write_tiny_infinity(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """Random Infinity snapshot in the two published pickle containers plus Flan-T5 layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.infinity import InfinityTransformer
+    from imagehub.models.infinity_vae import InfinityVAE
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    text_dir = root / "text_encoder"
+    text_dir.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    transformer = InfinityTransformer(TINY_INFINITY_TRANSFORMER)
+    vae = InfinityVAE(TINY_INFINITY_VAE)
+    for model in (transformer, vae):
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.08)
+    torch.save(dict(transformer.state_dict()), root / "infinity_2b_reg.pth")
+    torch.save({"vae": dict(vae.state_dict())}, root / "infinity_vae_d32reg.pth")
+    (root / "infinity_config.json").write_text(
+        json.dumps({"transformer": TINY_INFINITY_TRANSFORMER, "vae": TINY_INFINITY_VAE})
+    )
+
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", text_dir / "tokenizer.json")
+    tokenizer_config = {
+        "tokenizer_class": "T5TokenizerFast",
+        "model_max_length": 512,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (text_dir / "tokenizer_config.json").write_text(json.dumps(tokenizer_config))
+    (text_dir / "special_tokens_map.json").write_text(
+        json.dumps({key: tokenizer_config[key] for key in ("pad_token", "eos_token", "unk_token")})
+    )
+    text = T5EncoderModel(TINY_LLAMAGEN_T5)
+    for parameter in text.parameters():
+        parameter.data.normal_(0, 0.08)
+    state = dict(text.state_dict())
+    state["encoder.embed_tokens.weight"] = state["shared.weight"].clone()
+    state["lm_head.weight"] = torch.randn(164, 32)
+    state["decoder.embed_tokens.weight"] = state["shared.weight"].clone()
+    (text_dir / "config.json").write_text(json.dumps(TINY_LLAMAGEN_T5))
+    save_safetensors(state, text_dir / "model.safetensors")
+    return root
+
+
 ERNIE_TINY_PRETOKENIZER_REGEX = (
     r"[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]*[\p{Ll}\p{Lm}\p{Lo}\p{M}]+|"
     r"[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]+[\p{Ll}\p{Lm}\p{Lo}\p{M}]*|"

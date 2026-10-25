@@ -112,6 +112,7 @@ for _task, _name, _path in (
     (Task.T2I, "amused", "imagehub.backends.amused:AmusedBackend"),
     (Task.T2I, "meissonic", "imagehub.backends.meissonic:MeissonicBackend"),
     (Task.T2I, "llamagen", "imagehub.backends.llamagen:LlamaGenBackend"),
+    (Task.T2I, "infinity", "imagehub.backends.infinity:InfinityBackend"),
     (Task.T2I, "hart", "imagehub.backends.hart:HARTBackend"),
     (Task.T2I, "show-o", "imagehub.backends.show_o:ShowOBackend"),
     (Task.T2I, "emu3", "imagehub.backends.emu3:Emu3Backend"),
