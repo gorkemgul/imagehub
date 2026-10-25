@@ -2371,6 +2371,46 @@ The prompt is lower-cased and stripped before tokenization; the reference's defa
 cleaning (`ftfy`, BeautifulSoup) is not implemented, and the comparisons use the script's
 `use_text_preprocessing=False` behavior.
 
+## Infinity
+
+Validated on CPU in the same environment as above. `infinity-2b` loads `infinity_2b_reg.pth` and
+`infinity_vae_d32reg.pth` from `FoundationVision/Infinity` revision `e710892`, plus Flan-T5-XL
+revision `7d6315d`. The reference is the original `Infinity`, `Infinity.autoregressive_infer_cfg`
+and bitwise VAE decoder at commit `9f9fcd1`. Tests are in `tests/reference/test_ref_infinity_2b.py`;
+the original real-checkpoint pipeline runs in a subprocess so its large modules are freed before
+imagehub loads its copies.
+
+All 8 real tests passed, and the observed difference in every recorded comparison is **exactly 0**
+(0 means exact): on CPU in float32, the local implementation produces a bit-identical image to the
+one the original implementation produces. The published transformer, VAE and Flan-T5-XL weights are
+float32. The tensor headers match with 0 missing, extra and mismatched entries for the transformer
+(694 tensors), the VAE archive (302 tensors) and the Flan-T5 encoder (219 tensors)
+(`header_infinity-2b`); the tokenizer and text-encoder outputs are equal and the VAE decoder and the
+first scale load strictly (`components_infinity-2b`); the random-weight self-attention,
+compact cross-attention, transformer scale and VAE decoder comparisons all record `max_abs` 0.0
+(`infinity_self_attention_random_weights`, `infinity_cross_attention_random_weights`,
+`infinity_transformer_random_weights`, `infinity_vae_decoder_random_weights`); and both
+end-to-end runs (256x256, seven scales, seed 0 and seed 42) pass (`e2e_infinity-2b`,
+`seed_e2e_infinity-2b`). The real-checkpoint run took 1 minute on an M2 Max (CPU). Records:
+[validation-measurements.json](validation-measurements.json).
+
+### Comparisons (CPU, float32)
+
+| Comparison | Tolerance |
+| --- | --- |
+| Tensor headers: transformer (694 tensors), VAE archive (302 tensors; 33 training-only perceptual tensors and one deterministic mask excluded), Flan-T5 encoder | 0 missing, extra or mismatched |
+| Flan-T5 tokenizer ids, attention mask and encoder output | exact |
+| Random-weight self-attention and compact cross-attention | 0 |
+| Random-weight bitwise VAE decoder | 0 |
+| Strict real transformer, text encoder and VAE load; first scale exercised by end to end | exact |
+| End to end, official seven-scale 256x256 schedule, guidance 3.0, temperature 0.5, top-k 900, top-p 0.97, seed 0 | identical uint8 image |
+| Separate public-pipeline seed run with seed 42 and the same shortened schedule | identical uint8 image |
+
+The 256x256 comparison is the smallest schedule published for Infinity-2B and is intentionally
+used instead of the 13-scale 1024x1024 default so a CPU reference run finishes in minutes. Unit
+tests additionally cover a random tiny snapshot, strict loading, sampling option validation,
+repeatability, request isolation and restoration of the caller's autograd mode.
+
 ## HiDream-I1
 
 `hidream-i1-fast`, `hidream-i1-dev` (revision `0fad2ea`) and `hidream-i1-full` (revision `8ccbbfb`) are the HiDream-I1 repositories plus
@@ -2561,7 +2601,7 @@ first sequence of the batch only; the native module reproduces that.
   `deepfloyd-if-i-xl`, 6 passed for `meissonic`, 8 passed each for `hart` and `pixeldit`, and 27 passed
   for `bk-sdm-base`, `bk-sdm-small` and `bk-sdm-tiny`, and 27 passed for
   `bk-sdm-v2-base`, `bk-sdm-v2-small` and `bk-sdm-v2-tiny`, 6 passed for
-  `show-o-512`, 5 passed for `sdxs-512-0.9`, 7 passed for `emu3-gen`, 8 passed for `cosmos-predict2-2b-t2i`, 5 passed for `nextstep-1-large`, and 6 passed for `bagel-7b-mot`. These include structural parity with random weights, end-to-end parity with
+  `show-o-512`, 5 passed for `sdxs-512-0.9`, 7 passed for `emu3-gen`, 8 passed for `cosmos-predict2-2b-t2i`, 5 passed for `nextstep-1-large`, 6 passed for `bagel-7b-mot`, and 8 passed for `infinity-2b`. These include structural parity with random weights, end-to-end parity with
   a small model, real-checkpoint parity and tokenizer fuzz tests.
 - Stable Diffusion 3 and 3.5 reference tests (CPU): 10 passed for `sd3-medium`, 10 passed each for
   `sd3.5-medium` and `sd3.5-large`, and 11 passed for `sd3.5-large-turbo`.

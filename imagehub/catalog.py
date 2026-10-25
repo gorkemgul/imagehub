@@ -3088,6 +3088,53 @@ for _llamagen_id, _llamagen_file, _llamagen_size in (
         )
     )
 
+_INFINITY_REVISION = "e7108923249fb3c836ebfbc3f4b4d318d6131293"
+_INFINITY_CODE_REVISION = "9f9fcd1de7ead377ddf1106db1249a35f3a59143"
+
+_entries.append(
+    ModelSpec(
+        id="infinity-2b",
+        task=Task.T2I,
+        family="infinity",
+        source="https://huggingface.co/FoundationVision/Infinity",
+        repo_id="FoundationVision/Infinity",
+        revision=_INFINITY_REVISION,
+        provenance="author",
+        catalog_id="infinity",
+        format="pytorch",
+        license="MIT",
+        gated=False,
+        config={
+            "defaults": {
+                "cfg_scale": 3.0,
+                "temperature": 0.5,
+                "top_k": 900,
+                "top_p": 0.97,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        reference={"Infinity": {"commit": _INFINITY_CODE_REVISION}},
+        files=("infinity_2b_reg.pth", "infinity_vae_d32reg.pth"),
+        subfolders={
+            "text_encoder": SubRepo(
+                repo_id="google/flan-t5-xl",
+                revision=_FLAN_T5_XL_REVISION,
+                files=(
+                    "config.json",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00002.safetensors",
+                    "model-00002-of-00002.safetensors",
+                    "spiece.model",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                    "special_tokens_map.json",
+                ),
+            )
+        },
+    )
+)
+
 _entries.append(
     ModelSpec(
         id="wuerstchen-v2",

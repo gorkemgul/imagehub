@@ -53,6 +53,7 @@ def test_catalog_contents():
             "hunyuan-dit-v1.2-distilled",
             "hyper-sdxl-1step",
             "ideogram4-fp8",
+            "infinity-2b",
             "janus-pro-1b",
             "janus-pro-7b",
             "joyai-image-edit",

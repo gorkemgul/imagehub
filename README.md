@@ -75,6 +75,7 @@ The [model catalog](docs/catalog.md) lists every supported checkpoint with its s
 | PRX | `prx-1024-t2i-beta`, `prx-512-t2i-sft` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
 | Chroma | `chroma1-hd`, `chroma1-flash`, `chroma1-base` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | LlamaGen | `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` | `t2i` | T | CPU fp32 parity |
+| Infinity | `infinity-2b` | `t2i` | T | CPU fp32 parity; 256px shortened validation run |
 | HART | `hart` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
 | Show-o | `show-o-512` | `t2i` | T | CPU fp32 parity |
 | Emu3 | `emu3-gen` | `t2i` | T | CPU fp32 parity with shortened 24×16 end-to-end runs |
