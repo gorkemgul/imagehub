@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-10-24",
+  "date": "2026-10-25",
   "environment": {
     "python": "3.13.11",
     "torch": "2.14.1",
@@ -3865,6 +3865,57 @@
         "passed": true,
         "pixels_match": true,
         "seed": 42
+      }
+    },
+    {
+      "model_id": "bagel-7b-mot",
+      "repo_id": "ByteDance-Seed/BAGEL-7B-MoT",
+      "revision": "5019f57d168e5816e8f3f701b17cc816bb7cf24b",
+      "provenance": "author",
+      "catalog_id": "bagel",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "config.json": "0795703a1d2ceeaa44bfe1275ef29b3c0dce6c4e1d479ea1cd3e9dd0967c1810",
+        "llm_config.json": "7463bb0ea78315365e6c6b74de4e73bbcc8359dfb0c5a737584e077d42c0b03c",
+        "vit_config.json": "917a59e36337e279c9234b6524c653b10de47345761fa4fbb299c64700f20357",
+        "generation_config.json": "3a8f9087e486054c8a4a08dae2e5a3ba62e23da212b5b8c08bc42cb983c3459f",
+        "preprocessor_config.json": "053c4136f51777293460c7065af06442c448a4a867468f811a60dc3388025e68",
+        "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+        "tokenizer_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+        "model.safetensors.index.json": "dcf749a22e4678e5168f2e3e7939674eb1a207533310a87d4c3aaad03b7d4783",
+        "ema.safetensors": "0b41c43835fd737b8c948e604870da522c091dcf151f3e8d55f84781765ee1a3",
+        "ae.safetensors": "afc8e28272cd15db3919bacdb6918ce9c1ed22e96cb12c4d5ed0fba823529e38"
+      },
+      "tensor_header_check": {
+        "extra": [],
+        "mismatch": [],
+        "missing": [],
+        "tensors": 1467
+      },
+      "end_to_end": {
+        "height": 64,
+        "passed": true,
+        "seed": 0,
+        "steps": 2,
+        "tolerance": "exact",
+        "width": 64
+      },
+      "seed_end_to_end": {
+        "height": 64,
+        "passed": true,
+        "seed": 42,
+        "steps": 2,
+        "tolerance": "exact",
+        "width": 64
       }
     },
     {
@@ -11462,6 +11513,29 @@
       "tolerance": 0.0
     }
   },
+  "components_bagel": {
+    "bagel_denoiser": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "bagel_mot_random": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "bagel_text_encoder": {
+      "passed": true,
+      "tolerance": "exact"
+    },
+    "bagel_tokenizer": {
+      "passed": true,
+      "prompts": 3,
+      "tolerance": "exact"
+    },
+    "bagel_vae_decode": {
+      "passed": true,
+      "tolerance": "exact"
+    }
+  },
   "components_sd3": {
     "sd3_scheduler": {
       "sigmas": {
@@ -16084,6 +16158,6 @@
     "Text-to-image only; SD 1.x img2img is not implemented."
   ],
   "tests": {
-    "reference_summary": "5 passed (nextstep-1-large)"
+    "reference_summary": "6 passed (bagel-7b-mot)"
   }
 }
