@@ -1,0 +1,1 @@
+{"model_id": "longcat-image", "family": "LongCat-Image", "name": "LongCat-Image", "repo": "meituan-longcat/LongCat-Image", "settings": "8 steps (default 50) \u00b7 guidance 4.5 \u00b7 prompt rewrite \u00b7 CFG renorm \u00b7 1024\u00d71024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-10-08", "pr": 59}

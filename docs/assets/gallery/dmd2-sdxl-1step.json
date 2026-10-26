@@ -1,0 +1,1 @@
+{"model_id": "dmd2-sdxl-1step", "family": "Stable Diffusion XL", "name": "DMD2 SDXL 1-step", "repo": "tianweiy/DMD2", "settings": "1 step \u00b7 guidance 0 \u00b7 timesteps [399] \u00b7 LCM \u00b7 1024\u00d71024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-10-07", "pr": 55}

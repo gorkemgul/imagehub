@@ -2982,7 +2982,10 @@ negative prompt, caller-supplied latents, callbacks, LoRA and fp16/bf16 parity a
 
 **License.** The repository declares the MIT license. imagehub does not distribute weights.
 
-## Emu3-Gen
+# Emu3-Gen
+
+Catalog: [`emu3`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `emu3-gen` · Task: `t2i`
 
 **Checkpoint.** `emu3-gen` pins the author repository `BAAI/Emu3-Gen` to revision
 `40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72` and the required
@@ -3020,6 +3023,9 @@ and releases it before native inference.
 distribute weights.
 
 # NextStep-1
+
+Catalog: [`nextstep-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `nextstep-1-large` · Task: `t2i`
 
 ## NextStep-1 Large
 

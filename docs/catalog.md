@@ -1,6 +1,6 @@
 # Model catalog — imagehub 0.1
 
-**50 architecture families, 118 published checkpoints.** A model is a separately published set of weights;
+**{{ ih.families }} architecture families, {{ ih.models }} published checkpoints.** A model is a separately published set of weights;
 fp16 copies, non-EMA weights and single-file `.ckpt` releases do not count as separate models.
 
 `pipeline("t2i", backend=model_id, model="local/folder")` selects the family by catalog id; the
