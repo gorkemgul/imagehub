@@ -13,12 +13,12 @@ hide:
 
 <p class="ih-eyebrow">Open-weight text-to-image models · pure PyTorch</p>
 
-## Many models. One API. The same pixels.
+## Model catalog and pipeline API
 
 <p class="ih-lead">
 imagehub reimplements open text-to-image architectures natively in PyTorch and checks every
 model against its reference implementation. On CPU in float32 the output is
-bit-identical to diffusers.
+bit-identical to the recorded reference implementation.
 </p>
 
 <div class="ih-cta" markdown>
@@ -39,7 +39,7 @@ bit-identical to diffusers.
 <div class="ih-split" markdown>
 <div markdown>
 
-## One call for every model
+## Pipeline interface
 
 The model id selects the architecture; the folder selects the weights. Switching from
 Stable Diffusion to FLUX or Qwen-Image changes one string.
@@ -64,11 +64,11 @@ print(result.metadata)
 </div>
 </div>
 
-## Why imagehub
+## Implementation properties
 
 <div class="ih-features" markdown>
 <div markdown>
-### Parity, not approximation
+### Recorded parity
 Each model is accepted only after tensors load strictly and a full generation from the same noise
 matches the reference. The differences are recorded, not asserted.
 </div>
@@ -83,7 +83,7 @@ Catalog entries pin a commit and file list. Downloads check sizes and hashes and
 manifest of what you got.
 </div>
 <div markdown>
-### Honest limits
+### Validation scope
 Parity is claimed for CPU and float32. Other devices and precisions are smoke-tested and labelled
 as such.
 </div>

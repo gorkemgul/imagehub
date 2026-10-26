@@ -1,3 +1,5 @@
+import json
+import shutil
 from pathlib import Path
 
 import torch
@@ -15,10 +17,28 @@ def test_qwen_normalization_matches_reference_for_recent_combining_marks():
 def test_qwen_tiny_bpe_and_special_tokens():
     tokenizer = Qwen2Tokenizer(TOKENIZER)
 
+    assert tokenizer.add_bos_token is False
     assert tokenizer.tokenize("hi cat") == [25, 30]
     assert tokenizer.tokenize("cats") == [27, 11]
     assert tokenizer.tokenize("hi<|im_end|>cat") == [25, 33, 27]
     assert tokenizer.tokenize("<|endoftext|>") == [31]
+
+
+def test_qwen_slow_tokenizer_files(tmp_path):
+    for name in ("vocab.json", "merges.txt"):
+        shutil.copyfile(TOKENIZER / name, tmp_path / name)
+    data = json.loads((TOKENIZER / "tokenizer.json").read_text(encoding="utf-8"))
+    config = json.loads((TOKENIZER / "tokenizer_config.json").read_text(encoding="utf-8"))
+    config["added_tokens_decoder"] = {
+        str(token["id"]): {key: value for key, value in token.items() if key != "id"}
+        for token in data["added_tokens"]
+    }
+    (tmp_path / "tokenizer_config.json").write_text(json.dumps(config), encoding="utf-8")
+
+    tokenizer = Qwen2Tokenizer(tmp_path)
+
+    assert tokenizer.tokenize("hi<|im_end|>cat") == [25, 33, 27]
+    assert tokenizer.pad_id == 31
 
 
 def test_qwen_batch_padding_truncation_and_mask():

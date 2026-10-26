@@ -15,6 +15,12 @@ import torch
 from torch import Tensor
 
 from imagehub.backends.base import TextToImageBackend
+from imagehub.backends.sdxl_refiner import (
+    REFINER_DEFAULTS,
+    preprocess_refiner_image,
+    refine,
+    refiner_start,
+)
 from imagehub.backends.stable_diffusion import (
     LATENT_CHANNELS,
     LATENT_SCALE,
@@ -24,10 +30,12 @@ from imagehub.backends.stable_diffusion import (
 from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
-from imagehub.image import Image
+from imagehub.image import Image, as_pil
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
 from imagehub.models.unet_2d import UNet2DConditionModel
+from imagehub.schedulers.ddpm import DDPMScheduler
+from imagehub.schedulers.deis_multistep import DEISMultistepScheduler
 from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.euler_ancestral import EulerAncestralDiscreteScheduler
@@ -44,6 +52,8 @@ COMPONENTS = (
     "vae",
     "scheduler",
 )
+REFINER_COMPONENTS = ("tokenizer_2", "text_encoder_2", "unet", "vae", "scheduler")
+REFINER_UNSUPPORTED = ("width", "height", "latents", "timesteps")
 OPTION_DEFAULTS: dict[str, Any] = {
     "negative_prompt": None,
     "steps": 50,
@@ -71,6 +81,10 @@ def _scheduler(config: dict[str, Any]) -> tuple[Any, str]:
         return EDMDPMSolverMultistepScheduler(config), "edm_dpmsolver_multistep"
     if class_name == "LCMScheduler":
         return LCMScheduler.from_config(config), "lcm"
+    if class_name == "DDPMScheduler":
+        return DDPMScheduler(config), "ddpm"
+    if class_name == "DEISMultistepScheduler":
+        return DEISMultistepScheduler(config), "deis"
     raise ValueError(f"Unsupported SDXL scheduler {class_name}")
 
 
@@ -81,9 +95,9 @@ def _hint(root: Path, model_id: str | None) -> str:
 
 @dataclass
 class StableDiffusionXLComponents:
-    tokenizer: CLIPTokenizer
+    tokenizer: CLIPTokenizer | None
     tokenizer_2: CLIPTokenizer
-    text_encoder: CLIPTextModel
+    text_encoder: CLIPTextModel | None
     text_encoder_2: CLIPTextModelWithProjection
     unet: UNet2DConditionModel
     vae: AutoencoderKL
@@ -99,9 +113,11 @@ class StableDiffusionXLComponents:
         dtype: torch.dtype,
         model_id: str | None = None,
         scheduler_overrides: Mapping[str, Any] | None = None,
+        refiner: bool = False,
     ) -> StableDiffusionXLComponents:
         root = Path(directory)
-        missing = [name for name in COMPONENTS if not (root / name).is_dir()]
+        required = REFINER_COMPONENTS if refiner else COMPONENTS
+        missing = [name for name in required if not (root / name).is_dir()]
         if missing:
             raise CheckpointError(
                 f"{root} is not a Stable Diffusion XL snapshot (missing {', '.join(missing)}). "
@@ -110,9 +126,11 @@ class StableDiffusionXLComponents:
         try:
             model_index = read_json(root / "model_index.json")
             return cls(
-                tokenizer=CLIPTokenizer(root / "tokenizer"),
+                tokenizer=None if refiner else CLIPTokenizer(root / "tokenizer"),
                 tokenizer_2=CLIPTokenizer(root / "tokenizer_2"),
-                text_encoder=CLIPTextModel.from_pretrained(
+                text_encoder=None
+                if refiner
+                else CLIPTextModel.from_pretrained(
                     root / "text_encoder", device=device, dtype=dtype
                 ),
                 text_encoder_2=CLIPTextModelWithProjection.from_pretrained(
@@ -138,10 +156,13 @@ class StableDiffusionXLComponents:
 def encode_prompt(
     components: StableDiffusionXLComponents, prompt: str, device: torch.device
 ) -> tuple[Tensor, Tensor]:
-    ids_1 = torch.tensor([components.tokenizer(prompt)], device=device)
     ids_2 = torch.tensor([components.tokenizer_2(prompt)], device=device)
-    _, hidden_1 = components.text_encoder(ids_1, output_hidden_states=True)
     pooled, _, hidden_2 = components.text_encoder_2(ids_2, output_hidden_states=True)
+    if components.tokenizer is None or components.text_encoder is None:
+        # The refiner has only the second text encoder.
+        return hidden_2[-2], pooled
+    ids_1 = torch.tensor([components.tokenizer(prompt)], device=device)
+    _, hidden_1 = components.text_encoder(ids_1, output_hidden_states=True)
     return torch.cat([hidden_1[-2], hidden_2[-2]], dim=-1), pooled
 
 
@@ -210,7 +231,7 @@ def denoise(
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
         if isinstance(scheduler, LCMScheduler):
             latents, _ = scheduler.step(noise, timestep, latents, generator=generator)
-        elif isinstance(scheduler, EulerAncestralDiscreteScheduler):
+        elif isinstance(scheduler, (DDPMScheduler, EulerAncestralDiscreteScheduler)):
             latents = scheduler.step(noise, timestep, latents, generator=generator)
         else:
             latents = scheduler.step(noise, timestep, latents)
@@ -261,14 +282,31 @@ class StableDiffusionXLBackend(TextToImageBackend):
         if model_id is not None and model_id in MODEL_CATALOG:
             model_defaults = dict(MODEL_CATALOG[model_id].config.get("defaults", {}))
             self.scheduler_overrides = dict(MODEL_CATALOG[model_id].config.get("scheduler", {}))
+        self.refiner = (
+            model_id is not None
+            and model_id in MODEL_CATALOG
+            and MODEL_CATALOG[model_id].config.get("pipeline") == "refiner"
+        )
         self.option_defaults = OPTION_DEFAULTS | model_defaults
+        if self.refiner:
+            self.option_defaults = {
+                name: value
+                for name, value in self.option_defaults.items()
+                if name not in REFINER_UNSUPPORTED
+            } | REFINER_DEFAULTS
 
     def validate_options(self, inputs: T2IRequest, options: dict[str, Any]) -> dict[str, Any]:
         merged = dict(inputs.parameters) | options
-        unknown = sorted(set(merged) - set(OPTION_DEFAULTS))
+        if self.refiner:
+            known = set(self.option_defaults)
+        else:
+            known = set(OPTION_DEFAULTS)
+        unknown = sorted(set(merged) - known)
         if unknown:
             raise TypeError(f"Unknown Stable Diffusion XL options: {', '.join(unknown)}")
         o = self.option_defaults | merged
+        if self.refiner:
+            return self._validate_refiner(o, merged)
         if o["width"] is None or o["height"] is None:
             try:
                 sample_size = int(read_json(self.source / "unet" / "config.json")["sample_size"])
@@ -332,6 +370,94 @@ class StableDiffusionXLBackend(TextToImageBackend):
         )
         return o
 
+    def _validate_refiner(self, o: dict[str, Any], merged: dict[str, Any]) -> dict[str, Any]:
+        if o["image"] is None:
+            raise ValueError("The SDXL refiner requires an input image (image=...)")
+        o["image"] = as_pil(o["image"])
+        if min(o["image"].size) < 8:
+            raise ValueError("image must be at least 8 pixels wide and high")
+        if o["negative_prompt"] is not None and not isinstance(o["negative_prompt"], str):
+            raise TypeError("negative_prompt must be a string or None")
+        for name in ("steps", "num_images"):
+            _positive_int(o, name)
+        if o["steps"] > 1000:
+            raise ValueError("steps must be at most 1000")
+        for name in ("guidance", "strength", "aesthetic_score", "negative_aesthetic_score"):
+            value = o[name]
+            if isinstance(value, bool) or not isinstance(value, int | float):
+                raise ValueError(f"{name} must be a finite number")
+            if not math.isfinite(value):
+                raise ValueError(f"{name} must be a finite number")
+        if o["guidance"] < 0:
+            raise ValueError("guidance must be a finite number >= 0")
+        if not 0.0 <= o["strength"] <= 1.0:
+            raise ValueError("strength must be in [0, 1]")
+        if refiner_start(o["steps"], o["strength"]) >= o["steps"]:
+            raise ValueError("strength is too small: no denoising step would remain")
+        seed = o["seed"]
+        if seed is not None and (type(seed) is not int or not 0 <= seed < 2**64):
+            raise ValueError("seed must be an int in [0, 2**64)")
+        for name in (
+            "original_size",
+            "target_size",
+            "negative_original_size",
+            "negative_target_size",
+        ):
+            o[name] = _pair(o[name], name, positive=True)
+        for name in ("crops_coords_top_left", "negative_crops_coords_top_left"):
+            o[name] = _pair(o[name], name, positive=False)
+        return o
+
+    def _infer_refiner(self, inputs: T2IRequest, **o: Any) -> ImageResult:
+        assert self.components is not None
+        seed = o["seed"]
+        if seed is None:
+            seed = secrets.randbits(63)
+        generator = torch.Generator("cpu").manual_seed(seed)
+        pixels = preprocess_refiner_image(o["image"]).to(self.device)
+        final = refine(
+            self.components,
+            prompt=inputs.prompt,
+            negative_prompt=o["negative_prompt"],
+            steps=o["steps"],
+            strength=float(o["strength"]),
+            guidance=float(o["guidance"]),
+            pixels=pixels,
+            num_images=o["num_images"],
+            original_size=o["original_size"],
+            crops_coords_top_left=o["crops_coords_top_left"] or (0, 0),
+            target_size=o["target_size"],
+            negative_original_size=o["negative_original_size"],
+            negative_crops_coords_top_left=o["negative_crops_coords_top_left"] or (0, 0),
+            negative_target_size=o["negative_target_size"],
+            aesthetic_score=float(o["aesthetic_score"]),
+            negative_aesthetic_score=float(o["negative_aesthetic_score"]),
+            generator=generator,
+        )
+        pixels_out = decode_latents(self.components, final)
+        snapshot = self.snapshot or {}
+        metadata = {
+            "model_id": snapshot.get("model_id"),
+            "revision": snapshot.get("revision"),
+            "seed": seed,
+            "steps": o["steps"],
+            "strength": float(o["strength"]),
+            "guidance": float(o["guidance"]),
+            "width": int(pixels.shape[-1]),
+            "height": int(pixels.shape[-2]),
+            "image_input": True,
+            "input_height": int(pixels.shape[-2]),
+            "input_width": int(pixels.shape[-1]),
+            "aesthetic_score": float(o["aesthetic_score"]),
+            "negative_aesthetic_score": float(o["negative_aesthetic_score"]),
+            "negative_prompt": o["negative_prompt"],
+            "scheduler": _scheduler(self.components.scheduler_config)[1],
+            "scheduler_overrides": self.scheduler_overrides,
+            "device": str(self.device),
+            "dtype": str(self.dtype).removeprefix("torch."),
+        }
+        return ImageResult(tuple(Image(p) for p in pixels_out), metadata)
+
     def _load(self) -> None:
         self.components = StableDiffusionXLComponents.load(
             self.source,
@@ -339,6 +465,7 @@ class StableDiffusionXLBackend(TextToImageBackend):
             dtype=self.dtype,
             model_id=self.model_id,
             scheduler_overrides=self.scheduler_overrides,
+            refiner=self.refiner,
         )
         self.snapshot = read_snapshot(self.source)
         recorded = (self.snapshot or {}).get("model_id")
@@ -355,6 +482,8 @@ class StableDiffusionXLBackend(TextToImageBackend):
         self.snapshot = None
 
     def _infer(self, inputs: T2IRequest, **o: Any) -> ImageResult:
+        if self.refiner:
+            return self._infer_refiner(inputs, **o)
         assert self.components is not None
         seed, latents = o["seed"], o["latents"]
         generator = None

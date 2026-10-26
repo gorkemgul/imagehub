@@ -1,4 +1,4 @@
-"""Native byte-level BPE tokenizer for Qwen2 tokenizer files."""
+"""Native byte-level BPE tokenizer for fast and slow Qwen2 tokenizer files."""
 
 from __future__ import annotations
 
@@ -167,7 +167,8 @@ def _split_added(text: str, tokens: dict[str, int]) -> list[_AddedPiece]:
     return pieces
 
 
-def _pretokenize(text: str) -> list[str]:
+def _pretokenize(text: str, digit_group: int = 1) -> list[str]:
+    """Split like the GPT-4 style pattern; numbers are cut into runs of ``digit_group`` digits."""
     pieces: list[str] = []
     i = 0
     while i < len(text):
@@ -200,8 +201,11 @@ def _pretokenize(text: str) -> list[str]:
             continue
 
         if _is_number(text[i]):
-            pieces.append(text[i])
-            i += 1
+            end = i + 1
+            while end < len(text) and end - i < digit_group and _is_number(text[end]):
+                end += 1
+            pieces.append(text[i:end])
+            i = end
             continue
 
         punctuation_start = i
@@ -247,12 +251,40 @@ class Qwen2Tokenizer:
 
     def __init__(self, directory: str | os.PathLike[str]) -> None:
         path = Path(directory)
-        data = json.loads((path / "tokenizer.json").read_text(encoding="utf-8"))
-        model = data["model"]
-        self.encoder: dict[str, int] = model["vocab"]
+        config = json.loads((path / "tokenizer_config.json").read_text(encoding="utf-8"))
+        tokenizer_path = path / "tokenizer.json"
+        if tokenizer_path.is_file():
+            data = json.loads(tokenizer_path.read_text(encoding="utf-8"))
+            model = data["model"]
+            merges_data = model["merges"]
+            added_tokens = data.get("added_tokens", [])
+        else:
+            model = {}
+            merges_data = [
+                line
+                for line in (path / "merges.txt").read_text(encoding="utf-8").splitlines()
+                if line and not line.startswith("#")
+            ]
+            decoder = config.get("added_tokens_decoder", {})
+            if decoder:
+                added_tokens = [
+                    dict(token, id=int(token_id)) for token_id, token in decoder.items()
+                ]
+            else:
+                added = json.loads((path / "added_tokens.json").read_text(encoding="utf-8"))
+                added_tokens = [
+                    {"content": token, "id": token_id, "normalized": False}
+                    for token, token_id in added.items()
+                ]
+        vocab_path = path / "vocab.json"
+        self.encoder: dict[str, int] = (
+            json.loads(vocab_path.read_text(encoding="utf-8"))
+            if vocab_path.is_file()
+            else model["vocab"]
+        )
         merges = [
             tuple(merge) if isinstance(merge, list) else tuple(merge.split())
-            for merge in model["merges"]
+            for merge in merges_data
         ]
         self.ranks = {pair: rank for rank, pair in enumerate(merges)}
         self.byte_encoder = bytes_to_unicode()
@@ -260,19 +292,19 @@ class Qwen2Tokenizer:
 
         raw_added: dict[str, int] = {}
         normalized_added: dict[str, int] = {}
-        for token in data.get("added_tokens", []):
+        for token in added_tokens:
             destination = normalized_added if token.get("normalized", False) else raw_added
             destination[token["content"]] = token["id"]
         self._raw_added = raw_added
         self._normalized_added = normalized_added
 
-        config = json.loads((path / "tokenizer_config.json").read_text(encoding="utf-8"))
         pad_token = config.get("pad_token", "<|endoftext|>")
         if isinstance(pad_token, dict):
             pad_token = pad_token["content"]
         self.pad_id = (
             self._raw_added[pad_token] if pad_token in self._raw_added else self.encoder[pad_token]
         )
+        self.add_bos_token = bool(config.get("add_bos_token", False))
 
     def _bpe(self, token: str) -> list[str]:
         cached = self._cache.get(token)

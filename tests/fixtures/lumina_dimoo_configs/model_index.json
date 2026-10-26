@@ -1,0 +1,12 @@
+{
+  "_class_name": "LuminaDiMOOPipeline",
+  "_diffusers_version": "0.36.0.dev0",
+  "tokenizer": [
+    "transformers",
+    "PreTrainedTokenizerFast"
+  ],
+  "vqvae": [
+    "diffusers",
+    "VQModel"
+  ]
+}

@@ -146,15 +146,43 @@ def test_downloads_composite_snapshot_with_provenance(monkeypatch, tmp_path):
 
 
 @pytest.mark.parametrize(
+    "model_id", ["pixart-sigma-xl-256", "pixart-sigma-xl-512", "pixart-sigma-xl-2k"]
+)
+def test_downloads_transformer_only_pixart_sigma_on_top_of_the_1024_snapshot(
+    monkeypatch, tmp_path, model_id
+):
+    spec, base, repositories, calls = fake_composite_hub(monkeypatch, model_id=model_id)
+    dest = download_pretrained(model_id, tmp_path / "snapshot")
+    manifest = read_snapshot(dest)
+
+    assert manifest["base"] == {"model_id": "pixart-sigma-xl-1024", "revision": base.revision}
+    assert set(manifest["files"]) == set(base.files)
+    for name in spec.files:
+        assert (dest / name).read_bytes() == repositories[spec.repo_id][name]
+        assert manifest["files"][name]["repo_id"] == spec.repo_id
+    assert manifest["files"]["vae/config.json"]["repo_id"] == base.repo_id
+    assert not any(
+        f"/{base.repo_id}/resolve/{base.revision}/transformer/" in url for url, _ in calls
+    )
+
+
+@pytest.mark.parametrize(
     "model_id",
     [
         "sana-1600m-1024",
         "sana-600m-1024",
+        "sana-sprint-1.6b-1024",
+        "sana-1.5-4.8b-1024",
         "kolors",
+        "kandinsky-3",
         "lumina-image-2.0",
         "amused-256",
         "amused-512",
+        "meissonic",
         "auraflow-v0.3",
+        "prx-1024-t2i-beta",
+        "prx-512-t2i-sft",
+        "omnigen-v1",
     ],
 )
 def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, tmp_path, model_id):
@@ -188,11 +216,23 @@ def test_downloads_single_revision_snapshot_pinned_to_its_revision(monkeypatch, 
 
 
 @pytest.mark.parametrize(
-    "model_id", ["kandinsky-2.2", "stable-cascade", "stable-cascade-lite", "wuerstchen-v2"]
+    ("model_id", "subfolder"),
+    [
+        ("kandinsky-2-1", "prior"),
+        ("kandinsky-2.2", "prior"),
+        ("stable-cascade", "prior"),
+        ("stable-cascade-lite", "prior"),
+        ("wuerstchen-v2", "prior"),
+        ("llamagen-t2i-xl-256", "text_encoder"),
+        ("llamagen-t2i-xl-512", "text_encoder"),
+        ("hidream-i1-fast", "text_encoder_4"),
+    ],
 )
-def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, model_id):
+def test_downloads_subrepository_into_snapshot_subfolder(
+    monkeypatch, tmp_path, model_id, subfolder
+):
     spec = model_info(model_id)
-    prior = spec.subfolders["prior"]
+    prior = spec.subfolders[subfolder]
     repositories = {
         spec.repo_id: {name: f"decoder {name}".encode() for name in spec.files},
         prior.repo_id: {name: f"prior {name}".encode() for name in prior.files},
@@ -223,7 +263,9 @@ def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, 
     dest = download_pretrained(spec.id, tmp_path / "snapshot")
     manifest = read_snapshot(dest)
     assert manifest["verified_revision"] is True
-    assert set(manifest["files"]) == set(spec.files) | {f"prior/{name}" for name in prior.files}
+    assert set(manifest["files"]) == set(spec.files) | {
+        f"{subfolder}/{name}" for name in prior.files
+    }
     for name, data in repositories[spec.repo_id].items():
         assert (dest / name).read_bytes() == data
         assert manifest["files"][name] == {
@@ -232,7 +274,7 @@ def test_downloads_subrepository_into_snapshot_subfolder(monkeypatch, tmp_path, 
             "sha256": hashlib.sha256(data).hexdigest(),
         }
     for name, data in repositories[prior.repo_id].items():
-        destination = f"prior/{name}"
+        destination = f"{subfolder}/{name}"
         assert (dest / destination).read_bytes() == data
         assert manifest["files"][destination] == {
             "repo_id": prior.repo_id,

@@ -32,9 +32,45 @@ transformers = pytest.importorskip("transformers")
 np = pytest.importorskip("numpy")
 
 CPU = torch.device("cpu")
-MODEL_IDS = ("sana-600m-1024", "sana-1600m-1024")
+MODELS = {
+    "sana-600m-1024": {"pipeline": "SanaPipeline", "steps": 20, "size": 1024},
+    "sana-1600m-1024": {"pipeline": "SanaPipeline", "steps": 20, "size": 1024},
+    "sana-sprint-1.6b-1024": {"pipeline": "SanaSprintPipeline", "steps": 2, "size": 1024},
+    "sana-1.5-4.8b-1024": {"pipeline": "SanaPipeline", "steps": 20, "size": 1024},
+}
+MODEL_IDS = tuple(MODELS)
 PROMPT = "a photograph of an astronaut riding a horse"
 MAX_SEQUENCE_LENGTH = 300
+
+FIXTURES = Path(__file__).parents[1] / "fixtures" / "sana_configs"
+SANA_FIXTURE_MODELS = {
+    "sana-sprint-1.6b-1024": {
+        "config": "1.6b_sprint",
+        "headers": "1.6b_sprint_headers",
+        "components": {
+            "text_encoder": ("text_encoder_1.json", "text_encoder_2.json"),
+            "transformer": ("transformer.json",),
+            "vae": ("vae.json",),
+        },
+    },
+    "sana-1.5-4.8b-1024": {
+        "config": "4.8b_1.5",
+        "headers": "4.8b_1.5_headers",
+        "components": {
+            "text_encoder": ("text_encoder_1.json", "text_encoder_2.json"),
+            "transformer": ("transformer_1.json", "transformer_2.json"),
+            "vae": ("vae.json",),
+        },
+    },
+}
+
+
+def _fixture_shapes(header_dir: Path, files: tuple[str, ...]) -> dict[str, tuple[int, ...]]:
+    shapes: dict[str, tuple[int, ...]] = {}
+    for name in files:
+        data = json.loads((header_dir / name).read_text(encoding="utf-8"))
+        shapes.update({k: tuple(v) for k, v in data.items()})
+    return shapes
 
 
 def _checkpoint_shapes(directory: Path) -> dict[str, tuple[int, ...]]:
@@ -71,8 +107,9 @@ def _reference_instruction() -> list[str]:
     return list(default)
 
 
-def _reference_pipeline(root, **modules):
-    reference = diffusers.SanaPipeline.from_pretrained(
+def _reference_pipeline(model_id, root, **modules):
+    pipeline_cls = getattr(diffusers, MODELS[model_id]["pipeline"])
+    reference = pipeline_cls.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32, **modules
     )
     reference.set_progress_bar_config(disable=True)
@@ -100,6 +137,51 @@ def _our_conditioning(root):
 
 def test_instruction_matches_pipeline_default():
     assert list(COMPLEX_HUMAN_INSTRUCTION) == _reference_instruction()
+    sprint_default = (
+        inspect.signature(diffusers.SanaSprintPipeline.__call__)
+        .parameters["complex_human_instruction"]
+        .default
+    )
+    assert list(COMPLEX_HUMAN_INSTRUCTION) == list(sprint_default)
+
+
+@pytest.mark.parametrize("model_id", sorted(SANA_FIXTURE_MODELS))
+def test_headers_from_fixtures(model_id, record):
+    """Header check for the Sprint and 1.5 fixtures (no downloaded weights needed)."""
+    info = SANA_FIXTURE_MODELS[model_id]
+    config_dir = FIXTURES / info["config"]
+    header_dir = FIXTURES / info["headers"]
+    config_files = {
+        "text_encoder": config_dir / "text_encoder_config.json",
+        "transformer": config_dir / "transformer_config.json",
+        "vae": config_dir / "vae_config.json",
+    }
+    result = {}
+    for component, cls in {
+        "text_encoder": Gemma2Model,
+        "transformer": SanaTransformer2DModel,
+        "vae": AutoencoderDC,
+    }.items():
+        with torch.device("meta"):
+            model = cls(read_json(config_files[component]))
+        shapes = _fixture_shapes(header_dir, info["components"][component])
+        prepared = model.prepare_state_dict(
+            {name: torch.empty(shape, device="meta") for name, shape in shapes.items()}
+        )
+        expected = {name: tuple(value.shape) for name, value in model.state_dict().items()}
+        actual = {name: tuple(value.shape) for name, value in prepared.items()}
+        result[component] = {
+            "missing": sorted(expected.keys() - actual.keys()),
+            "extra": sorted(actual.keys() - expected.keys()),
+            "mismatch": sorted(
+                name for name in expected.keys() & actual.keys() if expected[name] != actual[name]
+            ),
+            "tensors": len(shapes),
+        }
+    record(f"fixture_header_{model_id}", **result)
+    assert all(
+        not entry[key] for entry in result.values() for key in ("missing", "extra", "mismatch")
+    )
 
 
 @pytest.mark.parametrize("model_id", MODEL_IDS)
@@ -175,27 +257,40 @@ def test_text_encoder(model_id, record):
     root = snapshot_dir(model_id)
     # Only the text encoder and tokenizer are needed; loading goes through the pipeline so
     # the attention implementation is the one the pipeline selects.
-    reference = _reference_pipeline(root, transformer=None, vae=None)
+    reference = _reference_pipeline(model_id, root, transformer=None, vae=None)
     with torch.inference_mode():
-        prompt_embeds, prompt_mask, negative_embeds, negative_mask = reference.encode_prompt(
-            PROMPT,
-            do_classifier_free_guidance=True,
-            negative_prompt="",
-            device=CPU,
-            clean_caption=False,
-            max_sequence_length=MAX_SEQUENCE_LENGTH,
-            complex_human_instruction=_reference_instruction(),
-        )
+        if model_id == "sana-sprint-1.6b-1024":
+            prompt_embeds, prompt_mask = reference.encode_prompt(
+                PROMPT,
+                device=CPU,
+                clean_caption=False,
+                max_sequence_length=MAX_SEQUENCE_LENGTH,
+                complex_human_instruction=_reference_instruction(),
+            )
+        else:
+            prompt_embeds, prompt_mask, negative_embeds, negative_mask = reference.encode_prompt(
+                PROMPT,
+                do_classifier_free_guidance=True,
+                negative_prompt="",
+                device=CPU,
+                clean_caption=False,
+                max_sequence_length=MAX_SEQUENCE_LENGTH,
+                complex_human_instruction=_reference_instruction(),
+            )
     del reference
     gc.collect()
     embeds, mask = _our_conditioning(root)
-    masks_match = torch.equal(mask[1:], prompt_mask.bool()) and torch.equal(
-        mask[:1], negative_mask.bool()
-    )
+    if model_id == "sana-sprint-1.6b-1024":
+        masks_match = torch.equal(mask[1:], prompt_mask.bool())
+    else:
+        masks_match = torch.equal(mask[1:], prompt_mask.bool()) and torch.equal(
+            mask[:1], negative_mask.bool()
+        )
     record(f"sana_{model_id}_text_encoder_masks", masks_match=masks_match, tolerance="exact")
     assert masks_match
     _check(record, f"sana_{model_id}_text_encoder_prompt", embeds[1:], prompt_embeds)
-    _check(record, f"sana_{model_id}_text_encoder_negative", embeds[:1], negative_embeds)
+    if model_id != "sana-sprint-1.6b-1024":
+        _check(record, f"sana_{model_id}_text_encoder_negative", embeds[:1], negative_embeds)
 
 
 @pytest.mark.parametrize("model_id", MODEL_IDS)
@@ -211,13 +306,27 @@ def test_transformer(model_id, record):
     generator = torch.Generator("cpu").manual_seed(1)
     hidden_states = torch.randn(2, 32, 32, 32, generator=generator)
     timestep = torch.tensor([800.0, 300.0])
+    transformer_kwargs = {}
+    reference_kwargs = {}
+    if ours.guidance_embeds:
+        guidance_scale = 4.5
+        guidance_embeds_scale = float(ours.config.get("guidance_embeds_scale", 0.1))
+        guidance = (
+            torch.full([1], guidance_scale, device=CPU, dtype=torch.float32)
+            .expand(hidden_states.shape[0])
+            .to(torch.float32)
+            * guidance_embeds_scale
+        )
+        transformer_kwargs["guidance"] = guidance
+        reference_kwargs["guidance"] = guidance
     with torch.inference_mode():
-        actual = ours(hidden_states, embeds, timestep, mask)
+        actual = ours(hidden_states, embeds, timestep, mask, **transformer_kwargs)
         expected = reference(
             hidden_states,
             encoder_hidden_states=embeds,
             timestep=timestep,
             encoder_attention_mask=mask,
+            **reference_kwargs,
         ).sample
     _check(record, f"sana_{model_id}_transformer", actual, expected)
     del ours, reference
@@ -242,11 +351,11 @@ def test_vae_decode(model_id, record):
     gc.collect()
 
 
-def _reference_output(root, seed, **kwargs):
-    reference = _reference_pipeline(root)
+def _reference_output(model_id, root, seed, **kwargs):
+    reference = _reference_pipeline(model_id, root)
     arguments = {
         "prompt": PROMPT,
-        "num_inference_steps": 20,
+        "num_inference_steps": MODELS[model_id]["steps"],
         "guidance_scale": 4.5,
         "clean_caption": False,
         **kwargs,
@@ -266,21 +375,40 @@ def _reference_output(root, seed, **kwargs):
 @pytest.mark.parametrize("model_id", MODEL_IDS)
 def test_end_to_end(model_id, record):
     root = snapshot_dir(model_id)
-    expected_latents, expected_pixels = _reference_output(root, 0, height=1024, width=1024)
-    components = SanaComponents.load(root, device=CPU, dtype=torch.float32, model_id=model_id)
-    noise = torch.randn(1, 32, 32, 32, generator=torch.Generator("cpu").manual_seed(0))
-    actual_latents = denoise(
-        components,
-        prompt=PROMPT,
-        negative_prompt="",
-        steps=20,
-        guidance=4.5,
-        max_sequence_length=MAX_SEQUENCE_LENGTH,
-        instruction=COMPLEX_HUMAN_INSTRUCTION,
-        latents=noise,
+    size = MODELS[model_id]["size"]
+    steps = MODELS[model_id]["steps"]
+    expected_latents, expected_pixels = _reference_output(
+        model_id, root, 0, height=size, width=size
     )
+    components = SanaComponents.load(root, device=CPU, dtype=torch.float32, model_id=model_id)
+    if model_id == "sana-sprint-1.6b-1024":
+        generator = torch.Generator("cpu").manual_seed(0)
+        noise = torch.randn(1, 32, 32, 32, generator=generator)
+        actual_latents = denoise(
+            components,
+            prompt=PROMPT,
+            negative_prompt="",
+            steps=steps,
+            guidance=4.5,
+            max_sequence_length=MAX_SEQUENCE_LENGTH,
+            instruction=COMPLEX_HUMAN_INSTRUCTION,
+            latents=noise,
+            generator=generator,
+        )
+    else:
+        noise = torch.randn(1, 32, 32, 32, generator=torch.Generator("cpu").manual_seed(0))
+        actual_latents = denoise(
+            components,
+            prompt=PROMPT,
+            negative_prompt="",
+            steps=steps,
+            guidance=4.5,
+            max_sequence_length=MAX_SEQUENCE_LENGTH,
+            instruction=COMPLEX_HUMAN_INSTRUCTION,
+            latents=noise,
+        )
     actual_pixels = decode_latents(
-        components.vae, actual_latents, output_width=1024, output_height=1024, resize=True
+        components.vae, actual_latents, output_width=size, output_height=size, resize=True
     )
     latent_diff = max_diff(actual_latents, expected_latents)
     pixel_diff = int((actual_pixels.int() - expected_pixels.int()).abs().max())
@@ -291,9 +419,9 @@ def test_end_to_end(model_id, record):
         pixels_max_abs=pixel_diff,
         passed=passed,
         prompt=PROMPT,
-        steps=20,
+        steps=steps,
         guidance=4.5,
-        size=[1024, 1024],
+        size=[size, size],
         seed=0,
     )
     assert passed
@@ -304,7 +432,7 @@ def test_end_to_end(model_id, record):
 @pytest.mark.parametrize("model_id", MODEL_IDS)
 def test_seed_end_to_end(model_id, record):
     root = snapshot_dir(model_id)
-    _, expected = _reference_output(root, 1234, height=768, width=1360)
+    _, expected = _reference_output(model_id, root, 1234, height=768, width=1360)
     result = pipeline("t2i", backend=model_id, model=root)(
         PROMPT, seed=1234, height=768, width=1360
     )

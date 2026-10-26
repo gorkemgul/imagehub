@@ -1,0 +1,29 @@
+{
+  "_class_name": "KandinskyPriorPipeline",
+  "_diffusers_version": "0.17.0.dev0",
+  "text_encoder": [
+    "transformers",
+    "CLIPTextModelWithProjection"
+  ],
+  "tokenizer": [
+    "transformers",
+    "CLIPTokenizer"
+  ],
+  "prior": [
+    "diffusers",
+    "PriorTransformer"
+  ],
+  "scheduler": [
+    "diffusers",
+    "UnCLIPScheduler"
+  ],
+  "image_encoder": [
+    "transformers",
+    "CLIPVisionModelWithProjection"
+  ],
+  "image_processor": [
+    "transformers",
+    "CLIPImageProcessor"
+  ]
+
+}

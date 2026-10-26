@@ -49,11 +49,37 @@ def test_tiny_forward_shape_and_mask():
 
 @pytest.mark.parametrize(
     "override",
-    [{"qk_norm": "rms_norm_across_heads"}, {"guidance_embeds": True}, {"interpolation_scale": 2}],
+    [{"interpolation_scale": 2}, {"qk_norm": "rms_norm"}],
 )
 def test_unsupported_option_rejected(override):
     with pytest.raises(ValueError, match="Unsupported Sana transformer setting"):
         SanaTransformer2DModel(TINY | override)
+
+
+@pytest.mark.parametrize("qk_norm", [None, "rms_norm_across_heads"])
+def test_qk_norm_supported(qk_norm):
+    config = TINY | {"qk_norm": qk_norm}
+    model = SanaTransformer2DModel(config).eval()
+    hidden = torch.randn(2, 4, 6, 10)
+    text = torch.randn(2, 5, 12)
+    with torch.inference_mode():
+        out = model(hidden, text, torch.tensor([500.0, 250.0]))
+    assert out.shape == hidden.shape
+
+
+def test_guidance_embeds_supported():
+    config = TINY | {"guidance_embeds": True}
+    model = SanaTransformer2DModel(config).eval()
+    hidden = torch.randn(1, 4, 6, 10)
+    text = torch.randn(1, 5, 12)
+    with torch.inference_mode():
+        out = model(
+            hidden,
+            text,
+            torch.tensor([0.5]),
+            guidance=torch.tensor([0.45]),
+        )
+    assert out.shape == hidden.shape
 
 
 def test_unknown_option_rejected():

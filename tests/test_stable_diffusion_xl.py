@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 import torch
@@ -31,8 +32,6 @@ def tiny_turbo(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def tiny_playground(tmp_path_factory):
-    from pathlib import Path
-
     config = json.loads(
         (
             Path(__file__).parent / "fixtures/playground_v25_configs/scheduler_config.json"
@@ -72,6 +71,17 @@ def test_turbo_uses_model_scheduler_defaults_and_native_size(tiny_turbo):
     assert result.metadata["scheduler"] == "euler_ancestral"
 
 
+def test_playground_v2_uses_model_guidance_and_euler_ancestral_scheduler(tmp_path):
+    config = json.loads(
+        (Path(__file__).parent / "fixtures/playground_v2_configs/scheduler_config.json").read_text()
+    )
+    root = write_tiny_sdxl(tmp_path / "tiny-playground-v2", scheduler_config=config, sample_size=4)
+    result = pipeline("t2i", backend="playground-v2", model=root)("a cat", seed=7, steps=1)
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["guidance"] == 3.0
+    assert result.metadata["scheduler"] == "euler_ancestral"
+
+
 def test_playground_uses_model_guidance_and_edm_scheduler(tiny_playground):
     result = pipeline("t2i", backend="playground-v2.5", model=tiny_playground)(
         "a cat", seed=7, steps=1
@@ -80,6 +90,25 @@ def test_playground_uses_model_guidance_and_edm_scheduler(tiny_playground):
     assert result.metadata["steps"] == 1
     assert result.metadata["guidance"] == 3.0
     assert result.metadata["scheduler"] == "edm_dpmsolver_multistep"
+
+
+@pytest.mark.parametrize(
+    ("model_id", "fixture", "scheduler_name"),
+    [
+        ("juggernaut-xl-v9", "juggernaut_xl_v9_configs", "ddpm"),
+        ("dreamshaper-xl-1.0", "dreamshaper_xl_1_configs", "deis"),
+    ],
+)
+def test_finetunes_use_published_schedulers(tmp_path, model_id, fixture, scheduler_name):
+    config = json.loads(
+        (Path(__file__).parent / "fixtures" / fixture / "scheduler.json").read_text()
+    )
+    root = write_tiny_sdxl(tmp_path / f"tiny-{model_id}", scheduler_config=config, sample_size=4)
+    result = pipeline("t2i", backend=model_id, model=root)(
+        "a cat", seed=7, steps=2, width=32, height=32
+    )
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["scheduler"] == scheduler_name
 
 
 def test_lightning_uses_scheduler_overrides_and_model_defaults(tiny_sdxl):
@@ -94,6 +123,23 @@ def test_lightning_uses_scheduler_overrides_and_model_defaults(tiny_sdxl):
     )
     assert result.metadata["steps"] == 2
     assert result.metadata["guidance"] == 0.0
+    assert result.metadata["scheduler"] == "euler"
+    assert result.metadata["scheduler_overrides"] == {"timestep_spacing": "trailing"}
+
+
+@pytest.mark.parametrize("model_id", ["koala-lightning-700m", "koala-lightning-1b"])
+def test_koala_lightning_uses_published_sampling_defaults(tiny_sdxl, model_id):
+    backend = StableDiffusionXLBackend(tiny_sdxl, model_id=model_id).load()
+    assert backend.components is not None
+    assert backend.components.scheduler_config["timestep_spacing"] == "trailing"
+    result = backend.infer(
+        __import__("imagehub.types", fromlist=["T2IRequest"]).T2IRequest("cat"),
+        seed=0,
+        width=32,
+        height=32,
+    )
+    assert result.metadata["steps"] == 10
+    assert result.metadata["guidance"] == 3.5
     assert result.metadata["scheduler"] == "euler"
     assert result.metadata["scheduler_overrides"] == {"timestep_spacing": "trailing"}
 

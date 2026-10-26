@@ -17,9 +17,9 @@ repeated afterwards. Pass either `seed` or `latents` (your own noise tensor), no
 
 ## Same image as the reference
 
-For the recorded checkpoints, on CPU in float32, with diffusers {{ ih.diffusers }} and
-transformers {{ ih.transformers }}, imagehub produces the **same pixels** as the reference. That
-claim comes with its evidence:
+For the recorded checkpoints, on CPU in float32, imagehub produces the **same pixels** as each
+model's recorded reference implementation. The validation record identifies the exact diffusers,
+transformers or official-code revision used. The claim comes with its evidence:
 
 - [Results](../parity/results.md): the recorded differences, one row per model.
 - [Gallery](../parity/gallery.md): the reference and imagehub images side by side.

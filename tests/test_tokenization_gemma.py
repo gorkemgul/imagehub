@@ -74,6 +74,18 @@ def test_bos_and_eos_flags(tmp_path):
     assert tokenizer.tokenize("ab", max_length=1) == [vocab["<eos>"]]
 
 
+def test_missing_bos_and_eos_flags_default_to_false(tmp_path):
+    vocab = _write(tmp_path)
+    config_path = tmp_path / "tokenizer_config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    del config["add_bos_token"], config["add_eos_token"]
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+
+    tokenizer = GemmaTokenizer(tmp_path)
+
+    assert tokenizer.tokenize("ab") == [vocab["ab"]]
+
+
 @pytest.mark.parametrize("side", ["left", "right"])
 def test_padding_truncation_and_mask(tmp_path, side):
     vocab = _write(tmp_path)

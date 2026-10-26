@@ -51,7 +51,7 @@ def test_requires_set_timesteps_before_sampling():
     "option",
     [
         {"algorithm_type": "sde-dpmsolver++"},
-        {"beta_schedule": "scaled_linear"},
+        {"beta_schedule": "squaredcos_cap_v2"},
         {"euler_at_final": True},
         {"final_sigmas_type": "sigma_min"},
         {"lower_order_final": False},

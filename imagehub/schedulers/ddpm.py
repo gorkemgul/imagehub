@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from typing import Any
 
@@ -25,11 +26,26 @@ DDPM_DEFAULTS: dict[str, Any] = {
     "steps_offset": 0,
     "rescale_betas_zero_snr": False,
 }
-_IGNORED = frozenset({"set_alpha_to_one", "skip_prk_steps"})
+_IGNORED = frozenset(
+    {"set_alpha_to_one", "skip_prk_steps", "lambda_min_clipped", "interpolation_type"}
+)
+
+
+def _cosine_betas(count: int, max_beta: float = 0.999) -> Tensor:
+    """The squared-cosine ("Glide") schedule, ``squaredcos_cap_v2``."""
+
+    def alpha_bar(time: float) -> float:
+        return math.cos((time + 0.008) / 1.008 * math.pi / 2) ** 2
+
+    betas = [
+        min(1 - alpha_bar((index + 1) / count) / alpha_bar(index / count), max_beta)
+        for index in range(count)
+    ]
+    return torch.tensor(betas, dtype=torch.float32)
 
 
 class DDPMScheduler:
-    """Stateful DDPM sampler for the release configurations of HunyuanDiT and Kandinsky 2.2."""
+    """Stateful DDPM sampler for the release configurations of HunyuanDiT and Kandinsky 2.2/3."""
 
     init_noise_sigma = 1.0
 
@@ -45,15 +61,13 @@ class DDPMScheduler:
         }
         if cfg["trained_betas"] is not None:
             raise ValueError("Unsupported DDPM setting trained_betas")
-        if cfg["beta_schedule"] not in ("linear", "scaled_linear"):
+        if cfg["beta_schedule"] not in ("linear", "scaled_linear", "squaredcos_cap_v2"):
             raise ValueError(f"Unsupported DDPM setting beta_schedule={cfg['beta_schedule']!r}")
         if cfg["variance_type"] not in ("fixed_small", "learned_range"):
             raise ValueError(f"Unsupported DDPM setting variance_type={cfg['variance_type']!r}")
-        if cfg["thresholding"]:
-            raise ValueError("Unsupported DDPM setting thresholding=True")
         if cfg["rescale_betas_zero_snr"]:
             raise ValueError("Unsupported DDPM setting rescale_betas_zero_snr=True")
-        if cfg["timestep_spacing"] != "leading":
+        if cfg["timestep_spacing"] not in ("leading", "trailing"):
             raise ValueError(
                 f"Unsupported DDPM setting timestep_spacing={cfg['timestep_spacing']!r}"
             )
@@ -71,6 +85,8 @@ class DDPMScheduler:
                 )
                 ** 2
             )
+        elif cfg["beta_schedule"] == "squaredcos_cap_v2":
+            self.betas = _cosine_betas(count)
         else:
             self.betas = torch.linspace(
                 cfg["beta_start"], cfg["beta_end"], count, dtype=torch.float32
@@ -84,16 +100,40 @@ class DDPMScheduler:
     def scale_model_input(self, sample: Tensor, timestep: Tensor | int | None = None) -> Tensor:
         return sample
 
+    def add_noise(self, original_samples: Tensor, noise: Tensor, timesteps: Tensor) -> Tensor:
+        alphas = self.alphas_cumprod.to(
+            device=original_samples.device, dtype=original_samples.dtype
+        )
+        while timesteps.ndim < original_samples.ndim:
+            timesteps = timesteps.unsqueeze(-1)
+        sqrt_alpha = alphas[timesteps] ** 0.5
+        sqrt_one_minus_alpha = (1 - alphas[timesteps]) ** 0.5
+        return sqrt_alpha * original_samples + sqrt_one_minus_alpha * noise
+
+    def _threshold_sample(self, sample: Tensor) -> Tensor:
+        dtype = sample.dtype
+        batch, channels = sample.shape[:2]
+        flat = sample.float().reshape(batch, channels * math.prod(sample.shape[2:]))
+        threshold = torch.quantile(flat.abs(), self.config["dynamic_thresholding_ratio"], dim=1)
+        threshold = threshold.clamp(min=1, max=self.config["sample_max_value"]).unsqueeze(1)
+        return (flat.clamp(-threshold, threshold) / threshold).reshape_as(sample).to(dtype)
+
     def set_timesteps(self, num_inference_steps: int) -> None:
         count = self.config["num_train_timesteps"]
         if type(num_inference_steps) is not int or not 0 < num_inference_steps <= count:
             raise ValueError(f"num_inference_steps must be an int in [1, {count}]")
         self.num_inference_steps = num_inference_steps
-        step_ratio = count // num_inference_steps
-        self.timesteps = (
-            torch.arange(num_inference_steps - 1, -1, -1, dtype=torch.int64) * step_ratio
-            + self.config["steps_offset"]
-        )
+        if self.config["timestep_spacing"] == "trailing":
+            step_ratio = count / num_inference_steps
+            self.timesteps = (
+                torch.arange(num_inference_steps, 0, -1, dtype=torch.float64) * step_ratio
+            ).round().to(torch.int64) - 1
+        else:
+            step_ratio = count // num_inference_steps
+            self.timesteps = (
+                torch.arange(num_inference_steps - 1, -1, -1, dtype=torch.int64) * step_ratio
+                + self.config["steps_offset"]
+            )
 
     def previous_timestep(self, timestep: Tensor | int) -> Tensor:
         indices = (self.timesteps == torch.as_tensor(timestep)).nonzero(as_tuple=True)[0]
@@ -161,7 +201,9 @@ class DDPMScheduler:
         else:
             pred_original_sample = alpha_prod_t**0.5 * sample - beta_prod_t**0.5 * model_output
 
-        if self.config["clip_sample"]:
+        if self.config["thresholding"]:
+            pred_original_sample = self._threshold_sample(pred_original_sample)
+        elif self.config["clip_sample"]:
             limit = self.config["clip_sample_range"]
             pred_original_sample = pred_original_sample.clamp(-limit, limit)
 

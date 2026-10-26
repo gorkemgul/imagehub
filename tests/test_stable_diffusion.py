@@ -7,11 +7,12 @@ from helpers import write_tiny_lcm, write_tiny_sd
 from imagehub import pipeline
 from imagehub.backends.stable_diffusion import (
     StableDiffusionBackend,
+    StableDiffusionComponents,
     _scheduler,
     initial_latents,
     resolve_device,
 )
-from imagehub.checkpoints import SNAPSHOT_FILE
+from imagehub.checkpoints import SNAPSHOT_FILE, load_safetensors
 from imagehub.exceptions import CheckpointError
 
 
@@ -23,6 +24,26 @@ def tiny_sd(tmp_path_factory):
 @pytest.fixture(scope="module")
 def tiny_lcm(tmp_path_factory):
     return write_tiny_lcm(tmp_path_factory.mktemp("tiny-lcm"))
+
+
+@pytest.fixture(scope="module")
+def tiny_sdxs(tmp_path_factory):
+    return write_tiny_sd(
+        tmp_path_factory.mktemp("tiny-sdxs"),
+        tiny_vae=True,
+        scheduler_config={"_class_name": "EulerDiscreteScheduler", "timestep_spacing": "trailing"},
+        unet_config={
+            "sample_size": 4,
+            "block_out_channels": [32, 64, 64],
+            "down_block_types": ["CrossAttnDownBlock2D"] * 3,
+            "up_block_types": ["CrossAttnUpBlock2D"] * 3,
+            "layers_per_block": 1,
+            "attention_head_dim": [2, 4, 4],
+            "only_cross_attention": [True, False, False],
+            "mid_block_type": None,
+            "use_linear_projection": True,
+        },
+    )
 
 
 def test_generates_images_with_metadata(tiny_sd):
@@ -48,6 +69,15 @@ def test_sd_turbo_uses_model_defaults_and_unet_size(tiny_sd):
     unet_path.write_text(json.dumps(unet), encoding="utf-8")
 
     result = pipeline("t2i", backend="sd-turbo", model=tiny_sd)("a cat", seed=3)
+
+    assert (result.images[0].width, result.images[0].height) == (32, 32)
+    assert result.metadata["steps"] == 1
+    assert result.metadata["guidance"] == 0.0
+    assert result.metadata["scheduler"] == "euler"
+
+
+def test_sdxs_uses_tiny_vae_and_published_defaults(tiny_sdxs):
+    result = pipeline("t2i", backend="sdxs-512-0.9", model=tiny_sdxs)("a cat", seed=42)
 
     assert (result.images[0].width, result.images[0].height) == (32, 32)
     assert result.metadata["steps"] == 1
@@ -136,6 +166,28 @@ def test_missing_snapshot_points_to_pretrained(tmp_path):
     pipe = pipeline("t2i", backend="sd-v1-5", model=tmp_path / "nowhere")
     with pytest.raises(CheckpointError, match="python -m imagehub.pretrained"):
         pipe("a cat")
+
+
+def test_component_loader_normalizes_channels_last_unet_weights(tmp_path):
+    root = write_tiny_sd(tmp_path / "tiny")
+    safe_path = root / "unet" / "diffusion_pytorch_model.safetensors"
+    state = load_safetensors(safe_path)
+    state = {
+        name: tensor.to(memory_format=torch.channels_last) if tensor.ndim == 4 else tensor
+        for name, tensor in state.items()
+    }
+    torch.save(state, root / "unet" / "diffusion_pytorch_model.bin")
+    safe_path.unlink()
+
+    components = StableDiffusionComponents.load(
+        root, device=torch.device("cpu"), dtype=torch.float32
+    )
+
+    assert all(
+        parameter.is_contiguous()
+        for parameter in components.unet.parameters()
+        if parameter.ndim == 4
+    )
 
 
 def test_snapshot_metadata(tiny_sd, tmp_path):

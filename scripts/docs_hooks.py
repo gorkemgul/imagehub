@@ -63,12 +63,12 @@ def _load(docs: Path) -> dict:
     image_input_note = ""
     for title, body in zip(parts[1::2], parts[2::2], strict=True):
         head = body.split("**Architecture.**")[0]
-        listed = re.findall(
-            r"`([a-z0-9][a-z0-9._-]*)`", head.split("Models:")[-1].split("Task:")[0]
-        )
-        if "…" in head and len(listed) == 2:  # "`sd-v1-1` … `sd-v1-5`"
+        model_line = re.search(r"Models?:\s*(.+?)\s*·\s*Task:", head, flags=re.S)
+        listed = re.findall(r"`([a-z0-9][a-z0-9._-]*)`", model_line.group(1)) if model_line else []
+        if model_line and "…" in model_line.group(1):  # "`sd-v1-1` … `sd-v1-5`"
             ids = list(MODEL_CATALOG)
-            listed = ids[ids.index(listed[0]) : ids.index(listed[1]) + 1]
+            first, last, *rest = listed
+            listed = ids[ids.index(first) : ids.index(last) + 1] + rest
         if title == "Image input":
             image_input_note = body.strip()
             continue
@@ -176,7 +176,7 @@ def compare(model_id: str, d: dict, prefix: str, caption: bool = True) -> str:
     figure = (
         f'<figure class="ih-compare" style="--pos:50%" markdown>\n'
         f'<span class="ih-compare__stage" markdown="span">'
-        f"![diffusers reference]({base}.reference.webp){{ loading=lazy }}"
+        f"![recorded reference]({base}.reference.webp){{ loading=lazy }}"
         f"![imagehub]({base}.imagehub.webp){{ .ih-compare__top loading=lazy }}"
         f'<input type="range" min="0" max="100" value="50" aria-label="Slide between the reference and imagehub output">'
         f'<span class="ih-compare__tag ih-compare__tag--l">reference</span>'
@@ -219,7 +219,7 @@ def family_page(fam: dict, d: dict) -> str:
     if shown:
         out.append("## Reference and imagehub, side by side\n")
         out.append(
-            "Drag the slider. Left is the diffusers reference, right is imagehub, from the same "
+            "Drag the slider. Left is the recorded reference, right is imagehub, from the same "
             "seed, on CPU in float32.\n"
         )
         out.append('<div class="ih-gallery" markdown>\n')
@@ -267,7 +267,12 @@ def results_page(d: dict) -> str:
             lat = e2e.get("latents")
             lat = lat.get("max_abs") if isinstance(lat, dict) else None
             pix = e2e.get("pixels_max_abs", e2e.get("max_pixel_diff"))
-            size = "×".join(str(x) for x in e2e["size"]) if e2e.get("size") else "—"
+            raw_size = e2e.get("size")
+            size = (
+                "×".join(str(x) for x in raw_size)
+                if isinstance(raw_size, list)
+                else str(raw_size or "—")
+            )
             fmt = lambda v: "—" if v is None else (f"{v:g}" if isinstance(v, float) else str(v))  # noqa: E731
             rows.append(
                 f"| [`{model_id}`](../models/{fam['slug']}.md) | {fam['title']} | "
@@ -280,7 +285,7 @@ def results_page(d: dict) -> str:
 
 One row per checkpoint, taken from `docs/validation.json`. A dash means that comparison was not the
 form of evidence recorded for that model (some models are checked on tokens and pixels only, or against
-the official implementation instead of diffusers); the narrative record is in
+        the model's recorded reference may be diffusers or its official implementation); the narrative record is in
 [Validation](../validation.md).
 
 Measured on CPU, float32, Python {env["python"]}, PyTorch {env["torch"]}, diffusers
@@ -298,8 +303,8 @@ def gallery_page(d: dict) -> str:
         "# Gallery\n",
         f"{len(d['gallery'])} checkpoints, each generated twice from the same seed and prompt: once by "
         "the reference implementation (diffusers or the authors' code) and once by imagehub. Move the "
-        "slider across a pair; where the two outputs are identical there is nothing to see, and that "
-        "is the point. Images are downscaled to 512 px for the web; the difference figures were "
+        "slider across a pair; identical outputs overlap completely. Images are downscaled to "
+        "512 px for the web; the difference figures were "
         "measured on the full-size outputs.\n",
         '<div class="ih-gallery" markdown>\n',
     ]
@@ -355,6 +360,18 @@ def on_page_markdown(markdown, page, config, files):
         "transformers": env["transformers"],
         "torch": env["torch"],
         "gallery-count": str(len(d["gallery"])),
+        "max-pixel-diff": str(
+            max(
+                (
+                    (m.get("end_to_end") or {}).get(
+                        "pixels_max_abs", (m.get("end_to_end") or {}).get("max_pixel_diff", 0)
+                    )
+                    or 0
+                    for m in d["validation"]["models"]
+                ),
+                default=0,
+            )
+        ),
     }
 
     def replace(match: re.Match) -> str:

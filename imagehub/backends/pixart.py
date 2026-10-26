@@ -24,6 +24,7 @@ from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.pixart_transformer import PixArtTransformer2DModel
 from imagehub.models.t5 import T5EncoderModel
 from imagehub.schedulers.dpmsolver_multistep import DPMSolverMultistepScheduler
+from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.tokenization_t5 import T5Tokenizer
 from imagehub.types import ImageResult, T2IRequest
 
@@ -80,7 +81,50 @@ ASPECT_RATIO_512_BIN = {
 ASPECT_RATIO_256_BIN = {
     key: [height / 4, width / 4] for key, (height, width) in ASPECT_RATIO_1024_BIN.items()
 }
+ASPECT_RATIO_2048_BIN = {
+    "0.25": [1024.0, 4096.0],
+    "0.26": [1024.0, 3968.0],
+    "0.27": [1024.0, 3840.0],
+    "0.28": [1024.0, 3712.0],
+    "0.32": [1152.0, 3584.0],
+    "0.33": [1152.0, 3456.0],
+    "0.35": [1152.0, 3328.0],
+    "0.4": [1280.0, 3200.0],
+    "0.42": [1280.0, 3072.0],
+    "0.48": [1408.0, 2944.0],
+    "0.5": [1408.0, 2816.0],
+    "0.52": [1408.0, 2688.0],
+    "0.57": [1536.0, 2688.0],
+    "0.6": [1536.0, 2560.0],
+    "0.68": [1664.0, 2432.0],
+    "0.72": [1664.0, 2304.0],
+    "0.78": [1792.0, 2304.0],
+    "0.82": [1792.0, 2176.0],
+    "0.88": [1920.0, 2176.0],
+    "0.94": [1920.0, 2048.0],
+    "1.0": [2048.0, 2048.0],
+    "1.07": [2048.0, 1920.0],
+    "1.13": [2176.0, 1920.0],
+    "1.21": [2176.0, 1792.0],
+    "1.29": [2304.0, 1792.0],
+    "1.38": [2304.0, 1664.0],
+    "1.46": [2432.0, 1664.0],
+    "1.67": [2560.0, 1536.0],
+    "1.75": [2688.0, 1536.0],
+    "2.0": [2816.0, 1408.0],
+    "2.09": [2944.0, 1408.0],
+    "2.4": [3072.0, 1280.0],
+    "2.5": [3200.0, 1280.0],
+    "2.89": [3328.0, 1152.0],
+    "3.0": [3456.0, 1152.0],
+    "3.11": [3584.0, 1152.0],
+    "3.62": [3712.0, 1024.0],
+    "3.75": [3840.0, 1024.0],
+    "3.88": [3968.0, 1024.0],
+    "4.0": [4096.0, 1024.0],
+}
 ASPECT_RATIO_BINS = {
+    256: ASPECT_RATIO_2048_BIN,
     128: ASPECT_RATIO_1024_BIN,
     64: ASPECT_RATIO_512_BIN,
     32: ASPECT_RATIO_256_BIN,
@@ -127,6 +171,7 @@ class PixArtComponents:
     vae: AutoencoderKL
     scheduler_config: dict[str, Any]
     variant: str
+    scheduler: str
 
     @classmethod
     def load(
@@ -149,6 +194,14 @@ class PixArtComponents:
             variants = {"PixArtSigmaPipeline": "sigma", "PixArtAlphaPipeline": "alpha"}
             if class_name not in variants:
                 raise CheckpointError(f"Unsupported PixArt pipeline class {class_name!r}")
+            scheduler_config = read_json(root / "scheduler" / "scheduler_config.json")
+            schedulers = {
+                "DPMSolverMultistepScheduler": "dpm-solver++",
+                "LCMScheduler": "lcm",
+            }
+            scheduler_class = scheduler_config.get("_class_name")
+            if scheduler_class not in schedulers:
+                raise CheckpointError(f"Unsupported PixArt scheduler {scheduler_class!r}")
             return cls(
                 tokenizer=T5Tokenizer(root / "tokenizer"),
                 text_encoder=T5EncoderModel.from_pretrained(
@@ -158,8 +211,9 @@ class PixArtComponents:
                     root / "transformer", device=device, dtype=dtype
                 ),
                 vae=AutoencoderKL.from_pretrained(root / "vae", device=device, dtype=dtype),
-                scheduler_config=read_json(root / "scheduler" / "scheduler_config.json"),
+                scheduler_config=scheduler_config,
                 variant=variants[class_name],
+                scheduler=schedulers[scheduler_class],
             )
         except FileNotFoundError as error:
             raise CheckpointError(
@@ -243,6 +297,7 @@ def denoise(
     height: int,
     max_sequence_length: int,
     latents: Tensor,
+    generator: torch.Generator | None = None,
 ) -> Tensor:
     use_cfg = guidance > 1.0
     prompt_embeds, prompt_mask = encode_prompt(
@@ -253,8 +308,16 @@ def denoise(
         latents.device,
         use_cfg,
     )
-    scheduler = DPMSolverMultistepScheduler(components.scheduler_config)
-    scheduler.set_timesteps(steps)
+    lcm_scheduler: LCMScheduler | None = None
+    dpm_scheduler: DPMSolverMultistepScheduler | None = None
+    if components.scheduler == "lcm":
+        lcm_scheduler = LCMScheduler(components.scheduler_config)
+        lcm_scheduler.set_timesteps(steps)
+        timesteps = lcm_scheduler.timesteps
+    else:
+        dpm_scheduler = DPMSolverMultistepScheduler(components.scheduler_config)
+        dpm_scheduler.set_timesteps(steps)
+        timesteps = dpm_scheduler.timesteps
     added_cond_kwargs = None
     if components.variant == "alpha" and components.transformer.model_config["sample_size"] == 128:
         resolution, aspect_ratio = size_conditions(
@@ -267,9 +330,13 @@ def denoise(
         )
         added_cond_kwargs = {"resolution": resolution, "aspect_ratio": aspect_ratio}
     latent_channels = int(components.transformer.model_config["in_channels"])
-    for timestep in scheduler.timesteps:
+    for timestep in timesteps:
         latent_model_input = torch.cat([latents] * 2) if use_cfg else latents
-        latent_model_input = scheduler.scale_model_input(latent_model_input, timestep)
+        if lcm_scheduler is not None:
+            latent_model_input = lcm_scheduler.scale_model_input(latent_model_input, timestep)
+        else:
+            assert dpm_scheduler is not None
+            latent_model_input = dpm_scheduler.scale_model_input(latent_model_input, timestep)
         current_timestep = timestep[None].to(latent_model_input.device)
         current_timestep = current_timestep.expand(latent_model_input.shape[0])
         noise_pred = components.transformer(
@@ -284,7 +351,11 @@ def denoise(
             noise_pred = noise_unconditional + guidance * (noise_text - noise_unconditional)
         if components.transformer.out_channels // 2 == latent_channels:
             noise_pred = noise_pred.chunk(2, dim=1)[0]
-        latents = scheduler.step(noise_pred, timestep, latents)
+        if lcm_scheduler is not None:
+            latents, _ = lcm_scheduler.step(noise_pred, timestep, latents, generator=generator)
+        else:
+            assert dpm_scheduler is not None
+            latents = dpm_scheduler.step(noise_pred, timestep, latents)
     return latents
 
 
@@ -441,6 +512,7 @@ class PixArtBackend(TextToImageBackend):
             height=o["height"],
             max_sequence_length=o["max_sequence_length"],
             latents=latents.to(self.dtype).to(self.device),
+            generator=generator,
         )
         pixels = decode_latents(
             self.components.vae,
@@ -459,7 +531,7 @@ class PixArtBackend(TextToImageBackend):
             "width": o["output_width"],
             "height": o["output_height"],
             "negative_prompt": o["negative_prompt"],
-            "scheduler": "dpm-solver++",
+            "scheduler": self.components.scheduler,
             "device": str(self.device),
             "dtype": str(self.dtype).removeprefix("torch."),
         }

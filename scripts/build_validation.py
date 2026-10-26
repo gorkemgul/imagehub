@@ -1,19 +1,34 @@
 """Assemble docs/validation.json from reference-test measurements and local snapshots.
 
 The backward-compatible ``components`` and top-level ``seed_end_to_end`` fields retain SD 1.x
-measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.2, Stable Cascade,
-PixArt, Sana, Lumina-Image 2.0, aMUSEd, AuraFlow, Wuerstchen v2, LongCat-Image, CogView4 and
-Ideogram 4
-measurements are
-grouped in flat
-``components_sdxl``, ``components_qwen_image``, ``components_sd3``, ``components_flux1``,
-``components_krea2``, ``components_hunyuan_dit``, ``components_kandinsky22``,
+measurements. SDXL, Qwen-Image, SD3, FLUX.1, Krea 2, HunyuanDiT, Kandinsky 2.1,
+Kandinsky 2.2, Kandinsky 3,
+Kandinsky 5, Stable Cascade, PixArt, Sana, Lumina-Image 2.0, Lumina-Next, Lumina-DiMOO, aMUSEd,
+Meissonic, AuraFlow,
+LlamaGen, Show-o,
+Wuerstchen v2, LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen
+measurements are grouped in flat
+``components_dreamshaper``,
+``components_sdxs``, ``components_segmind_sd``, ``components_bk_sdm``, ``components_bk_sdm_v2``,
+``components_sdxl``, ``components_qwen_image``, ``components_sd3``,
+``components_flux1``,
+``components_krea2``, ``components_ernie_image``, ``components_hunyuan_dit``,
+``components_kandinsky21``, ``components_kandinsky22``,
+``components_kandinsky3``,
+``components_ldm``,
+``components_kandinsky5``,
 ``components_stable_cascade``, ``components_pixart``, ``components_sana``,
-``components_lumina2``, ``components_amused``, ``components_auraflow``,
-``components_wuerstchen``,
+``components_lumina2``, ``components_lumina_next``, ``components_lumina_dimoo``,
+``components_amused``,
+``components_meissonic``, ``components_auraflow``,
+``components_llamagen``, ``components_show_o``, ``components_emu3``,
+``components_wuerstchen``, ``components_glm_image``,
 ``components_longcat_image``,
-``components_cogview4`` and ``components_ideogram4`` mappings: the base model keeps its historical
-unsuffixed keys, while other models use ``<key>_<model-id>``. Each model entry may also contain its
+``components_cogview3_plus``,
+``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
+``components_hidream_o1``, ``components_cosmos2`` and ``components_omnigen`` mappings: the base
+model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
+entry may also contain its
 own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
 output is retained unchanged; a missing directory without an existing entry is an error.
 
@@ -45,17 +60,24 @@ LIMITS = [
     "no parity claim.",
     "No float16 or bfloat16 parity.",
     "No safety checker or invisible watermark; the reference ran with safety_checker=None.",
-    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DDIM for SD 2.1, Euler "
-    "with trailing spacing for SD-Turbo, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, "
-    "Euler for SDXL, "
-    "flow-match Euler for Z-Image and SD 3.5, flow-match Euler with a static shift for FLUX.1 "
-    "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev, Qwen-Image 2.1 "
-    "and LongCat-Image, flow-match "
-    "Euler with exponential shifting for Krea 2 and linear shifting for CogView4, DDPM for "
+    "Only the checkpoint scheduler is implemented: PNDM (PLMS) for SD 1.x, DEIS for Segmind "
+    "Small-SD, DPM-Solver++ for Segmind Tiny-SD, DDIM for SD 2.1, Euler "
+    "with trailing spacing for SD-Turbo and SDXS, LCM for LCM Dreamshaper v7, Hyper-SDXL and DMD2, "
+    "Euler, trailing DDPM and leading DEIS for SDXL, "
+    "flow-match Euler for Z-Image, SD 3.5 and Kandinsky 5, flow-match Euler with a static shift "
+    "for FLUX.1 "
+    "schnell, Lumina-Image 2.0 and AuraFlow, and dynamic shifting for FLUX.1 dev/Lite, "
+    "Qwen-Image 2.1 and LongCat-Image, flow-match "
+    "Euler with exponential shifting for Krea 2 and Chroma HD/Flash, beta sigmas for Chroma Base, "
+    "and linear shifting for "
+    "CogView4, shifted-SNR "
+    "DDIM for CogView3-Plus, DDPM for "
     "HunyuanDiT, UnCLIP and DDPM for Kandinsky 2.2, DDPM Wuerstchen for Stable Cascade and "
-    "Wuerstchen v2, "
-    "DPM-Solver++ for PixArt and Sana (flow sigmas), and the cosine masked-token scheduler for "
-    "aMUSEd.",
+    "Wuerstchen v2, flow-match Euler with inverted sigmas for OmniGen, "
+    "DPM-Solver++ for PixArt and Sana (flow sigmas), and cosine masked-token schedulers for "
+    "aMUSEd and Lumina-DiMOO, and flow-match LCM with re-noising for HiDream-I1 Fast; LlamaGen "
+    "samples image tokens "
+    "autoregressively and has no scheduler.",
     "No image-quality benchmark (FID, CLIP score).",
     "Text-to-image only; SD 1.x img2img is not implemented.",
 ]
@@ -67,6 +89,10 @@ SDXL_COMPONENT_KEYS = (
     "sdxl_vae_decode",
     "sdxl_vae_encode",
     "sdxl_scheduler",
+    "sdxl_refiner_vae_sample",
+    "sdxl_refiner_preprocess_1024x1024",
+    "sdxl_refiner_preprocess_1000x700",
+    "sdxl_refiner_preprocess_640x963",
 )
 SD_TURBO_COMPONENT_KEYS = (
     "sd_turbo_tokenizer",
@@ -107,7 +133,22 @@ QWEN_IMAGE_COMPONENT_KEYS = (
     "qwen_image_vae_encode",
     "qwen_image_scheduler",
 )
+CHROMA_COMPONENT_KEYS = (
+    "chroma_tokenizer",
+    "chroma_text_encoder",
+    "chroma_transformer",
+    "chroma_vae_decode",
+    "chroma_vae_encode",
+    "chroma_scheduler",
+)
 JANUS_COMPONENT_KEYS = ("janus_language_model", "janus_vq_decode")
+BAGEL_COMPONENT_KEYS = (
+    "bagel_mot_random",
+    "bagel_tokenizer",
+    "bagel_text_encoder",
+    "bagel_denoiser",
+    "bagel_vae_decode",
+)
 SD3_COMPONENT_KEYS = (
     "sd3_tokenizers",
     "sd3_text_encoder",
@@ -118,13 +159,14 @@ SD3_COMPONENT_KEYS = (
     "sd3_vae_encode",
     "sd3_scheduler",
 )
+LDM_COMPONENT_KEYS = ("ldm_tokenizer", "ldm_text_encoder", "ldm_unet", "ldm_vqvae_decode")
 
 
 def header_check(header: dict | None) -> dict | None:
     """Merge per-component header records into missing/extra/mismatch lists and counts."""
     if header is None:
         return None
-    if all(key in header for key in ("missing", "extra", "mismatch", "tensors")):
+    if all(key in header for key in ("missing", "extra", "mismatch")):
         return header
     if all(set(entry) == {"fp8", "scales", "tensors"} for entry in header.values()):
         return header
@@ -166,13 +208,20 @@ def main() -> None:
             sys.exit(f"{spec.id}: missing snapshot or not the validated revision")
         measurement_id = {
             "krea2-turbo": "krea2_turbo",
+            "ernie-image": "ernie_image",
             "longcat-image": "longcat_image",
             "flux1-kontext-dev": "flux1_kontext_dev",
+            "hidream-i1-fast": "hidream_i1_fast",
+            "hidream-i1-dev": "hidream_i1_dev",
+            "hidream-i1-full": "hidream_i1_full",
+            "kandinsky-3": "kandinsky3",
+            "kandinsky-5-t2i-lite": "kandinsky5",
         }.get(spec.id, spec.id)
         e2e = measured.get(f"e2e_{measurement_id}")
         e2e_batch2 = measured.get(f"e2e_batch2_{spec.id}")
         e2e_multistep = measured.get(f"e2e_multistep_{spec.id}")
         e2e_guided = measured.get(f"e2e_guided_{spec.id}")
+        e2e_image = measured.get(f"e2e_image_{spec.id}")
         seed_e2e = measured.get(f"seed_e2e_{measurement_id}")
         header = measured.get(f"header_{measurement_id}") or measured.get(f"header_{spec.id}")
         reference = {package: dict(details) for package, details in spec.reference.items()}
@@ -207,6 +256,7 @@ def main() -> None:
                 **({"end_to_end_batch2": e2e_batch2} if e2e_batch2 else {}),
                 **({"end_to_end_multistep": e2e_multistep} if e2e_multistep else {}),
                 **({"end_to_end_guided": e2e_guided} if e2e_guided else {}),
+                **({"end_to_end_image": e2e_image} if e2e_image else {}),
                 "seed_end_to_end": seed_e2e,
             }
         )
@@ -230,6 +280,9 @@ def main() -> None:
             if key
             in ("tokenizer", "text_encoder", "unet", "vae_decode", "vae_encode", "seed_noise")
         },
+        "components_dreamlite": {
+            key: value for key, value in measured.items() if key.startswith("components_dreamlite-")
+        },
         "components_sdxl": {
             key: value
             for key, value in measured.items()
@@ -247,11 +300,35 @@ def main() -> None:
         "components_sd_turbo": {
             key: value for key, value in measured.items() if key in SD_TURBO_COMPONENT_KEYS
         },
+        "components_dreamshaper": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith("sd_") and "dreamshaper-8" in key
+        },
+        "components_sdxs": {
+            key: value for key, value in measured.items() if key.startswith("sdxs_")
+        },
+        "components_segmind_sd": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith("sd_") and "segmind-" in key
+        },
         "components_sd21": {
             key: value for key, value in measured.items() if key in SD21_COMPONENT_KEYS
         },
         "components_lcm": {
             key: value for key, value in measured.items() if key in LCM_COMPONENT_KEYS
+        },
+        "components_bk_sdm": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith("bk_sdm_") and not key.startswith("bk_sdm_v2_")
+        },
+        "components_bk_sdm_v2": {
+            key: value for key, value in measured.items() if key.startswith("bk_sdm_v2_")
+        },
+        "components_ldm": {
+            key: value for key, value in measured.items() if key in LDM_COMPONENT_KEYS
         },
         "components_z_image": {
             key: value
@@ -278,6 +355,9 @@ def main() -> None:
                 if spec.family == "janus" and spec.id != "janus-pro-1b"
             )
         },
+        "components_bagel": {
+            key: value for key, value in measured.items() if key in BAGEL_COMPONENT_KEYS
+        },
         "components_sd3": {
             key: value
             for key, value in measured.items()
@@ -297,6 +377,9 @@ def main() -> None:
         "components_krea2": {
             key: value for key, value in measured.items() if key.startswith("krea2_")
         },
+        "components_ernie_image": {
+            key: value for key, value in measured.items() if key.startswith("ernie_image_")
+        },
         "components_flux2": {
             key: value for key, value in measured.items() if key.startswith("flux2_")
         },
@@ -305,6 +388,18 @@ def main() -> None:
         },
         "components_kandinsky22": {
             key: value for key, value in measured.items() if "kandinsky22" in key
+        },
+        "components_kandinsky21": {
+            key: value for key, value in measured.items() if "kandinsky21" in key
+        },
+        "components_deepfloyd_if": {
+            key: value for key, value in measured.items() if key.startswith("deepfloyd_if_")
+        },
+        "components_kandinsky3": {
+            key: value for key, value in measured.items() if key.startswith("kandinsky3_")
+        },
+        "components_kandinsky5": {
+            key: value for key, value in measured.items() if key.startswith("kandinsky5_")
         },
         "components_stable_cascade": {
             key: value
@@ -328,25 +423,90 @@ def main() -> None:
         "components_lumina2": {
             key: value for key, value in measured.items() if key.startswith("lumina2_")
         },
+        "components_lumina_next": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(("lumina_next_", "gemma1_", "e2e_watershed_lumina"))
+        },
+        "components_lumina_dimoo": {
+            key: value for key, value in measured.items() if key.startswith("lumina_dimoo_")
+        },
         "components_amused": {
             key: value for key, value in measured.items() if key.startswith(("amused_", "amused-"))
         },
+        "components_meissonic": {
+            key: value for key, value in measured.items() if key.startswith("meissonic_")
+        },
+        "components_llamagen": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(("llamagen_", "llamagen-"))
+        },
+        "components_infinity": {
+            key: value for key, value in measured.items() if key.startswith("infinity_")
+        },
+        "components_hart": {
+            key: value for key, value in measured.items() if key.startswith("hart_")
+        },
+        "components_show_o": {
+            key: value for key, value in measured.items() if key.startswith("show_o_")
+        },
+        "components_emu3": {
+            key: value for key, value in measured.items() if key.startswith("emu3_gen_")
+        },
+        "components_pixeldit": {
+            key: value for key, value in measured.items() if key.startswith("pixeldit_")
+        },
         "components_auraflow": {
             key: value for key, value in measured.items() if key.startswith("auraflow_")
+        },
+        "components_prx": {
+            key: value for key, value in measured.items() if key.startswith(("prx_", "t5gemma_"))
         },
         "components_wuerstchen": {
             key: value
             for key, value in measured.items()
             if key.startswith(("wuerstchen_", "wuerstchen-v2_"))
         },
+        "components_glm_image": {
+            key: value for key, value in measured.items() if key.startswith("glm_image_")
+        },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")
+        },
+        "components_cogview3_plus": {
+            key: value for key, value in measured.items() if key.startswith("cogview3_plus_")
         },
         "components_cogview4": {
             key: value for key, value in measured.items() if key.startswith("cogview4_")
         },
         "components_ideogram4": {
             key: value for key, value in measured.items() if key.startswith("ideogram4_")
+        },
+        "components_hidream": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith("hidream_") and not key.startswith("hidream_o1_")
+        },
+        "components_hidream_o1": {
+            key: value for key, value in measured.items() if key.startswith("hidream_o1_")
+        },
+        "components_cosmos2": {
+            key: value for key, value in measured.items() if key.startswith("cosmos2_")
+        },
+        "components_omnigen": {
+            key: value for key, value in measured.items() if key.startswith("omnigen_")
+        },
+        "components_chroma": {
+            key: value for key, value in measured.items() if key in CHROMA_COMPONENT_KEYS
+        },
+        "components_joyai_image": {
+            key: value
+            for key, value in measured.items()
+            if key.startswith(
+                ("tokenizer_vision_joyai-", "conditioning_joyai-", "transformer_joyai-", "vae_")
+            )
+            and "joyai-image" in key
         },
         "seed_end_to_end": measured.get("seed_e2e_sd-v1-5"),
         "devices": {k: v for k, v in measured.items() if k.startswith("smoke_")},

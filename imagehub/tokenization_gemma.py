@@ -46,7 +46,7 @@ class GemmaTokenizer:
         )
 
         config = json.loads((path / "tokenizer_config.json").read_text(encoding="utf-8"))
-        self.add_bos_token = bool(config.get("add_bos_token", True))
+        self.add_bos_token = bool(config.get("add_bos_token", False))
         self.add_eos_token = bool(config.get("add_eos_token", False))
         self.bos_id = self._token_id(_content(config.get("bos_token")) or "<bos>")
         self.eos_id = self._token_id(_content(config.get("eos_token")) or "<eos>")

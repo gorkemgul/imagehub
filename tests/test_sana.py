@@ -120,7 +120,7 @@ def test_invalid_options_fail_before_loading(tmp_path, options, error, match):
 
 
 def test_catalog_defaults_and_instruction_option(tmp_path):
-    for model_id in ("sana-1600m-1024", "sana-600m-1024"):
+    for model_id in ("sana-1600m-1024", "sana-600m-1024", "sana-1.5-4.8b-1024"):
         spec = model_info(model_id)
         assert spec.family == "sana"
         options = SanaBackend(tmp_path, model_id=model_id).validate_options(T2IRequest("x"), {})
@@ -132,6 +132,15 @@ def test_catalog_defaults_and_instruction_option(tmp_path):
         assert options["max_sequence_length"] == 300
         assert options["complex_human_instruction"] == tuple(COMPLEX_HUMAN_INSTRUCTION)
         assert options["latent_shape"] == (1, 32, 32, 32)
+
+    sprint = SanaBackend(tmp_path, model_id="sana-sprint-1.6b-1024").validate_options(
+        T2IRequest("x"), {}
+    )
+    assert sprint["steps"] == 2
+    assert sprint["guidance"] == 4.5
+    assert sprint["width"] == sprint["height"] == 1024
+    assert sprint["latent_shape"] == (1, 32, 32, 32)
+
     backend = SanaBackend(tmp_path)
     disabled = backend.validate_options(T2IRequest("x"), {"complex_human_instruction": []})
     assert disabled["complex_human_instruction"] == ()

@@ -9,7 +9,7 @@ what was measured, how, and where the claim stops.
 
 <div class="ih-stats" markdown>
 <div class="ih-stat" markdown><strong>{{ ih.validated }} / {{ ih.models }}</strong><span>checkpoints with recorded end-to-end evidence</span></div>
-<div class="ih-stat" markdown><strong>0</strong><span>largest recorded pixel difference</span></div>
+<div class="ih-stat" markdown><strong>{{ ih.max-pixel-diff }}</strong><span>largest recorded pixel difference</span></div>
 <div class="ih-stat" markdown><strong>CPU · fp32</strong><span>where parity is claimed</span></div>
 <div class="ih-stat" markdown><strong>{{ ih.gallery-count }}</strong><span>models in the side-by-side gallery</span></div>
 </div>
@@ -27,8 +27,9 @@ For each checkpoint, in this order:
 4. **Tolerance.** The accepted difference is written down before the run; for most models it is exactly
    zero.
 
-The reference is diffusers {{ ih.diffusers }} and transformers {{ ih.transformers }} (or the
-authors' own code where those do not cover a model), measured with PyTorch {{ ih.torch }}.
+The recorded reference is the model's implementation in diffusers {{ ih.diffusers }} and
+transformers {{ ih.transformers }}, or its official implementation where those libraries do not
+cover it. Measurements use PyTorch {{ ih.torch }}.
 
 ## Reading the results
 

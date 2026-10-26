@@ -23,9 +23,12 @@ from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
 from imagehub.models.autoencoder_kl import AutoencoderKL
+from imagehub.models.autoencoder_tiny import AutoencoderTiny
 from imagehub.models.clip_text import CLIPTextModel
 from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.schedulers.ddim import DDIMScheduler
+from imagehub.schedulers.deis_multistep import DEISMultistepScheduler
+from imagehub.schedulers.dpmsolver_multistep import DPMSolverMultistepScheduler
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
@@ -50,7 +53,15 @@ _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
 
 def _scheduler(
     config: dict[str, Any],
-) -> tuple[PNDMScheduler | DDIMScheduler | EulerDiscreteScheduler | LCMScheduler, str]:
+) -> tuple[
+    PNDMScheduler
+    | DDIMScheduler
+    | EulerDiscreteScheduler
+    | LCMScheduler
+    | DPMSolverMultistepScheduler
+    | DEISMultistepScheduler,
+    str,
+]:
     class_name = config.get("_class_name", "PNDMScheduler")
     if class_name == "DDIMScheduler":
         return DDIMScheduler(config), "ddim"
@@ -60,6 +71,10 @@ def _scheduler(
         return EulerDiscreteScheduler(config), "euler"
     if class_name == "LCMScheduler":
         return LCMScheduler(config), "lcm"
+    if class_name == "DPMSolverMultistepScheduler":
+        return DPMSolverMultistepScheduler(config), "dpm-solver++"
+    if class_name == "DEISMultistepScheduler":
+        return DEISMultistepScheduler(config), "deis"
     raise ValueError(f"Unsupported Stable Diffusion scheduler {class_name}")
 
 
@@ -110,7 +125,7 @@ class StableDiffusionComponents:
     tokenizer: CLIPTokenizer
     text_encoder: CLIPTextModel
     unet: UNet2DConditionModel
-    vae: AutoencoderKL
+    vae: AutoencoderKL | AutoencoderTiny
     scheduler_config: dict[str, Any]
 
     @classmethod
@@ -130,15 +145,26 @@ class StableDiffusionComponents:
                 + _hint(root, model_id)
             )
         try:
+            vae_config = read_json(root / "vae" / "config.json")
+            vae_class = vae_config.get("_class_name", "AutoencoderKL")
+            vae_type: type[AutoencoderKL] | type[AutoencoderTiny]
+            if vae_class == "AutoencoderKL":
+                vae_type = AutoencoderKL
+            elif vae_class == "AutoencoderTiny":
+                vae_type = AutoencoderTiny
+            else:
+                raise ValueError(f"Unsupported Stable Diffusion VAE {vae_class}")
+            unet = UNet2DConditionModel.from_pretrained(root / "unet", device=device, dtype=dtype)
+            # Pickled diffusers checkpoints can store convolution kernels as channels-last.
+            # Its non-accelerate loader copies them into contiguous module parameters.
+            unet.to(memory_format=torch.contiguous_format)
             return cls(
                 tokenizer=CLIPTokenizer(root / "tokenizer"),
                 text_encoder=CLIPTextModel.from_pretrained(
                     root / "text_encoder", device=device, dtype=dtype
                 ),
-                unet=UNet2DConditionModel.from_pretrained(
-                    root / "unet", device=device, dtype=dtype
-                ),
-                vae=AutoencoderKL.from_pretrained(root / "vae", device=device, dtype=dtype),
+                unet=unet,
+                vae=vae_type.from_pretrained(root / "vae", device=device, dtype=dtype),
                 scheduler_config=read_json(root / "scheduler" / "scheduler_config.json"),
             )
         except FileNotFoundError as error:
@@ -209,7 +235,14 @@ def denoise(
         if use_cfg:
             noise_uncond, noise_text = noise.chunk(2)
             noise = noise_uncond + guidance * (noise_text - noise_uncond)
-        assert isinstance(scheduler, PNDMScheduler | DDIMScheduler | EulerDiscreteScheduler)
+        assert isinstance(
+            scheduler,
+            PNDMScheduler
+            | DDIMScheduler
+            | EulerDiscreteScheduler
+            | DPMSolverMultistepScheduler
+            | DEISMultistepScheduler,
+        )
         latents = scheduler.step(noise, t, latents)
     return latents
 
@@ -218,7 +251,11 @@ def denoise(
 def decode_latents(components: _VAEComponents, latents: Tensor) -> Tensor:
     """Decode final latents to uint8 images of shape (batch, height, width, 3) on CPU."""
     vae = components.vae
-    if vae.latents_mean is not None and vae.latents_std is not None:
+    if (
+        isinstance(vae, AutoencoderKL)
+        and vae.latents_mean is not None
+        and vae.latents_std is not None
+    ):
         latents_mean = (
             torch.tensor(vae.latents_mean).view(1, 4, 1, 1).to(latents.device, latents.dtype)
         )
@@ -234,7 +271,8 @@ def decode_latents(components: _VAEComponents, latents: Tensor) -> Tensor:
 
 
 class _VAEComponents(Protocol):
-    vae: AutoencoderKL
+    @property
+    def vae(self) -> AutoencoderKL | AutoencoderTiny: ...
 
 
 def _positive_int(options: dict[str, Any], name: str) -> None:

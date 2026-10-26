@@ -45,6 +45,22 @@ def test_krea_dev_catalog_entry_and_defaults():
     assert (options["steps"], options["guidance"], options["max_sequence_length"]) == (28, 4.5, 512)
 
 
+def test_flux_lite_catalog_entry_and_defaults():
+    lite = model_info("flux-1-lite-8b")
+    assert lite.family == "flux" and lite.catalog_id == "flux-1"
+    assert lite.repo_id == "Freepik/flux.1-lite-8B"
+    assert lite.revision == "16b9373dd3d05bc5f125558f5e2b8470fbb873e8"
+    assert lite.provenance == "author" and not lite.gated and lite.format == "diffusers"
+    assert lite.license == "FLUX.1-dev Non-Commercial License"
+    assert len(set(lite.files)) == len(lite.files) == 22
+    assert "flux.1-lite-8B.safetensors" not in lite.files
+    assert lite.config == {"defaults": {"steps": 28, "guidance": 3.5, "max_sequence_length": 512}}
+    options = FluxBackend(Path("missing"), model_id="flux-1-lite-8b").validate_options(
+        T2IRequest("a cat"), {}
+    )
+    assert (options["steps"], options["guidance"], options["max_sequence_length"]) == (28, 3.5, 512)
+
+
 def test_backend_uses_catalog_defaults():
     schnell = FluxBackend(Path("missing"), model_id="flux1-schnell")
     dev = FluxBackend(Path("missing"), model_id="flux1-dev")

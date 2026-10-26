@@ -16,6 +16,7 @@ from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.pixart_transformer import PixArtTransformer2DModel
 from imagehub.models.t5 import T5EncoderModel
 from imagehub.schedulers.dpmsolver_multistep import DPMSolverMultistepScheduler
+from imagehub.schedulers.lcm import LCMScheduler
 from imagehub.tokenization_t5 import T5Tokenizer
 
 pytestmark = pytest.mark.reference
@@ -23,7 +24,21 @@ diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 
 CPU = torch.device("cpu")
-MODEL_IDS = ("pixart-sigma-xl-1024", "pixart-alpha-xl-1024")
+# model id -> (maximum prompt length, native size in pixels)
+MODELS = {
+    "pixart-sigma-xl-1024": (300, 1024),
+    "pixart-alpha-xl-1024": (120, 1024),
+    "pixart-alpha-xl-512": (120, 512),
+    "pixart-sigma-xl-256": (300, 256),
+    "pixart-sigma-xl-512": (300, 512),
+    "pixart-sigma-xl-2k": (300, 2048),
+    "pixart-lcm-xl-1024": (120, 1024),
+}
+MODEL_IDS = tuple(MODELS)
+# The 2K model is checked at 1024 pixels in the single-step and decode tests to keep them short; its
+# end-to-end runs use a reduced step count.
+STEPS = {"pixart-sigma-xl-2k": 4, "pixart-lcm-xl-1024": 4}
+GUIDANCE = {"pixart-lcm-xl-1024": 0.0}
 PROMPT = "a photograph of an astronaut riding a horse"
 
 
@@ -82,11 +97,9 @@ def test_headers(model_id, record):
     )
 
 
-@pytest.mark.parametrize(
-    ("model_id", "max_length"),
-    [("pixart-sigma-xl-1024", 300), ("pixart-alpha-xl-1024", 120)],
-)
-def test_tokens_masks_and_encoder(model_id, max_length, record):
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_tokens_masks_and_encoder(model_id, record):
+    max_length = MODELS[model_id][0]
     root = snapshot_dir(model_id)
     prompts = [PROMPT, ""]
     ours_tokenizer = T5Tokenizer(root / "tokenizer")
@@ -133,12 +146,13 @@ def test_transformer(model_id, record):
         root / "transformer", local_files_only=True, torch_dtype=torch.float32
     )
     generator = torch.Generator("cpu").manual_seed(1)
-    hidden_states = torch.randn(2, 4, 128, 128, generator=generator)
+    latent_size = min(MODELS[model_id][1], 1024) // 8
+    hidden_states = torch.randn(2, 4, latent_size, latent_size, generator=generator)
     encoder_hidden_states = torch.randn(2, 120, config["caption_channels"], generator=generator)
     attention_mask = torch.ones(2, 120, dtype=torch.bool)
     timestep = torch.tensor([500, 500])
     added_cond_kwargs = None
-    if model_id == "pixart-alpha-xl-1024":
+    if config.get("sample_size") == 128 and "sigma" not in model_id:
         added_cond_kwargs = {
             "resolution": torch.tensor([[1024.0, 1024.0]] * 2),
             "aspect_ratio": torch.tensor([[1.0]] * 2),
@@ -171,8 +185,9 @@ def test_vae(model_id, record):
         root / "vae", local_files_only=True, torch_dtype=torch.float32
     )
     generator = torch.Generator("cpu").manual_seed(1)
-    latents = torch.randn(1, 4, 128, 128, generator=generator)
-    image = torch.rand(1, 3, 1024, 1024, generator=generator) * 2 - 1
+    size = min(MODELS[model_id][1], 1024)
+    latents = torch.randn(1, 4, size // 8, size // 8, generator=generator)
+    image = torch.rand(1, 3, size, size, generator=generator) * 2 - 1
     with torch.inference_mode():
         actual_decode = ours.decode(latents)
         expected_decode = reference.decode(latents).sample
@@ -188,31 +203,40 @@ def test_vae(model_id, record):
 def test_scheduler_timesteps(model_id, record):
     root = snapshot_dir(model_id)
     config = read_json(root / "scheduler" / "scheduler_config.json")
-    ours = DPMSolverMultistepScheduler(config)
-    reference = diffusers.DPMSolverMultistepScheduler.from_config(config)
-    ours.set_timesteps(20)
-    reference.set_timesteps(20)
+    scheduler_class = (
+        LCMScheduler if config["_class_name"] == "LCMScheduler" else DPMSolverMultistepScheduler
+    )
+    reference_class = (
+        diffusers.LCMScheduler
+        if config["_class_name"] == "LCMScheduler"
+        else diffusers.DPMSolverMultistepScheduler
+    )
+    ours = scheduler_class(config)
+    reference = reference_class.from_config(config)
+    steps = STEPS.get(model_id, 20)
+    ours.set_timesteps(steps)
+    reference.set_timesteps(steps)
     exact = torch.equal(ours.timesteps, reference.timesteps.cpu())
-    record(f"{model_id}_scheduler", exact=exact, steps=20, tolerance="exact")
+    record(f"{model_id}_scheduler", exact=exact, steps=steps, tolerance="exact")
     assert exact
 
 
-def _reference_output(root, model_id, *, latents=None, seed=42):
+def _reference_output(root, model_id, *, latents=None, seed=42, steps=None, size=None):
     pipeline_class = (
-        diffusers.PixArtSigmaPipeline
-        if model_id == "pixart-sigma-xl-1024"
-        else diffusers.PixArtAlphaPipeline
+        diffusers.PixArtSigmaPipeline if "sigma" in model_id else diffusers.PixArtAlphaPipeline
     )
+    steps = steps or STEPS.get(model_id, 20)
+    size = size or MODELS[model_id][1]
     reference = pipeline_class.from_pretrained(
         root, local_files_only=True, torch_dtype=torch.float32
     )
     reference.set_progress_bar_config(disable=True)
     kwargs = {
         "prompt": PROMPT,
-        "num_inference_steps": 20,
-        "guidance_scale": 4.5,
-        "height": 1024,
-        "width": 1024,
+        "num_inference_steps": steps,
+        "guidance_scale": GUIDANCE.get(model_id, 4.5),
+        "height": size,
+        "width": size,
         "generator": torch.Generator("cpu").manual_seed(seed),
         "clean_caption": False,
     }
@@ -227,31 +251,31 @@ def _reference_output(root, model_id, *, latents=None, seed=42):
     return expected_latents, expected_pixels
 
 
-@pytest.mark.parametrize(
-    ("model_id", "max_length"),
-    [("pixart-sigma-xl-1024", 300), ("pixart-alpha-xl-1024", 120)],
-)
-def test_end_to_end_fixed_latents(model_id, max_length, record):
+@pytest.mark.parametrize("model_id", MODEL_IDS)
+def test_end_to_end_fixed_latents(model_id, record):
+    max_length, size = MODELS[model_id]
+    steps = STEPS.get(model_id, 20)
     root = snapshot_dir(model_id)
-    noise = torch.randn(1, 4, 128, 128, generator=torch.Generator("cpu").manual_seed(7))
+    noise = torch.randn(1, 4, size // 8, size // 8, generator=torch.Generator("cpu").manual_seed(7))
     expected_latents, expected_pixels = _reference_output(root, model_id, latents=noise)
     components = PixArtComponents.load(root, device=CPU, dtype=torch.float32)
     actual_latents = denoise(
         components,
         prompt=PROMPT,
         negative_prompt=None,
-        steps=20,
-        guidance=4.5,
-        width=1024,
-        height=1024,
+        steps=steps,
+        guidance=GUIDANCE.get(model_id, 4.5),
+        width=size,
+        height=size,
         max_sequence_length=max_length,
         latents=noise.clone(),
+        generator=torch.Generator("cpu").manual_seed(42),
     )
     actual_pixels = decode_latents(
         components.vae,
         actual_latents,
-        output_width=1024,
-        output_height=1024,
+        output_width=size,
+        output_height=size,
         resize=True,
     )
     latent_diff = max_diff(actual_latents, expected_latents)
@@ -262,9 +286,9 @@ def test_end_to_end_fixed_latents(model_id, max_length, record):
         pixels_max_abs=pixel_diff,
         passed=latent_diff["max_abs"] == 0 and pixel_diff == 0,
         prompt=PROMPT,
-        steps=20,
-        guidance=4.5,
-        size=[1024, 1024],
+        steps=steps,
+        guidance=GUIDANCE.get(model_id, 4.5),
+        size=[size, size],
         noise_seed=7,
         scheduler_seed=42,
     )
@@ -277,7 +301,9 @@ def test_end_to_end_fixed_latents(model_id, max_length, record):
 def test_seed_end_to_end(model_id, record):
     root = snapshot_dir(model_id)
     _, expected = _reference_output(root, model_id, seed=42)
-    actual = pipeline("t2i", backend=model_id, model=root)(PROMPT, seed=42)
+    actual = pipeline("t2i", backend=model_id, model=root)(
+        PROMPT, seed=42, steps=STEPS.get(model_id, 20)
+    )
     pixels = torch.stack([image.tensor for image in actual.images])
     passed = torch.equal(pixels, expected)
     pixel_diff = int((pixels.int() - expected.int()).abs().max())

@@ -13,6 +13,32 @@ pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
 
+@pytest.mark.parametrize("steps", [1, 4, 30, 50])
+def test_juggernaut_trailing_ddpm_trajectory_exact(steps):
+    config = json.loads(
+        (Path(__file__).parents[1] / "fixtures/juggernaut_xl_v9_configs/scheduler.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    reference = diffusers.DDPMScheduler.from_config(config)
+    native = DDPMScheduler(config)
+    reference.set_timesteps(steps)
+    native.set_timesteps(steps)
+    assert torch.equal(native.timesteps, reference.timesteps)
+    generator = torch.Generator().manual_seed(0)
+    expected = torch.randn(1, 4, 4, 6, generator=generator)
+    actual = expected.clone()
+    expected_generator = torch.Generator().manual_seed(42)
+    actual_generator = torch.Generator().manual_seed(42)
+    for timestep in reference.timesteps:
+        output = torch.randn(expected.shape, generator=generator)
+        expected = reference.step(
+            output, timestep, expected, generator=expected_generator
+        ).prev_sample
+        actual = native.step(output, timestep, actual, generator=actual_generator)
+        assert torch.equal(actual, expected)
+
+
 @pytest.mark.parametrize("steps", [25, 50])
 def test_ddpm_timesteps_match_reference(steps, record):
     root = snapshot_dir("hunyuan-dit-v1.1-distilled")
@@ -61,6 +87,34 @@ def test_ddpm_trajectory_matches_reference(prediction_type, record):
     )
 
 
+def test_hunyuan_dit_v12_scheduler_config_trajectory_exact():
+    config = json.loads(
+        (
+            Path(__file__).parents[1]
+            / "fixtures/hunyuan_dit_v12_configs/scheduler_scheduler_config.json"
+        ).read_text()
+    )
+    assert config["beta_end"] == 0.018
+    reference = diffusers.DDPMScheduler.from_config(config)
+    native = DDPMScheduler(config)
+    for steps in (25, 50):
+        reference.set_timesteps(steps)
+        native.set_timesteps(steps)
+        assert torch.equal(native.timesteps, reference.timesteps)
+    generator = torch.Generator().manual_seed(0)
+    sample = torch.randn(2, 4, 8, 12, generator=generator)
+    expected, actual = sample.clone(), sample.clone()
+    expected_generator = torch.Generator().manual_seed(5)
+    actual_generator = torch.Generator().manual_seed(5)
+    for timestep in reference.timesteps:
+        output = torch.randn(2, 4, 8, 12, generator=generator)
+        expected = reference.step(
+            output, timestep, expected, generator=expected_generator
+        ).prev_sample
+        actual = native.step(output, timestep, actual, generator=actual_generator)
+        assert torch.equal(actual, expected)
+
+
 def test_kandinsky22_decoder_config_trajectory_exact():
     config = json.loads(
         (
@@ -83,4 +137,34 @@ def test_kandinsky22_decoder_config_trajectory_exact():
         actual = native.step(
             output, timestep, actual, generator=torch.Generator().manual_seed(int(timestep))
         )
+    torch.testing.assert_close(actual, expected, atol=0, rtol=0)
+
+
+def test_kandinsky3_scheduler_config_trajectory_exact():
+    config = json.loads(
+        (
+            Path(__file__).parents[1] / "fixtures/kandinsky3_configs/scheduler_config.json"
+        ).read_text()
+    )
+    reference = diffusers.DDPMScheduler.from_config(config)
+    native = DDPMScheduler(config)
+    assert torch.equal(native.betas, reference.betas)
+    assert torch.equal(native.alphas_cumprod, reference.alphas_cumprod)
+    for steps in (1, 5, 25, 100):
+        reference.set_timesteps(steps)
+        native.set_timesteps(steps)
+        assert torch.equal(native.timesteps, reference.timesteps)
+    reference.set_timesteps(25)
+    native.set_timesteps(25)
+    generator = torch.Generator().manual_seed(0)
+    sample = torch.randn(2, 4, 8, 12, generator=generator)
+    expected, actual = sample.clone(), sample.clone()
+    expected_generator = torch.Generator().manual_seed(7)
+    actual_generator = torch.Generator().manual_seed(7)
+    for timestep in reference.timesteps:
+        output = torch.randn(2, 4, 8, 12, generator=generator)
+        expected = reference.step(
+            output, timestep, expected, generator=expected_generator
+        ).prev_sample
+        actual = native.step(output, timestep, actual, generator=actual_generator)
     torch.testing.assert_close(actual, expected, atol=0, rtol=0)

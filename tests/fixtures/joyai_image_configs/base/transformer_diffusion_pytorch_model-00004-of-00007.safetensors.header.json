@@ -1,0 +1,477 @@
+{
+"double_blocks.18.attn.img_attn_k_norm.weight": [
+128
+],
+"double_blocks.18.attn.img_attn_proj.bias": [
+4096
+],
+"double_blocks.18.attn.img_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.18.attn.img_attn_q_norm.weight": [
+128
+],
+"double_blocks.18.attn.img_attn_qkv.bias": [
+12288
+],
+"double_blocks.18.attn.img_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.18.attn.txt_attn_k_norm.weight": [
+128
+],
+"double_blocks.18.attn.txt_attn_proj.bias": [
+4096
+],
+"double_blocks.18.attn.txt_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.18.attn.txt_attn_q_norm.weight": [
+128
+],
+"double_blocks.18.attn.txt_attn_qkv.bias": [
+12288
+],
+"double_blocks.18.attn.txt_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.18.img_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.18.img_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.18.img_mlp.net.2.bias": [
+4096
+],
+"double_blocks.18.img_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.18.txt_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.18.txt_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.18.txt_mlp.net.2.bias": [
+4096
+],
+"double_blocks.18.txt_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.18.txt_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.19.attn.img_attn_k_norm.weight": [
+128
+],
+"double_blocks.19.attn.img_attn_proj.bias": [
+4096
+],
+"double_blocks.19.attn.img_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.19.attn.img_attn_q_norm.weight": [
+128
+],
+"double_blocks.19.attn.img_attn_qkv.bias": [
+12288
+],
+"double_blocks.19.attn.img_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.19.attn.txt_attn_k_norm.weight": [
+128
+],
+"double_blocks.19.attn.txt_attn_proj.bias": [
+4096
+],
+"double_blocks.19.attn.txt_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.19.attn.txt_attn_q_norm.weight": [
+128
+],
+"double_blocks.19.attn.txt_attn_qkv.bias": [
+12288
+],
+"double_blocks.19.attn.txt_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.19.img_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.19.img_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.19.img_mlp.net.2.bias": [
+4096
+],
+"double_blocks.19.img_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.19.img_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.19.txt_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.19.txt_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.19.txt_mlp.net.2.bias": [
+4096
+],
+"double_blocks.19.txt_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.19.txt_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.20.attn.img_attn_k_norm.weight": [
+128
+],
+"double_blocks.20.attn.img_attn_proj.bias": [
+4096
+],
+"double_blocks.20.attn.img_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.20.attn.img_attn_q_norm.weight": [
+128
+],
+"double_blocks.20.attn.img_attn_qkv.bias": [
+12288
+],
+"double_blocks.20.attn.img_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.20.attn.txt_attn_k_norm.weight": [
+128
+],
+"double_blocks.20.attn.txt_attn_proj.bias": [
+4096
+],
+"double_blocks.20.attn.txt_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.20.attn.txt_attn_q_norm.weight": [
+128
+],
+"double_blocks.20.attn.txt_attn_qkv.bias": [
+12288
+],
+"double_blocks.20.attn.txt_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.20.img_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.20.img_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.20.img_mlp.net.2.bias": [
+4096
+],
+"double_blocks.20.img_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.20.img_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.20.txt_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.20.txt_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.20.txt_mlp.net.2.bias": [
+4096
+],
+"double_blocks.20.txt_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.20.txt_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.21.attn.img_attn_k_norm.weight": [
+128
+],
+"double_blocks.21.attn.img_attn_proj.bias": [
+4096
+],
+"double_blocks.21.attn.img_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.21.attn.img_attn_q_norm.weight": [
+128
+],
+"double_blocks.21.attn.img_attn_qkv.bias": [
+12288
+],
+"double_blocks.21.attn.img_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.21.attn.txt_attn_k_norm.weight": [
+128
+],
+"double_blocks.21.attn.txt_attn_proj.bias": [
+4096
+],
+"double_blocks.21.attn.txt_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.21.attn.txt_attn_q_norm.weight": [
+128
+],
+"double_blocks.21.attn.txt_attn_qkv.bias": [
+12288
+],
+"double_blocks.21.attn.txt_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.21.img_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.21.img_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.21.img_mlp.net.2.bias": [
+4096
+],
+"double_blocks.21.img_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.21.img_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.21.txt_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.21.txt_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.21.txt_mlp.net.2.bias": [
+4096
+],
+"double_blocks.21.txt_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.21.txt_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.22.attn.img_attn_k_norm.weight": [
+128
+],
+"double_blocks.22.attn.img_attn_proj.bias": [
+4096
+],
+"double_blocks.22.attn.img_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.22.attn.img_attn_q_norm.weight": [
+128
+],
+"double_blocks.22.attn.img_attn_qkv.bias": [
+12288
+],
+"double_blocks.22.attn.img_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.22.attn.txt_attn_k_norm.weight": [
+128
+],
+"double_blocks.22.attn.txt_attn_proj.bias": [
+4096
+],
+"double_blocks.22.attn.txt_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.22.attn.txt_attn_q_norm.weight": [
+128
+],
+"double_blocks.22.attn.txt_attn_qkv.bias": [
+12288
+],
+"double_blocks.22.attn.txt_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.22.img_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.22.img_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.22.img_mlp.net.2.bias": [
+4096
+],
+"double_blocks.22.img_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.22.img_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.22.txt_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.22.txt_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.22.txt_mlp.net.2.bias": [
+4096
+],
+"double_blocks.22.txt_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.22.txt_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.23.attn.img_attn_k_norm.weight": [
+128
+],
+"double_blocks.23.attn.img_attn_proj.bias": [
+4096
+],
+"double_blocks.23.attn.img_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.23.attn.img_attn_q_norm.weight": [
+128
+],
+"double_blocks.23.attn.img_attn_qkv.bias": [
+12288
+],
+"double_blocks.23.attn.img_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.23.attn.txt_attn_k_norm.weight": [
+128
+],
+"double_blocks.23.attn.txt_attn_proj.bias": [
+4096
+],
+"double_blocks.23.attn.txt_attn_proj.weight": [
+4096,
+4096
+],
+"double_blocks.23.attn.txt_attn_q_norm.weight": [
+128
+],
+"double_blocks.23.attn.txt_attn_qkv.bias": [
+12288
+],
+"double_blocks.23.attn.txt_attn_qkv.weight": [
+12288,
+4096
+],
+"double_blocks.23.img_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.23.img_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.23.img_mlp.net.2.bias": [
+4096
+],
+"double_blocks.23.img_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.23.img_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.23.txt_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.23.txt_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.23.txt_mlp.net.2.bias": [
+4096
+],
+"double_blocks.23.txt_mlp.net.2.weight": [
+4096,
+16384
+],
+"double_blocks.23.txt_mod.modulate_table": [
+1,
+6,
+4096
+],
+"double_blocks.24.img_mlp.net.0.proj.bias": [
+16384
+],
+"double_blocks.24.img_mlp.net.0.proj.weight": [
+16384,
+4096
+],
+"double_blocks.24.img_mod.modulate_table": [
+1,
+6,
+4096
+]
+}

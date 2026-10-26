@@ -32,16 +32,87 @@ def test_matches_sdxl_published_tensor_layout():
     [
         ("playground_v25_configs/unet.json", "sdxl"),
         ("sdxl_configs/unet.json", "sdxl"),
+        ("segmind_vega_configs/unet.json", "segmind-vega"),
+        ("koala_700m_configs/unet.json", "koala-700m"),
+        ("koala_1b_configs/unet.json", "koala-1b"),
+        ("koala_lightning_700m_configs/unet.json", "koala-lightning-700m"),
+        ("koala_lightning_1b_configs/unet.json", "koala-lightning-1b"),
+        ("bk_sdm_configs/base/unet.json", "bk-sdm-base"),
+        ("bk_sdm_configs/small/unet.json", "bk-sdm-small"),
+        ("bk_sdm_configs/tiny/unet.json", "bk-sdm-tiny"),
         ("ssd1b_configs/unet.json", "ssd1b"),
+        ("segmind_small_sd_configs/unet.json", "segmind-small-sd"),
+        ("segmind_tiny_sd_configs/unet.json", "segmind-tiny-sd"),
         ("sd1_configs/v1-5/unet.json", "sd1"),
         ("sd1_configs/v1-1/unet.json", "sd1"),
+        ("dreamshaper_8_configs/unet.json", "sd1"),
     ],
 )
 def test_real_release_configs_match_published_tensor_layout(config_path, family):
     config = json.loads((FIXTURES / config_path).read_text(encoding="utf-8"))
     fixtures = {
         "sdxl": sdxl_published_shapes,
+        "segmind-vega": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "segmind_vega_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "koala-700m": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "koala_700m_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "koala-1b": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "koala_1b_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "koala-lightning-700m": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "koala_lightning_700m_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "koala-lightning-1b": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "koala_lightning_1b_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
         "ssd1b": ssd1b_published_shapes,
+        "segmind-small-sd": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "segmind_small_sd_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "segmind-tiny-sd": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "segmind_tiny_sd_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "bk-sdm-base": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "bk_sdm_base_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "bk-sdm-small": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "bk_sdm_small_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
+        "bk-sdm-tiny": lambda component: {
+            name: entry["shape"]
+            for name, entry in json.loads(
+                (FIXTURES / "bk_sdm_tiny_tensor_shapes.json").read_text(encoding="utf-8")
+            )[component].items()
+        },
         "sd1": published_shapes,
     }
     assert meta_shapes(UNet2DConditionModel, config) == fixtures[family]("unet")
@@ -56,6 +127,32 @@ def test_ssd1b_mid_block_has_one_resnet_and_no_attention():
     with torch.inference_mode():
         out = model(sample, torch.tensor(981), torch.randn(2, 7, 32))
     assert out.shape == sample.shape
+
+
+def test_no_mid_block_omits_published_tensors_and_runs():
+    config = TINY_UNET_CONFIG | {
+        "block_out_channels": [32, 64, 64],
+        "down_block_types": ["CrossAttnDownBlock2D"] * 3,
+        "up_block_types": ["CrossAttnUpBlock2D"] * 3,
+        "mid_block_type": None,
+    }
+    model = UNet2DConditionModel(config)
+    assert len(model.mid_block.resnets) == 0
+    assert not any(name.startswith("mid_block.") for name in model.state_dict())
+    sample = torch.randn(2, 4, 8, 8)
+    with torch.inference_mode():
+        out = model(sample, torch.tensor(981), torch.randn(2, 7, 32))
+    assert out.shape == sample.shape
+
+
+def test_bk_sdm_omitted_mid_block_is_identity():
+    model = UNet2DConditionModel(TINY_UNET_CONFIG | {"mid_block_type": None})
+    assert len(model.mid_block.resnets) == 0
+    assert model.mid_block.attentions is None
+    sample = torch.randn(2, 32, 5, 7)
+    temb = torch.randn(2, 128)
+    context = torch.randn(2, 7, 32)
+    assert model.mid_block(sample, temb, context) is sample
 
 
 def test_nested_transformer_layers_apply_per_resnet():
@@ -152,13 +249,9 @@ def test_timestep_conditioning_shape_and_requirement():
 @pytest.mark.parametrize(
     "option",
     [
-        {"class_embed_type": "timestep"},
         {"num_class_embeds": 10},
-        {"addition_embed_type": "text"},
-        {"only_cross_attention": True},
         {"upcast_attention": "yes"},
         {"center_input_sample": True},
-        {"act_fn": "gelu"},
         {"conv_in_kernel": 5},
         {"resnet_time_scale_shift": "ada_group"},
         {"attention_mask": True},
@@ -168,6 +261,25 @@ def test_timestep_conditioning_shape_and_requirement():
 def test_rejects_unsupported_options(option):
     with pytest.raises(ValueError, match="Unsupported U-Net setting"):
         UNet2DConditionModel(option)
+
+
+def test_accepts_deepfloyd_if_options():
+    config = TINY_UNET_CONFIG | {
+        "act_fn": "gelu",
+        "addition_embed_type": "text",
+        "addition_embed_type_num_heads": 4,
+        "class_embed_type": "timestep",
+        "cross_attention_norm": "group_norm",
+        "encoder_hid_dim": 32,
+        "encoder_hid_dim_type": "text_proj",
+        "mid_block_scale_factor": 1.4142271248762552,
+        "resnet_out_scale_factor": 1.4142271248762552,
+        "resnet_skip_time_act": True,
+        "resnet_time_scale_shift": "scale_shift",
+        "time_embedding_act_fn": "gelu",
+        "time_embedding_dim": 128,
+    }
+    UNet2DConditionModel(config)
 
 
 def test_explicit_num_attention_heads_override_historical_name():

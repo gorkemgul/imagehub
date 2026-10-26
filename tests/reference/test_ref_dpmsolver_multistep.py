@@ -61,6 +61,29 @@ def test_twenty_step_trajectory_matches_reference():
         exact(actual, expected)
 
 
+def test_scaled_linear_published_sd_trajectory_matches_reference():
+    config = CONFIG | {
+        "beta_start": 0.00085,
+        "beta_end": 0.012,
+        "beta_schedule": "scaled_linear",
+        "steps_offset": 1,
+    }
+    expected_scheduler = diffusers.DPMSolverMultistepScheduler.from_config(config)
+    actual_scheduler = DPMSolverMultistepScheduler(config)
+    expected_scheduler.set_timesteps(20)
+    actual_scheduler.set_timesteps(20)
+    exact(actual_scheduler.timesteps, expected_scheduler.timesteps)
+    exact(actual_scheduler.sigmas, expected_scheduler.sigmas)
+    generator = torch.Generator("cpu").manual_seed(0)
+    expected = torch.randn(2, 4, 6, 10, generator=generator)
+    actual = expected.clone()
+    for timestep in expected_scheduler.timesteps:
+        model_output = torch.randn(expected.shape, generator=generator)
+        expected = expected_scheduler.step(model_output, timestep, expected).prev_sample
+        actual = actual_scheduler.step(model_output, timestep, actual)
+        exact(actual, expected)
+
+
 FLOW_CONFIG = CONFIG | {
     "prediction_type": "flow_prediction",
     "use_flow_sigmas": True,

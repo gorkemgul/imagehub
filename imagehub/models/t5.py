@@ -1,9 +1,9 @@
-"""T5 encoder used as the Stable Diffusion 3.5 third text encoder."""
+"""T5 encoder (gated GELU or gated SiLU feed-forward), without a decoder."""
 
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Any
 
 import torch
@@ -57,17 +57,41 @@ def gelu_new(hidden_states: Tensor) -> Tensor:
     )
 
 
+def _gate_activation(name: str) -> Callable[[Tensor], Tensor]:
+    activations: dict[str, Callable[[Tensor], Tensor]] = {
+        "gelu_new": gelu_new,
+        "relu": F.relu,
+        "silu": F.silu,
+    }
+    return activations[name]
+
+
 class T5DenseGatedActDense(nn.Module):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
+        self.act = _gate_activation(config["dense_act_fn"])
         self.wi_0 = nn.Linear(config["d_model"], config["d_ff"], bias=False)
         self.wi_1 = nn.Linear(config["d_model"], config["d_ff"], bias=False)
         self.wo = nn.Linear(config["d_ff"], config["d_model"], bias=False)
 
     def forward(self, hidden_states: Tensor) -> Tensor:
-        hidden_gelu = gelu_new(self.wi_0(hidden_states))
+        hidden_gelu = self.act(self.wi_0(hidden_states))
         hidden_linear = self.wi_1(hidden_states)
         hidden_states = hidden_gelu * hidden_linear
+        if hidden_states.dtype != self.wo.weight.dtype and self.wo.weight.dtype != torch.int8:
+            hidden_states = hidden_states.to(self.wo.weight.dtype)
+        return self.wo(hidden_states)
+
+
+class T5DenseActDense(nn.Module):
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__()
+        self.act = _gate_activation(config["dense_act_fn"])
+        self.wi = nn.Linear(config["d_model"], config["d_ff"], bias=False)
+        self.wo = nn.Linear(config["d_ff"], config["d_model"], bias=False)
+
+    def forward(self, hidden_states: Tensor) -> Tensor:
+        hidden_states = self.act(self.wi(hidden_states))
         if hidden_states.dtype != self.wo.weight.dtype and self.wo.weight.dtype != torch.int8:
             hidden_states = hidden_states.to(self.wo.weight.dtype)
         return self.wo(hidden_states)
@@ -76,7 +100,8 @@ class T5DenseGatedActDense(nn.Module):
 class T5LayerFF(nn.Module):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
-        self.DenseReluDense = T5DenseGatedActDense(config)
+        dense = T5DenseGatedActDense if config["is_gated_act"] else T5DenseActDense
+        self.DenseReluDense = dense(config)
         self.layer_norm = T5LayerNorm(config["d_model"], config["layer_norm_epsilon"])
 
     def forward(self, hidden_states: Tensor) -> Tensor:
@@ -226,12 +251,19 @@ class T5Stack(nn.Module):
 
 
 class T5EncoderModel(NativeModel):
+    # A full sequence-to-sequence checkpoint (for example Flan-T5) also holds the decoder, the
+    # output head and a copy of the tied embedding; an encoder never reads them.
+    skipped_prefixes = ("decoder.", "lm_head.", "encoder.embed_tokens.")
+
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(T5_DEFAULTS | dict(config))
         unsupported = {
-            "feed-forward projection": self.config["feed_forward_proj"] != "gated-gelu",
-            "activation": self.config["dense_act_fn"] != "gelu_new",
-            "ungated feed-forward": not self.config["is_gated_act"],
+            "feed-forward projection": self.config["feed_forward_proj"]
+            not in ("gated-gelu", "gated-silu", "relu"),
+            "activation": (self.config["feed_forward_proj"], self.config["dense_act_fn"])
+            not in (("gated-gelu", "gelu_new"), ("gated-silu", "silu"), ("relu", "relu")),
+            "feed-forward gating": self.config["is_gated_act"]
+            != self.config["feed_forward_proj"].startswith("gated-"),
         }
         for option, is_unsupported in unsupported.items():
             if is_unsupported:

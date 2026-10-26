@@ -116,6 +116,336 @@ class ModelSpec:
 
 _entries: list[ModelSpec] = []
 
+_JOYAI_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "processor/chat_template.jinja",
+    "processor/tokenizer.json",
+    "processor/tokenizer_config.json",
+    "tokenizer/chat_template.jinja",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer_config.json",
+    "text_encoder/config.json",
+    "text_encoder/generation_config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00004.safetensors",
+    "text_encoder/model-00002-of-00004.safetensors",
+    "text_encoder/model-00003-of-00004.safetensors",
+    "text_encoder/model-00004-of-00004.safetensors",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors.index.json",
+    "transformer/diffusion_pytorch_model-00001-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00002-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00003-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00004-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00005-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00006-of-00007.safetensors",
+    "transformer/diffusion_pytorch_model-00007-of-00007.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+_JOYAI_PLUS_FILES = _JOYAI_FILES + ("processor/processor_config.json",)
+_JOYAI_BASE_FILES = _JOYAI_FILES + (
+    "tokenizer/added_tokens.json",
+    "tokenizer/merges.txt",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/vocab.json",
+    "processor/added_tokens.json",
+    "processor/merges.txt",
+    "processor/preprocessor_config.json",
+    "processor/special_tokens_map.json",
+    "processor/video_preprocessor_config.json",
+    "processor/vocab.json",
+)
+
+_entries.extend(
+    (
+        ModelSpec(
+            id="joyai-image-edit",
+            task=Task.T2I,
+            family="joyai-image",
+            source="https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers",
+            repo_id="jdopensource/JoyAI-Image-Edit-Diffusers",
+            revision="4b41fb25d961f37668750178ccbb380da326201c",
+            provenance="author",
+            catalog_id="joyai-image",
+            format="diffusers",
+            license="Apache-2.0",
+            image_input="optional",
+            config={"defaults": {"steps": 40, "guidance": 4.0}},
+            files=_JOYAI_BASE_FILES,
+        ),
+        ModelSpec(
+            id="joyai-image-edit-plus",
+            task=Task.T2I,
+            family="joyai-image",
+            source="https://huggingface.co/jdopensource/JoyAI-Image-Edit-Plus-Diffusers",
+            repo_id="jdopensource/JoyAI-Image-Edit-Plus-Diffusers",
+            revision="c2686460c7b64d8aa11bc4d0da423fb316b33f9e",
+            provenance="author",
+            catalog_id="joyai-image",
+            format="diffusers",
+            license="Apache-2.0",
+            image_input="required",
+            config={"defaults": {"steps": 30, "guidance": 4.0}},
+            files=_JOYAI_PLUS_FILES,
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="qwen-image",
+        task=Task.T2I,
+        family="qwen-image",
+        source="https://huggingface.co/Qwen/Qwen-Image",
+        repo_id="Qwen/Qwen-Image",
+        revision="75e0b4be04f60ec59a75f475837eced720f823b6",
+        provenance="author",
+        catalog_id="qwen-image-2",
+        format="diffusers",
+        license="Apache-2.0",
+        reference={"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
+        config={
+            "defaults": {
+                "steps": 50,
+                "true_cfg": 4.0,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        files=(
+            "model_index.json",
+            "LICENSE",
+            "scheduler/scheduler_config.json",
+            "tokenizer/added_tokens.json",
+            "tokenizer/chat_template.jinja",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00004-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00005-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00006-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00007-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00008-of-00009.safetensors",
+            "transformer/diffusion_pytorch_model-00009-of-00009.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="deepfloyd-if-i-xl",
+        task=Task.T2I,
+        family="deepfloyd-if",
+        source="https://huggingface.co/DeepFloyd/IF-I-XL-v1.0",
+        repo_id="DeepFloyd/IF-I-XL-v1.0",
+        revision="c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+        provenance="author",
+        catalog_id="deepfloyd-if",
+        format="diffusers",
+        license="DeepFloyd IF License (non-commercial)",
+        gated=True,
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 7.0,
+                "superresolution_steps": 50,
+                "superresolution_guidance": 4.0,
+                "noise_level": 250,
+                "width": 256,
+                "height": 256,
+            }
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/spiece.model",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+        ),
+        subfolders={
+            "stage_ii": SubRepo(
+                repo_id="DeepFloyd/IF-II-L-v1.0",
+                revision="609476ce702b2d94aff7d1f944dcc54d4f972901",
+                files=(
+                    "model_index.json",
+                    "image_noising_scheduler/scheduler_config.json",
+                    "scheduler/scheduler_config.json",
+                    "unet/config.json",
+                    "unet/diffusion_pytorch_model.safetensors",
+                ),
+            )
+        },
+    )
+)
+
+_CHROMA_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model-00001-of-00002.safetensors",
+    "text_encoder/model-00002-of-00002.safetensors",
+    "text_encoder/model.safetensors.index.json",
+    "tokenizer/added_tokens.json",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/spiece.model",
+    "tokenizer/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+    "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+    "transformer/diffusion_pytorch_model.safetensors.index.json",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+
+_entries.extend(
+    (
+        ModelSpec(
+            id="chroma1-base",
+            task=Task.T2I,
+            family="chroma",
+            source="https://huggingface.co/lodestones/Chroma1-Base",
+            repo_id="lodestones/Chroma1-Base",
+            revision="50ebe125b67794f4ed8e4985d26a4414ca62aed3",
+            provenance="author",
+            catalog_id="chroma1-base",
+            format="diffusers",
+            license="Apache-2.0",
+            gated=False,
+            config={"defaults": {"steps": 40, "guidance": 3.0, "width": 1024, "height": 1024}},
+            files=_CHROMA_FILES,
+        ),
+        ModelSpec(
+            id="chroma1-flash",
+            task=Task.T2I,
+            family="chroma",
+            source="https://huggingface.co/lodestones/Chroma1-Flash",
+            repo_id="lodestones/Chroma1-Flash",
+            revision="093c4f63b60507234aa53a073f1f9f565b3f4336",
+            provenance="author",
+            catalog_id="chroma1-flash",
+            format="diffusers",
+            license="Apache-2.0",
+            gated=False,
+            config={"defaults": {"steps": 4, "guidance": 1.0, "width": 1024, "height": 1024}},
+            files=_CHROMA_FILES,
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="ldm-text2im-large-256",
+        task=Task.T2I,
+        family="ldm",
+        source="https://huggingface.co/CompVis/ldm-text2im-large-256",
+        repo_id="CompVis/ldm-text2im-large-256",
+        revision="30de525ca11a880baea4962827fb6cb0bb268955",
+        provenance="author",
+        catalog_id="ldm",
+        format="diffusers",
+        license="Apache-2.0",
+        config={
+            "defaults": {"steps": 50, "guidance": 1.0, "width": 256, "height": 256, "eta": 0.0}
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "bert/config.json",
+            "bert/pytorch_model.bin",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.bin",
+            "vqvae/config.json",
+            "vqvae/diffusion_pytorch_model.bin",
+        ),
+    )
+)
+
+# DreamLite publishes bfloat16 safetensors only.  Both releases use the same
+# component layout; the mobile checkpoint is distilled for four CFG-free steps.
+_DREAMLITE_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "processor/added_tokens.json",
+    "processor/chat_template.jinja",
+    "processor/merges.txt",
+    "processor/preprocessor_config.json",
+    "processor/special_tokens_map.json",
+    "processor/tokenizer.json",
+    "processor/tokenizer_config.json",
+    "processor/video_preprocessor_config.json",
+    "processor/vocab.json",
+    "text_encoder/config.json",
+    "text_encoder/generation_config.json",
+    "text_encoder/model.safetensors",
+    "tokenizer/added_tokens.json",
+    "tokenizer/chat_template.jinja",
+    "tokenizer/merges.txt",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/vocab.json",
+    "unet/config.json",
+    "unet/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _id, _repo, _revision, _defaults in (
+    (
+        "dreamlite-base",
+        "carlofkl/DreamLite-base",
+        "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+        {"steps": 30, "guidance": 3.5, "image_guidance": 1.5},
+    ),
+    (
+        "dreamlite-mobile",
+        "carlofkl/DreamLite-mobile",
+        "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+        {"steps": 4, "guidance": None, "image_guidance": None},
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="dreamlite",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="dreamlite",
+            format="diffusers",
+            license="CC-BY-NC-4.0",
+            config={"defaults": _defaults, "precision": "bfloat16"},
+            files=_DREAMLITE_FILES,
+        )
+    )
+
 # Stable Diffusion 1.x: one architecture, five released weight sets. Only fp32 EMA weights
 # are fetched; fp16, non-EMA, single-file .ckpt and safety checker files are excluded.
 _SD1_COMMON = (
@@ -195,6 +525,86 @@ for _version, _repo, _revision, _provenance, _weights in (
 
 _entries.append(
     ModelSpec(
+        id="dreamshaper-8",
+        task=Task.T2I,
+        family="stable-diffusion",
+        source="https://huggingface.co/Lykon/dreamshaper-8",
+        repo_id="Lykon/dreamshaper-8",
+        files=_SD1_COMMON + _SD1_SAFETENSORS,
+        format="diffusers",
+        catalog_id="stable-diffusion-1",
+        revision="a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917",
+        provenance="author",
+        license="CreativeML-OpenRAIL-M",
+        config={"defaults": {"steps": 50, "guidance": 7.5}},
+    )
+)
+
+for _id, _repo, _revision, _precision in (
+    (
+        "segmind-small-sd",
+        "segmind/small-sd",
+        "f8b087e68071a29bbe85a4b07e6e1e8998d59aa7",
+        "float32",
+    ),
+    (
+        "segmind-tiny-sd",
+        "segmind/tiny-sd",
+        "cad0bd7495fa6c4bcca01b19a723dc91627fe84f",
+        "float16",
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="stable-diffusion",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            files=_SD1_COMMON + _SD1_BIN,
+            format="diffusers",
+            catalog_id="bk-sdm",
+            revision=_revision,
+            provenance="author",
+            license="CreativeML-OpenRAIL-M",
+            config={"precision": _precision},
+            reference={
+                "diffusers": {
+                    "version": "0.40.0",
+                    "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+                },
+                "segmind-distill-sd": {
+                    "repository": "segmind/distill-sd",
+                    "git_commit": "c1e97a70d141df09e6fe5cc7dbd66e0cbeae3eeb",
+                },
+            },
+        )
+    )
+
+for _variant, _revision in (
+    ("base", "0c03b7a0369b49f97d1acf7256d4ee55ced9b2e0"),
+    ("small", "572238db7ed3a10858900803f3fc8cca53e893e0"),
+    ("tiny", "0364108e53b7f7f4d2585e817a0b7a83dc261cfa"),
+):
+    _repo = f"nota-ai/bk-sdm-{_variant}"
+    _entries.append(
+        ModelSpec(
+            id=f"bk-sdm-{_variant}",
+            task=Task.T2I,
+            family="stable-diffusion",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            files=_SD1_COMMON + _SD1_SAFETENSORS,
+            format="diffusers",
+            catalog_id="bk-sdm",
+            revision=_revision,
+            provenance="author",
+            license="CreativeML-OpenRAIL-M",
+        )
+    )
+
+_entries.append(
+    ModelSpec(
         id="sd-v2-1",
         task=Task.T2I,
         family="stable-diffusion",
@@ -222,6 +632,53 @@ _entries.append(
         ),
     )
 )
+
+for _variant, _revision in (
+    ("base", "21915be4c3a83f3fa45f93559750df44943509b1"),
+    ("small", "ad82c51a3b568e855a7f79c5b893ea2f9ebb197f"),
+    ("tiny", "68277af553777858cd47e133f92e4db47321bc74"),
+):
+    _repo = f"nota-ai/bk-sdm-v2-{_variant}"
+    _entries.append(
+        ModelSpec(
+            id=f"bk-sdm-v2-{_variant}",
+            task=Task.T2I,
+            family="stable-diffusion",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="bk-sdm",
+            format="diffusers",
+            license="CreativeML-OpenRAIL-M",
+            config={"defaults": {"steps": 50, "guidance": 7.5}},
+            reference={
+                "diffusers": {
+                    "version": "0.40.0",
+                    "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+                },
+                "transformers": {"version": "5.18.0"},
+                "bk-sdm": {
+                    "repository": "Nota-NetsPresso/BK-SDM",
+                    "git_commit": "e13670c8a7e2b896f508cbece59335930703be6c",
+                },
+            },
+            files=(
+                "model_index.json",
+                "scheduler/scheduler_config.json",
+                "tokenizer/merges.txt",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/vocab.json",
+                "text_encoder/config.json",
+                "text_encoder/model.safetensors",
+                "unet/config.json",
+                "unet/diffusion_pytorch_model.safetensors",
+                "vae/config.json",
+                "vae/diffusion_pytorch_model.safetensors",
+            ),
+        )
+    )
 
 _entries.append(
     ModelSpec(
@@ -285,6 +742,43 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="sdxs-512-0.9",
+        task=Task.T2I,
+        family="stable-diffusion",
+        source="https://huggingface.co/IDKiro/sdxs-512-0.9",
+        repo_id="IDKiro/sdxs-512-0.9",
+        revision="c332f05f60eb4b453de513be52c2a18c48d8cfe6",
+        provenance="author",
+        catalog_id="sdxs",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        config={"defaults": {"steps": 1, "guidance": 0.0}},
+        reference={
+            "diffusers": {
+                "version": "0.40.0",
+                "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+            },
+            "transformers": {"version": "5.18.0"},
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="sdxl-base-1.0",
         task=Task.T2I,
         family="stable-diffusion-xl",
@@ -306,6 +800,123 @@ _entries.append(
             "tokenizer/special_tokens_map.json",
             "tokenizer/tokenizer_config.json",
             "tokenizer/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_SDXL_FINETUNE_CONFIGS = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "tokenizer/vocab.json",
+    "tokenizer/merges.txt",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer_2/vocab.json",
+    "tokenizer_2/merges.txt",
+    "tokenizer_2/tokenizer_config.json",
+    "tokenizer_2/special_tokens_map.json",
+    "text_encoder/config.json",
+    "text_encoder_2/config.json",
+    "unet/config.json",
+    "vae/config.json",
+)
+_SDXL_FINETUNE_REFERENCE = {
+    "diffusers": {"version": "0.40.0"},
+    "transformers": {"version": "5.18.0"},
+}
+for (
+    _finetune_id,
+    _finetune_repo,
+    _finetune_revision,
+    _finetune_license,
+    _finetune_precision,
+    _finetune_files,
+) in (
+    (
+        "juggernaut-xl-v9",
+        "RunDiffusion/Juggernaut-XL-v9",
+        "cf419233522daa0b9ea36c3aff98fa2cab1fb0fb",
+        "CreativeML-OpenRAIL-M",
+        "float16",
+        (
+            "text_encoder/model.fp16.safetensors",
+            "text_encoder_2/model.fp16.safetensors",
+            "unet/diffusion_pytorch_model.fp16.safetensors",
+            "vae/diffusion_pytorch_model.fp16.safetensors",
+        ),
+    ),
+    (
+        "animagine-xl-4.0",
+        "cagliostrolab/animagine-xl-4.0",
+        "2b7c1b397761bf5bd3cc42e5b39ec99314a75a96",
+        "CreativeML-OpenRAIL++-M",
+        "float16",
+        (
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    ),
+    (
+        "dreamshaper-xl-1.0",
+        "Lykon/dreamshaper-xl-1-0",
+        "41e6644752a8c9aa63930e6043c4fd83c7708420",
+        "CreativeML-OpenRAIL++-M",
+        "float32",
+        (
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_finetune_id,
+            task=Task.T2I,
+            family="stable-diffusion-xl",
+            source=f"https://huggingface.co/{_finetune_repo}",
+            repo_id=_finetune_repo,
+            revision=_finetune_revision,
+            provenance="author",
+            catalog_id="sdxl",
+            format="diffusers",
+            license=_finetune_license,
+            reference=_SDXL_FINETUNE_REFERENCE,
+            config={"precision": _finetune_precision},
+            files=_SDXL_FINETUNE_CONFIGS + _finetune_files,
+        )
+    )
+
+_entries.append(
+    ModelSpec(
+        id="sdxl-refiner-1.0",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0",
+        repo_id="stabilityai/stable-diffusion-xl-refiner-1.0",
+        revision="5d4cfe854c9a9a87939ff3653551c2b3c99a4356",
+        provenance="author",
+        catalog_id="sdxl",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        image_input="required",
+        config={"pipeline": "refiner"},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
             "tokenizer_2/merges.txt",
             "tokenizer_2/special_tokens_map.json",
             "tokenizer_2/tokenizer_config.json",
@@ -651,6 +1262,40 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="bagel-7b-mot",
+        task=Task.T2I,
+        family="bagel",
+        source="https://huggingface.co/ByteDance-Seed/BAGEL-7B-MoT",
+        repo_id="ByteDance-Seed/BAGEL-7B-MoT",
+        revision="5019f57d168e5816e8f3f701b17cc816bb7cf24b",
+        provenance="author",
+        catalog_id="bagel",
+        format="transformers",
+        license="Apache-2.0",
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 4.0,
+                "timestep_shift": 3.0,
+            }
+        },
+        files=(
+            "config.json",
+            "llm_config.json",
+            "vit_config.json",
+            "generation_config.json",
+            "preprocessor_config.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "model.safetensors.index.json",
+            "ema.safetensors",
+            "ae.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="janus-pro-7b",
         task=Task.T2I,
         family="janus",
@@ -884,6 +1529,46 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="flux-1-lite-8b",
+        task=Task.T2I,
+        family="flux",
+        source="https://huggingface.co/Freepik/flux.1-lite-8B",
+        repo_id="Freepik/flux.1-lite-8B",
+        revision="16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+        provenance="author",
+        catalog_id="flux-1",
+        format="diffusers",
+        license="FLUX.1-dev Non-Commercial License",
+        config={"defaults": {"steps": 28, "guidance": 3.5, "max_sequence_length": 512}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors.index.json",
+            "text_encoder_2/model-00001-of-00002.safetensors",
+            "text_encoder_2/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/spiece.model",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="flux1-kontext-dev",
         task=Task.T2I,
         family="flux",
@@ -930,6 +1615,62 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="chroma1-hd",
+        task=Task.T2I,
+        family="chroma",
+        source="https://huggingface.co/lodestones/Chroma1-HD",
+        repo_id="lodestones/Chroma1-HD",
+        revision="0e0c60ece1e82b17cb7f77342d765ba5024c40c0",
+        provenance="author",
+        catalog_id="chroma1-hd",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 35, "guidance": 5.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "text_encoder/model.safetensors.index.json",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_HUNYUAN_DIT_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors",
+    "text_encoder_2/config.json",
+    "text_encoder_2/model.safetensors.index.json",
+    "text_encoder_2/model-00001-of-00002.safetensors",
+    "text_encoder_2/model-00002-of-00002.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/vocab.txt",
+    "tokenizer_2/special_tokens_map.json",
+    "tokenizer_2/spiece.model",
+    "tokenizer_2/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+
+_entries.append(
+    ModelSpec(
         id="hunyuan-dit-v1.1-distilled",
         task=Task.T2I,
         family="hunyuan-dit",
@@ -942,26 +1683,43 @@ _entries.append(
         license="Tencent Hunyuan Community License",
         gated=False,
         config={"defaults": {"steps": 25, "guidance": 5.0}},
-        files=(
-            "model_index.json",
-            "scheduler/scheduler_config.json",
-            "text_encoder/config.json",
-            "text_encoder/model.safetensors",
-            "text_encoder_2/config.json",
-            "text_encoder_2/model.safetensors.index.json",
-            "text_encoder_2/model-00001-of-00002.safetensors",
-            "text_encoder_2/model-00002-of-00002.safetensors",
-            "tokenizer/special_tokens_map.json",
-            "tokenizer/tokenizer_config.json",
-            "tokenizer/vocab.txt",
-            "tokenizer_2/special_tokens_map.json",
-            "tokenizer_2/spiece.model",
-            "tokenizer_2/tokenizer_config.json",
-            "transformer/config.json",
-            "transformer/diffusion_pytorch_model.safetensors",
-            "vae/config.json",
-            "vae/diffusion_pytorch_model.safetensors",
-        ),
+        files=_HUNYUAN_DIT_FILES,
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hunyuan-dit-v1.2",
+        task=Task.T2I,
+        family="hunyuan-dit",
+        source="https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+        repo_id="Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+        revision="5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+        provenance="author",
+        catalog_id="hunyuan-dit",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0}},
+        files=_HUNYUAN_DIT_FILES,
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hunyuan-dit-v1.2-distilled",
+        task=Task.T2I,
+        family="hunyuan-dit",
+        source="https://huggingface.co/Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+        repo_id="Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled",
+        revision="ba991d1546d8c50936c4c16398ed0a87b9b99fb1",
+        provenance="author",
+        catalog_id="hunyuan-dit",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 25, "guidance": 5.0}},
+        files=_HUNYUAN_DIT_FILES,
     )
 )
 
@@ -980,13 +1738,20 @@ _PIXART_COMMON = (
     "vae/config.json",
     "vae/diffusion_pytorch_model.safetensors",
 )
-for _id, _repo, _revision, _catalog_id, _max_length, _files in (
+_PIXART_ALPHA_512_FILES = (
+    _PIXART_COMMON[:4]
+    + tuple(f"text_encoder/model-0000{index}-of-00004.safetensors" for index in range(1, 5))
+    + ("tokenizer/added_tokens.json",)
+    + _PIXART_COMMON[6:]
+)
+for _id, _repo, _revision, _catalog_id, _max_length, _size, _files in (
     (
         "pixart-sigma-xl-1024",
         "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
         "e102b3591cc82e97071b8b4cb90d834d0c487207",
         "pixart-sigma",
         300,
+        1024,
         _PIXART_COMMON,
     ),
     (
@@ -995,7 +1760,17 @@ for _id, _repo, _revision, _catalog_id, _max_length, _files in (
         "b89adadeccd9ead2adcb9fa2825d3fabec48d404",
         "pixart-alpha",
         120,
+        1024,
         _PIXART_COMMON[:6] + ("tokenizer/added_tokens.json",) + _PIXART_COMMON[6:],
+    ),
+    (
+        "pixart-alpha-xl-512",
+        "PixArt-alpha/PixArt-XL-2-512x512",
+        "50f702106901db6d0f8b67eb88e814c56ded2692",
+        "pixart-alpha",
+        120,
+        512,
+        _PIXART_ALPHA_512_FILES,
     ),
 ):
     _entries.append(
@@ -1016,9 +1791,83 @@ for _id, _repo, _revision, _catalog_id, _max_length, _files in (
                     "steps": 20,
                     "guidance": 4.5,
                     "max_sequence_length": _max_length,
+                    **({"width": _size, "height": _size} if _size != 1024 else {}),
                 }
             },
             files=_files,
+        )
+    )
+
+_entries.append(
+    ModelSpec(
+        id="pixart-lcm-xl-1024",
+        task=Task.T2I,
+        family="pixart",
+        source="https://huggingface.co/PixArt-alpha/PixArt-LCM-XL-2-1024-MS",
+        repo_id="PixArt-alpha/PixArt-LCM-XL-2-1024-MS",
+        revision="e153060b10990994d2ed31304b3224da47fbd740",
+        provenance="author",
+        catalog_id="pixart-delta",
+        format="diffusers",
+        license="CreativeML-OpenRAIL++-M",
+        gated=False,
+        config={"defaults": {"steps": 4, "guidance": 0.0, "max_sequence_length": 120}},
+        files=_PIXART_ALPHA_512_FILES,
+    )
+)
+
+# The PixArt-Sigma 256, 512 and 2K repositories publish only a transformer; the text encoder,
+# tokenizer, VAE and scheduler come from the 1024 repository, as in the model cards.
+for _id, _repo, _revision, _size in (
+    (
+        "pixart-sigma-xl-256",
+        "PixArt-alpha/PixArt-Sigma-XL-2-256x256",
+        "495cb1bafac48d71ca96761409c5fd7e48354df2",
+        256,
+    ),
+    (
+        "pixart-sigma-xl-512",
+        "PixArt-alpha/PixArt-Sigma-XL-2-512-MS",
+        "76fb7eb5a9314bc1e4e479d2f13447517fca9be4",
+        512,
+    ),
+    (
+        "pixart-sigma-xl-2k",
+        "PixArt-alpha/PixArt-Sigma-XL-2-2K-MS",
+        "cd274f4c8b01de0dcc87b65887dd357d473bf516",
+        2048,
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="pixart",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="pixart-sigma",
+            format="diffusers",
+            license="CreativeML-OpenRAIL++-M",
+            gated=False,
+            base="pixart-sigma-xl-1024",
+            config={
+                "defaults": {
+                    "steps": 20,
+                    "guidance": 4.5,
+                    "max_sequence_length": 300,
+                    "width": _size,
+                    "height": _size,
+                }
+            },
+            files=("transformer/config.json", "transformer/diffusion_pytorch_model.safetensors"),
+            overlay={
+                "transformer/config.json": "transformer/config.json",
+                "transformer/diffusion_pytorch_model.safetensors": (
+                    "transformer/diffusion_pytorch_model.safetensors"
+                ),
+            },
         )
     )
 
@@ -1076,6 +1925,58 @@ for _sana_id, _sana_repo, _sana_revision, _sana_weights in _SANA_VARIANTS:
             ),
         )
     )
+
+# Sana-Sprint uses the SCM scheduler and guidance embeddings; defaults to the 2-step
+# inference schedule used by the upstream pipeline.
+_entries.append(
+    ModelSpec(
+        id="sana-sprint-1.6b-1024",
+        task=Task.T2I,
+        family="sana",
+        source="https://huggingface.co/Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+        repo_id="Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+        revision="19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+        provenance="author",
+        catalog_id="sana",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 2, "guidance": 4.5, "width": 1024, "height": 1024}},
+        files=(
+            *_SANA_COMMON,
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+# Sana 1.5 4.8B keeps the standard DPMSolverMultistep scheduler but adds qk_norm and
+# uses a 60-layer transformer split across two safetensors shards.
+_entries.append(
+    ModelSpec(
+        id="sana-1.5-4.8b-1024",
+        task=Task.T2I,
+        family="sana",
+        source="https://huggingface.co/Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+        repo_id="Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+        revision="9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+        provenance="author",
+        catalog_id="sana",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 20, "guidance": 4.5, "width": 1024, "height": 1024}},
+        files=(
+            *_SANA_COMMON,
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
 
 # Kolors publishes float16 weights only; the loaders read the variant file names.
 _entries.append(
@@ -1147,6 +2048,79 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="lumina-next",
+        task=Task.T2I,
+        family="lumina-next",
+        source="https://huggingface.co/Alpha-VLLM/Lumina-Next-SFT-diffusers",
+        repo_id="Alpha-VLLM/Lumina-Next-SFT-diffusers",
+        revision="0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+        provenance="author",
+        catalog_id="lumina-next",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 30, "guidance": 4.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="lumina-dimoo",
+        task=Task.T2I,
+        family="lumina-dimoo",
+        source="https://huggingface.co/Alpha-VLLM/Lumina-DiMOO",
+        repo_id="Alpha-VLLM/Lumina-DiMOO",
+        revision="f014549e17679e41b119959754cdd9320af9bdc8",
+        provenance="author",
+        catalog_id="lumina-dimoo",
+        format="safetensors",
+        license="Apache-2.0",
+        gated=False,
+        reference={
+            "lumina-dimoo": {
+                "repository": "Alpha-VLLM/Lumina-DiMOO",
+                "git_commit": "81344e60545ae8d70f11039d3450717d974f831b",
+                "class": "LLaDAForMultiModalGeneration/generate_image",
+            }
+        },
+        config={"defaults": {"steps": 64, "guidance": 4.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "args.json",
+            "config.json",
+            "generation_config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00004.safetensors",
+            "model-00002-of-00004.safetensors",
+            "model-00003-of-00004.safetensors",
+            "model-00004-of-00004.safetensors",
+            "special_tokens_map.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "vqvae/config.json",
+            "vqvae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 for _amused_id, _amused_revision, _amused_size in (
     ("amused-256", "09b6259bf96dbe6d70a852b70812420fe02df55e", 256),
     ("amused-512", "6f3f309ba188a08e347bff9691a0ac791817ca97", 512),
@@ -1188,6 +2162,44 @@ for _amused_id, _amused_revision, _amused_size in (
             ),
         )
     )
+
+_entries.append(
+    ModelSpec(
+        id="meissonic",
+        task=Task.T2I,
+        family="meissonic",
+        source="https://huggingface.co/MeissonFlow/Meissonic",
+        repo_id="MeissonFlow/Meissonic",
+        revision="7ee5068bcebaaf6165e5d77c2969aa3b38e17b38",
+        provenance="author",
+        catalog_id="meissonic",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        reference={
+            "meissonic": {
+                "repository": "viiika/Meissonic",
+                "git_commit": "a9de06ca8c02c467aec3da275605fc59380299e2",
+            },
+            "transformers": {"version": "5.18.0"},
+        },
+        config={"defaults": {"steps": 48, "guidance": 9.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vqvae/config.json",
+            "vqvae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
 
 _entries.append(
     ModelSpec(
@@ -1352,6 +2364,43 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="cogview3-plus-3b",
+        task=Task.T2I,
+        family="cogview3",
+        source="https://huggingface.co/zai-org/CogView3-Plus-3B",
+        repo_id="zai-org/CogView3-Plus-3B",
+        revision="5d70e40732ac0efac98524c51a7fa9c82707f1e5",
+        provenance="author",
+        catalog_id="cogview3-plus",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="ideogram4-fp8",
         task=Task.T2I,
         family="ideogram4",
@@ -1382,6 +2431,43 @@ _entries.append(
             "vae/config.json",
             "vae/diffusion_pytorch_model.safetensors",
         ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hidream-o1-image",
+        task=Task.T2I,
+        family="hidream-o1",
+        source="https://huggingface.co/HiDream-ai/HiDream-O1-Image",
+        repo_id="HiDream-ai/HiDream-O1-Image",
+        revision="0b0901d99f200389e138c61946af1185f5f49a13",
+        provenance="author",
+        catalog_id="hidream-o1-image",
+        format="transformers",
+        license="MIT",
+        reference={
+            "hidream-o1": {
+                "repository": "HiDream-ai/HiDream-O1-Image",
+                "git_commit": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4",
+            }
+        },
+        config={"defaults": {"steps": 50, "guidance": 5.0, "shift": 3.0}},
+        files=(
+            "config.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00008.safetensors",
+            "model-00002-of-00008.safetensors",
+            "model-00003-of-00008.safetensors",
+            "model-00004-of-00008.safetensors",
+            "model-00005-of-00008.safetensors",
+            "model-00006-of-00008.safetensors",
+            "model-00007-of-00008.safetensors",
+            "model-00008-of-00008.safetensors",
+        ),
+        image_input=None,
     )
 )
 
@@ -1433,6 +2519,208 @@ _entries.append(
         catalog_id="ssd-1b",
         format="diffusers",
         license="Apache-2.0",
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/special_tokens_map.json",
+            "text_encoder/config.json",
+            "text_encoder_2/config.json",
+            "unet/config.json",
+            "vae/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="segmind-vega",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/segmind/Segmind-Vega",
+        repo_id="segmind/Segmind-Vega",
+        revision="7714c4363e5856ff974a4f4b068e8691f26d0b40",
+        provenance="author",
+        catalog_id="segmind-vega",
+        format="diffusers",
+        license="Apache-2.0",
+        reference={
+            "diffusers": {
+                "version": "0.40.0",
+                "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+            },
+            "transformers": {"version": "5.18.0"},
+            "segmind-ssd-1b": {
+                "repository": "segmind/SSD-1B",
+                "git_commit": "2bfc35f41f21531c61e3d3470bca907fd839d035",
+            },
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/special_tokens_map.json",
+            "text_encoder/config.json",
+            "text_encoder_2/config.json",
+            "unet/config.json",
+            "vae/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/model.safetensors",
+            "unet/diffusion_pytorch_model.safetensors",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+for _id, _repo, _revision in (
+    (
+        "koala-700m",
+        "etri-vilab/koala-700m",
+        "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    ),
+    (
+        "koala-1b",
+        "etri-vilab/koala-1b",
+        "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="stable-diffusion-xl",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="koala",
+            format="diffusers",
+            license="Unspecified",
+            reference={
+                "diffusers": {
+                    "version": "0.40.0",
+                    "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+                },
+                "transformers": {"version": "5.18.0"},
+                "sdxl-koala": {
+                    "repository": "youngwanLEE/sdxl-koala",
+                    "git_commit": "df9dac7514cc2bd6882a5161401cd9740349c11b",
+                },
+            },
+            files=(
+                "model_index.json",
+                "scheduler/scheduler_config.json",
+                "tokenizer/vocab.json",
+                "tokenizer/merges.txt",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer_2/vocab.json",
+                "tokenizer_2/merges.txt",
+                "tokenizer_2/tokenizer_config.json",
+                "tokenizer_2/special_tokens_map.json",
+                "text_encoder/config.json",
+                "text_encoder_2/config.json",
+                "unet/config.json",
+                "vae/config.json",
+                "text_encoder/model.safetensors",
+                "text_encoder_2/model.safetensors",
+                "unet/diffusion_pytorch_model.safetensors",
+                "vae/diffusion_pytorch_model.safetensors",
+            ),
+        )
+    )
+
+for _id, _repo, _revision in (
+    (
+        "koala-lightning-700m",
+        "etri-vilab/koala-lightning-700m",
+        "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    ),
+    (
+        "koala-lightning-1b",
+        "etri-vilab/koala-lightning-1b",
+        "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="stable-diffusion-xl",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="koala",
+            format="diffusers",
+            license="Unspecified",
+            config={
+                "defaults": {"steps": 10, "guidance": 3.5},
+                "scheduler": {"timestep_spacing": "trailing"},
+            },
+            reference={
+                "diffusers": {
+                    "version": "0.40.0",
+                    "git_commit": "d035dcd7cc7c88e0a154609b62887d50bba9fdc2",
+                },
+                "transformers": {"version": "5.18.0"},
+                "sdxl-koala": {
+                    "repository": "youngwanLEE/sdxl-koala",
+                    "git_commit": "df9dac7514cc2bd6882a5161401cd9740349c11b",
+                },
+            },
+            files=(
+                "model_index.json",
+                "scheduler/scheduler_config.json",
+                "tokenizer/vocab.json",
+                "tokenizer/merges.txt",
+                "tokenizer/tokenizer_config.json",
+                "tokenizer/special_tokens_map.json",
+                "tokenizer_2/vocab.json",
+                "tokenizer_2/merges.txt",
+                "tokenizer_2/tokenizer_config.json",
+                "tokenizer_2/special_tokens_map.json",
+                "text_encoder/config.json",
+                "text_encoder_2/config.json",
+                "unet/config.json",
+                "vae/config.json",
+                "text_encoder/model.safetensors",
+                "text_encoder_2/model.safetensors",
+                "unet/diffusion_pytorch_model.safetensors",
+                "vae/diffusion_pytorch_model.safetensors",
+            ),
+        )
+    )
+
+_entries.append(
+    ModelSpec(
+        id="playground-v2",
+        task=Task.T2I,
+        family="stable-diffusion-xl",
+        source="https://huggingface.co/playgroundai/playground-v2-1024px-aesthetic",
+        repo_id="playgroundai/playground-v2-1024px-aesthetic",
+        revision="737a24ebe3ae4e5421110879168be188853d86c8",
+        provenance="author",
+        catalog_id="playground-v2",
+        format="diffusers",
+        license="playground-v2-community",
+        config={"defaults": {"guidance": 3.0}},
         files=(
             "model_index.json",
             "scheduler/scheduler_config.json",
@@ -1545,6 +2833,150 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="kandinsky-2-1",
+        task=Task.T2I,
+        family="kandinsky21",
+        source="https://huggingface.co/kandinsky-community/kandinsky-2-1",
+        repo_id="kandinsky-community/kandinsky-2-1",
+        revision="04b366659663bf60deacb96fd3e38f1cb39a3be4",
+        provenance="author",
+        catalog_id="kandinsky-2",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={
+            "defaults": {
+                "steps": 100,
+                "guidance": 4.0,
+                "prior_steps": 25,
+                "prior_guidance": 4.0,
+            }
+        },
+        files=(
+            "ddpm_scheduler/scheduler_config.json",
+            "model_index.json",
+            "movq/config.json",
+            "movq/diffusion_pytorch_model.safetensors",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/sentencepiece.bpe.model",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.safetensors",
+        ),
+        subfolders={
+            "prior": SubRepo(
+                repo_id="kandinsky-community/kandinsky-2-1-prior",
+                revision="b726af62d69111bbf62b5d71bb9d90d9867fbce4",
+                files=(
+                    "model_index.json",
+                    "image_encoder/config.json",
+                    "image_encoder/model.safetensors",
+                    "image_processor/preprocessor_config.json",
+                    "prior/config.json",
+                    "prior/diffusion_pytorch_model.safetensors",
+                    "scheduler/scheduler_config.json",
+                    "text_encoder/config.json",
+                    "text_encoder/model.safetensors",
+                    "tokenizer/merges.txt",
+                    "tokenizer/special_tokens_map.json",
+                    "tokenizer/tokenizer_config.json",
+                    "tokenizer/vocab.json",
+                ),
+            )
+        },
+    )
+)
+
+# Kandinsky 3 publishes float16 weights only; the loaders read the variant file names.
+_entries.append(
+    ModelSpec(
+        id="kandinsky-3",
+        task=Task.T2I,
+        family="kandinsky3",
+        source="https://huggingface.co/kandinsky-community/kandinsky-3",
+        repo_id="kandinsky-community/kandinsky-3",
+        revision="bf79e6c219da8a94abb50235fdc4567eb8fb4632",
+        provenance="author",
+        catalog_id="kandinsky-3",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 25, "guidance": 3.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "movq/config.json",
+            "movq/diffusion_pytorch_model.fp16.safetensors",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.fp16.json",
+            "text_encoder/model.fp16-00001-of-00005.safetensors",
+            "text_encoder/model.fp16-00002-of-00005.safetensors",
+            "text_encoder/model.fp16-00003-of-00005.safetensors",
+            "text_encoder/model.fp16-00004-of-00005.safetensors",
+            "text_encoder/model.fp16-00005-of-00005.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer_config.json",
+            "unet/config.json",
+            "unet/diffusion_pytorch_model.fp16.safetensors",
+        ),
+    )
+)
+
+# Kandinsky 5 publishes bfloat16 transformer and text-encoder weights; the catalog lists them
+# as released and the native loaders upcast to float32 for parity testing.
+_entries.append(
+    ModelSpec(
+        id="kandinsky-5-t2i-lite",
+        task=Task.T2I,
+        family="kandinsky5",
+        source="https://huggingface.co/kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers",
+        repo_id="kandinskylab/Kandinsky-5.0-T2I-Lite-sft-Diffusers",
+        revision="25da1e82e6adefdbc83c02a71f762287c5e471a4",
+        provenance="author",
+        catalog_id="kandinsky-5",
+        format="diffusers",
+        license="MIT",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 3.5, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/generation_config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00005.safetensors",
+            "text_encoder/model-00002-of-00005.safetensors",
+            "text_encoder/model-00003-of-00005.safetensors",
+            "text_encoder/model-00004-of-00005.safetensors",
+            "text_encoder/model-00005-of-00005.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "tokenizer/preprocessor_config.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_2/merges.txt",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 _STABLE_CASCADE_REVISION = "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16"
 _STABLE_CASCADE_PRIOR_REVISION = "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91"
 
@@ -1604,6 +3036,105 @@ for _model_id, _decoder, _prior in (
         )
     )
 
+_LLAMAGEN_REVISION = "276f5c5a3d915b922899a03f1912605531574747"
+_FLAN_T5_XL_REVISION = "7d6315df2c2fb742f0f5b556879d730926ca9001"
+
+for _llamagen_id, _llamagen_file, _llamagen_size in (
+    ("llamagen-t2i-xl-256", "t2i_XL_stage1_256.pt", 256),
+    ("llamagen-t2i-xl-512", "t2i_XL_stage2_512.pt", 512),
+):
+    _entries.append(
+        ModelSpec(
+            id=_llamagen_id,
+            task=Task.T2I,
+            family="llamagen",
+            source="https://huggingface.co/peizesun/llamagen_t2i",
+            repo_id="peizesun/llamagen_t2i",
+            revision=_LLAMAGEN_REVISION,
+            provenance="author",
+            catalog_id="llamagen",
+            format="pytorch",
+            license="MIT",
+            gated=False,
+            config={
+                "gpt_checkpoint": _llamagen_file,
+                "defaults": {
+                    "cfg_scale": 7.5,
+                    "temperature": 1.0,
+                    "top_k": 1000,
+                    "top_p": 1.0,
+                    "cfg_interval": -1,
+                    "width": _llamagen_size,
+                    "height": _llamagen_size,
+                },
+            },
+            files=("vq_ds16_t2i.pt", _llamagen_file),
+            subfolders={
+                "text_encoder": SubRepo(
+                    repo_id="google/flan-t5-xl",
+                    revision=_FLAN_T5_XL_REVISION,
+                    files=(
+                        "config.json",
+                        "model.safetensors.index.json",
+                        "model-00001-of-00002.safetensors",
+                        "model-00002-of-00002.safetensors",
+                        "spiece.model",
+                        "tokenizer.json",
+                        "tokenizer_config.json",
+                        "special_tokens_map.json",
+                    ),
+                )
+            },
+        )
+    )
+
+_INFINITY_REVISION = "e7108923249fb3c836ebfbc3f4b4d318d6131293"
+_INFINITY_CODE_REVISION = "9f9fcd1de7ead377ddf1106db1249a35f3a59143"
+
+_entries.append(
+    ModelSpec(
+        id="infinity-2b",
+        task=Task.T2I,
+        family="infinity",
+        source="https://huggingface.co/FoundationVision/Infinity",
+        repo_id="FoundationVision/Infinity",
+        revision=_INFINITY_REVISION,
+        provenance="author",
+        catalog_id="infinity",
+        format="pytorch",
+        license="MIT",
+        gated=False,
+        config={
+            "defaults": {
+                "cfg_scale": 3.0,
+                "temperature": 0.5,
+                "top_k": 900,
+                "top_p": 0.97,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        reference={"Infinity": {"commit": _INFINITY_CODE_REVISION}},
+        files=("infinity_2b_reg.pth", "infinity_vae_d32reg.pth"),
+        subfolders={
+            "text_encoder": SubRepo(
+                repo_id="google/flan-t5-xl",
+                revision=_FLAN_T5_XL_REVISION,
+                files=(
+                    "config.json",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00002.safetensors",
+                    "model-00002-of-00002.safetensors",
+                    "spiece.model",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                    "special_tokens_map.json",
+                ),
+            )
+        },
+    )
+)
+
 _entries.append(
     ModelSpec(
         id="wuerstchen-v2",
@@ -1657,6 +3188,600 @@ _entries.append(
                 ),
             )
         },
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="glm-image",
+        task=Task.T2I,
+        family="glm-image",
+        source="https://huggingface.co/zai-org/GLM-Image",
+        repo_id="zai-org/GLM-Image",
+        revision="2c433cc0cbc293bde2ac8ca9624f279b5d23fcf4",
+        provenance="author",
+        catalog_id="glm-image",
+        format="diffusers",
+        license="MIT",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 1.5}},
+        files=(
+            "model_index.json",
+            "processor/chat_template.jinja",
+            "processor/preprocessor_config.json",
+            "processor/tokenizer.json",
+            "processor/tokenizer_config.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+            "vision_language_encoder/config.json",
+            "vision_language_encoder/generation_config.json",
+            "vision_language_encoder/model-00001-of-00004.safetensors",
+            "vision_language_encoder/model-00002-of-00004.safetensors",
+            "vision_language_encoder/model-00003-of-00004.safetensors",
+            "vision_language_encoder/model-00004-of-00004.safetensors",
+            "vision_language_encoder/model.safetensors.index.json",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="ernie-image",
+        task=Task.T2I,
+        family="ernie-image",
+        source="https://huggingface.co/baidu/ERNIE-Image",
+        repo_id="baidu/ERNIE-Image",
+        revision="5346b31d68c9c23758ba56ef8be5e9dc174c7f99",
+        provenance="author",
+        catalog_id="ernie-image",
+        format="diffusers",
+        license="Apache-2.0",
+        config={"defaults": {"steps": 50, "guidance": 4.0}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hidream-i1-fast",
+        task=Task.T2I,
+        family="hidream",
+        source="https://huggingface.co/HiDream-ai/HiDream-I1-Fast",
+        repo_id="HiDream-ai/HiDream-I1-Fast",
+        revision="4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+        provenance="author",
+        catalog_id="hidream-i1",
+        format="diffusers",
+        license="MIT",
+        gated=True,
+        config={"defaults": {"steps": 16, "guidance": 0.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "text_encoder_3/config.json",
+            "text_encoder_3/model.safetensors.index.json",
+            "text_encoder_3/model-00001-of-00002.safetensors",
+            "text_encoder_3/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/merges.txt",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "tokenizer_2/vocab.json",
+            "tokenizer_3/special_tokens_map.json",
+            "tokenizer_3/spiece.model",
+            "tokenizer_3/tokenizer.json",
+            "tokenizer_3/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            *(
+                f"transformer/diffusion_pytorch_model-{index:05d}-of-00007.safetensors"
+                for index in range(1, 8)
+            ),
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+        # The Llama 3.1 encoder and its tokenizer come from Meta's gated repository.
+        subfolders={
+            "text_encoder_4": SubRepo(
+                repo_id="meta-llama/Llama-3.1-8B-Instruct",
+                revision="0e9e39f249a16976918f6564b8830bc894c89659",
+                files=(
+                    "config.json",
+                    "generation_config.json",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00004.safetensors",
+                    "model-00002-of-00004.safetensors",
+                    "model-00003-of-00004.safetensors",
+                    "model-00004-of-00004.safetensors",
+                    "special_tokens_map.json",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                ),
+            )
+        },
+    )
+)
+
+# Dev and Full publish the same component layout as Fast.  The Llama encoder remains a
+# separately licensed, gated subrepository for all three variants.
+for _id, _repo, _revision, _steps, _guidance in (
+    (
+        "hidream-i1-dev",
+        "HiDream-ai/HiDream-I1-Dev",
+        "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+        30,
+        0.0,
+    ),
+    (
+        "hidream-i1-full",
+        "HiDream-ai/HiDream-I1-Full",
+        "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+        50,
+        5.0,
+    ),
+):
+    _fast = _entries[-1]
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="hidream",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="hidream-i1",
+            format="diffusers",
+            license="MIT",
+            gated=True,
+            config={
+                "defaults": {"steps": _steps, "guidance": _guidance, "width": 1024, "height": 1024}
+            },
+            files=_fast.files,
+            subfolders=_fast.subfolders,
+        )
+    )
+
+_entries.append(
+    ModelSpec(
+        id="omnigen-v1",
+        task=Task.T2I,
+        family="omnigen",
+        source="https://huggingface.co/Shitao/OmniGen-v1-diffusers",
+        repo_id="Shitao/OmniGen-v1-diffusers",
+        revision="016e2f61d12a98303f6bbdf122687694d7984268",
+        provenance="author",
+        catalog_id="omnigen",
+        format="diffusers",
+        license="MIT",
+        gated=False,
+        image_input="optional",
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 2.5,
+                "image_guidance": 1.6,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="ovis-image-7b",
+        task=Task.T2I,
+        family="ovis-image",
+        source="https://huggingface.co/ATH-MaaS/Ovis-Image-7B",
+        repo_id="ATH-MaaS/Ovis-Image-7B",
+        revision="41be1c5821a92c970d63d7eb595a2fd3fe32b22e",
+        provenance="author",
+        catalog_id="ovis-image",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        config={"defaults": {"steps": 50, "guidance": 5.0, "width": 1024, "height": 1024}},
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/chat_template.jinja",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00002.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_PRX_FILES = (
+    "model_index.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00003.safetensors",
+    "text_encoder/model-00002-of-00003.safetensors",
+    "text_encoder/model-00003-of-00003.safetensors",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer.model",
+    "tokenizer/tokenizer_config.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+for _id, _repo, _revision, _size in (
+    (
+        "prx-1024-t2i-beta",
+        "Photoroom/prx-1024-t2i-beta",
+        "0370504b9a433fbdff814b8fcba9da03bf72a7a3",
+        1024,
+    ),
+    (
+        "prx-512-t2i-sft",
+        "Photoroom/prx-512-t2i-sft",
+        "2996423bc26e8eaca48774fac1797484214dfea0",
+        512,
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="prx",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="prx",
+            format="diffusers",
+            license="Apache-2.0",
+            config={"defaults": {"width": _size, "height": _size}},
+            files=_PRX_FILES,
+        )
+    )
+
+_entries.append(
+    ModelSpec(
+        id="hart",
+        task=Task.T2I,
+        family="hart",
+        source="https://huggingface.co/mit-han-lab/hart-0.7b-1024px",
+        repo_id="mit-han-lab/hart-0.7b-1024px",
+        revision="b1521ff1449d6817c685b08614c554e7a5b5b8eb",
+        provenance="author",
+        catalog_id="hart",
+        format="pytorch",
+        license="MIT",
+        config={"defaults": {"cfg_scale": 4.5, "width": 1024, "height": 1024}},
+        reference={
+            "repository": {
+                "url": "https://github.com/mit-han-lab/hart",
+                "revision": "e28a41fe15025baf3d48ab004f5d3727c88d8fc7",
+            }
+        },
+        files=(
+            "llm/config.json",
+            "llm/ema_model.bin",
+            "tokenizer/config.json",
+            "tokenizer/pytorch_model.bin",
+        ),
+        subfolders={
+            "text_encoder": SubRepo(
+                repo_id="mit-han-lab/Qwen2-VL-1.5B-Instruct",
+                revision="6e5b5399a390528a3b2c9f5109fb795553d3db71",
+                files=(
+                    "config.json",
+                    "generation_config.json",
+                    "merges.txt",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00002.safetensors",
+                    "model-00002-of-00002.safetensors",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                    "vocab.json",
+                ),
+            )
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="show-o-512",
+        task=Task.T2I,
+        family="show-o",
+        source="https://huggingface.co/showlab/show-o-512x512",
+        repo_id="showlab/show-o-512x512",
+        revision="dbe757d951099968fb102d249d35a764528df2dd",
+        provenance="author",
+        catalog_id="show-o",
+        format="safetensors",
+        license="Apache-2.0",
+        config={
+            "defaults": {
+                "guidance": 10.0,
+                "temperature": 1.0,
+                "steps": 18,
+                "width": 512,
+                "height": 512,
+            }
+        },
+        reference={
+            "repository": {
+                "url": "https://github.com/showlab/Show-o",
+                "revision": "45a5a2de01d1ebd10cd5864d29310a76476cdf23",
+            }
+        },
+        files=("config.json", "pytorch_model.safetensors"),
+        subfolders={
+            "vq": SubRepo(
+                repo_id="showlab/magvitv2",
+                revision="5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d",
+                files=("config.json", "pytorch_model.safetensors"),
+            ),
+            "tokenizer": SubRepo(
+                repo_id="microsoft/phi-1_5",
+                revision="77aa61eeac94fbf33d492b9f2744c98b42d5b5eb",
+                files=(
+                    "added_tokens.json",
+                    "config.json",
+                    "merges.txt",
+                    "special_tokens_map.json",
+                    "tokenizer.json",
+                    "tokenizer_config.json",
+                    "vocab.json",
+                ),
+            ),
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="emu3-gen",
+        task=Task.T2I,
+        family="emu3",
+        source="https://huggingface.co/BAAI/Emu3-Gen",
+        repo_id="BAAI/Emu3-Gen",
+        revision="40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72",
+        provenance="author",
+        catalog_id="emu3",
+        format="safetensors",
+        license="Apache-2.0",
+        config={
+            "defaults": {
+                "guidance": 3.0,
+                "top_k": 2048,
+                "width": 720,
+                "height": 720,
+            }
+        },
+        reference={
+            "repository": {
+                "url": "https://github.com/baaivision/Emu3",
+                "revision": "dbbf9858194d70b8c58293e219ecffe22df0f9c7",
+            }
+        },
+        files=(
+            "config.json",
+            "generation_config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00007.safetensors",
+            "model-00002-of-00007.safetensors",
+            "model-00003-of-00007.safetensors",
+            "model-00004-of-00007.safetensors",
+            "model-00005-of-00007.safetensors",
+            "model-00006-of-00007.safetensors",
+            "model-00007-of-00007.safetensors",
+            "emu3.tiktoken",
+            "emu3_vision_tokens.txt",
+            "special_tokens_map.json",
+            "tokenizer_config.json",
+        ),
+        subfolders={
+            "vision_tokenizer": SubRepo(
+                repo_id="BAAI/Emu3-VisionTokenizer",
+                revision="c81f916ad371289e205310a7539255e8a9396488",
+                files=("config.json", "preprocessor_config.json", "model.safetensors"),
+            )
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="pixeldit",
+        task=Task.T2I,
+        family="pixeldit",
+        source="https://huggingface.co/nvidia/PixelDiT-1300M-1024px",
+        repo_id="nvidia/PixelDiT-1300M-1024px",
+        revision="7c63b99a7a399918a1d6478b095698a65f664847",
+        provenance="author",
+        catalog_id="pixeldit",
+        format="pytorch",
+        license="NVIDIA License (NSCLv1; non-commercial research or evaluation)",
+        config={
+            "defaults": {
+                "steps": 50,
+                "guidance": 2.75,
+                "width": 1024,
+                "height": 1024,
+            }
+        },
+        reference={
+            "repository": {
+                "url": "https://github.com/NVlabs/PixelDiT",
+                "revision": "f7d7c35f71893d81c6e71d2576ea80601a1e8529",
+            }
+        },
+        files=("LICENSE", "README.md", "config.json", "pixeldit_t2i_v1.pth"),
+        subfolders={
+            "text_encoder": SubRepo(
+                repo_id="Efficient-Large-Model/gemma-2-2b-it",
+                revision="569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+                files=(
+                    "config.json",
+                    "generation_config.json",
+                    "model.safetensors.index.json",
+                    "model-00001-of-00002.safetensors",
+                    "model-00002-of-00002.safetensors",
+                    "special_tokens_map.json",
+                    "tokenizer.json",
+                    "tokenizer.model",
+                    "tokenizer_config.json",
+                ),
+            )
+        },
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="cosmos-predict2-2b-t2i",
+        task=Task.T2I,
+        family="cosmos2",
+        source="https://huggingface.co/nvidia/Cosmos-Predict2-2B-Text2Image",
+        repo_id="nvidia/Cosmos-Predict2-2B-Text2Image",
+        revision="acdb5fde992a73ef0355f287977d002cbfd127e0",
+        provenance="author",
+        catalog_id="cosmos-predict2-2b-t2i",
+        format="diffusers",
+        gated=True,
+        license="NVIDIA Open Model License",
+        config={
+            "defaults": {
+                "steps": 35,
+                "guidance": 7.0,
+                "width": 1360,
+                "height": 768,
+                "max_sequence_length": 512,
+            }
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00002.safetensors",
+            "text_encoder/model-00002-of-00002.safetensors",
+            "tokenizer/config.json",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/spiece.model",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="nextstep-1-large",
+        task=Task.T2I,
+        family="nextstep",
+        source="https://huggingface.co/stepfun-ai/NextStep-1-Large",
+        repo_id="stepfun-ai/NextStep-1-Large",
+        revision="97dd0b9e097f60e39e3ce3bbac1a3343a09547cd",
+        provenance="author",
+        catalog_id="nextstep-1",
+        format="safetensors",
+        license="Apache-2.0",
+        config={
+            "defaults": {
+                "steps": 20,
+                "guidance": 1.0,
+                "width": 256,
+                "height": 256,
+            }
+        },
+        reference={
+            "repository": {
+                "url": "https://github.com/stepfun-ai/NextStep-1",
+                "revision": "a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0",
+            }
+        },
+        files=(
+            "added_tokens.json",
+            "config.json",
+            "model.safetensors.index.json",
+            "model-00001-of-00012.safetensors",
+            "model-00002-of-00012.safetensors",
+            "model-00003-of-00012.safetensors",
+            "model-00004-of-00012.safetensors",
+            "model-00005-of-00012.safetensors",
+            "model-00006-of-00012.safetensors",
+            "model-00007-of-00012.safetensors",
+            "model-00008-of-00012.safetensors",
+            "model-00009-of-00012.safetensors",
+            "model-00010-of-00012.safetensors",
+            "model-00011-of-00012.safetensors",
+            "model-00012-of-00012.safetensors",
+            "special_tokens_map.json",
+            "tokenizer.json",
+            "tokenizer_config.json",
+            "vae/checkpoint.pt",
+            "vae/config.json",
+            "vocab.json",
+        ),
     )
 )
 

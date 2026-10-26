@@ -1,0 +1,24 @@
+{
+  "_class_name": "CogView3PlusPipeline",
+  "_diffusers_version": "0.31.0.dev0",
+  "scheduler": [
+    "diffusers",
+    "CogVideoXDDIMScheduler"
+  ],
+  "text_encoder": [
+    "transformers",
+    "T5EncoderModel"
+  ],
+  "tokenizer": [
+    "transformers",
+    "T5Tokenizer"
+  ],
+  "transformer": [
+    "diffusers",
+    "CogView3PlusTransformer2DModel"
+  ],
+  "vae": [
+    "diffusers",
+    "AutoencoderKL"
+  ]
+}

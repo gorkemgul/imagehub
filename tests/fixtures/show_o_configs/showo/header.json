@@ -1,0 +1,1459 @@
+{
+"showo.lm_head.bias": [
+58498
+],
+"showo.lm_head.weight": [
+58498,
+2048
+],
+"showo.model.embed_tokens.weight": [
+58498,
+2048
+],
+"showo.model.final_layernorm.bias": [
+2048
+],
+"showo.model.final_layernorm.weight": [
+2048
+],
+"showo.model.layers.0.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.0.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.0.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.0.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.0.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.0.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.0.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.0.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.0.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.0.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.0.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.0.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.0.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.0.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.0.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.0.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.0.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.0.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.1.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.1.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.1.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.1.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.1.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.1.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.1.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.1.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.1.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.1.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.1.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.1.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.1.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.1.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.1.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.1.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.1.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.1.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.10.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.10.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.10.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.10.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.10.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.10.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.10.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.10.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.10.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.10.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.10.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.10.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.10.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.10.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.10.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.10.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.10.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.10.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.11.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.11.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.11.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.11.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.11.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.11.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.11.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.11.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.11.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.11.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.11.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.11.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.11.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.11.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.11.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.11.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.11.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.11.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.12.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.12.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.12.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.12.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.12.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.12.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.12.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.12.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.12.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.12.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.12.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.12.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.12.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.12.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.12.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.12.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.12.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.12.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.13.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.13.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.13.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.13.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.13.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.13.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.13.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.13.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.13.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.13.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.13.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.13.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.13.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.13.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.13.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.13.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.13.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.13.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.14.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.14.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.14.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.14.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.14.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.14.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.14.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.14.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.14.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.14.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.14.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.14.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.14.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.14.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.14.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.14.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.14.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.14.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.15.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.15.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.15.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.15.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.15.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.15.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.15.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.15.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.15.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.15.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.15.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.15.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.15.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.15.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.15.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.15.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.15.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.15.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.16.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.16.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.16.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.16.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.16.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.16.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.16.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.16.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.16.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.16.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.16.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.16.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.16.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.16.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.16.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.16.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.16.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.16.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.17.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.17.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.17.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.17.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.17.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.17.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.17.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.17.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.17.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.17.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.17.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.17.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.17.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.17.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.17.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.17.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.17.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.17.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.18.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.18.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.18.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.18.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.18.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.18.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.18.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.18.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.18.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.18.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.18.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.18.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.18.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.18.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.18.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.18.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.18.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.18.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.19.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.19.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.19.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.19.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.19.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.19.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.19.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.19.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.19.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.19.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.19.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.19.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.19.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.19.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.19.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.19.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.19.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.19.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.2.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.2.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.2.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.2.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.2.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.2.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.2.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.2.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.2.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.2.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.2.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.2.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.2.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.2.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.2.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.2.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.2.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.2.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.20.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.20.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.20.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.20.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.20.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.20.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.20.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.20.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.20.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.20.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.20.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.20.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.20.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.20.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.20.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.20.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.20.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.20.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.21.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.21.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.21.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.21.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.21.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.21.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.21.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.21.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.21.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.21.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.21.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.21.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.21.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.21.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.21.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.21.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.21.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.21.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.22.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.22.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.22.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.22.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.22.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.22.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.22.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.22.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.22.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.22.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.22.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.22.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.22.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.22.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.22.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.22.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.22.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.22.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.23.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.23.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.23.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.23.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.23.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.23.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.23.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.23.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.23.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.23.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.23.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.23.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.23.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.23.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.23.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.23.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.23.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.23.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.3.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.3.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.3.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.3.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.3.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.3.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.3.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.3.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.3.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.3.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.3.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.3.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.3.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.3.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.3.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.3.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.3.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.3.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.4.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.4.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.4.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.4.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.4.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.4.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.4.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.4.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.4.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.4.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.4.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.4.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.4.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.4.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.4.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.4.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.4.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.4.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.5.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.5.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.5.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.5.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.5.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.5.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.5.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.5.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.5.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.5.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.5.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.5.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.5.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.5.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.5.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.5.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.5.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.5.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.6.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.6.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.6.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.6.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.6.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.6.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.6.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.6.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.6.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.6.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.6.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.6.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.6.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.6.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.6.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.6.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.6.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.6.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.7.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.7.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.7.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.7.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.7.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.7.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.7.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.7.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.7.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.7.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.7.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.7.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.7.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.7.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.7.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.7.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.7.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.7.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.8.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.8.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.8.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.8.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.8.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.8.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.8.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.8.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.8.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.8.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.8.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.8.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.8.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.8.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.8.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.8.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.8.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.8.self_attn.v_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.9.input_layernorm.bias": [
+2048
+],
+"showo.model.layers.9.input_layernorm.weight": [
+2048
+],
+"showo.model.layers.9.mlp.fc1.bias": [
+8192
+],
+"showo.model.layers.9.mlp.fc1.weight": [
+8192,
+2048
+],
+"showo.model.layers.9.mlp.fc2.bias": [
+2048
+],
+"showo.model.layers.9.mlp.fc2.weight": [
+2048,
+8192
+],
+"showo.model.layers.9.self_attn.dense.bias": [
+2048
+],
+"showo.model.layers.9.self_attn.dense.weight": [
+2048,
+2048
+],
+"showo.model.layers.9.self_attn.k_layernorm.bias": [
+64
+],
+"showo.model.layers.9.self_attn.k_layernorm.weight": [
+64
+],
+"showo.model.layers.9.self_attn.k_proj.bias": [
+2048
+],
+"showo.model.layers.9.self_attn.k_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.9.self_attn.q_layernorm.bias": [
+64
+],
+"showo.model.layers.9.self_attn.q_layernorm.weight": [
+64
+],
+"showo.model.layers.9.self_attn.q_proj.bias": [
+2048
+],
+"showo.model.layers.9.self_attn.q_proj.weight": [
+2048,
+2048
+],
+"showo.model.layers.9.self_attn.v_proj.bias": [
+2048
+],
+"showo.model.layers.9.self_attn.v_proj.weight": [
+2048,
+2048
+]
+}

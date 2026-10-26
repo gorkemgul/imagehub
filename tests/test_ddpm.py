@@ -51,12 +51,11 @@ def test_ddpm_step_requires_timesteps():
 @pytest.mark.parametrize(
     "option",
     [
-        {"beta_schedule": "squaredcos_cap_v2"},
+        {"beta_schedule": "sigmoid"},
         {"variance_type": "fixed_large"},
         {"prediction_type": "sample"},
         {"rescale_betas_zero_snr": True},
-        {"thresholding": True},
-        {"timestep_spacing": "trailing"},
+        {"timestep_spacing": "linspace"},
         {"trained_betas": [0.1]},
         {"variance_type": "learned"},
         {"unknown": True},
@@ -65,3 +64,29 @@ def test_ddpm_step_requires_timesteps():
 def test_ddpm_rejects_unsupported_options(option):
     with pytest.raises(ValueError, match="Unsupported DDPM setting"):
         DDPMScheduler(DDPM_CONFIG | option)
+
+
+def test_ddpm_accepts_deepfloyd_if_thresholding():
+    DDPMScheduler(
+        DDPM_CONFIG
+        | {
+            "beta_end": 0.02,
+            "beta_schedule": "squaredcos_cap_v2",
+            "beta_start": 0.0001,
+            "clip_sample": True,
+            "dynamic_thresholding_ratio": 0.95,
+            "lambda_min_clipped": -5.1,
+            "prediction_type": "epsilon",
+            "sample_max_value": 1.5,
+            "thresholding": True,
+            "variance_type": "learned_range",
+        }
+    )
+
+
+def test_ddpm_squaredcos_betas_follow_the_glide_schedule():
+    scheduler = DDPMScheduler(DDPM_CONFIG | {"beta_schedule": "squaredcos_cap_v2"})
+    assert scheduler.betas.shape == (1000,)
+    assert scheduler.betas.dtype == torch.float32
+    assert 0 < float(scheduler.betas[0]) < float(scheduler.betas[500]) < float(scheduler.betas[-1])
+    assert float(scheduler.betas[-1]) == pytest.approx(0.999)

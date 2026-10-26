@@ -1,0 +1,17 @@
+{
+  "_class_name": "OvisImageTransformer2DModel",
+  "_diffusers_version": "0.36.0.dev0",
+  "attention_head_dim": 128,
+  "axes_dims_rope": [
+    16,
+    56,
+    56
+  ],
+  "in_channels": 64,
+  "joint_attention_dim": 2048,
+  "num_attention_heads": 24,
+  "num_layers": 6,
+  "num_single_layers": 27,
+  "out_channels": null,
+  "patch_size": 1
+}

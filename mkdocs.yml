@@ -1,5 +1,5 @@
 site_name: imagehub
-site_description: Open-weight text-to-image models in pure PyTorch, with exact parity against diffusers, behind one API.
+site_description: Open-weight text-to-image models in pure PyTorch, with exact parity against each model's recorded reference implementation, behind one API.
 repo_url: https://github.com/gorkemgul/imagehub
 repo_name: gorkemgul/imagehub
 edit_uri: edit/main/docs/
@@ -11,7 +11,6 @@ strict: true
 exclude_docs: |
   design/
   models.md
-  validation-measurements.json
 
 theme:
   name: material

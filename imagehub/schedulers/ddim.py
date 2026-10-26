@@ -30,7 +30,7 @@ _REQUIRED = {"thresholding": False, "trained_betas": None, "rescale_betas_zero_s
 _PREDICTION_TYPES = ("epsilon", "sample", "v_prediction")
 _SPACINGS = ("leading", "linspace", "trailing")
 # Keys that older releases write but the sampler never reads.
-_LEGACY_KEYS = {"skip_prk_steps"}
+_LEGACY_KEYS = {"skip_prk_steps", "timestep_values"}
 
 
 def _linspace(stop: int, num: int) -> list[float]:
@@ -108,7 +108,13 @@ class DDIMScheduler:
     def scale_model_input(self, sample: Tensor, timestep: Tensor | int | None = None) -> Tensor:
         return sample
 
-    def step(self, model_output: Tensor, timestep: Tensor | int, sample: Tensor) -> Tensor:
+    def step(
+        self,
+        model_output: Tensor,
+        timestep: Tensor | int,
+        sample: Tensor,
+        generator: torch.Generator | None = None,
+    ) -> Tensor:
         if self.num_inference_steps == 0:
             raise RuntimeError("Call set_timesteps before step")
         cfg = self.config

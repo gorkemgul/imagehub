@@ -7,25 +7,119 @@ image input, and passing `image` to one raises an error.
 | Model | Image input | Use | Options |
 | --- | --- | --- | --- |
 | `flux1-kontext-dev` | optional | instruction editing | `image` |
+| `joyai-image-edit` | optional | instruction editing | `image` |
+| `joyai-image-edit-plus` | required | multi-image instruction editing | `image` |
+| `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
+| `omnigen-v1` | optional | editing and subject-driven generation, referenced from the prompt | `image`, `image_guidance`, `max_input_image_size`, `use_input_image_size_as_output` |
+
+# Cosmos-Predict2
+
+Catalog: [`cosmos-predict2-2b-t2i`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `cosmos-predict2-2b-t2i` · Task: `t2i`
+
+**Architecture.** Cosmos-Predict2 combines a 2B, 28-layer 3D diffusion transformer with a T5-XXL
+text encoder, a WAN causal VAE, and Karras flow-match Euler sampling. The published transformer
+and VAE are float32; the two T5 shards are bfloat16 and are upcast for CPU float32 inference.
+
+**Usage.** Accept the gated repository terms, then run
+`python -m imagehub.pretrained cosmos-predict2-2b-t2i checkpoints/cosmos-predict2-2b-t2i`.
+
+**Settings.** `steps` (35), `guidance` (7.0; 1 and below disables classifier-free guidance),
+`width` (1360), `height` (768), `negative_prompt`, `max_sequence_length` (512), `seed`, and
+`latents`. Width and height must be multiples of 16.
+
+**Validation.** Published headers match all 195 T5, 567 transformer, and 194 VAE tensors. Exact
+random-weight tests cover each component, the tokenizer, Karras schedule, guidance on and off,
+non-square output, two seeds, and whole-pipeline uint8 output. Real-checkpoint component and
+end-to-end tests are provided for the validation run.
+
+**Limits and license.** The backend supports one prompt and one image per call. Batches, image
+conditioning, video, training, callbacks, and safety-checker integration are out of scope. The
+gated weights use the NVIDIA Open Model License; review its safety and attribution conditions
+before use.
+
+# JoyAI-Image
+
+Catalog: [`joyai-image-edit`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `joyai-image-edit`, `joyai-image-edit-plus` · Task: `t2i`
+
+**Architecture.** JoyAI-Image combines Qwen3-VL conditioning, a WAN causal VAE, a dual-stream
+3D transformer, and flow-match Euler sampling. Published weights are bfloat16 safetensors.
+
+**Settings.** `steps` (40 for Edit, 30 for Edit Plus), `guidance` (4.0), `width`/`height`, `seed`,
+and `image`. The base checkpoint also permits text-only generation; Plus requires an input image.
+
+**Validation.** Published-header and exact random-weight tests cover the native Qwen3-VL vision
+conditioning and both transformer paths. Real-checkpoint parity is covered: all 23 real tests
+passed with exactly 0 difference in every recorded comparison, and the run took 123 minutes on an
+M2 Max (CPU) ([validation](validation.md)). The catalog records the exact repositories, commits,
+component files, and bfloat16 precision.
+
+# Latent Diffusion Model
+
+Catalog: [`ldm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`ldm-text2im-large-256` · Task: `t2i`
+
+**Architecture.** A 32×32×4 latent U-Net conditioned by a 32-layer LDMBert encoder and decoded
+by an f=8 KL autoencoder. The published sampler is DDIM.
+
+**Usage.** `python -m imagehub.pretrained ldm-text2im-large-256 checkpoints/ldm`
+
+**Settings.** `steps` (50), `guidance` (1.0), `width`/`height` (256, multiples of 8),
+`negative_prompt`, `num_images`, `seed`, `latents`, and `eta` (0.0 only).
+
+**Validation.** CPU float32 parity is established against diffusers on CPU; all 5 real-checkpoint
+tests passed with exactly 0 difference. Safety checkers,
+watermarking, img2img, and stochastic DDIM sampling are out of scope.
+
+# DreamLite
+
+Catalog: [`dreamlite`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `dreamlite-base`, `dreamlite-mobile` · Task: `t2i`
+
+**Architecture.** DreamLite combines Qwen3-VL text conditioning, a depthwise-separable U-Net with
+grouped-query cross-attention, a TinyVAE, and flow-matching Euler sampling.  The model uses a
+horizontally concatenated target/condition latent pair: a blank condition produces an image from
+text, while an input image supplies the condition for instruction-guided editing.
+
+**Checkpoints.** `dreamlite-base` defaults to 30 steps with text guidance 3.5 and image guidance
+1.5. `dreamlite-mobile` is a four-step distilled checkpoint and does not use classifier-free
+guidance. Both checkpoints publish bfloat16 safetensors only.
+
+**Support.** The native text-to-image backend implements the published Qwen3-VL prompt template,
+DreamLite U-Net, TinyVAE, dynamic flow-matching schedule, base guidance, and mobile distilled loop.
+The reference pipelines also expose image editing; that input mode is not part of this `t2i`
+backend.
+
+**Validation.** Published tensor headers match strictly, and random-weight component and tiny
+end-to-end comparisons against both diffusers pipelines are exact. Real-checkpoint parity is
+covered: all 8 real-checkpoint tests passed with exactly 0 difference in every recorded
+comparison, and the run took 2 minutes on an M2 Max (CPU) ([validation](validation.md)). The
+catalog records the exact repositories, commits, component files, and bfloat16 precision.
+
+**License.** The weights are licensed under CC-BY-NC-4.0 and are non-commercial. Review the
+license before downloading or using them.
 
 # Stable Diffusion 1.x
 
 Catalog: [`stable-diffusion-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `sd-v1-1` … `sd-v1-5` · Task: `t2i`
+Models: `sd-v1-1` … `sd-v1-5`, `dreamshaper-8` · Task: `t2i`
 
 **Architecture.** An f=8 KL autoencoder (512×512×3 image ↔ 64×64×4 latent), a 860M-parameter U-Net
 conditioned through cross-attention, and a frozen CLIP ViT-L/14 text encoder (last layer, unpooled
-output). The scheduler is the PNDM published with the checkpoints (`skip_prk_steps=True`, i.e. PLMS):
-50 steps perform 51 U-Net evaluations.
+output). The base checkpoints use PNDM (`skip_prk_steps=True`, i.e. PLMS); DreamShaper 8 uses the
+published second-order DEIS scheduler.
 
 **Usage.**
 
 ```bash
 python -m imagehub.pretrained sd-v1-5 checkpoints/sd-v1-5
+python -m imagehub.pretrained dreamshaper-8 checkpoints/dreamshaper-8
 ```
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
@@ -34,6 +128,8 @@ with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5", device="mps
 **Settings.** `steps` (50), `guidance` (7.5; 1 and below turns guidance off), `width`/`height`
 (512, multiples of 8), `negative_prompt`, `num_images` (1), `seed`, `latents`. Unrecognized settings
 raise an error.
+
+Select `backend="dreamshaper-8"` with `model="checkpoints/dreamshaper-8"` to use the fine-tune.
 
 **Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS has a smoke
@@ -45,6 +141,121 @@ fp16 parity are not in this release.
 
 **License.** The weights are licensed under CreativeML OpenRAIL-M; the license's use restrictions
 bind whoever downloads and uses the weights. imagehub does not distribute weights.
+
+
+# SDXS-512
+
+Catalog: [`sdxs`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `sdxs-512-0.9` · Task: `t2i`
+
+**Architecture.** SDXS-512 is a one-step distilled Stable Diffusion model. It uses a three-stage,
+one-layer U-Net without a mid block, an OpenCLIP ViT-H/14 text encoder, a tiny distilled
+autoencoder, and the published Euler scheduler with trailing timestep spacing.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained sdxs-512-0.9 checkpoints/sdxs-512-0.9
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="sdxs-512-0.9", model="checkpoints/sdxs-512-0.9") as pipe:
+    result = pipe("portrait photo of a girl, golden hour", seed=42)
+    result.images[0].save("portrait.png")
+```
+
+**Settings.** The model-card defaults are `steps=1` and `guidance=0.0`. Output defaults to
+512×512; `width` and `height` must be multiples of 8. `negative_prompt`, `num_images`, `seed`, and
+`latents` are also accepted. Unrecognized settings raise an error.
+
+**Out of scope.** There is no safety checker or invisible watermark. Image conditioning, img2img,
+the optional large VAE, alternate schedulers, and fp16 parity are not included.
+
+**License.** The weights use CreativeML Open RAIL++-M. Its use restrictions bind whoever downloads
+and uses the weights; imagehub does not distribute weights.
+
+
+# Segmind Small-SD and Tiny-SD
+
+Catalog: [`bk-sdm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `segmind-small-sd`, `segmind-tiny-sd` · Task: `t2i`
+
+**Architecture.** These are knowledge-distilled Stable Diffusion 1.x checkpoints with pruned
+U-Nets. Small-SD keeps four channel stages but one residual/attention layer per stage. Tiny-SD
+keeps three stages and removes the mid-block. They retain the CLIP text encoder and f=8 KL
+autoencoder layout. Small uses its published second-order DEIS scheduler; Tiny uses its published
+second-order DPM-Solver++ scheduler.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained segmind-small-sd checkpoints/segmind-small-sd
+python -m imagehub.pretrained segmind-tiny-sd checkpoints/segmind-tiny-sd
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="segmind-tiny-sd", model="checkpoints/segmind-tiny-sd"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` (50), `guidance` (7.5), `width`/`height` (512, multiples of 8),
+`negative_prompt`, `num_images`, `seed`, and `latents`. Unrecognized settings raise an error.
+Tiny-SD publishes only float16 weights; CPU validation upcasts them to float32.
+
+**Out of scope.** There is no safety checker or invisible watermark. img2img and alternate
+schedulers are not included.
+
+**License.** Both weight sets use CreativeML OpenRAIL-M. Its use restrictions bind whoever
+downloads and uses the weights; imagehub does not distribute weights.
+
+
+# BK-SDM
+
+Catalog: [`bk-sdm`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `bk-sdm-base`, `bk-sdm-small`, `bk-sdm-tiny`, `bk-sdm-v2-base`,
+`bk-sdm-v2-small`, `bk-sdm-v2-tiny` · Task: `t2i`
+
+**Architecture.** BK-SDM distills Stable Diffusion 1.4 into smaller U-Nets by removing repeated
+residual and cross-attention blocks. Base keeps four stages and the cross-attention mid block;
+Small removes the mid block; Tiny also removes the innermost stage. All three reuse the SD 1.4
+CLIP text encoder, f=8 KL autoencoder and PNDM scheduler.
+
+The v2 checkpoints apply the same three pruning layouts to Stable Diffusion 2.1-base. They use its
+23-layer OpenCLIP-H text encoder, 1024-wide text conditioning and linear-projection U-Net
+attention, while retaining the published epsilon-prediction PNDM scheduler and 512×512 native
+image size.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained bk-sdm-small checkpoints/bk-sdm-small
+python -m imagehub.pretrained bk-sdm-v2-small checkpoints/bk-sdm-v2-small
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="bk-sdm-v2-small", model="checkpoints/bk-sdm-v2-small") as pipe:
+    result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` (50), `guidance` (7.5; 1 and below turns guidance off), `width`/`height`
+(512, multiples of 8), `negative_prompt`, `num_images` (1), `seed`, `latents`. Unrecognized settings
+raise an error.
+
+**Out of scope.** There is no safety checker. Image-to-image, DreamBooth training, 2M-data variants,
+Core ML exports and fp16 parity are not included.
+
+**License.** The weights are licensed under CreativeML OpenRAIL-M; its use restrictions bind
+whoever downloads or uses them. imagehub does not distribute weights.
 
 
 # Latent Consistency Model (LCM)
@@ -64,7 +275,10 @@ python -m imagehub.pretrained lcm-dreamshaper-v7 checkpoints/lcm-dreamshaper-v7
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="lcm-dreamshaper-v7", model="checkpoints/lcm-dreamshaper-v7", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="lcm-dreamshaper-v7", model="checkpoints/lcm-dreamshaper-v7", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -104,6 +318,7 @@ python -m imagehub.pretrained sd-v2-1 checkpoints/sd-v2-1
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sd-v2-1", model="checkpoints/sd-v2-1", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -141,6 +356,7 @@ python -m imagehub.pretrained sd-turbo checkpoints/sd-turbo
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sd-turbo", model="checkpoints/sd-turbo", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -165,7 +381,9 @@ imagehub does not distribute weights.
 
 Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
 Models: `sdxl-base-1.0`, `sdxl-lightning-2step`, `sdxl-lightning-4step`,
-`sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step` · Task: `t2i`
+`sdxl-lightning-8step`, `hyper-sdxl-1step`, `dmd2-sdxl-4step`, `dmd2-sdxl-1step`,
+`juggernaut-xl-v9`, `animagine-xl-4.0`, `dreamshaper-xl-1.0` · Task: `t2i`
+(the refiner `sdxl-refiner-1.0` has its own section below)
 
 **Architecture.** Two frozen text encoders: CLIP ViT-L/14 (penultimate layer output) and OpenCLIP
 bigG (penultimate layer output and pooled output). The concatenated outputs condition a
@@ -188,15 +406,28 @@ the SDXL base. Both use an LCM scheduler built from the SDXL scheduler configura
 0.0, and 1024×1024. Their defaults are respectively 4 steps with explicit timesteps
 `[999, 749, 499, 249]` and 1 step with `[399]`.
 
+**Community fine-tunes.** `juggernaut-xl-v9`, `animagine-xl-4.0` and
+`dreamshaper-xl-1.0` are complete SDXL fine-tunes rather than U-Net overlays. They retain their
+published DDPM (trailing spacing), Euler and DEIS (leading spacing) schedulers, respectively.
+Juggernaut targets photorealistic work, Animagine targets anime tag prompts, and DreamShaper is a
+general artistic fine-tune. Juggernaut and Animagine publish float16 component tensors, which are
+upcast when the pipeline runs in CPU float32; DreamShaper publishes float32 components.
+
 **Usage.**
 
 ```bash
 python -m imagehub.pretrained sdxl-base-1.0 checkpoints/sdxl-base-1.0
+python -m imagehub.pretrained juggernaut-xl-v9 checkpoints/juggernaut-xl-v9
+python -m imagehub.pretrained animagine-xl-4.0 checkpoints/animagine-xl-4.0
+python -m imagehub.pretrained dreamshaper-xl-1.0 checkpoints/dreamshaper-xl-1.0
 ```
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="sdxl-base-1.0", model="checkpoints/sdxl-base-1.0", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="sdxl-base-1.0", model="checkpoints/sdxl-base-1.0", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
 ```
@@ -209,6 +440,7 @@ python -m imagehub.pretrained hyper-sdxl-1step checkpoints/hyper-sdxl-1step
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="hyper-sdxl-1step", model="checkpoints/hyper-sdxl-1step") as pipe:
     result = pipe("a cat, oil painting", steps=1, guidance=0.0, timesteps=[800], seed=42)
     result.images[0].save("cat.png")
@@ -223,6 +455,7 @@ python -m imagehub.pretrained dmd2-sdxl-1step checkpoints/dmd2-sdxl-1step
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="dmd2-sdxl-4step", model="checkpoints/dmd2-sdxl-4step") as pipe:
     result = pipe(
         "a cat, oil painting",
@@ -238,22 +471,81 @@ with pipeline("t2i", backend="dmd2-sdxl-4step", model="checkpoints/dmd2-sdxl-4st
 `width`/`height` (the U-Net config's native size, 1024 here, and multiples of 8), `negative_prompt`
 (None; with an empty negative prompt, zero embeddings are used), `num_images` (1), `seed`,
 `latents`, and the micro-conditioning inputs `original_size`, `crops_coords_top_left` and
-`target_size` (default to the generated size and `(0, 0)`). The SDXL backend also supports the LCM
-scheduler and an explicit `timesteps` sequence; supplying `timesteps` sets the step count.
+`target_size` (default to the generated size and `(0, 0)`). The SDXL backend supports the
+checkpoint's Euler, DDPM, DEIS or LCM scheduler and an explicit `timesteps` sequence for Euler and
+LCM; supplying `timesteps` sets the step count.
 Unrecognized settings raise an error.
 
 **Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). As with SD 1.x,
 MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The SDXL base and SDXL-Lightning weights are licensed under CreativeML Open RAIL++-M;
 the license's use restrictions bind whoever downloads and uses the weights. The Hyper-SD model
 card has no license metadata, and the repository's license file covers only the FLUX-related files,
 so the Hyper-SDXL weights are recorded as `Unspecified`. The DMD2 weights are licensed under
 CC-BY-NC-4.0, which prohibits commercial use. imagehub does not distribute weights.
+Juggernaut XL v9 is licensed under CreativeML OpenRAIL-M. Animagine XL 4.0 and DreamShaper XL 1.0
+are licensed under CreativeML Open RAIL++-M. The license restrictions bind whoever downloads and
+uses the weights.
+
+
+# SDXL refiner
+
+Catalog: [`sdxl`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `sdxl-refiner-1.0` · Task: `t2i` (image input required)
+
+**Architecture.** The refiner is an SDXL U-Net specialised in the low-noise end of the schedule. It
+differs from the base model in four ways: it has a single text encoder (OpenCLIP bigG: penultimate
+hidden state, 1280 channels, and its pooled output), a U-Net with four resolution levels (384, 768,
+1536, 1536 channels; 4 transformer layers per block), a `text_time` conditioning vector of five time
+ids per sample (original size, crop position and an aesthetic score) instead of six, and the VAE
+and scheduler of the base model. `vae/` is used; the repository's second `vae_1_0/` is not.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained sdxl-refiner-1.0 checkpoints/sdxl-refiner-1.0
+```
+
+```python
+from PIL import Image
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="sdxl-refiner-1.0", model="checkpoints/sdxl-refiner-1.0", device="mps"
+) as pipe:
+    result = pipe("a cat, oil painting", image=Image.open("cat.png"), strength=0.3, seed=0)
+    result.images[0].save("refined.png")
+```
+
+- **The image is required.** It is converted to RGB, rounded down to a multiple of 8 and resized
+  with Lanczos as diffusers' `VaeImageProcessor` does, encoded by the VAE by sampling the
+  posterior (this draws from the seeded generator before the noise does) and scaled by 0.13025.
+  The result has the size of the preprocessed input; `width`, `height` and `latents` are not
+  accepted.
+- **Strength.** `strength` (default 0.3) keeps the last `int(steps * strength)` of the `steps`
+  timesteps: the encoded image is noised to the sigma at the first kept step and denoised from
+  there. A `strength` so small that no step remains is rejected.
+- **Defaults.** 50 steps, guidance 5.0, `strength` 0.3, `aesthetic_score` 6.0 and
+  `negative_aesthetic_score` 2.5. Since `force_zeros_for_empty_prompt` is false, an empty negative
+  prompt is encoded, not zeroed. Other settings: `negative_prompt`, `num_images`, `seed`,
+  `original_size`, `crops_coords_top_left`, `target_size` and their `negative_*` counterparts.
+  Unrecognized settings raise an error.
+- **Not supported.** Running the refiner after the base model in latent space (`denoising_end` on
+  the base and `denoising_start` on the refiner, ensemble of expert denoisers) is out of scope: the
+  refiner takes an image. Also not supported: the other schedulers of the img2img pipeline, several
+  input images, IP-Adapter, a safety checker, the invisible watermark and fp16 parity.
+- **Seed compatibility.** On CPU, the same seed, image and settings give the same image as diffusers
+  0.40.0 `StableDiffusionXLImg2ImgPipeline` with `generator=torch.Generator("cpu").manual_seed(seed)`
+  ([validation](validation.md)). MPS and CUDA runs are smoke tests only.
+- **License.** CreativeML Open RAIL++-M; the license's use restrictions bind whoever downloads and
+  uses the weights. The repository is not gated. imagehub does not distribute weights.
+- **Memory.** In float32: U-Net about 9.4 GB, text encoder 2 about 2.8 GB, VAE 0.3 GB.
 
 
 # SDXL Turbo
@@ -275,6 +567,7 @@ python -m imagehub.pretrained sdxl-turbo checkpoints/sdxl-turbo
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sdxl-turbo", model="checkpoints/sdxl-turbo", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -289,50 +582,124 @@ guidance and take their default size from the U-Net config. Unrecognized setting
 ancestral noise at every scheduler step. MPS and CUDA runs are smoke tests only; there is no claim
 of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights use the `sai-nc-community` license and are limited to non-commercial use.
 The license's use restrictions bind whoever downloads and uses the weights. imagehub does not
 distribute weights.
 
 
-# SSD-1B
+# SSD-1B and Segmind-Vega
 
-Catalog: [`ssd-1b`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `ssd-1b` · Task: `t2i`
+Catalog: [`ssd-1b`](https://github.com/gorkemgul/awesome-text-to-image-architectures),
+[`segmind-vega`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `ssd-1b`, `segmind-vega` · Task: `t2i`
 
 **Architecture.** A distilled SDXL model with the same frozen CLIP ViT-L/14 and OpenCLIP bigG text
 encoders, f=8 KL autoencoder and Euler scheduler as SDXL. Its 1.3B-parameter U-Net uses per-block
 transformer depths and a mid block without attention while retaining SDXL's `text_time`
 micro-conditioning.
 
+Segmind-Vega is the smaller 0.74B-parameter U-Net from the same progressive distillation work. Its
+three U-Net levels use one, one and two transformer layers per attention block, and its middle
+block has one residual block and no attention. The text encoders, VAE, Euler scheduler and SDXL
+micro-conditioning are unchanged.
+
 **Usage.**
 
 ```bash
 python -m imagehub.pretrained ssd-1b checkpoints/ssd-1b
+python -m imagehub.pretrained segmind-vega checkpoints/segmind-vega
 ```
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="ssd-1b", model="checkpoints/ssd-1b", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
 ```
+
+Use `backend="segmind-vega"` with `model="checkpoints/segmind-vega"` for Vega. The model card
+recommends a negative prompt and guidance around 9.0 for image quality; imagehub retains the
+reference pipeline defaults unless those options are supplied.
 
 **Settings.** The defaults and supported settings are the same as for SDXL: `steps` (50, at most
 1000), `guidance` (5.0), `width`/`height` (the U-Net config's native size, 1024 here, and multiples
 of 8), `negative_prompt` (None), `num_images` (1), `seed`, `latents`, `original_size`,
 `crops_coords_top_left` and `target_size`. Unrecognized settings raise an error.
 
-**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
-`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
-runs are smoke tests only; there is no claim of exact equality on these devices.
+**Seed compatibility.** SSD-1B's recorded CPU validation gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)`. The dedicated Vega suite includes the same
+comparison; its real-checkpoint record is produced by the controller ([validation](validation.md)).
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
+
+**Memory.** Segmind-Vega's U-Net is about 3.0 GB in float32; a complete float32 pipeline is about
+6.6 GB. SSD-1B is larger because its U-Net retains more transformer blocks.
+
+
+# KOALA
+
+Catalog: [`koala`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `koala-700m`, `koala-1b`, `koala-lightning-700m`, `koala-lightning-1b` · Task: `t2i`
+
+**Architecture.** KOALA distills SDXL into smaller denoising U-Nets while retaining SDXL's two
+text encoders, f=8 KL autoencoder, Euler scheduler and `text_time` micro-conditioning. Both U-Nets
+use one residual layer per level. KOALA-700M uses transformer depths `[1, 2, 5]` and omits the
+middle block; KOALA-1B uses `[1, 2, 6]` and retains the SDXL cross-attention middle block.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained koala-700m checkpoints/koala-700m
+python -m imagehub.pretrained koala-1b checkpoints/koala-1b
+python -m imagehub.pretrained koala-lightning-700m checkpoints/koala-lightning-700m
+python -m imagehub.pretrained koala-lightning-1b checkpoints/koala-lightning-1b
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="koala-700m", model="checkpoints/koala-700m") as pipe:
+    result = pipe("a portrait painting of a golden retriever", seed=42)
+    result.images[0].save("retriever.png")
+```
+
+Use `backend="koala-1b"` and the matching snapshot for the larger variant. The model cards show
+25-step generation and a negative prompt for image quality; imagehub retains the reference
+pipeline defaults unless options are supplied.
+
+The Lightning checkpoints use the same two U-Net layouts but are trained for few-step generation.
+Select `backend="koala-lightning-700m"` or `backend="koala-lightning-1b"` with its matching
+snapshot. Their model-card defaults are 10 steps, guidance 3.5 and Euler trailing timestep spacing.
+
+**Settings.** The supported settings match SDXL: `steps` (50 for base KOALA and 10 for Lightning,
+at most 1000), `guidance` (5.0 for base KOALA and 3.5 for Lightning),
+`width`/`height` (1024 by default and multiples of 8), `negative_prompt` (None), `num_images` (1),
+`seed`, `latents`, `original_size`, `crops_coords_top_left` and `target_size`. Unrecognized settings
+raise an error.
+
+**Validation.** Dedicated CPU float32 tests compare the published tensor layouts, tokenizers, text
+encoders, U-Net, VAE, Euler scheduler and two public-API generations per checkpoint against
+diffusers 0.40.0. MPS and CUDA runs are smoke tests only.
+
+**Out of scope.** There is no safety checker or watermark. Image-to-image, other schedulers and
+reduced-precision parity are not included.
+
+**License.** The model repositories do not declare weight-license metadata. The linked author code
+repository describes separate non-commercial and proprietary commercial terms; review the terms
+before downloading. imagehub does not distribute weights.
+
+**Memory.** The full-precision U-Net files are about 3.1 GB for each 700M release and 4.6 GB for
+each 1B release. The two text encoders and VAE add about 3.6 GB.
 
 
 # Stable Diffusion 3 and 3.5
@@ -356,6 +723,7 @@ HF_TOKEN=... python -m imagehub.pretrained sd3-medium checkpoints/sd3-medium
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="sd3-medium", model="checkpoints/sd3-medium", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
@@ -367,9 +735,10 @@ steps and guidance 0.0. All four default to 1024×1024, and `width`/`height` mus
 16. The other supported options are `negative_prompt`, `num_images`, `seed`, `latents` and
 `max_sequence_length` (256). Unrecognized settings raise an error.
 
-**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
-`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
-runs are smoke tests only; there is no claim of exact equality on these devices.
+**Seed compatibility.** For the validated Alpha and Sigma checkpoints, CPU runs with the same seed
+and settings give the same image as diffusers with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). PixArt-LCM has exact tiny-snapshot coverage; its real-checkpoint run
+is pending. MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** There is no safety checker or invisible watermark. Img2img, other schedulers and
 fp16/bf16 parity are not in this release.
@@ -381,7 +750,7 @@ not distribute weights.
 # FLUX.1
 
 Catalog: [`flux-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `flux1-schnell`, `flux1-dev`, `flux1-krea-dev`, `flux1-kontext-dev` · Task: `t2i`
+Models: `flux1-schnell`, `flux1-dev`, `flux1-krea-dev`, `flux-1-lite-8b`, `flux1-kontext-dev` · Task: `t2i`
 
 **Architecture.** CLIP-L supplies a pooled embedding and T5-XXL supplies sequence embeddings to a
 12B rectified-flow transformer with 19 double-stream blocks, 38 single-stream blocks, 24 attention
@@ -398,7 +767,10 @@ HF_TOKEN=... python -m imagehub.pretrained flux1-schnell checkpoints/flux1-schne
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="flux1-schnell", model="checkpoints/flux1-schnell", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="flux1-schnell", model="checkpoints/flux1-schnell", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -413,10 +785,38 @@ and `width`/`height` must be multiples of 16. The other supported options are `n
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** Fill, Redux, Depth and Canny variants, ControlNet, LoRA and fp16/bf16 parity are
-not supported. `flux1-schnell`, `flux1-dev` and `flux1-krea-dev` take no image input; for Kontext, see below.
+not supported. `flux1-schnell`, `flux1-dev`, `flux1-krea-dev` and `flux-1-lite-8b` take no image
+input; for Kontext, see below.
 
 **License.** The schnell weights use the Apache-2.0 license. The dev, Krea [dev] and Kontext weights use the
 FLUX.1-dev Non-Commercial License; see the license. imagehub does not distribute weights.
+
+## Flux.1-Lite 8B
+
+`flux-1-lite-8b` (`Freepik/flux.1-lite-8B`) distills FLUX.1-dev by reducing the double-stream
+transformer from 19 blocks to 8 while retaining all 38 single-stream blocks, the two text encoders,
+VAE and dynamically shifted flow-match scheduler. The component weights are published only in
+bfloat16 and are upcast for CPU float32 inference.
+
+```bash
+python -m imagehub.pretrained flux-1-lite-8b checkpoints/flux-1-lite-8b
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="flux-1-lite-8b", model="checkpoints/flux-1-lite-8b", device="mps"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+- **Defaults.** 28 steps, guidance 3.5, 512 text tokens and 1024x1024, matching the model card.
+- **Access and license.** The repository is ungated. The weights inherit the FLUX.1-dev
+  Non-Commercial License.
+- **Memory.** The two transformer shards total about 16.3 GB in bfloat16. CPU float32 loading
+  requires roughly twice that for the transformer, plus T5-XXL, CLIP-L and the VAE.
 
 ## FLUX.1 Krea [dev]
 
@@ -426,7 +826,10 @@ FLUX.1 [dev] architecture, per its model card. Its published configs are identic
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="flux1-krea-dev", model="checkpoints/flux1-krea-dev", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="flux1-krea-dev", model="checkpoints/flux1-krea-dev", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -449,7 +852,10 @@ only the generated tokens are decoded.
 ```python
 from PIL import Image
 from imagehub import pipeline
-with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-kontext-dev", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-kontext-dev", device="mps"
+) as pipe:
     result = pipe("Add a red hat to the scene", image=Image.open("photo.png"), seed=0)
     result.images[0].save("edited.png")
 ```
@@ -478,6 +884,54 @@ with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-konte
   diffusers 0.40.0 `FluxKontextPipeline` ([validation](validation.md)).
 
 
+# Chroma
+
+Catalog: [`chroma1-hd`](https://github.com/gorkemgul/awesome-text-to-image-architectures), [`chroma1-flash`](https://github.com/gorkemgul/awesome-text-to-image-architectures), [`chroma1-base`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `chroma1-hd`, `chroma1-flash`, `chroma1-base` · Task: `t2i`
+
+**Architecture.** Chroma1-HD is a ~8.9B diffusion transformer built on the FLUX.1 latent-flow
+foundation. It reuses the FLUX.1 VAE (16 latent channels, scaling factor 0.3611, shift factor 0.1159)
+and the flow-match Euler scheduler with exponential shifting. The text encoder is T5-XXL (4.7B
+parameters, bfloat16 weights) with a native SentencePiece Unigram tokenizer. The new Chroma
+transformer replaces FLUX.1's timestep-plus-pooled-text embedding with a distilled-guidance
+approximator: a sinusoidal timestep projection is combined with a fixed modulation projection and
+fed through a small MLP to produce per-block scale, shift and gate vectors for all 19 double-stream
+and 38 single-stream blocks. Attention is joint over text and image tokens, using 3-axis RoPE and an
+attention mask that keeps the real text tokens plus one padding token (the remaining padding tokens
+are masked out). Classifier-free guidance is applied when `guidance > 1`; otherwise the negative
+pass is skipped.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained chroma1-hd checkpoints/chroma1-hd
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="chroma1-hd", model="checkpoints/chroma1-hd", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** Chroma1-HD defaults to 35 steps and guidance 5.0; Chroma1-Flash defaults to 4 steps
+and guidance 1.0; Chroma1-Base defaults to 40 steps and guidance 3.0 and uses the checkpoint's
+Beta(0.6, 0.6) flow-match sigma schedule. All default to 1024×1024;
+`width` and `height` must be multiples of 16. The other supported options are `num_images`, `seed`, `latents`,
+`negative_prompt` and `max_sequence_length` (default 512, at most 512). Unrecognized settings raise
+an error.
+
+**Seed compatibility.** Random-weight parity against diffusers 0.40.0 `ChromaPipeline` is exact on
+CPU in float32. The published bfloat16 checkpoints are loaded as float32 and reproduce the recorded
+reference outputs exactly ([validation](validation.md)). MPS and CUDA runs are smoke tests only;
+there is no claim of exact equality on these devices.
+
+**Out of scope.** Img2img, inpainting, IP-Adapter, LoRA, single-file checkpoint loading and
+fp16/bf16 parity are not supported.
+
+**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+
+
 # FLUX.2 klein
 
 Catalog: [`flux-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -499,7 +953,10 @@ python -m imagehub.pretrained flux2-klein-4b checkpoints/flux2-klein-4b
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="flux2-klein-4b", model="checkpoints/flux2-klein-4b", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="flux2-klein-4b", model="checkpoints/flux2-klein-4b", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -522,13 +979,15 @@ FLUX Non-Commercial License; see the license. imagehub does not distribute weigh
 # HunyuanDiT
 
 Catalog: [`hunyuan-dit`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `hunyuan-dit-v1.1-distilled` · Task: `t2i`
+Models: `hunyuan-dit-v1.1-distilled`, `hunyuan-dit-v1.2`, `hunyuan-dit-v1.2-distilled` · Task: `t2i`
 
 **Architecture.** Bilingual Chinese/English BERT-large and mT5-XL text encoders condition a 1.5B
 diffusion transformer with 40 blocks, width 1408, 16 attention heads of width 88, long skip
 connections and 2D RoPE. It also uses timestep, image-size, style and pooled-text conditioning and
 predicts a learned sigma. A 4-channel VAE with scaling factor 0.13025 decodes the latents. The DDPM
-scheduler uses v-prediction, and requested resolutions are binned to supported shapes.
+scheduler uses v-prediction, and requested resolutions are binned to supported shapes. The v1.2
+releases drop the image-size and style conditioning (`use_style_cond_and_image_meta_size` is false)
+and use a smaller final beta (0.018) in the scheduler.
 
 **Usage.**
 
@@ -538,12 +997,18 @@ python -m imagehub.pretrained hunyuan-dit-v1.1-distilled checkpoints/hunyuan-dit
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="hunyuan-dit-v1.1-distilled", model="checkpoints/hunyuan-dit-v1.1-distilled", device="mps") as pipe:
+
+with pipeline(
+    "t2i",
+    backend="hunyuan-dit-v1.1-distilled",
+    model="checkpoints/hunyuan-dit-v1.1-distilled",
+    device="mps",
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
 
-**Settings.** `steps` defaults to 25, `guidance` defaults to 5.0 and `width`/`height` default to
+**Settings.** `steps` defaults to 25 (50 for `hunyuan-dit-v1.2`), `guidance` defaults to 5.0 and `width`/`height` default to
 1024. The other supported options are `seed`, `latents`, `negative_prompt`, `guidance_rescale` and
 `use_resolution_binning`. Unrecognized settings raise an error.
 
@@ -551,11 +1016,82 @@ with pipeline("t2i", backend="hunyuan-dit-v1.1-distilled", model="checkpoints/hu
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** Other HunyuanDiT releases (v1.0, v1.2 and non-distilled), ControlNet, PAG, LoRA
+**Out of scope.** Other HunyuanDiT releases (v1.0 and the non-distilled v1.1), ControlNet, PAG, LoRA
 and fp16/bf16 parity are not supported.
 
 **License.** The weights use the Tencent Hunyuan Community License, which excludes use in the
 European Union, the United Kingdom and South Korea; see the license. imagehub does not distribute
+weights.
+
+
+# DeepFloyd IF
+
+Catalog: [`deepfloyd-if`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `deepfloyd-if-i-xl` · Task: `t2i`
+
+**Architecture.** A T5-XXL encoder conditions stage I pixel diffusion at 64×64. Stage II receives
+the same prompt context and the noisy bilinearly-upscaled stage-I image, then produces a 256×256
+image. Both stages use learned-range DDPM variance and dynamic thresholding.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained deepfloyd-if-i-xl checkpoints/deepfloyd-if-i-xl
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="deepfloyd-if-i-xl", model="checkpoints/deepfloyd-if-i-xl") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+result.images[0].save("cat.png")
+```
+
+**Settings.** Output is fixed at 256×256. `steps` and `superresolution_steps` default to 50;
+`guidance` and `superresolution_guidance` default to 7.0 and 4.0. `noise_level` defaults to 250.
+`negative_prompt`, `seed`, and stage-I `latents` are also supported. Stage III, caption cleaning,
+safety checking, watermarking and fp16/bfloat16 parity are out of scope.
+
+**License.** The gated weights use the non-commercial DeepFloyd IF License. imagehub does not
+distribute weights.
+
+# Kandinsky 2.1
+
+Catalog: [`kandinsky-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `kandinsky-2-1` · Task: `t2i`
+
+**Architecture.** A CLIP text model and PriorTransformer produce a CLIP-image embedding. The
+decoder separately encodes the prompt with a multilingual XLM-RoBERTa CLIP model, then combines its
+token states and pooled text embedding with the image embedding in a text-image-conditioned U-Net.
+An UnCLIP scheduler drives the prior, DDIM drives the decoder, and MoVQ decodes the latents.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained kandinsky-2-1 checkpoints/kandinsky-2-1
+```
+
+```python
+from imagehub import pipeline
+with pipeline("t2i", backend="kandinsky-2-1", model="checkpoints/kandinsky-2-1", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The prior defaults to 25 steps and guidance 4.0; the decoder defaults to 100 steps,
+guidance 4.0 and 512×512 output. Supported options are `steps`, `guidance`, `prior_steps`,
+`prior_guidance`, `width`, `height`, `seed`, `negative_prompt` and prior `latents`. Unrecognized
+settings raise an error before weights are loaded.
+
+**Seed compatibility.** The tiny CPU float32 pipeline is bit-identical to diffusers for guidance on
+and off, an explicit negative prompt, non-square output and two seeds, and so is the
+real-checkpoint pipeline (all 4 real-checkpoint tests; [validation](validation.md)). MPS and CUDA
+runs are smoke tests only.
+
+**Out of scope.** Image-to-image, inpainting, interpolation, ControlNet, safety checking,
+watermarking and fp16/bfloat16 parity are not supported.
+
+**License.** The decoder and prior weights use the Apache-2.0 license. imagehub does not distribute
 weights.
 
 
@@ -579,7 +1115,10 @@ python -m imagehub.pretrained kandinsky-2.2 checkpoints/kandinsky-2.2
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="kandinsky-2.2", model="checkpoints/kandinsky-2.2", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="kandinsky-2.2", model="checkpoints/kandinsky-2.2", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -598,6 +1137,257 @@ supported.
 **License.** The decoder and prior weights use the Apache-2.0 license. imagehub does not distribute
 weights.
 
+
+# Kandinsky 3
+
+Catalog: [`kandinsky-3`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `kandinsky-3` · Task: `t2i`
+
+**Architecture.** There is no image prior. The encoder of a Flan-UL2 T5 model (32 layers, width
+4096, 16 heads of size 256, gated SiLU feed-forward, 8.7B parameters) encodes the prompt into 128
+tokens. A 3.06B-parameter U-Net built from bottleneck residual blocks (four levels of 384, 768,
+1536 and 3072 channels, three blocks per level) denoises 4-channel latents; every normalization is
+a group norm whose scale and shift come from the timestep embedding. The three deeper levels add
+self-attention and cross-attention to the projected text tokens, and the timestep embedding is
+also shifted by an attention pooling over the text tokens. A MoVQ decoder (8× upsampling, spatial
+normalization, no quantization step) turns the latents into the image. The scheduler is DDPM with
+the squared-cosine beta schedule and clipping.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained kandinsky-3 checkpoints/kandinsky-3
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="kandinsky-3", model="checkpoints/kandinsky-3", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The defaults are 25 steps, guidance 3.0 and 1024×1024. The supported options are
+`seed`, `latents`, `steps`, `guidance`, `width`, `height`, `num_images` and `negative_prompt`.
+Width and height must be multiples of 8 and, as in diffusers, the image is generated at the next
+multiple of 64 pixels, so the output can be larger than the request; the metadata holds the actual
+size. `steps` is at most 1000. Guidance is applied as `(g + 1) * text - g * uncond`, and guidance
+1.0 or lower skips the unconditional pass. Without a negative prompt the unconditional context is
+all zeros and fully masked; an explicit empty string is encoded like any other text. Prompts are
+truncated to 128 tokens. The sampler draws fresh noise at every step from the seeded generator, so
+`latents` together with `seed` fixes the whole trajectory. Unrecognized settings raise an error.
+
+**Weights.** Only float16 weights are published, so the snapshot holds `*.fp16.safetensors` files
+and a float16 shard index for the text encoder. They are read directly and upcast to float32 on
+load; parity is measured on that upcast, against diffusers loaded with `variant="fp16"` and
+`torch_dtype=torch.float32`.
+
+**Memory.** In float32 the text encoder needs about 35 GB, the U-Net about 12 GB and the MoVQ
+decoder about 1.1 GB; the float16 files total about half of that.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** Kandinsky 3.1, Flash, inpainting and the image-prompted variants, LoRA, other
+schedulers, precomputed prompt embeddings, batches of several prompts and fp16/bf16 parity are not
+supported.
+
+**License.** The repository declares the Apache-2.0 license. imagehub does not distribute weights.
+
+
+# Kandinsky 5
+
+Catalog: [`kandinsky-5`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `kandinsky-5-t2i-lite` · Task: `t2i`
+
+**Architecture.** A flow-matching text-to-image diffusion transformer. A Qwen2.5-VL text model
+encodes a templated prompt into token embeddings; a secondary CLIP ViT-L text encoder supplies a
+pooled text embedding. A 3D transformer (patch size 1×2×2 over the latent depth, height and width)
+denoises 16-channel latents with self-attention, cross-attention to the Qwen states, and 3D rotary
+position embeddings for the visual tokens. An f=8 FLUX-style autoencoder (scaling factor 0.3611,
+shift 0.1159) maps between 16-channel latents and pixels. The scheduler is flow-match Euler with a
+shift of 5.0.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained kandinsky-5-t2i-lite checkpoints/kandinsky-5-t2i-lite
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="kandinsky5", model="checkpoints/kandinsky-5-t2i-lite", device="mps"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The defaults are 50 steps, guidance 3.5 and 1024×1024. The supported options are
+`seed`, `latents`, `steps`, `guidance`, `width`, `height`, `num_images`, `negative_prompt` and
+`max_sequence_length`. Requests are snapped to one of the
+published aspect ratios (1024×1024, 640×1408, 1408×640, 768×1280, 1280×768, 896×1152, 1152×896) by
+matching aspect ratio, and the metadata holds the actual size. `steps` is at most 1000 and
+`max_sequence_length` is at most 1024. Guidance greater than 1.0 enables classifier-free guidance
+with the negative prompt, or an empty prompt when none is supplied. Unrecognized settings raise an
+error.
+
+**Weights.** The transformer and Qwen text encoder are published in bfloat16; the catalog lists the
+published files and the native loaders upcast them to float32 on load. Parity is measured on that
+upcast.
+
+**Memory.** The transformer is about 6B parameters and the Qwen text encoder about 7B parameters;
+real-checkpoint runs require substantial memory and should use shortened step counts.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` once the real-checkpoint validation is run.
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** Inpainting, image-to-image, video, other checkpoints, other schedulers,
+precomputed prompt embeddings, batches of several prompts and fp16/bf16 parity are not supported.
+
+**License.** The repository declares the MIT license. imagehub does not distribute weights.
+
+# Show-o
+
+Catalog: [`show-o`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `show-o-512` · Task: `t2i`
+
+**Architecture.** Show-o extends the 1.3B Phi-1.5 decoder to a shared vocabulary containing text,
+prompt-control and 8,192 image tokens. Text uses causal attention, while the 1,024 image-token region
+uses bidirectional attention. Image tokens are predicted in parallel over 18 cosine-remasking rounds
+and decoded by a lookup-free MAGVIT-v2 tokenizer with 16× spatial compression.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained show-o-512 checkpoints/show-o-512
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="show-o-512", model="checkpoints/show-o-512") as pipe:
+    result = pipe("a watercolor painting of a lighthouse", seed=42)
+    result.images[0].save("lighthouse.png")
+```
+
+**Settings.** The checkpoint generates 512×512 images. Defaults are 18 `steps`, guidance 10 and
+temperature 1. The supported options are `seed`, `steps`, `guidance`, `temperature`, `width` and
+`height`; width and height must remain 512. Unrecognized settings raise an error before weights load.
+
+**Memory and validation.** The float32 unified transformer is about 5.8 GB and MAGVIT-v2 about
+0.38 GB. Offline tests cover every published tensor, CodeGen tokenization, Phi attention and MLP,
+MAGVIT-v2 decoding, omni-attention prompting, discrete denoising, and short two-step end-to-end runs
+at seeds 0 and 42. The shortened run changes only the step count from the 18-step default.
+
+**Out of scope.** Multimodal understanding, image input, inpainting, extrapolation, CLIP-ViT
+variants, 256-pixel checkpoints, batches and reduced-precision parity are not supported.
+
+**License.** The model card declares Apache-2.0. imagehub does not distribute weights.
+
+# PixelDiT
+
+Catalog: [`pixeldit`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `pixeldit` · Task: `t2i`
+
+**Architecture.** PixelDiT generates RGB pixels directly, without an autoencoder. Fourteen
+patch-level MM-DiT blocks jointly attend to image patches and Gemma-2 text tokens for global
+semantics. Two pixel-level transformer blocks then compact each 16×16 patch into one attention
+token and expand it back to pixel tokens, with per-pixel AdaLN modulation from the patch stream.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained pixeldit checkpoints/pixeldit
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="pixeldit", model="checkpoints/pixeldit") as pipe:
+    result = pipe("a blue ceramic cat on a wooden table", seed=0)
+result.images[0].save("cat.png")
+```
+
+**Settings.** Defaults are 50 `steps`, `guidance` 2.75, seed 0 and 1024×1024. `width` and
+`height` must be divisible by 16. `negative_prompt`, `interval_guidance` and `use_chi_prompt` are
+also supported. Sampling uses the official second-order flow DPM-Solver++ with flow shift 4.
+
+**Validation.** The 391 published PixelDiT tensors and both Gemma-2 shards have strict layout
+tests. Random-weight transformer, flow-solver and tiny end-to-end comparisons against the pinned
+official implementation are bit-exact. The opt-in real-checkpoint suite covers the tokenizer,
+Gemma-2 output, one denoiser step, and separate seed-0 and seed-42 runs through the public pipeline;
+the end-to-end cases use two steps at 16×16 to keep CPU execution short while exercising the full
+pixel-space path. Checkpoint tensors are copied from pickle storage before assignment to preserve
+the parameter layout and CPU summation order used by the published loader.
+
+**Memory and limits.** The transformer has about 1.3B parameters and Gemma-2 about 2.6B. Training,
+class-conditional checkpoints, FlowEdit, batches, caller-provided noise and reduced-precision
+parity are out of scope.
+
+**License.** The weights and official implementation use the NVIDIA NSCLv1 license and are limited
+to non-commercial research or evaluation. imagehub does not distribute weights.
+
+# Ovis-Image
+
+Catalog: [`ovis-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`ovis-image-7b` · Task: `t2i`
+
+Ovis-Image uses a Qwen3 text encoder and a flow-matching joint transformer, followed by a
+16-channel AutoencoderKL. It accepts text prompts and defaults to 50 steps, guidance 5.0, and
+1024×1024 pixels. `seed`, `steps`, `guidance`, `width`, `height`, `negative_prompt`,
+`num_images`, and `max_sequence_length` are supported.
+
+```bash
+python -m imagehub.pretrained ovis-image-7b checkpoints/ovis-image-7b
+```
+
+The published transformer and text encoder are float32; the VAE is bfloat16. CPU float32 parity
+and end-to-end validation are covered; the real-checkpoint run took 12 minutes on an M2 Max (CPU)
+([validation](validation.md)).
+
+# PRX
+
+Catalog: [`prx`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`prx-1024-t2i-beta`, `prx-512-t2i-sft` · Task: `t2i`
+
+**Architecture.** PRX uses the 26-layer, width-2304 T5Gemma encoder with alternating bidirectional
+sliding-window and full attention. A 16-layer transformer consumes 2×2 patches of the 16-channel
+latent, attends to the text states, and uses two-axis rotary positions. A FLUX-style 8× VAE decodes
+the result. Flow-match Euler sampling uses a static shift of 3.0.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained prx-512-t2i-sft checkpoints/prx-512-t2i-sft
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="prx-512-t2i-sft", model="checkpoints/prx-512-t2i-sft") as pipe:
+    result = pipe("a product photograph of a ceramic lamp", seed=42)
+    result.images[0].save("lamp.png")
+```
+
+**Settings.** Both checkpoints default to 28 steps and guidance 4.0. Their native sizes are
+1024×1024 and 512×512 respectively. The supported options are `seed`, `steps`, `guidance`, `width`,
+`height`, `negative_prompt`, `max_sequence_length` (default 256), and `skip_text_cleaning`. Width and
+height are mapped to the reference aspect-ratio bins by default; disable `use_resolution_binning`
+to request dimensions that are multiples of 16 directly. Guidance 1.0 disables the unconditional pass.
+
+**Precision and validation.** The 1024 checkpoint declares bfloat16 for its text encoder; the 512
+checkpoint declares float32. Both repositories publish float32 transformer and VAE weights. Exact
+tiny-pipeline parity and published-weight parity are covered; the real-checkpoint run took 7
+minutes on an M2 Max (CPU) ([validation](validation.md)).
+
+**Out of scope.** Batches, caller-supplied latents or embeddings, callbacks, LoRA, and fp16/bf16
+parity are not supported.
+
+**License.** Both repositories declare Apache-2.0. imagehub does not distribute weights.
 
 # Stable Cascade
 
@@ -625,6 +1415,7 @@ python -m imagehub.pretrained stable-cascade-lite checkpoints/stable-cascade-lit
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", model="stable-cascade-lite", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -686,6 +1477,7 @@ python -m imagehub.pretrained wuerstchen-v2 checkpoints/wuerstchen-v2
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", model="wuerstchen-v2", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -716,11 +1508,69 @@ custom timestep lists, precomputed prompt embeddings and fp16/bf16 parity are no
 distribute weights.
 
 
+# GLM-Image
+
+Catalog: [`glm-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `glm-image` · Task: `t2i`
+
+**Architecture.** GLM-Image generates in two stages. A 9B autoregressive model (the GLM-4 decoder
+with interleaved three-axis rotary positions and a vision head over 16,512 tokens) reads the prompt
+and samples discrete image tokens: first a low-resolution preview (about 16 tokens on the long side) that fixes the
+layout, then the full grid at one token per 32×32 pixels. A 7B single-stream diffusion transformer
+(30 blocks, width 4096, CogView4-style blocks with AdaLN-zero modulation) then denoises 16-channel
+VAE latents. It receives the sampled tokens, upsampled two times to the latent patch grid and
+projected into the image stream, together with ByT5 glyph embeddings of the text the prompt puts in
+quotation marks (single, double, curly and 「」 quotes). For classifier-free guidance the
+unconditional pass drops the tokens and uses the glyph embedding of the empty string. The scheduler
+is flow-match Euler with linear dynamic shifting.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained glm-image checkpoints/glm-image
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", model="glm-image", device="mps") as pipe:
+    result = pipe('A neon sign that reads "Open Late" on a rainy street', seed=42)
+    result.images[0].save("sign.png")
+```
+
+**Settings.** Defaults are 50 steps, guidance 1.5 (guidance is active above 1), 1024×1024 and a
+glyph sequence limit of 2048 bytes. `width` and `height` must be multiples of 32. The supported
+options are `steps`, `guidance`, `width`, `height`, `seed`, `max_sequence_length` and `latents`.
+The seed controls both the sampled image tokens and the initial noise, so one seed gives one
+image; `latents` replaces only the initial noise. There is no negative prompt (the reference
+always uses the empty string). Unrecognized settings raise an error.
+
+**Memory.** The published weights are bfloat16. In float32 the autoregressive text tower takes
+about 36 GB (the vision tower and VQ encoder in the same files are not loaded), the transformer
+28 GB, the ByT5 encoder 0.9 GB and the VAE 1.6 GB. The backend loads the stages one after another
+and releases each, so the peak is the autoregressive model alone, and every request reloads them.
+Generating the 1,280 tokens of a 1024×1024 image takes one pass of the 9B model per token.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers
+`GlmImagePipeline` with `generator=torch.Generator("cpu").manual_seed(seed)`
+([validation](validation.md)). The token sampling consumes the CPU random stream in the same order
+as transformers' `generate`. MPS and CUDA runs are smoke tests only.
+
+**Out of scope.** Only text-to-image is supported, for one prompt at a time. The reference also
+accepts condition images for editing and style transfer; that needs the 40-block vision tower, the
+VQ encoder, the VAE encoder and the decoder's key/value cache for the reference tokens, and is not
+implemented (the catalog entry has no image input). Batches, precomputed prompt embeddings or
+prior tokens, custom timesteps and fp16/bf16 parity are not implemented.
+
+**License.** The weights are published under the MIT license. imagehub does not distribute weights.
+
+
 # PixArt
 
 Catalog: [`pixart-sigma`](https://github.com/gorkemgul/awesome-text-to-image-architectures),
 [`pixart-alpha`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
-`pixart-sigma-xl-1024`, `pixart-alpha-xl-1024` · Task: `t2i`
+`pixart-sigma-xl-1024`, `pixart-sigma-xl-512`, `pixart-sigma-xl-256`, `pixart-sigma-xl-2k`,
+`pixart-alpha-xl-1024`, `pixart-alpha-xl-512`, `pixart-lcm-xl-1024` · Task: `t2i`
 
 **Architecture.** A T5-v1.1-XXL text encoder supplies up to 300 tokens for Sigma and 120 for Alpha
 to a 0.6B diffusion transformer with 28 blocks, width 1152 and 16 attention heads of width 72. The
@@ -728,7 +1578,8 @@ transformer uses shared `ada_norm_single` timestep modulation, caption projectio
 position embedding and learned sigma prediction. Sigma uses interpolation scale 2 and the SDXL VAE
 with scaling factor 0.13025. Alpha adds resolution and aspect-ratio embeddings and uses the SD VAE
 with scaling factor 0.18215. Both use the order-2 midpoint DPM-Solver++ multistep scheduler and bin
-requested resolutions to their supported aspect-ratio tables.
+requested resolutions to their supported aspect-ratio tables. PixArt-LCM reuses the Alpha layout with
+an LCM scheduler and its own distilled transformer.
 
 **Usage.**
 
@@ -738,13 +1589,24 @@ python -m imagehub.pretrained pixart-sigma-xl-1024 checkpoints/pixart-sigma-xl-1
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="pixart-sigma-xl-1024", model="checkpoints/pixart-sigma-xl-1024", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="pixart-sigma-xl-1024", model="checkpoints/pixart-sigma-xl-1024", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry")
     result.images[0].save("cat.png")
 ```
 
-**Settings.** Both models default to 20 steps, guidance 4.5 and 1024×1024. Sigma defaults to a
-maximum sequence length of 300 and Alpha to 120. The other supported options are `seed`, `latents`,
+**Resolutions.** Each resolution is a separate checkpoint with its own transformer: Sigma at 256,
+512, 1024 and 2K (interpolation scales 0.5, 1, 2 and 4) and Alpha at 512 and 1024. The Sigma 256, 512 and
+2K repositories publish only a transformer, so `python -m imagehub.pretrained` fetches the text
+encoder, tokenizer, VAE and scheduler from the Sigma 1024 repository, as the model cards describe. The
+Alpha resolution and aspect-ratio embeddings exist only in the 1024 model. Resolution binning
+uses the table that matches the transformer (256, 512, 1024 or 2048).
+
+**Settings.** PixArt-LCM defaults to 4 steps, guidance 0.0 and 1024×1024 output; all other models
+default to 20 steps and guidance 4.5, and to a square image of their native size (256, 512, 1024 or
+2048 pixels). Sigma defaults to a maximum sequence length of 300 and Alpha and LCM to 120. The other supported options are `seed`, `latents`,
 `negative_prompt`, `use_resolution_binning` and `max_sequence_length`. Unrecognized settings raise
 an error.
 
@@ -752,7 +1614,7 @@ an error.
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** The 256×256, 512×512 and 2K releases, PixArt-LCM, PixArt-DMD, ControlNet,
+**Out of scope.** PixArt-DMD, ControlNet,
 fp16/bf16 parity and caption cleaning are not supported. Caption cleaning requires `bs4` and `ftfy`;
 parity is against `clean_caption=False`, which diffusers uses when those packages are unavailable.
 
@@ -780,6 +1642,7 @@ HF_TOKEN=... python -m imagehub.pretrained krea2-turbo checkpoints/krea2-turbo
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="krea2-turbo", model="checkpoints/krea2-turbo", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -799,6 +1662,51 @@ LoRA and fp16/bf16 parity are not supported.
 
 **License.** The weights use the Krea 2 Community License; see the license. imagehub does not
 distribute weights.
+
+
+# ERNIE-Image
+
+Catalog: [`ernie-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`ernie-image` · Task: `t2i`
+
+**Architecture.** The language model of Ministral 3 (26 layers, width 3072, grouped-query
+attention with YaRN rotary embeddings and a position-dependent query scale) supplies the
+second-to-last hidden state of the prompt. An 8B single-stream diffusion transformer with 36
+blocks, width 4096 and 32 heads of width 128 processes the image tokens and the text tokens
+together, with shared AdaLN modulation and 3-axis RoPE. The FLUX.2 VAE decodes 32-channel latents
+that are patchified to 128 channels. The flow-match Euler scheduler uses a static shift of 4.0.
+The native image size is 1024×1024.
+
+**Usage.** The repository is not gated. The weights are published in bfloat16 and are upcast on
+loading; the snapshot is about 32 GB, and float32 needs about 46 GB of memory.
+
+```bash
+python -m imagehub.pretrained ernie-image checkpoints/ernie-image
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="ernie-image", model="checkpoints/ernie-image", device="mps") as pipe:
+    result = pipe("a poster that says 'HELLO', flat design", seed=42)
+    result.images[0].save("poster.png")
+```
+
+**Settings.** The model defaults to 50 steps, guidance 4.0 and 1024×1024; `width` and `height`
+must be multiples of 16. Guidance above 1.0 also runs the negative prompt (default empty).
+The other supported options are `num_images`, `seed` and `latents`. Unrecognized settings raise
+an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` and `use_pe=False` ([validation](validation.md)).
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The optional prompt enhancer (the `pe` model that rewrites a short prompt, which
+diffusers enables by default with `use_pe=True`) is not implemented: it samples text with the global
+random generator, and its weights are not part of the snapshot. Images match the reference run with
+`use_pe=False`. Image input, LoRA and fp16/bf16 parity are not supported either.
+
+**License.** Apache-2.0. imagehub does not distribute weights.
 
 
 # LongCat-Image
@@ -821,7 +1729,10 @@ python -m imagehub.pretrained longcat-image checkpoints/longcat-image
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="longcat-image", model="checkpoints/longcat-image", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="longcat-image", model="checkpoints/longcat-image", device="mps"
+) as pipe:
     result = pipe(
         "a cat, oil painting",
         seed=42,
@@ -846,6 +1757,56 @@ are bfloat16; validated parity is in float32 after upcasting.
 **License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
 
 
+# CogView3-Plus
+
+Catalog: [`cogview3-plus`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `cogview3-plus-3b` · Task: `t2i`
+
+**Architecture.** A T5-XXL encoder (24 layers, width 4096) supplies the prompt features, padded to
+224 tokens and used without an attention mask. A 3B diffusion transformer with 30 blocks and 64
+attention heads of width 40 attends jointly over text and image tokens; each block is modulated by
+AdaLN-Zero from a timestep embedding plus SDXL-style original-size, target-size and crop-coordinate
+conditions. Image tokens receive a fixed 2D sine-cosine position embedding. A 16-channel VAE with
+scaling factor 1.0 decodes the latents. The scheduler is a DDIM sampler with shifted SNR
+(`CogVideoXDDIMScheduler`, trailing spacing, zero terminal SNR, v-prediction). The native image
+size is 1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained cogview3-plus-3b checkpoints/cogview3-plus-3b
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="cogview3-plus-3b", model="checkpoints/cogview3-plus-3b", device="mps"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 5.0, `width`/`height` default to 1024
+and `max_sequence_length` defaults to 224. The other supported options are `seed`, `latents`,
+`negative_prompt`, `original_size` and `crops_coords_top_left`. `width` and `height` must be
+multiples of 16 and at most 2048. Guidance is applied when it is greater than 1. Without a
+`negative_prompt` the unconditional features are zeros, as in the reference pipeline; an explicit
+`negative_prompt` (even an empty string) is encoded by the text encoder. Unrecognized settings raise
+an error.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
+runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The `CogVideoXDPMScheduler`, stochastic sampling (`eta` above 0), multiple images
+per prompt, prompt embeddings passed in directly and fp16/bf16 parity are not supported. The
+published transformer and VAE weights are bfloat16; CPU parity is measured in float32 after
+upcasting. In float32 the text encoder needs about 19 GB and the transformer about 11 GB.
+
+**License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
+
+
 # CogView4
 
 Catalog: [`cogview4`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -866,6 +1827,7 @@ python -m imagehub.pretrained cogview4-6b checkpoints/cogview4-6b
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="cogview4-6b", model="checkpoints/cogview4-6b", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -912,7 +1874,10 @@ HF_TOKEN=... python -m imagehub.pretrained ideogram4-fp8 checkpoints/ideogram4-f
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="ideogram4-fp8", model="checkpoints/ideogram4-fp8", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="ideogram4-fp8", model="checkpoints/ideogram4-fp8", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42, preset="V4_QUALITY_48")
     result.images[0].save("cat.png")
 ```
@@ -934,16 +1899,15 @@ parity are not supported. Magic prompt and safety moderation call external paid 
 not distribute weights.
 
 
-# Qwen-Image 2.1
+# Qwen-Image
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `qwen-image-2.1` · Task: `t2i`
+Models: `qwen-image`, `qwen-image-2.1` · Task: `t2i`
 
-**Architecture.** A Qwen3-VL-8B text encoder renders the prompt through the pipeline's prompt
-template and supplies the last decoder-layer output before the final norm. A 7B transformer uses
-block-causal joint attention and reuses a text KV cache across sampling steps. A causal 3D VAE has
-64 latent channels. The flow-match Euler scheduler uses dynamic shifting. The native image size is
-1024×1024.
+**Architecture.** The original release uses Qwen2.5-VL, a 60-layer patch-2 dual-stream transformer
+and a 16-channel causal Qwen VAE. Qwen-Image 2.1 uses Qwen3-VL-8B, a single-stream transformer with
+block-causal joint attention and a text KV cache, and a 64-channel causal VAE. Both releases use
+dynamic-shift flow-match Euler sampling and have a native image size of 1024×1024.
 
 **Usage.**
 
@@ -953,14 +1917,18 @@ python -m imagehub.pretrained qwen-image-2.1 checkpoints/qwen-image-2.1
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="qwen-image-2.1", model="checkpoints/qwen-image-2.1", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="qwen-image-2.1", model="checkpoints/qwen-image-2.1", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42, negative_prompt="blurry", true_cfg=4.0)
     result.images[0].save("cat.png")
 ```
 
-**Settings.** `steps` defaults to 40, `true_cfg` defaults to 1.0 and `width`/`height` default to
-1024 and must be multiples of 32. The other supported options are `negative_prompt`, `num_images`,
-`seed` and `latents`. Unrecognized settings raise an error.
+Use `qwen-image` in both commands for the original release. Its `steps` and `true_cfg` defaults are
+50 and 4.0, and dimensions must be multiples of 16. For Qwen-Image 2.1, `steps` defaults to 40,
+`true_cfg` defaults to 1.0, and dimensions must be multiples of 32. Both accept `negative_prompt`,
+`num_images`, `seed` and `latents`; unrecognized settings raise an error.
 
 **Seed compatibility.** On CPU, the same seed and settings give the same image as the pinned
 diffusers reference with `generator=torch.Generator("cpu").manual_seed(seed)`
@@ -970,8 +1938,13 @@ equality on these devices.
 **Out of scope.** Image editing, condition images, the Qwen3-VL vision encoder and fp16/bf16 parity
 are not supported.
 
-**License.** The weights use the Qwen Research License and are for research use; see the license.
-imagehub does not distribute weights.
+The original release's published bfloat16 weights are upcast for CPU float32 validation. Its
+real-checkpoint run took 30 minutes on an M2 Max (CPU) and every recorded comparison is exactly 0
+([validation](validation.md)).
+
+**License.** Original Qwen-Image weights use Apache-2.0. Qwen-Image 2.1 weights use the Qwen
+Research License and are for research use; see each repository's license. imagehub does not
+distribute weights.
 
 
 # Janus-Pro
@@ -994,7 +1967,10 @@ python -m imagehub.pretrained janus-pro-1b checkpoints/janus-pro-1b
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="janus-pro-1b", model="checkpoints/janus-pro-1b", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="janus-pro-1b", model="checkpoints/janus-pro-1b", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1011,6 +1987,92 @@ equality on these devices.
 
 **License.** The original Janus code is licensed under MIT. The weights are under the DeepSeek
 Model License; see the license. imagehub does not distribute weights.
+
+
+# BAGEL
+
+Catalog: [`bagel`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `bagel-7b-mot` · Task: `t2i`
+
+**Architecture.** BAGEL is a unified 14B-parameter Mixture-of-Transformers with about 7B active
+parameters per token. Text and image-boundary tokens use the Qwen2 understanding expert while
+latent patches use a separate generation expert; both routes share one attention sequence. A
+rectified-flow head predicts 2×2 patches of 16-channel FLUX VAE latents. The published SigLIP
+vision branch is loaded strictly but is not executed for text-only generation.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained bagel-7b-mot checkpoints/bagel-7b-mot
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="bagel-7b-mot", model="checkpoints/bagel-7b-mot"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The supported options are `width` and `height` (1024, multiples of 16 up to 1024),
+`steps` (50), `guidance` (4), `timestep_shift` (3), `cfg_interval` ((0.4, 1.0)),
+`cfg_renorm_min` (0) and `seed`. The release is bfloat16 and needs roughly 30 GB just for model
+weights. Unrecognized settings raise an error before loading.
+
+**Validation.** The reference suite uses the official `InterleaveInferencer` and
+`Bagel.generate_image`. Its end-to-end checks use two flow timesteps at 64×64 for seeds 0 and 42;
+these deliberately shortened runs validate ordering and determinism without attempting the
+release's expensive 50-step 1024×1024 default. Real-checkpoint results are pending the dedicated
+validation run.
+
+**Out of scope.** Image understanding, image editing, interleaved multi-image generation,
+reasoning-token generation, quantized loading and TaylorSeer acceleration are not supported.
+
+**License.** The code and weights are Apache-2.0. imagehub does not distribute weights.
+
+
+# Playground v2
+
+Catalog: [`playground-v2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `playground-v2` · Task: `t2i`
+
+**Architecture.** An SDXL-family model with the same two frozen text encoders, U-Net layout and
+`text_time` micro-conditioning as SDXL. Unlike Playground v2.5, it keeps the standard SDXL
+autoencoder (scaling factor 0.13025) and the Euler ancestral scheduler with the scaled-linear
+noise schedule and `leading` timestep spacing. Its native image size is 1024×1024.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained playground-v2 checkpoints/playground-v2
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="playground-v2", model="checkpoints/playground-v2", device="mps"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** `steps` defaults to 50, `guidance` defaults to 3.0 (the value recommended on the model
+card) and `width`/`height` default to 1024. Other supported settings match SDXL. Unrecognized
+settings raise an error.
+
+**Seed compatibility.** On CPU, the same seed gives the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). The Euler
+ancestral scheduler draws its per-step noise from the same seeded generator. MPS and CUDA runs are
+smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
+refiner model, img2img, other schedulers and fp16 parity are not in this release.
+
+**License.** The weights use the `playground-v2-community` license, which restricts commercial use
+under its terms; see the license. imagehub does not distribute weights.
 
 
 # Playground v2.5
@@ -1032,7 +2094,10 @@ python -m imagehub.pretrained playground-v2.5 checkpoints/playground-v2.5
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="playground-v2.5", model="checkpoints/playground-v2.5", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="playground-v2.5", model="checkpoints/playground-v2.5", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1044,8 +2109,9 @@ with pipeline("t2i", backend="playground-v2.5", model="checkpoints/playground-v2
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** There is no safety checker, and the optional image watermark is off. The SDXL
-refiner model, img2img, other schedulers and fp16 parity are not in this release.
+**Out of scope.** There is no safety checker, and the optional image watermark is off. Image input
+(img2img) is available only for the SDXL refiner, which has its own section; other schedulers and
+fp16 parity are not in this release.
 
 **License.** The weights use the `playground-v2dot5-community` license, which restricts commercial
 use under its terms; see the license. imagehub does not distribute weights.
@@ -1070,6 +2136,7 @@ python -m imagehub.pretrained z-image-turbo checkpoints/z-image-turbo
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="z-image", model="checkpoints/z-image-turbo", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -1093,17 +2160,21 @@ img2img, LoRA and fp16/bf16 parity are not in this release.
 # Sana
 
 Catalog: [`sana`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
-`sana-1600m-1024`, `sana-600m-1024` · Task: `t2i`
+`sana-1600m-1024`, `sana-600m-1024`, `sana-sprint-1.6b-1024`, `sana-1.5-4.8b-1024` · Task: `t2i`
 
 **Architecture.** A Gemma-2 2B text model (26 layers, width 2304, soft-capped attention and
 alternating sliding-window layers) encodes the prompt, and its last hidden state conditions a linear
 diffusion transformer. The transformer applies ReLU linear attention over the image tokens,
 cross-attention to the masked text, GLUMBConv feed-forward blocks and AdaLN-single timestep
 modulation. The 1600M model has 20 blocks of width 2240 and the 600M model has 28 blocks of width
-1152. Images are decoded by the DC-AE autoencoder, which compresses 32× into 32 latent channels
-(scaling factor 0.41407). The scheduler is the order-2 midpoint DPM-Solver++ with flow sigmas and
-`flow_shift` 3.0. Before encoding, a "complex human instruction" is prepended to the prompt, and the
-first token plus the last 299 tokens of the encoder output are kept.
+1152. The 1.5 4.8B model uses 60 blocks of width 2240 with qk normalization. The Sprint 1.6B model
+keeps the 1600M width but replaces the timestep embedding with a combined timestep + guidance
+embedding and uses the single-step consistent-model (SCM) scheduler with trigflow parameterization.
+Images are decoded by the DC-AE autoencoder, which compresses 32× into 32 latent channels
+(scaling factor 0.41407). The standard models use the order-2 midpoint DPM-Solver++ with flow
+sigmas and `flow_shift` 3.0; Sprint uses the 2-step SCM schedule. Before encoding, a "complex human
+instruction" is prepended to the prompt, and the first token plus the last 299 tokens of the encoder
+output are kept.
 
 **Usage.**
 
@@ -1113,35 +2184,40 @@ python -m imagehub.pretrained sana-1600m-1024 checkpoints/sana-1600m-1024
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="sana-1600m-1024", model="checkpoints/sana-1600m-1024", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="sana-1600m-1024", model="checkpoints/sana-1600m-1024", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
 
-**Settings.** Both models default to 20 steps, guidance 4.5 and 1024×1024, with an empty negative
-prompt. The supported options are `seed`, `steps`, `guidance`, `width`, `height`,
-`negative_prompt`, `use_resolution_binning`, `max_sequence_length` (default 300) and
-`complex_human_instruction`. With `use_resolution_binning` on (the default), the requested size is
-snapped to the closest aspect-ratio bin, the image is generated at the bin size, and the decoded
-image is resized and centre-cropped back to the request; turn it off to generate at the exact size,
-which must then be a multiple of 32. `complex_human_instruction` is a list of strings; `None` selects
-the published instruction and an empty list disables it. The instruction is never added to the
-negative prompt. Guidance 1.0 or lower skips the unconditional pass. Unrecognized settings raise an
-error.
+**Settings.** All models default to guidance 4.5 and 1024×1024, with an empty negative prompt.
+`sana-1600m-1024`, `sana-600m-1024` and `sana-1.5-4.8b-1024` default to 20 steps; the standard
+options are `seed`, `steps`, `guidance`, `width`, `height`, `negative_prompt`,
+`use_resolution_binning`, `max_sequence_length` (default 300) and `complex_human_instruction`.
+`sana-sprint-1.6b-1024` defaults to 2 steps, ignores `negative_prompt` (guidance is embedded via the
+transformer) and supports the same remaining options. With `use_resolution_binning` on (the default),
+the requested size is snapped to the closest aspect-ratio bin, the image is generated at the bin
+size, and the decoded image is resized and centre-cropped back to the request; turn it off to
+generate at the exact size, which must then be a multiple of 32. `complex_human_instruction` is a
+list of strings; `None` selects the published instruction and an empty list disables it. The
+instruction is never added to the negative prompt. Guidance 1.0 or lower skips the unconditional pass
+for standard models. Unrecognized settings raise an error.
 
-**Memory.** In float32 the transformer needs about 6.4 GB (2.4 GB for the 600M model), the Gemma-2
-text model about 10.5 GB and DC-AE about 1.3 GB. The Gemma-2 weights are stored in bfloat16 and
-upcast on load.
+**Memory.** In float32 the 1600M transformer needs about 6.4 GB (2.4 GB for the 600M model), the
+Gemma-2 text model about 10.5 GB and DC-AE about 1.3 GB. The 1.5 4.8B and Sprint transformers need
+roughly 9–10 GB. The Gemma-2 weights are stored in bfloat16 and upcast on load.
 
 **Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** The 2K and 4K checkpoints, SANA 1.5, SANA-Sprint, ControlNet, PAG, fp16/bf16
-parity and caption cleaning are not supported. Caption cleaning requires external packages; parity
-is against `clean_caption=False`. Only decoding is exposed for DC-AE.
+**Out of scope.** The 2K and 4K checkpoints, ControlNet, PAG, fp16/bf16 parity and caption cleaning
+are not supported. Caption cleaning requires external packages; parity is against
+`clean_caption=False`. Only decoding is exposed for DC-AE.
 
-**License.** Both repositories declare the Apache-2.0 license. The text encoder is a Gemma-2
+**License.** All repositories declare the Apache-2.0 license. The text encoder is a Gemma-2
 checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
 distribute weights.
 
@@ -1169,6 +2245,7 @@ python -m imagehub.pretrained kolors checkpoints/kolors
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="kolors", model="checkpoints/kolors", device="mps") as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
@@ -1225,7 +2302,10 @@ python -m imagehub.pretrained lumina-image-2.0 checkpoints/lumina-image-2.0
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="lumina-image-2.0", model="checkpoints/lumina-image-2.0", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="lumina-image-2.0", model="checkpoints/lumina-image-2.0", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1254,6 +2334,121 @@ caller-supplied latents or embeddings are not supported.
 checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
 distribute weights.
 
+# Lumina-Next
+
+Catalog: [`lumina-next`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `lumina-next` · Task: `t2i`
+
+This is the 2B Next-DiT from the Lumina-T2X family (`Lumina-Next-SFT`), published for diffusers as
+`LuminaPipeline`. It is a different architecture from Lumina-Image 2.0 (`lumina-image-2.0`).
+
+**Architecture.** A Gemma 2B text model (the first-generation Gemma: 18 layers, width 2048, eight
+query heads and one key-value head of size 256) encodes the prompt, and its second-to-last hidden
+state conditions a 2B Next-DiT transformer. The transformer has 24 blocks of width 2304 (32 attention
+heads, 8 key-value heads). Each block runs self-attention over the image tokens and cross-attention
+to the text; the cross-attention output is multiplied by a per-head `tanh` gate before both are
+summed and projected. Queries and keys are normalized with a LayerNorm over all heads, and both
+attentions use two-dimensional rotary position embeddings. A pooled caption feature is added to the
+timestep embedding, which modulates every block through adaptive RMS norms. The transformer works on
+2×2 patches of the four-channel latents of the SDXL autoencoder (scaling factor 0.13025) and predicts
+a variance in four extra channels that is discarded. The scheduler is flow-match Euler without
+shifting. The model treats t=0 as noise, so the timestep is reversed and the prediction is negated
+before each step. The prompt is lower-cased and stripped, then padded to a multiple of eight tokens
+(at most 256, including the start and end tokens). The negative prompt is used as written and padded
+to the prompt's length.
+
+Two options let the model generate at sizes other than the training size of 1024×1024. With
+proportional attention, the self-attention logits are rescaled by the square root of the base-4096
+logarithm of the token count. With time-aware scaled RoPE the rotary positions are stretched
+linearly by the factor `sqrt(width * height / 1024²)` while the reversed timestep is below
+`scaling_watershed`, and the rotary base is multiplied by that factor afterwards. At the training
+size the factor is 1 and both options change nothing. Guidance is applied to the first three latent
+channels only, as the reference pipeline does.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained lumina-next checkpoints/lumina-next
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="lumina-next", model="checkpoints/lumina-next", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The model defaults to 30 steps, guidance 4.0 and 1024×1024, with an empty negative
+prompt. The supported options are `seed`, `steps`, `guidance`, `width`, `height`,
+`negative_prompt`, `scaling_watershed` (default 1.0) and `proportional_attn` (default true).
+`width` and `height` must be multiples of 16 and at most 6144. Guidance is applied as
+`uncond + guidance * (cond - uncond)`; guidance 1.0 or lower skips the unconditional pass
+entirely. The default `scaling_watershed` of 1.0 stretches the rotary positions at every step;
+a lower value switches to the base-scaling form for the later steps. Unrecognized settings raise
+an error.
+
+**Memory.** In float32 the transformer needs about 7.0 GB, the Gemma 2B text model about 10 GB and
+the autoencoder about 0.3 GB. The autoencoder is the SDXL one, which overflows in float16; use
+float32 or bfloat16.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)); the pending
+real-checkpoint run will record the measurements. MPS and CUDA runs are smoke tests only; there is no
+claim of exact equality on these devices.
+
+**Out of scope.** `clean_caption` (the reference needs `beautifulsoup4` and `ftfy`, and falls back
+to lower-casing when they are missing, which is what this backend does), `max_sequence_length` (the
+reference pipeline ignores it and always uses 256), LoRA, fp16/bf16 parity, batches of several
+prompts or images per call, and caller-supplied latents or embeddings.
+
+**License.** The repository declares the Apache-2.0 license. The text encoder is a Gemma
+checkpoint; check Google's Gemma terms of use before redistributing it. imagehub does not
+distribute weights.
+
+# Lumina-DiMOO
+
+Catalog: [`lumina-dimoo`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `lumina-dimoo` · Task: `t2i`
+
+**Architecture.** Lumina-DiMOO is a fully discrete diffusion model. Its 32-layer, width-4096
+LLaDA transformer uses bidirectional attention, 32 heads, rotary position embeddings, RMS norms
+and gated SiLU feed-forwards. Text and 8,192 image tokens share one 134,548-entry vocabulary.
+Generation appends a 16x-downsampled rectangular grid of mask tokens to the formatted prompt. At
+each step the transformer predicts every still-masked image token, Gumbel-max samples it, and a
+cosine schedule remasks the least-confident samples. The final ids are decoded by the published
+aMUSEd VQ model.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained lumina-dimoo checkpoints/lumina-dimoo
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="lumina-dimoo", model="checkpoints/lumina-dimoo") as pipe:
+    result = pipe("a red cube on a white table", seed=42)
+    result.images[0].save("cube.png")
+```
+
+**Settings.** Defaults follow the published command-line sampler: 64 steps, guidance 4.0,
+temperature 1.0 and 1024x1024 output. `width` and `height` may be non-square positive multiples of
+16. Supported options are `seed`, `steps`, `guidance`, `temperature`, `width` and `height`.
+Temperature 0 uses greedy token selection. Guidance 0 skips the unconditional forward pass.
+Unknown options are rejected before loading.
+
+**Memory and validation.** The four language-model shards contain BF16 weights (about 15 GB); the
+VQ decoder is float32 (about 0.6 GB). CPU float32 is the parity target. Header checks cover all 291
+LLaDA and 277 VQ tensors. Random-weight LLaDA logits and tiny masked-token trajectories are exact;
+the real-checkpoint tests use 32x32 images and two steps to keep their CPU run short.
+
+**Out of scope.** Image editing, inpainting, understanding, batching, the experimental max-logit
+cache, training, and reduced-precision parity are not supported.
+
+**License.** The code and weights are Apache-2.0. imagehub does not distribute weights.
+
 # aMUSEd
 
 Catalog: [`amused`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -1279,6 +2474,7 @@ python -m imagehub.pretrained amused-512 checkpoints/amused-512
 
 ```python
 from imagehub import pipeline
+
 with pipeline("t2i", backend="amused-512", model="checkpoints/amused-512", device="mps") as pipe:
     result = pipe("a photo of an astronaut riding a horse on mars", seed=42)
     result.images[0].save("astronaut.png")
@@ -1310,6 +2506,48 @@ inpainting and variation, and caller-supplied tokens or embeddings are not suppo
 **License.** Both repositories declare the OpenRAIL++ license; check its use restrictions before
 redistributing generated images or weights. imagehub does not distribute weights.
 
+# Meissonic
+
+Catalog: [`meissonic`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `meissonic` · Task: `t2i`
+
+**Architecture.** Meissonic is a masked image-token generator. Its CLIP text tower produces a
+pooled condition and 77 token states. A 1B-parameter transformer embeds a 64×64 grid of VQ tokens,
+compresses it to 32×32, applies 14 joint text/image blocks and 28 single-stream blocks with rotary
+position embeddings, restores the grid, and predicts one of 8192 codebook entries per position.
+The scheduler repeatedly samples tokens and remasks low-confidence positions on a cosine schedule.
+A VQ-VAE with 16× spatial compression decodes the completed grid.
+
+```bash
+python -m imagehub.pretrained meissonic checkpoints/meissonic
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="meissonic", model="checkpoints/meissonic") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** Defaults are 1024×1024, 48 steps, guidance 9, aesthetic score 6, crop `(0, 0)`,
+and temperature `(2, 0)`. Options are `seed`, `steps`, `guidance`, `width`, `height`,
+`negative_prompt`, `aesthetic_score`, `crop_coord`, and `temperature`. Dimensions must be multiples
+of 32 for the published transformer. A temperature pair is linearly interpolated across steps;
+one number falls to 0.01. Guidance at or below 1 disables the negative branch.
+
+**Memory.** The full-precision transformer is 4.0 GB, text encoder 1.4 GB, and VQ-VAE 0.6 GB.
+The 1024px transformer operates on 1,024 compressed image tokens plus 77 text tokens per branch.
+
+**Validation and limits.** CPU float32 tests compare the tokenizer, text encoder, transformer,
+scheduler, VQ decoder, completed token grid, and uint8 image with the pinned official `Pipeline`.
+The real end-to-end validation uses two steps and a narrow valid image to shorten its CPU run; it
+is a parity test, not a quality demonstration. Batches, caller-provided embeddings or tokens,
+callbacks, LoRA, image-to-image, inpainting, and fp16/bf16 parity are not supported.
+
+**License.** The weights and implementation declare Apache-2.0. imagehub does not distribute
+weights. See [validation](validation.md).
+
 # AuraFlow
 
 Catalog: [`auraflow`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
@@ -1332,7 +2570,10 @@ python -m imagehub.pretrained auraflow-v0.3 checkpoints/auraflow-v0.3
 
 ```python
 from imagehub import pipeline
-with pipeline("t2i", backend="auraflow-v0.3", model="checkpoints/auraflow-v0.3", device="mps") as pipe:
+
+with pipeline(
+    "t2i", backend="auraflow-v0.3", model="checkpoints/auraflow-v0.3", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1354,3 +2595,471 @@ runs are smoke tests only; there is no claim of exact equality on these devices.
 prompt and fp16/bf16 parity are not supported.
 
 **License.** The repository declares the Apache-2.0 license. imagehub does not distribute weights.
+
+# LlamaGen
+
+Catalog: [`llamagen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `llamagen-t2i-xl-256`, `llamagen-t2i-xl-512` · Task: `t2i`
+
+**Architecture.** LlamaGen is an autoregressive image model: the image is a grid of discrete tokens
+and a decoder-only transformer predicts them one at a time, like a language model. A VQ-16
+tokenizer (a codebook of 16384 entries of dimension 8, 16× downsampling) maps between tokens and
+pixels, so the 256 model writes 16×16 = 256 tokens and the 512 model 32×32 = 1024 tokens. The
+transformer (GPT-XL: 36 layers, width 1280, 20 heads, RMSNorm, SwiGLU, two-dimensional rotary
+position embeddings over the token grid) is conditioned on the prompt by a prefix: the prompt is
+encoded by the Flan-T5-XL encoder into 120 vectors of width 2048, a small MLP projects them to the
+model width, and they are placed in front of the image tokens. Each new token is drawn from the
+softmax of the logits after temperature, top-k and top-p filtering. Classifier-free guidance runs a
+second pass in which the caption is replaced by a learned "no caption" embedding and combines the
+logits as `uncond + cfg_scale * (cond - uncond)`.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained llamagen-t2i-xl-256 checkpoints/llamagen-t2i-xl-256
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="llamagen-t2i-xl-256", model="checkpoints/llamagen-t2i-xl-256", device="mps"
+) as pipe:
+    result = pipe("a blue Porsche 356 parked in front of a yellow brick wall", seed=42)
+    result.images[0].save("porsche.png")
+```
+
+The snapshot holds `vq_ds16_t2i.pt` and the GPT checkpoint (`t2i_XL_stage1_256.pt` or
+`t2i_XL_stage2_512.pt`) at its root, and the Flan-T5-XL files (config, tokenizer and the two
+safetensors shards) in `text_encoder/`. The two image sizes are separate checkpoints; the size is
+fixed by the checkpoint.
+
+**Settings.** The defaults are those of the official sampling script: `cfg_scale` 7.5, `temperature`
+1.0, `top_k` 1000, `top_p` 1.0 and `cfg_interval` -1. The supported options are `seed`,
+`cfg_scale`, `temperature`, `top_k`, `top_p`, `cfg_interval`, `width` and `height`. `width` and
+`height` can only repeat the size of the checkpoint (256 or 512). Guidance is used only when
+`cfg_scale` is above 1.0. With `cfg_interval` of `n` (0 or larger), guidance is dropped for every
+token after the first `n + 2` generated tokens; -1 keeps it for all. `top_k` of 0 and `top_p` of
+1.0 disable the respective filter. Unrecognized settings raise an error.
+
+The seed starts a CPU generator that supplies every random draw, in the same order as the
+reference after `torch.manual_seed(seed)` immediately before sampling, so the same seed gives the
+same tokens on every device up to numerical differences. Images have a batch size of one.
+
+**Prompt handling.** The prompt is lower-cased and stripped and encoded to 120 tokens (longer
+prompts are truncated), which is what the reference's text embedder does when its text
+preprocessing is switched off. The reference enables that preprocessing by default: it also
+removes URLs, HTML, some punctuation, file names and similar noise with the `ftfy` and
+BeautifulSoup packages. imagehub does not implement this caption cleaning, so a prompt that
+contains such text can give different tokens from the default reference script; plain prompts give
+identical tokens.
+
+**Memory.** In float32 the GPT needs about 3.1 GB, the Flan-T5-XL encoder about 4.9 GB (the
+decoder in the downloaded shards is never loaded) and the VQ decoder about 0.3 GB. The download
+holds the full Flan-T5-XL checkpoint, about 11 GB.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same token ids and the same
+image as the official `sample_t2i.py` driver run on CPU in float32 ([validation](validation.md)).
+MPS and CUDA runs are smoke tests only; there is no claim of exact equality on these devices.
+
+**Out of scope.** The class-conditional (ImageNet) checkpoints, the caption cleaning described
+above, `torch.compile`, fp16/bf16 parity, several prompts or images per call, and caller-supplied
+tokens or caption embeddings are not supported.
+
+**License.** The repository declares the MIT license and the text encoder is Apache-2.0.
+imagehub does not distribute weights.
+
+# Infinity
+
+Catalog: [`infinity`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `infinity-2b` · Task: `t2i`
+
+**Architecture.** Infinity is a bitwise next-scale autoregressive model. Flan-T5-XL encodes the
+prompt, and a 32-layer, width-2048 transformer cross-attends to the compact text features while
+predicting a pyramid of latent grids. Each grid position contains 32 independently sampled bits;
+binary spherical quantization converts them to a unit-length latent vector. Residual grids are
+upsampled and accumulated, and the d32 regularized image tokenizer decodes the final latent grid
+with 16x spatial upsampling.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained infinity-2b checkpoints/infinity-2b
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="infinity-2b", model="checkpoints/infinity-2b", device="cpu"
+) as pipe:
+    result = pipe("an intricate mechanical hummingbird", seed=42, width=256, height=256)
+    result.images[0].save("hummingbird.png")
+```
+
+The snapshot holds `infinity_2b_reg.pth` and `infinity_vae_d32reg.pth` at its root and the pinned
+Flan-T5-XL config, tokenizer and two safetensors shards in `text_encoder/`.
+
+**Settings.** Defaults follow the published reproduction script: guidance 3.0, temperature 0.5,
+top-k 900, top-p 0.97 and 1024x1024. `width` and `height` must be equal and one of 256, 512 or
+1024; these select the official 7-, 10- or 13-scale schedule. The other supported option is
+`seed`. Guidance 1.0 disables the unconditional batch. Unrecognized settings raise an error
+before weights are loaded.
+
+**Validation and limits.** CPU float32 is the parity target. Real-checkpoint end-to-end tests use
+the smallest official seven-scale schedule (256x256) for both seed 0 and seed 42; the public
+1024x1024 default is substantially slower. Batch generation, negative prompts, prompt rewriting,
+the 125M and 8B releases, FlexAttention, fused kernels and reduced-precision parity are outside
+the supported surface.
+
+**Memory.** The checkpoint downloads are about 9.7 GB for the transformer and VAE plus 11 GB for
+the full Flan-T5-XL sequence-to-sequence archive. Only its encoder tensors are loaded. Component
+and end-to-end reference comparisons isolate the original implementation in a subprocess.
+
+**License.** The code repository and model card declare MIT. imagehub does not distribute weights.
+
+# HART
+
+Catalog: [`hart`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `hart` · Task: `t2i`
+
+**Architecture.** HART generates an image as a pyramid of latent-token grids. A 24-layer,
+width-1536 transformer predicts discrete codebook entries at resolutions from 1×1 through 48×48;
+the last 64×64 stage is generated in one MaskGIT pass. A six-block diffusion MLP predicts a
+continuous 32-channel residual for each last-stage token in eight improved-DDPM steps. Adding the
+discrete and continuous latents gives the 64×64 feature map decoded by the hybrid tokenizer to
+1024×1024 pixels. Qwen2-VL-1.5B-Instruct supplies 300 prompt vectors, with the official prompt
+enhancement instruction prepended while encoding.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained hart checkpoints/hart
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="hart", model="checkpoints/hart", device="cpu") as pipe:
+    result = pipe("a blue Porsche 356 parked in front of a yellow brick wall", seed=42)
+    result.images[0].save("porsche.png")
+```
+
+**Settings.** The defaults follow the published sampler: guidance 4.5, seed 1, top-p disabled,
+the official system prompt enabled, and fixed 1024×1024 output. Supported options are `seed`,
+`cfg_scale`, `top_p`, `width`, `height`, `use_system_prompt`, and `more_smooth`. The published
+Gumbel smoothing mode is currently rejected (`more_smooth=True`) instead of silently changing the
+sampler. Unknown options are errors before weights are loaded.
+
+**Checkpoint layout.** The snapshot stores the EMA generator in `llm/ema_model.bin`, the hybrid
+autoencoder in `tokenizer/pytorch_model.bin`, and the Qwen2 weights and tokenizer files in
+`text_encoder/`. Only the autoencoder decoder, codebook, and multi-scale residual convolutions are
+loaded; training-only encoder and discriminator tensors remain verified download files but are not
+allocated for inference.
+
+**Memory and devices.** The published HART and hybrid-tokenizer tensors are float32; Qwen2 is
+bfloat16 and is upcast for CPU float32 validation. The complete native pipeline needs roughly 10 GB
+in CPU float32. CPU is the parity target; MPS and CUDA are unvalidated smoke-test devices.
+
+**Validation.** Published layouts cover 317 HART generator tensors, 190 inference autoencoder
+tensors, and 338 Qwen2 text tensors. Random-weight Qwen2, transformer-block, multi-scale quantizer,
+residual-diffusion, and decoder comparisons are exact. Real-checkpoint parity is covered: all 8
+real-checkpoint tests passed with exactly 0 difference in every recorded comparison, and the run
+took 3 minutes on an M2 Max (CPU) ([validation](validation.md)).
+
+**Out of scope.** Training, the safety checker, class-conditional checkpoints, CUDA fused kernels,
+several prompts per call, non-EMA generator weights, and reduced-precision parity are not supported.
+
+**License.** The HART code and weights are MIT; the Qwen2 text encoder is Apache-2.0. imagehub does
+not distribute weights.
+
+
+# HiDream-I1
+
+Catalog: [`hidream-i1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:
+`hidream-i1-dev`, `hidream-i1-fast`, `hidream-i1-full` · Task: `t2i`
+
+**Architecture.** Four text encoders condition a 17B-parameter sparse flow-matching transformer.
+Two CLIP text encoders with projection (CLIP-L and CLIP-G, 128 tokens) give a pooled vector of width
+2048 that is added to the timestep embedding. A T5-XXL encoder (128 tokens, width 4096) and a
+Llama-3.1-8B-Instruct decoder supply the token-level context: the Llama encoder contributes the
+output of every one of its 32 layers (the last one after the final norm), and the transformer
+projects the layers named in `llama_layers` separately, one per block. The transformer has 16
+dual-stream blocks followed by 32 single-stream blocks of width 2560 (20 heads of 128), 2×2 patches
+and rotary embeddings; every feed-forward layer is a mixture of four routed SwiGLU experts (two
+activated per token) plus a shared expert. Images are decoded by the 16-channel, 8× FLUX VAE
+(scaling factor 0.3611, shift factor 0.1159). The scheduler is the flow-match LCM scheduler with a
+static shift of 3.0: each step predicts the clean sample and re-noises it to the next sigma with
+fresh Gaussian noise.
+
+**Usage.**
+
+```bash
+export HF_TOKEN=...   # an account with access to meta-llama/Llama-3.1-8B-Instruct
+python -m imagehub.pretrained hidream-i1-fast checkpoints/hidream-i1-fast
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="hidream-i1-fast", model="checkpoints/hidream-i1-fast", device="mps"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Gated Llama encoder.** The HiDream repository does not contain the Llama encoder. The catalog entry
+therefore also downloads `meta-llama/Llama-3.1-8B-Instruct` (revision `0e9e39f`) into the snapshot's
+`text_encoder_4/` folder, together with the tokenizer files the pipeline needs. That repository is
+gated: accept the Llama 3.1 Community License on Hugging Face and pass a token that has access.
+The pipeline reads the tokenizer and the model from this folder; no chat template is applied, the
+prompt is tokenized as plain text with a leading begin-of-text token and padded with the end-of-turn
+token.
+
+**Settings.** Fast defaults to 16 steps and guidance 0.0; Dev to 30 and 0.0; Full to 50 and 5.0 (classifier-free guidance), all at 1024×1024. The supported options
+are `seed`, `latents`, `steps`, `guidance`, `width`, `height`, `num_images`, `negative_prompt` and
+`max_sequence_length` (default 128 for every encoder, at most 512). All four encoders see the same
+prompt. Guidance above 1.0 runs the unconditional pass with the negative prompt (default empty) and
+combines the two predictions as usual; at 1.0 or below one pass is made. Like the diffusers pipeline,
+the requested width and height are only used for the aspect ratio: the image is rescaled to about one
+megapixel and rounded down to a multiple of 16, so `width=1024, height=512` gives a 1440×720 image.
+`metadata` reports the size actually used. Unrecognized settings raise an error.
+
+**Random numbers.** The scheduler adds fresh noise at every step. The diffusers pipeline draws the
+initial latents from the generator it is given but calls the scheduler without one, so the step noise
+comes from the global random state. imagehub never touches global random state. With a `seed` it uses
+two generators seeded with that value, one for the initial latents and one for the step noise; the
+result equals the pipeline's when its caller runs `torch.manual_seed(seed)` immediately before the
+call and passes `generator=torch.Generator("cpu").manual_seed(seed)`. Nothing else in the pipeline
+consumes global random numbers between those points. When `latents` are passed, `seed` only seeds the
+step noise; without a seed that noise is random.
+
+**Memory.** In float32 the transformer needs about 68 GB, the Llama encoder about 32 GB, the T5
+encoder about 19 GB, the two CLIP encoders about 3.5 GB and the VAE about 0.3 GB. The backend loads
+the text encoders one at a time, encodes the prompt, frees each of them, then loads the transformer,
+so the peak is the transformer alone; the next call loads the encoders again from disk. bfloat16
+halves every figure.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with the
+generator and global seed described above ([validation](validation.md)). MPS and CUDA runs are smoke
+tests only; there is no claim of exact equality on these devices.
+
+**Schedulers.** Fast and Dev use flow-match LCM (Dev uses its published shift of 6.0); Full uses its published UniPC flow-prediction scheduler. Separate prompts for the individual encoders,
+precomputed prompt embeddings, LoRA and fp16/bf16 parity are not supported.
+
+**License.** The HiDream repository declares the MIT license. The text encoders carry their own
+terms: Llama 3.1 Community License and Apache-2.0 for T5; the VAE comes from FLUX.1 [schnell].
+imagehub does not distribute weights.
+
+# HiDream-O1
+
+Catalog: [`hidream-o1-image`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `hidream-o1-image` · Task: `t2i`
+
+**Architecture.** HiDream-O1 uses a Qwen3-VL-8B decoder with 36 layers, width 4096 and grouped
+query attention. It appends noisy RGB image patches directly to the chat-formatted text sequence.
+Each patch contains one 32×32 RGB region; a two-stage linear projection maps it to the decoder
+width, and a linear output head predicts the clean pixels. Text tokens retain causal attention,
+while the timestep token and generated image tokens attend to the complete sequence. There is no
+VAE: the final patch sequence is rearranged directly into an RGB image.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained hidream-o1-image checkpoints/hidream-o1-image
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline(
+    "t2i", backend="hidream-o1-image", model="checkpoints/hidream-o1-image"
+) as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+```
+
+**Settings.** The checkpoint defaults to 50 Flow-UniPC steps, classifier-free guidance 5.0,
+schedule shift 3.0 and 2560×1440 output. `width` and `height` must be multiples of 32. The supported
+options are `seed`, caller-supplied `noise`, `steps`, `timesteps`, `guidance`, `shift`, `width`,
+`height` and `num_images`. Noise is drawn on CPU with `seed + 1` and multiplied by 8.0, matching the
+published sampler. Unknown options are rejected before checkpoint loading.
+
+**Prompt and positions.** A single user message is rendered with the checkpoint's Qwen chat
+template and followed by `<|boi_token|><|tms_token|>`. Generated patches use the checkpoint's
+fixed-point multimodal rotary positions beginning at 4096. Guidance above 1.0 adds an unconditional
+branch whose prompt is one space.
+
+**Image input.** Not supported yet. Although the published checkpoint contains the Qwen3-VL vision
+encoder and the official implementation can condition on reference images, this backend currently
+implements text-to-image only. The catalog therefore declares no image input.
+
+**Memory and validation.** The eight float32 shards total about 32.8 GiB. The published 759-tensor
+layout, new pixel modules, tokenizer and positions, Flow-UniPC trajectory, guided and unguided
+sampling, two seeds and non-square output have offline exact-parity tests. All 5 real-checkpoint
+tests passed with every recorded comparison exactly 0; the run took 1 minute on an M2 Max (CPU)
+([validation](validation.md)).
+
+**Out of scope.** Reference-image, subject, layout and skeleton conditioning, the prompt-refiner
+agent, distributed inference, flash attention, Dev checkpoints and reduced-precision parity are
+not supported.
+
+**License.** The author repository declares the model weights and official code MIT. imagehub does
+not distribute weights.
+
+# OmniGen
+
+Catalog: [`omnigen`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `omnigen-v1` · Task: `t2i`
+
+**Architecture.** One 3.8B-parameter transformer initialized from Phi-3 mini (32 layers, width 3072,
+32 heads, a fused gate-and-up MLP, RMSNorm, "su"-scaled rotary embeddings) reads text tokens,
+VAE-encoded input-image patches and the noisy-image patches as one sequence. Text and input-image
+tokens attend causally; the image tokens of one image attend to each other, and the noisy-image tokens
+attend to everything. The latents come from the 4-channel SDXL-style autoencoder (scaling factor
+0.13025) in 2×2 patches, with separate patch projections for input and output images and a stored
+sin-cos position table. The scheduler is flow-match Euler with the sigmas inverted, so the model sees
+a time that grows from 0 to 1. The prompt is wrapped in a chat-style instruction (`<|user|>`, "Generate
+an image according to the following instructions", `<|assistant|>`, `<|diffusion|>`) and tokenized
+with the Phi-3 Llama-style BPE tokenizer.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained omnigen-v1 checkpoints/omnigen-v1
+```
+
+```python
+from PIL import Image
+from imagehub import pipeline
+
+with pipeline("t2i", backend="omnigen-v1", model="checkpoints/omnigen-v1", device="mps") as pipe:
+    result = pipe("a cat, oil painting", seed=42)
+    result.images[0].save("cat.png")
+
+    # Editing: the prompt refers to the input image with the placeholder.
+    edited = pipe(
+        "Turn <img><|image_1|></img> into a watercolor painting.",
+        image=Image.open("photo.png"),
+        seed=42,
+    )
+    edited.images[0].save("edited.png")
+```
+
+**Image input (optional).** One input image is accepted through `image` (a `PIL.Image.Image` or an
+`imagehub.Image`; other PIL modes are converted to RGB). The prompt must reference it with the exact
+placeholder `<img><|image_1|></img>`, which can appear anywhere in the text and more than once. Without
+an image the prompt must not contain a placeholder. Several input images (`<|image_2|>`, ...) are not
+supported. The image is shrunk (box filter while both sides are at least twice
+`max_input_image_size`, then bicubic to at most `max_input_image_size` on the long side, default 1024),
+cropped evenly to multiples of 16 and encoded by the autoencoder; each placeholder becomes one image
+token per 16×16 pixels. With an image, three predictions are made per step (prompt, negative prompt,
+image-only prompt) and combined as `uncond + image_guidance * (img_cond - uncond) + guidance * (cond -
+img_cond)`. `use_input_image_size_as_output=True` generates at the preprocessed input size, which is
+the setting for editing.
+
+**Settings.** The model defaults to 50 steps, guidance 2.5, image guidance 1.6 and 1024×1024. The
+supported options are `seed`, `steps`, `guidance`, `image_guidance` (used only with an image), `width`,
+`height` (multiples of 16, at most 3072), `image`, `max_input_image_size` and
+`use_input_image_size_as_output`. The negative prompt is fixed by the model (a list of quality terms).
+Guidance is always applied, including at 1.0. Unrecognized settings raise an error.
+
+**Seed compatibility.** The initial noise is `torch.randn` from `torch.Generator("cpu").manual_seed(seed)`,
+as with the other models. The reference pipeline samples the input-image posterior from the global
+torch generator, so a reference run that uses an image must call `torch.manual_seed(seed)` before the
+pipeline; imagehub draws that noise from a second generator seeded with the same value, which gives
+the same stream. On CPU the same seed and settings then give the same image as diffusers 0.40.0
+([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is no claim of exact
+equality on these devices.
+
+**Memory.** The repository stores the transformer in bfloat16 (7.8 GB); in float32 it needs about
+15.5 GB, and the autoencoder about 0.3 GB. At 1024×1024 the sequence has more than 4,200 tokens per
+branch, so a CPU step takes minutes.
+
+**Out of scope.** Several input images, `num_images_per_prompt` above 1, batches of prompts, a custom
+negative prompt, caller-supplied latents, callbacks, LoRA and fp16/bf16 parity are not supported.
+
+**License.** The repository declares the MIT license. imagehub does not distribute weights.
+
+# Emu3-Gen
+
+Catalog: [`emu3`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `emu3-gen` · Task: `t2i`
+
+**Checkpoint.** `emu3-gen` pins the author repository `BAAI/Emu3-Gen` to revision
+`40b3bb89a9cee99ab0b9deb35dead2e50d6a0d72` and the required
+`BAAI/Emu3-VisionTokenizer` to `c81f916ad371289e205310a7539255e8a9396488`. Both are
+Apache-2.0. The architecture reference is the official Emu3 repository at
+`dbbf9858194d70b8c58293e219ecffe22df0f9c7`.
+
+**Architecture.** Emu3-Gen is an autoregressive multimodal decoder rather than a diffusion model.
+Its 32 Llama-style blocks use a 4096-wide hidden state, grouped-query attention with 32 query and
+eight key/value heads, SwiGLU feed-forward layers and rotary positions. Text and image control
+markers share a 184,622-token vocabulary with 32,768 visual tokens. A separate spatiotemporal VQ
+model maps the generated grid through a four-channel codebook and conditioned convolutional decoder.
+
+**Generation.** The backend formats the published BOS, image-start, grid-size and image markers,
+then samples visual tokens left to right. Row endings and image/end markers are forced at their
+published positions. Classifier-free guidance uses the official positive suffix and negative prompt.
+The VQ decoder expands each token by eight pixels and converts its `[-1, 1]` output to uint8.
+
+**Settings.** Defaults are 720×720, guidance 3.0, temperature 1.0 and top-k 2048. `width` and
+`height` must be positive multiples of eight whose product does not exceed 518,400. The backend also
+accepts `seed`, `negative_prompt` and `positive_suffix`. Unknown settings are rejected before loading.
+
+**Validation and limits.** Published layouts cover all 291 generator and 495 vision-tokenizer
+tensors. Exact random-weight comparisons cover the language model and vision decoder. Real tests
+compare components and separate seed-0 and seed-42 images through the public pipeline at 24×16;
+the deliberately small grid retains prompt formatting, guidance, constrained sampling and VQ decode
+while bounding the roughly 8.5B-parameter CPU run. Generation is limited to one prompt and one image;
+understanding, video, training, batches and fp16/bfloat16 parity are out of scope.
+
+**Memory.** The published generator is float32 and occupies about 34 GB; its seven shards plus the
+vision tokenizer total about 35.7 GB on disk. CPU validation computes the reference in a subprocess
+and releases it before native inference.
+
+**License.** The checkpoint, vision tokenizer and official code are Apache-2.0. imagehub does not
+distribute weights.
+
+# NextStep-1
+
+Catalog: [`nextstep-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Model: `nextstep-1-large` · Task: `t2i`
+
+## NextStep-1 Large
+
+**Checkpoint.** `nextstep-1-large` pins the author repository
+`stepfun-ai/NextStep-1-Large` to revision
+`97dd0b9e097f60e39e3ce3bbac1a3343a09547cd`. The architecture reference is the official
+NextStep-1 repository at `a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0`.
+
+**Architecture.** NextStep-1 combines a 48-layer, width-5120 Qwen2.5-derived causal decoder with
+continuous image tokens. A learned input projector embeds each packed 2×2 latent patch. The final
+hidden state conditions a 12-layer adaptive-normalization MLP that integrates one new latent patch
+with flow matching, after which the patch is fed back into the decoder. A 16-channel KL
+autoencoder decodes the completed latent grid.
+
+**Generation.** Prompts use the published image-area suffix and beginning-of-image token. Image
+patches are generated left to right with a persistent key/value cache. Guidance uses positive and
+negative prompt branches; each patch is sampled by the published ODE or SDE flow update, unpacked,
+and decoded to uint8 pixels.
+
+**Settings.** Defaults are 256×256, 20 flow steps, guidance 1, timestep shift 1 and SDE sampling.
+`width` and `height` must be positive multiples of 16. The backend also accepts `seed`,
+`negative_prompt`, `steps`, `guidance`, `timestep_shift` and `sde`. Unknown settings are rejected
+before loading.
+
+**Validation and limits.** Offline tests check every published transformer tensor name and shape,
+exact tiny random-weight decoder and flow-head parity, option validation and deterministic tiny
+generation. Separate opt-in end-to-end cases compare seed 0 and seed 42 through the public pipeline
+at 64×64 with one flow step. Those deliberately short cases retain prompt formatting, causal cache,
+flow integration, latent unpacking and VAE decoding without running the very large checkpoint in
+the fast suite. Real-checkpoint tests are provided but are not run as part of this implementation
+step. Batches, image editing, training and non-float32 parity are out of scope.
+
+**Memory.** The twelve bfloat16 transformer shards total 58.3 GB (about 54.3 GiB), plus a 335 MB
+VAE checkpoint. Loading the weights upcast to CPU float32 requires substantially more memory; the
+reference end-to-end case therefore runs in a separate process and exits before native loading.
+
+**License.** The checkpoint and official code are Apache-2.0. imagehub does not distribute weights.

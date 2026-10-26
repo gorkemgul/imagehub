@@ -18,6 +18,15 @@ from imagehub.models.layers import (
     timestep_embedding,
 )
 
+
+def _activation(name: str) -> nn.Module:
+    if name in ("silu", "swish"):
+        return nn.SiLU()
+    if name == "gelu":
+        return nn.GELU()
+    raise ValueError(f"Unsupported U-Net activation {name!r}")
+
+
 UNET_DEFAULTS: dict[str, Any] = {
     "in_channels": 4,
     "out_channels": 4,
@@ -109,17 +118,18 @@ class FeedForward(nn.Module):
 
 
 class TransformerBlock(nn.Module):
-    def __init__(self, dim: int, context_dim: int, heads: int) -> None:
+    def __init__(self, dim: int, context_dim: int, heads: int, only_cross_attention: bool) -> None:
         super().__init__()
+        self.only_cross_attention = only_cross_attention
         self.norm1 = nn.LayerNorm(dim)
-        self.attn1 = CrossAttention(dim, dim, heads)
+        self.attn1 = CrossAttention(dim, context_dim if only_cross_attention else dim, heads)
         self.norm2 = nn.LayerNorm(dim)
         self.attn2 = CrossAttention(dim, context_dim, heads)
         self.norm3 = nn.LayerNorm(dim)
         self.ff = FeedForward(dim)
 
     def forward(self, x: Tensor, context: Tensor) -> Tensor:
-        x = self.attn1(self.norm1(x)) + x
+        x = self.attn1(self.norm1(x), context if self.only_cross_attention else None) + x
         x = self.attn2(self.norm2(x), context) + x
         return self.ff(self.norm3(x)) + x
 
@@ -135,6 +145,7 @@ class SpatialTransformer(nn.Module):
         groups: int,
         layers: int,
         linear_projection: bool,
+        only_cross_attention: bool,
     ) -> None:
         super().__init__()
         self.linear_projection = linear_projection
@@ -142,7 +153,8 @@ class SpatialTransformer(nn.Module):
         projection = nn.Linear if linear_projection else lambda x, y: nn.Conv2d(x, y, 1)
         self.proj_in = projection(channels, channels)
         self.transformer_blocks = nn.ModuleList(
-            TransformerBlock(channels, context_dim, heads) for _ in range(layers)
+            TransformerBlock(channels, context_dim, heads, only_cross_attention)
+            for _ in range(layers)
         )
         self.proj_out = projection(channels, channels)
 
@@ -175,6 +187,7 @@ def _transformers(
     context_dim: int,
     heads: int,
     layers: int | Sequence[int],
+    only_cross_attention: bool = False,
 ) -> nn.ModuleList:
     depths = [layers] * count if isinstance(layers, int) else [int(v) for v in layers]
     if len(depths) != count:
@@ -189,6 +202,7 @@ def _transformers(
             cfg["norm_num_groups"],
             depth,
             cfg["use_linear_projection"],
+            only_cross_attention,
         )
         for depth in depths
     )
@@ -205,10 +219,16 @@ class ScaleShiftResnetBlock(nn.Module):
         groups: int,
         up: bool = False,
         down: bool = False,
+        act_fn: str = "silu",
+        skip_time_act: bool = False,
+        output_scale_factor: float = 1.0,
     ) -> None:
         super().__init__()
         self.up = up
         self.down = down
+        self.act = _activation(act_fn)
+        self.skip_time_act = skip_time_act
+        self.output_scale_factor = output_scale_factor
         self.norm1 = nn.GroupNorm(groups, in_ch, eps=eps)
         self.conv1 = nn.Conv2d(in_ch, out_ch, 3, padding=1)
         self.time_emb_proj = nn.Linear(temb, out_ch * 2)
@@ -218,7 +238,7 @@ class ScaleShiftResnetBlock(nn.Module):
 
     def forward(self, x: Tensor, temb: Tensor) -> Tensor:
         residual = x
-        hidden = F.silu(self.norm1(x))
+        hidden = self.act(self.norm1(x))
         if self.up:
             residual = F.interpolate(residual, scale_factor=2.0, mode="nearest")
             hidden = F.interpolate(hidden, scale_factor=2.0, mode="nearest")
@@ -226,19 +246,32 @@ class ScaleShiftResnetBlock(nn.Module):
             residual = F.avg_pool2d(residual, 2, stride=2)
             hidden = F.avg_pool2d(hidden, 2, stride=2)
         hidden = self.conv1(hidden)
-        scale, shift = self.time_emb_proj(F.silu(temb))[:, :, None, None].chunk(2, dim=1)
+        time = temb if self.skip_time_act else self.act(temb)
+        scale, shift = self.time_emb_proj(time)[:, :, None, None].chunk(2, dim=1)
         hidden = self.norm2(hidden) * (1 + scale) + shift
-        hidden = self.conv2(F.silu(hidden))
+        hidden = self.conv2(self.act(hidden))
         if self.conv_shortcut is not None:
             residual = self.conv_shortcut(residual)
-        return residual + hidden
+        return (residual + hidden) / self.output_scale_factor
 
 
 class AddedKVAttention(nn.Module):
-    def __init__(self, channels: int, context_dim: int, head_dim: int, groups: int) -> None:
+    def __init__(
+        self,
+        channels: int,
+        context_dim: int,
+        head_dim: int,
+        groups: int,
+        cross_attention_norm: str | None,
+    ) -> None:
         super().__init__()
         self.heads = channels // head_dim
         self.group_norm = nn.GroupNorm(groups, channels, eps=1e-5)
+        self.norm_cross = (
+            nn.GroupNorm(32, context_dim, eps=1e-5)
+            if cross_attention_norm == "group_norm"
+            else None
+        )
         self.to_q = nn.Linear(channels, channels)
         self.to_k = nn.Linear(channels, channels)
         self.to_v = nn.Linear(channels, channels)
@@ -252,6 +285,8 @@ class AddedKVAttention(nn.Module):
         hidden = x.view(batch, channels, -1).transpose(1, 2)
         hidden = self.group_norm(hidden.transpose(1, 2)).transpose(1, 2)
         query = self.to_q(hidden)
+        if self.norm_cross is not None:
+            context = self.norm_cross(context.transpose(1, 2)).transpose(1, 2)
         key = torch.cat([self.add_k_proj(context), self.to_k(hidden)], dim=1)
         value = torch.cat([self.add_v_proj(context), self.to_v(hidden)], dim=1)
         hidden = attention(query, key, value, self.heads)
@@ -267,6 +302,7 @@ def _resnet(
     *,
     up: bool = False,
     down: bool = False,
+    output_scale_factor: float | None = None,
 ) -> nn.Module:
     if cfg["resnet_time_scale_shift"] == "scale_shift":
         return ScaleShiftResnetBlock(
@@ -277,6 +313,13 @@ def _resnet(
             groups=cfg["norm_num_groups"],
             up=up,
             down=down,
+            act_fn=cfg["act_fn"],
+            skip_time_act=cfg["resnet_skip_time_act"],
+            output_scale_factor=(
+                cfg["resnet_out_scale_factor"]
+                if output_scale_factor is None
+                else output_scale_factor
+            ),
         )
     return ResnetBlock(
         in_ch,
@@ -301,6 +344,7 @@ class DownBlock(nn.Module):
         context_dim: int,
         heads: int,
         transformer_layers: int,
+        only_cross_attention: bool = False,
     ) -> None:
         super().__init__()
         self.resnets = nn.ModuleList(
@@ -309,7 +353,13 @@ class DownBlock(nn.Module):
         self.attentions: nn.ModuleList | None
         if kind == "SimpleCrossAttnDownBlock2D":
             self.attentions = nn.ModuleList(
-                AddedKVAttention(out_ch, context_dim, heads, cfg["norm_num_groups"])
+                AddedKVAttention(
+                    out_ch,
+                    context_dim,
+                    heads,
+                    cfg["norm_num_groups"],
+                    cfg["cross_attention_norm"],
+                )
                 for _ in range(layers)
             )
         elif kind == "CrossAttnDownBlock2D":
@@ -320,6 +370,7 @@ class DownBlock(nn.Module):
                 context_dim=context_dim,
                 heads=heads,
                 layers=transformer_layers,
+                only_cross_attention=only_cross_attention,
             )
         else:
             self.attentions = None
@@ -362,6 +413,7 @@ class UpBlock(nn.Module):
         context_dim: int,
         heads: int,
         transformer_layers: int,
+        only_cross_attention: bool = False,
     ) -> None:
         super().__init__()
         layers = layers + 1
@@ -373,7 +425,13 @@ class UpBlock(nn.Module):
         self.attentions: nn.ModuleList | None
         if kind == "SimpleCrossAttnUpBlock2D":
             self.attentions = nn.ModuleList(
-                AddedKVAttention(out_ch, context_dim, heads, cfg["norm_num_groups"])
+                AddedKVAttention(
+                    out_ch,
+                    context_dim,
+                    heads,
+                    cfg["norm_num_groups"],
+                    cfg["cross_attention_norm"],
+                )
                 for _ in range(layers)
             )
         elif kind == "CrossAttnUpBlock2D":
@@ -384,6 +442,7 @@ class UpBlock(nn.Module):
                 context_dim=context_dim,
                 heads=heads,
                 layers=transformer_layers,
+                only_cross_attention=only_cross_attention,
             )
         else:
             self.attentions = None
@@ -429,10 +488,13 @@ class MidBlock(nn.Module):
         super().__init__()
 
         def resnet() -> nn.Module:
-            return _resnet(cfg, ch, ch, temb)
+            return _resnet(cfg, ch, ch, temb, output_scale_factor=cfg["mid_block_scale_factor"])
 
         self.attentions: nn.ModuleList | None
-        if cfg["mid_block_type"] == "UNetMidBlock2DCrossAttn":
+        if cfg["mid_block_type"] is None:
+            self.resnets = nn.ModuleList()
+            self.attentions = None
+        elif cfg["mid_block_type"] == "UNetMidBlock2DCrossAttn":
             self.resnets = nn.ModuleList([resnet(), resnet()])
             self.attentions = _transformers(
                 cfg,
@@ -445,7 +507,15 @@ class MidBlock(nn.Module):
         elif cfg["mid_block_type"] == "UNetMidBlock2DSimpleCrossAttn":
             self.resnets = nn.ModuleList([resnet(), resnet()])
             self.attentions = nn.ModuleList(
-                [AddedKVAttention(ch, context_dim, heads, cfg["norm_num_groups"])]
+                [
+                    AddedKVAttention(
+                        ch,
+                        context_dim,
+                        heads,
+                        cfg["norm_num_groups"],
+                        cfg["cross_attention_norm"],
+                    )
+                ]
             )
         else:
             # diffusers builds the conditional UNet's UNetMidBlock2D with a single residual
@@ -454,6 +524,8 @@ class MidBlock(nn.Module):
             self.attentions = None
 
     def forward(self, x: Tensor, temb: Tensor, context: Tensor) -> Tensor:
+        if not self.resnets:
+            return x
         x = self.resnets[0](x, temb)
         if self.attentions is not None:
             x = self.attentions[0](x, context)
@@ -463,19 +535,26 @@ class MidBlock(nn.Module):
 
 
 class TimestepEmbedding(nn.Module):
-    def __init__(self, in_dim: int, dim: int, cond_proj_dim: int | None = None) -> None:
+    def __init__(
+        self,
+        in_dim: int,
+        dim: int,
+        cond_proj_dim: int | None = None,
+        act_fn: str = "silu",
+    ) -> None:
         super().__init__()
         self.linear_1 = nn.Linear(in_dim, dim)
         self.cond_proj = (
             nn.Linear(cond_proj_dim, in_dim, bias=False) if cond_proj_dim is not None else None
         )
         self.linear_2 = nn.Linear(dim, dim)
+        self.act = _activation(act_fn)
 
     def forward(self, x: Tensor, condition: Tensor | None = None) -> Tensor:
         if condition is not None:
             assert self.cond_proj is not None
             x = x + self.cond_proj(condition)
-        return self.linear_2(F.silu(self.linear_1(x)))
+        return self.linear_2(self.act(self.linear_1(x)))
 
 
 class ImageTimeEmbedding(nn.Module):
@@ -486,6 +565,47 @@ class ImageTimeEmbedding(nn.Module):
 
     def forward(self, image_embeds: Tensor) -> Tensor:
         return self.image_norm(self.image_proj(image_embeds))
+
+
+class AttentionPooling(nn.Module):
+    """IF text pooling with published diffusers parameter names."""
+
+    def __init__(self, heads: int, dim: int) -> None:
+        super().__init__()
+        self.positional_embedding = nn.Parameter(torch.randn(1, dim) / dim**0.5)
+        self.k_proj = nn.Linear(dim, dim)
+        self.q_proj = nn.Linear(dim, dim)
+        self.v_proj = nn.Linear(dim, dim)
+        self.heads = heads
+        self.dim_per_head = dim // heads
+
+    def forward(self, x: Tensor) -> Tensor:
+        batch, _, dim = x.shape
+        token = x.mean(dim=1, keepdim=True) + self.positional_embedding.to(x.dtype)
+        x = torch.cat([token, x], dim=1)
+
+        def shape(value: Tensor) -> Tensor:
+            value = value.view(batch, -1, self.heads, self.dim_per_head).transpose(1, 2)
+            return value.reshape(batch * self.heads, -1, self.dim_per_head).transpose(1, 2)
+
+        q, k, v = shape(self.q_proj(token)), shape(self.k_proj(x)), shape(self.v_proj(x))
+        scale = 1 / self.dim_per_head**0.25
+        weights = torch.einsum("bct,bcs->bts", q * scale, k * scale)
+        weights = torch.softmax(weights.float(), dim=-1).to(weights.dtype)
+        pooled = torch.einsum("bts,bcs->bct", weights, v)
+        return pooled.reshape(batch, -1, 1).transpose(1, 2)[:, 0]
+
+
+class TextTimeEmbedding(nn.Module):
+    def __init__(self, text_dim: int, time_dim: int, heads: int) -> None:
+        super().__init__()
+        self.norm1 = nn.LayerNorm(text_dim)
+        self.pool = AttentionPooling(heads, text_dim)
+        self.proj = nn.Linear(text_dim, time_dim)
+        self.norm2 = nn.LayerNorm(time_dim)
+
+    def forward(self, text: Tensor) -> Tensor:
+        return self.norm2(self.proj(self.pool(self.norm1(text))))
 
 
 class ImageProjection(nn.Module):
@@ -499,6 +619,40 @@ class ImageProjection(nn.Module):
         batch = image_embeds.shape[0]
         image_embeds = self.image_embeds(image_embeds.to(self.image_embeds.weight.dtype))
         return self.norm(image_embeds.reshape(batch, self.num_image_text_embeds, -1))
+
+
+class TextImageTimeEmbedding(nn.Module):
+    def __init__(self, text_dim: int, image_dim: int, time_dim: int) -> None:
+        super().__init__()
+        self.text_proj = nn.Linear(text_dim, time_dim)
+        self.text_norm = nn.LayerNorm(time_dim)
+        self.image_proj = nn.Linear(image_dim, time_dim)
+
+    def forward(self, text_embeds: Tensor, image_embeds: Tensor) -> Tensor:
+        text = self.text_norm(self.text_proj(text_embeds))
+        image = self.image_proj(image_embeds)
+        return text + image
+
+
+class TextImageProjection(nn.Module):
+    def __init__(
+        self,
+        text_dim: int,
+        image_dim: int,
+        context_dim: int,
+        num_image_text_embeds: int = 10,
+    ) -> None:
+        super().__init__()
+        self.num_image_text_embeds = num_image_text_embeds
+        self.image_embeds = nn.Linear(image_dim, num_image_text_embeds * context_dim)
+        self.text_proj = nn.Linear(text_dim, context_dim)
+
+    def forward(self, text_embeds: Tensor, image_embeds: Tensor) -> Tensor:
+        batch = text_embeds.shape[0]
+        image_text = self.image_embeds(image_embeds)
+        image_text = image_text.reshape(batch, self.num_image_text_embeds, -1)
+        text = self.text_proj(text_embeds)
+        return torch.cat([image_text, text], dim=1)
 
 
 class UNet2DConditionModel(NativeModel):
@@ -536,14 +690,28 @@ class UNet2DConditionModel(NativeModel):
         ):
             raise ValueError("Unsupported U-Net block type")
         for key, default in _UNSUPPORTED_DEFAULTS.items():
-            if key in ("encoder_hid_dim", "encoder_hid_dim_type", "resnet_time_scale_shift"):
+            if key in (
+                "encoder_hid_dim",
+                "encoder_hid_dim_type",
+                "only_cross_attention",
+                "resnet_time_scale_shift",
+                "act_fn",
+                "class_embed_type",
+                "resnet_skip_time_act",
+                "resnet_out_scale_factor",
+                "mid_block_scale_factor",
+                "time_embedding_dim",
+                "time_embedding_act_fn",
+                "cross_attention_norm",
+                "addition_embed_type_num_heads",
+            ):
                 continue
             if key == "upcast_attention" and (not cfg[key] or cfg[key] is True):
                 # diffusers only reads it in the explicit-softmax path; the SDPA path ignores it.
                 continue
             if cfg[key] != default:
                 raise ValueError(f"Unsupported U-Net setting {key}={cfg[key]!r}")
-        if cfg["addition_embed_type"] not in (None, "text_time", "image"):
+        if cfg["addition_embed_type"] not in (None, "text", "text_time", "text_image", "image"):
             raise ValueError(
                 f"Unsupported U-Net setting addition_embed_type={cfg['addition_embed_type']!r}"
             )
@@ -552,7 +720,12 @@ class UNet2DConditionModel(NativeModel):
                 "Unsupported U-Net setting "
                 f"resnet_time_scale_shift={cfg['resnet_time_scale_shift']!r}"
             )
+        if cfg["cross_attention_norm"] not in (None, "group_norm"):
+            raise ValueError(
+                f"Unsupported U-Net setting cross_attention_norm={cfg['cross_attention_norm']!r}"
+            )
         if cfg["mid_block_type"] not in (
+            None,
             "UNetMidBlock2DCrossAttn",
             "UNetMidBlock2DSimpleCrossAttn",
             "UNetMidBlock2D",
@@ -576,9 +749,15 @@ class UNet2DConditionModel(NativeModel):
         )
         heads = per_block(head_config, "attention heads")
         context_dims = per_block(cfg["cross_attention_dim"], "cross_attention_dim")
-        temb = ch[0] * 4
+        only_cross = per_block(cfg["only_cross_attention"], "only_cross_attention")
+        if not all(isinstance(value, bool) for value in only_cross):
+            raise ValueError("U-Net only_cross_attention values must be booleans")
+        temb = cfg["time_embedding_dim"] or ch[0] * 4
         self.conv_in = nn.Conv2d(cfg["in_channels"], ch[0], 3, padding=1)
-        self.time_embedding = TimestepEmbedding(ch[0], temb, cfg["time_cond_proj_dim"])
+        self.time_embedding = TimestepEmbedding(
+            ch[0], temb, cfg["time_cond_proj_dim"], act_fn=cfg["act_fn"]
+        )
+        self.time_embedding.act = _activation(cfg["act_fn"])
         self.down_blocks = nn.ModuleList()
         out_ch = ch[0]
         for i, kind in enumerate(cfg["down_block_types"]):
@@ -595,6 +774,7 @@ class UNet2DConditionModel(NativeModel):
                     context_dim=context_dims[i],
                     heads=heads[i],
                     transformer_layers=transformer_layers[i],
+                    only_cross_attention=only_cross[i],
                 )
             )
         self.mid_block = MidBlock(
@@ -618,6 +798,7 @@ class UNet2DConditionModel(NativeModel):
                 )
         rev_heads = list(reversed(heads))
         rev_context_dims = list(reversed(context_dims))
+        rev_only_cross = list(reversed(only_cross))
         self.up_blocks = nn.ModuleList()
         out_ch = rev[0]
         for i, kind in enumerate(cfg["up_block_types"]):
@@ -636,10 +817,24 @@ class UNet2DConditionModel(NativeModel):
                     context_dim=rev_context_dims[i],
                     heads=rev_heads[i],
                     transformer_layers=rev_transformer_layers[i],
+                    only_cross_attention=rev_only_cross[i],
                 )
             )
-        self.add_embedding: TimestepEmbedding | ImageTimeEmbedding
-        if cfg["addition_embed_type"] == "text_time":
+        self.add_embedding: nn.Module
+        self.class_embedding: TimestepEmbedding | None
+        if cfg["class_embed_type"] == "timestep":
+            self.class_embedding = TimestepEmbedding(ch[0], temb, act_fn=cfg["act_fn"])
+        elif cfg["class_embed_type"] is None:
+            self.class_embedding = None
+        else:
+            raise ValueError(f"Unsupported U-Net class_embed_type={cfg['class_embed_type']!r}")
+        if cfg["addition_embed_type"] == "text":
+            if cfg["encoder_hid_dim"] is None:
+                raise ValueError("text conditioning requires encoder_hid_dim")
+            self.add_embedding = TextTimeEmbedding(
+                cfg["encoder_hid_dim"], temb, cfg["addition_embed_type_num_heads"]
+            )
+        elif cfg["addition_embed_type"] == "text_time":
             if (
                 cfg["addition_time_embed_dim"] is None
                 or cfg["projection_class_embeddings_input_dim"] is None
@@ -649,11 +844,17 @@ class UNet2DConditionModel(NativeModel):
             self.add_embedding = TimestepEmbedding(
                 cfg["projection_class_embeddings_input_dim"], temb
             )
+        elif cfg["addition_embed_type"] == "text_image":
+            if not isinstance(cfg["cross_attention_dim"], int):
+                raise ValueError("text_image conditioning requires scalar cross_attention_dim")
+            self.add_embedding = TextImageTimeEmbedding(
+                cfg["cross_attention_dim"], cfg["cross_attention_dim"], temb
+            )
         elif cfg["addition_embed_type"] == "image":
             if cfg["encoder_hid_dim"] is None:
                 raise ValueError("image conditioning requires encoder_hid_dim")
             self.add_embedding = ImageTimeEmbedding(cfg["encoder_hid_dim"], temb)
-        self.encoder_hid_proj: ImageProjection | nn.Linear
+        self.encoder_hid_proj: nn.Module
         if cfg["encoder_hid_dim_type"] == "image_proj":
             if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
                 raise ValueError("image projection requires scalar embedding dimensions")
@@ -664,11 +865,25 @@ class UNet2DConditionModel(NativeModel):
             if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
                 raise ValueError("text projection requires scalar embedding dimensions")
             self.encoder_hid_proj = nn.Linear(cfg["encoder_hid_dim"], cfg["cross_attention_dim"])
+        elif cfg["encoder_hid_dim_type"] == "text_image_proj":
+            if cfg["encoder_hid_dim"] is None or not isinstance(cfg["cross_attention_dim"], int):
+                raise ValueError("text_image projection requires scalar embedding dimensions")
+            self.encoder_hid_proj = TextImageProjection(
+                cfg["encoder_hid_dim"],
+                cfg["cross_attention_dim"],
+                cfg["cross_attention_dim"],
+            )
         elif cfg["encoder_hid_dim_type"] is not None:
             raise ValueError(
                 f"Unsupported U-Net setting encoder_hid_dim_type={cfg['encoder_hid_dim_type']!r}"
             )
         self.conv_norm_out = nn.GroupNorm(cfg["norm_num_groups"], ch[0], eps=cfg["norm_eps"])
+        self.conv_act = _activation(cfg["act_fn"])
+        self.time_embed_act = (
+            _activation(cfg["time_embedding_act_fn"])
+            if cfg["time_embedding_act_fn"] is not None
+            else None
+        )
         self.conv_out = nn.Conv2d(ch[0], cfg["out_channels"], 3, padding=1)
 
     def forward(
@@ -681,6 +896,7 @@ class UNet2DConditionModel(NativeModel):
         text_embeds: Tensor | None = None,
         time_ids: Tensor | None = None,
         image_embeds: Tensor | None = None,
+        class_labels: Tensor | None = None,
     ) -> Tensor:
         timesteps = timestep.reshape(-1).to(sample.device).expand(sample.shape[0])
         t = timestep_embedding(
@@ -690,7 +906,22 @@ class UNet2DConditionModel(NativeModel):
             shift=self.config["freq_shift"],
         ).to(sample.dtype)
         temb = self.time_embedding(t, timestep_cond)
-        if self.config["addition_embed_type"] == "text_time":
+        if self.class_embedding is not None:
+            if class_labels is None:
+                raise ValueError("timestep class conditioning requires image_embeds")
+            labels = class_labels.reshape(-1).to(sample.device)
+            class_t = timestep_embedding(
+                labels,
+                self.config["block_out_channels"][0],
+                flip_sin_to_cos=self.config["flip_sin_to_cos"],
+                shift=self.config["freq_shift"],
+            ).to(sample.dtype)
+            temb = temb + self.class_embedding(class_t)
+        if self.config["addition_embed_type"] == "text":
+            if context is None:
+                raise ValueError("text conditioning requires encoder_hidden_states")
+            temb = temb + self.add_embedding(context)
+        elif self.config["addition_embed_type"] == "text_time":
             if text_embeds is None:
                 raise ValueError("text_time conditioning requires text_embeds")
             if time_ids is None:
@@ -703,14 +934,28 @@ class UNet2DConditionModel(NativeModel):
             ).reshape(text_embeds.shape[0], -1)
             add_embeds = torch.cat([text_embeds, time_features], dim=-1).to(temb.dtype)
             temb = temb + self.add_embedding(add_embeds)
+        elif self.config["addition_embed_type"] == "text_image":
+            if text_embeds is None:
+                text_embeds = context
+            if text_embeds is None or image_embeds is None:
+                raise ValueError("text_image conditioning requires text_embeds and image_embeds")
+            temb = temb + self.add_embedding(text_embeds, image_embeds)
         elif self.config["addition_embed_type"] == "image":
             if image_embeds is None:
                 raise ValueError("image conditioning requires image_embeds")
             temb = temb + self.add_embedding(image_embeds)
+        if self.time_embed_act is not None:
+            temb = self.time_embed_act(temb)
         if self.config["encoder_hid_dim_type"] == "image_proj":
             if image_embeds is None:
                 raise ValueError("image projection requires image_embeds")
             context = self.encoder_hid_proj(image_embeds)
+        elif self.config["encoder_hid_dim_type"] == "text_image_proj":
+            if image_embeds is None:
+                raise ValueError("text_image projection requires image_embeds")
+            if context is None:
+                raise ValueError("text_image projection requires encoder_hidden_states")
+            context = self.encoder_hid_proj(context, image_embeds)
         elif self.config["encoder_hid_dim_type"] == "text_proj" and context is not None:
             context = self.encoder_hid_proj(context)
         if context is None:
@@ -727,4 +972,4 @@ class UNet2DConditionModel(NativeModel):
             block_skips, skips = skips[-n:], skips[:-n]
             size = tuple(skips[-1].shape[2:]) if skips else None
             x = up(x, block_skips, temb, context, size)
-        return self.conv_out(F.silu(self.conv_norm_out(x)))
+        return self.conv_out(self.conv_act(self.conv_norm_out(x)))

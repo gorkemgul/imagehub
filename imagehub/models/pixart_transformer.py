@@ -443,7 +443,10 @@ class PixArtTransformer2DModel(NativeModel):
             PixArtAlphaTextProjection(
                 cfg["caption_channels"],
                 self.inner_dim,
-                120 if "use_additional_conditions" not in config else None,
+                # Only the original Alpha checkpoints store the unused null caption embedding.
+                120
+                if "use_additional_conditions" not in config and "interpolation_scale" not in config
+                else None,
             )
             if cfg["caption_channels"] is not None
             else None

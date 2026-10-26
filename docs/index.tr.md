@@ -13,12 +13,12 @@ hide:
 
 <p class="ih-eyebrow">Açık ağırlıklı metinden görüntüye modeller · saf PyTorch</p>
 
-## Çok model. Tek API. Aynı pikseller.
+## Model kataloğu ve pipeline API'si
 
 <p class="ih-lead">
 imagehub, açık metinden-görüntüye mimarilerini PyTorch ile baştan yazar ve her modeli referans
-uygulamasıyla karşılaştırır. CPU'da float32 ile çıktı, diffusers'ın çıktısıyla bit düzeyinde
-aynıdır.
+uygulamasıyla karşılaştırır. CPU'da float32 ile çıktı, kaydedilmiş referans uygulamanın
+çıktısıyla bit düzeyinde aynıdır.
 </p>
 
 <div class="ih-cta" markdown>
@@ -39,7 +39,7 @@ aynıdır.
 <div class="ih-split" markdown>
 <div markdown>
 
-## Her model için tek çağrı
+## Pipeline arayüzü
 
 Model kimliği mimariyi, klasör ağırlıkları seçer. Stable Diffusion'dan FLUX'a ya da
 Qwen-Image'e geçmek tek bir metni değiştirmek demektir.
@@ -64,11 +64,11 @@ print(result.metadata)
 </div>
 </div>
 
-## Neden imagehub
+## Uygulama özellikleri
 
 <div class="ih-features" markdown>
 <div markdown>
-### Yaklaşıklık değil, eşdeğerlik
+### Kayıtlı eşdeğerlik
 Bir model ancak tüm tensörler sıkı biçimde yüklendiğinde ve aynı gürültüden tam bir üretim
 referansla eşleştiğinde kabul edilir. Farklar iddia edilmez, kaydedilir.
 </div>
@@ -83,7 +83,7 @@ Katalog kayıtları bir commit'i ve dosya listesini sabitler. İndirme boyutlar�
 ne aldığınızı bir manifestoya yazar.
 </div>
 <div markdown>
-### Dürüst sınırlar
+### Doğrulama kapsamı
 Eşdeğerlik CPU ve float32 için iddia edilir. Diğer aygıtlar ve hassasiyetler duman testiyle
 denenir ve öyle etiketlenir.
 </div>
