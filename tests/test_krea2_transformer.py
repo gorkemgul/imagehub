@@ -2,10 +2,11 @@ import json
 from pathlib import Path
 
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.krea2_transformer import Krea2Transformer2DModel
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 CONFIG_PATH = FIXTURES / "krea2_configs" / "transformer_config.json"
 TENSORS_PATH = FIXTURES / "krea2_transformer_tensors.json"
 CHECKPOINT_INDEX = (

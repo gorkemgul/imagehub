@@ -63,6 +63,10 @@ class BackendRegistry:
     def factory(self, task: Task | str, name: str) -> BackendFactory | str:
         return self._entry(Task(task), name).factory
 
+    def model_id(self, task: Task | str, name: str) -> str | None:
+        """Return the catalog model selected by an alias, if any."""
+        return self._entry(Task(task), name).model_id
+
     def create(self, task: Task | str, name: str, **options: Any) -> Any:
         selected = Task(task)
         entry = self._entry(selected, name)

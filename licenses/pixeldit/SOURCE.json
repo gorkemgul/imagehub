@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/NVlabs/PixelDiT",
+  "revision": "f7d7c35f71893d81c6e71d2576ea80601a1e8529",
+  "license": "NSCLv1",
+  "commercial_use": false,
+  "policy": "The implementation is ported from the upstream source; pretrained weights are downloaded separately and keep their own license."
+}

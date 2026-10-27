@@ -1,8 +1,8 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path, restricted_fixture
 from helpers import write_tiny_sdxl
 
 from imagehub import pipeline
@@ -82,9 +82,7 @@ def test_tiny_sdxl_generation_matches_diffusers(tmp_path, case):
     ],
 )
 def test_tiny_ancestral_generation_matches_diffusers_exactly(tmp_path, model_id, fixture, guidance):
-    config = json.loads(
-        (Path(__file__).parents[1] / "fixtures" / fixture / "scheduler_config.json").read_text()
-    )
+    config = json.loads((fixture_path(fixture) / "scheduler_config.json").read_text())
     root = write_tiny_sdxl(tmp_path / "tiny-ancestral", scheduler_config=config, sample_size=4)
     ref = diffusers.StableDiffusionXLPipeline.from_pretrained(
         root, local_files_only=True, add_watermarker=False
@@ -109,9 +107,7 @@ def test_tiny_ancestral_generation_matches_diffusers_exactly(tmp_path, model_id,
 
 def test_tiny_playground_generation_matches_diffusers_exactly(tmp_path):
     config = json.loads(
-        (
-            Path(__file__).parents[1] / "fixtures/playground_v25_configs/scheduler_config.json"
-        ).read_text()
+        (restricted_fixture("playground_v25_configs/scheduler_config.json")).read_text()
     )
     vae_config = {
         "latents_mean": [-1.6574, 1.886, -1.383, 2.5155],

@@ -1,18 +1,18 @@
 """Gemma-2 text model parity with random weights."""
 
 import json
-from pathlib import Path
 from typing import Any
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.gemma2 import Gemma2Model
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
 
-FIXTURES = Path(__file__).parents[1] / "fixtures" / "sana_configs"
+FIXTURES = fixture_path("sana_configs")
 CONFIG = FIXTURES / "1600m" / "text_encoder_config.json"
 
 TINY: dict[str, Any] = {

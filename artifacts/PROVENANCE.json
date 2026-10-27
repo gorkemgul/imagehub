@@ -1,0 +1,22 @@
+[
+  {
+    "path": "artifacts/sd-v1-5-seed42.png",
+    "generated_by": "imagehub",
+    "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+    "revision": "451f4fe16113bff5a5d2269ed5ad43b0592e9a14",
+    "model_license": "CreativeML-OpenRAIL-M",
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 42,
+    "artifact_license": "Apache-2.0"
+  },
+  {
+    "path": "artifacts/sdxl-base-1.0-seed42.png",
+    "generated_by": "imagehub",
+    "model": "stabilityai/stable-diffusion-xl-base-1.0",
+    "revision": "462165984030d82259a11f4367a4eed129e94a7b",
+    "model_license": "CreativeML-OpenRAIL++-M",
+    "prompt": "a photograph of an astronaut riding a horse",
+    "seed": 42,
+    "artifact_license": "Apache-2.0"
+  }
+]

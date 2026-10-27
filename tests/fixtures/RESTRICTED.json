@@ -1,0 +1,3406 @@
+[
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "NVIDIA Open Model License",
+    "newline": true,
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "2ad22bbf287838c2823646e6261c708f98bf423e20f0ea86984907774e55c6fc",
+    "size": 12663,
+    "target": "cosmos2_configs/headers/text_encoder.json",
+    "upstream_path": "text_encoder/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00001-of-00002.safetensors",
+      "text_encoder/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "NVIDIA Open Model License",
+    "newline": true,
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "1661874a0a4806270c6674e24bfbb16d08e7fdaf88b0aed2e0b8be5c30d9b35f",
+    "size": 33349,
+    "target": "cosmos2_configs/headers/transformer.json",
+    "upstream_path": "transformer/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "NVIDIA Open Model License",
+    "newline": true,
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "5c683330c885c6a2e5276fc91575c90ff40c490960206226078eafedaabc428f",
+    "size": 11198,
+    "target": "cosmos2_configs/headers/vae.json",
+    "upstream_path": "vae/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "26389544f44378dafebb3134caf3997fc17743f2e62584f676d0afad4f3cdc68",
+    "size": 470,
+    "target": "cosmos2_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "7b2bc908263c1d074dad95779ca3840c1dc232b668ef6c872971a48cec26e10a",
+    "size": 586,
+    "target": "cosmos2_configs/scheduler/scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "e9c37563fd32cd99089f494b711d55cc84c409527c287733af8427e5463c6b04",
+    "size": 1467,
+    "target": "cosmos2_configs/text_encoder/config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "56d18c8e7db19b994a1d8101da8a16c3b9ca692b3039d54087f057848f72b159",
+    "size": 17567,
+    "target": "cosmos2_configs/text_encoder/model.safetensors.index.json",
+    "upstream_path": "text_encoder/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "ab37994c43740513f94b3ba6233a784035a67b43c8cde83c8f31aa90468c67ce",
+    "size": 249,
+    "target": "cosmos2_configs/tokenizer/config.json",
+    "upstream_path": "tokenizer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f",
+    "size": 2201,
+    "target": "cosmos2_configs/tokenizer/special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+    "size": 791656,
+    "target": "cosmos2_configs/tokenizer/spiece.model",
+    "upstream_path": "tokenizer/spiece.model"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "71c33c3bf57bf2e19b4f8ac686ad8d182a79f7cd1a4921889437c453420223f1",
+    "size": 2422169,
+    "target": "cosmos2_configs/tokenizer/tokenizer.json",
+    "upstream_path": "tokenizer/tokenizer.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "2632d1edd2266f6ca61b44dd2a5b74492fa009b9c793a294a80b724aef34ba3b",
+    "size": 20833,
+    "target": "cosmos2_configs/tokenizer/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "cc4533f860778400e2af8d1e6e3247ee9dd694d5ad6de6c8420afc5a643e0fcc",
+    "size": 481,
+    "target": "cosmos2_configs/transformer/config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA Open Model License",
+    "repo": "nvidia/Cosmos-Predict2-2B-Text2Image",
+    "revision": "acdb5fde992a73ef0355f287977d002cbfd127e0",
+    "sha256": "2fd4d39e7fa6b374584162a6eda5a88fbc66eea54e8490d7c0ef3353d438f97b",
+    "size": 779,
+    "target": "cosmos2_configs/vae/config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "3b3d7ab2097d8cc5cd40199791767d26f8a0d9fd8efcaabedf94a8c166eac311",
+    "size": 601,
+    "target": "deepfloyd_if_configs/stage_i/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "6ef5b93940abe405c53edf04e3911a851e0bd537f1b60bf741432b559032ace7",
+    "size": 454,
+    "target": "deepfloyd_if_configs/stage_i/scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f",
+    "size": 2201,
+    "target": "deepfloyd_if_configs/stage_i/special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+    "size": 791656,
+    "target": "deepfloyd_if_configs/stage_i/spiece.model",
+    "upstream_path": "tokenizer/spiece.model"
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-header",
+    "license": "DeepFloyd IF License",
+    "newline": false,
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "3cca1b791c0bb792c8b7f26938fe8381d7dca385c1432a3cecdf7c68efe46e38",
+    "size": 8619,
+    "target": "deepfloyd_if_configs/stage_i/text_encoder-00001.safetensors.header.json",
+    "upstream_path": "text_encoder/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00001-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-header",
+    "license": "DeepFloyd IF License",
+    "newline": false,
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "d44856261ac241897ced9d2e9b3eedc79772a54a963395940fea5fced1e492af",
+    "size": 8146,
+    "target": "deepfloyd_if_configs/stage_i/text_encoder-00002.safetensors.header.json",
+    "upstream_path": "text_encoder/model-00002-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "050a6e43f666689b9a181d5eb783f4100f5bcbfec8e3f666f3a310611a8640b3",
+    "size": 741,
+    "target": "deepfloyd_if_configs/stage_i/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "6f2931f5230f47e378ab4909127afb7b77eda653b36049c50e5c78598575965f",
+    "size": 2496,
+    "target": "deepfloyd_if_configs/stage_i/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-header",
+    "license": "DeepFloyd IF License",
+    "newline": false,
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "da174b33d4793e875de33df6293756c49ea1c23993246b4fb22debfa6fb7fbdb",
+    "size": 49905,
+    "target": "deepfloyd_if_configs/stage_i/unet.safetensors.header.json",
+    "upstream_path": "unet/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "unet/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-I-XL-v1.0",
+    "revision": "c03d510e9b75bce9f9db5bb85148c1402ad7e694",
+    "sha256": "792d7bae34edaedca69c3385731d99282881563216e1b04b444cfe1a6561b2b5",
+    "size": 1653,
+    "target": "deepfloyd_if_configs/stage_i/unet_config.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "41de4d5d9dc96a5d2edc6663b227cb5c5508cc5e11a316897ea23a6329423339",
+    "size": 424,
+    "target": "deepfloyd_if_configs/stage_ii/image_noising_scheduler_config.json",
+    "upstream_path": "image_noising_scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "7f0f30283fe0a10da687cb029e0d45a46f20a69050ae75557a9755018548a5d2",
+    "size": 692,
+    "target": "deepfloyd_if_configs/stage_ii/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "8783103170e5698bd88b6db651eaff74448b298e17a87e30302d485b36e86ba7",
+    "size": 454,
+    "target": "deepfloyd_if_configs/stage_ii/scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "5c87151ef0f72a99d1f766a4c418bd2a1f90aaa30a8e22fe5eca9641daebb64f",
+    "size": 2201,
+    "target": "deepfloyd_if_configs/stage_ii/special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+    "size": 791656,
+    "target": "deepfloyd_if_configs/stage_ii/spiece.model",
+    "upstream_path": "tokenizer/spiece.model"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "050a6e43f666689b9a181d5eb783f4100f5bcbfec8e3f666f3a310611a8640b3",
+    "size": 741,
+    "target": "deepfloyd_if_configs/stage_ii/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "6f2931f5230f47e378ab4909127afb7b77eda653b36049c50e5c78598575965f",
+    "size": 2496,
+    "target": "deepfloyd_if_configs/stage_ii/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-header",
+    "license": "DeepFloyd IF License",
+    "newline": false,
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "56084cd7bcdc3f14d247d40b4a8831324e2056a80b8cdb3d7675f85b304f372c",
+    "size": 60039,
+    "target": "deepfloyd_if_configs/stage_ii/unet.safetensors.header.json",
+    "upstream_path": "unet/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "unet/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "DeepFloyd IF License",
+    "repo": "DeepFloyd/IF-II-L-v1.0",
+    "revision": "609476ce702b2d94aff7d1f944dcc54d4f972901",
+    "sha256": "a79412a2756dc8f962b1e5167f50ecf6997f8dd77eb6d935f0dbae98e5892f86",
+    "size": 1721,
+    "target": "deepfloyd_if_configs/stage_ii/unet_config.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "kind": "deepseek-tiny-tokenizer",
+    "license": "DeepSeek Model License",
+    "repo": "deepseek-community/Janus-Pro-1B",
+    "revision": "1655280bb75959cc1cb85529a2a8b26e7016072e",
+    "sha256": "6505434e6006b9ae14b95dcd17dbdfdabc2a61c557d034caf1210454364eb63a",
+    "size": 3848,
+    "target": "deepseek_tokenizer/tokenizer.json",
+    "upstream_path": "tokenizer.json"
+  },
+  {
+    "gated": false,
+    "kind": "deepseek-tiny-tokenizer",
+    "license": "DeepSeek Model License",
+    "repo": "deepseek-community/Janus-Pro-1B",
+    "revision": "1655280bb75959cc1cb85529a2a8b26e7016072e",
+    "sha256": "6f7357d5ee8a1c145d6bdf9cf9f42add10c84188cb277bf37a33fd1578f6245f",
+    "size": 245,
+    "target": "deepseek_tokenizer/tokenizer_config.json",
+    "upstream_path": "tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "1c5161bcb184ceb7c32f3610d1307030c241dbe9a4fe924e4daaceabd55455be",
+    "size": 519,
+    "target": "dreamlite_configs/base-model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "a20515a2393e2ed1e41a9e9fecab581cb626dc8361ee578eac8f71e8d5a9e90a",
+    "size": 481,
+    "target": "dreamlite_configs/base-scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "CC-BY-NC-4.0",
+    "newline": false,
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "a2c5a97990a9505cda6ea286e8ca8e3b75697d61ccbb2f5d877afaf648c59de5",
+    "size": 39099,
+    "target": "dreamlite_configs/base-text_encoder-header.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "79ca0168d4f0286439068ab397e610088756790a6e61dbbb8ae401e6b705f5f2",
+    "size": 1546,
+    "target": "dreamlite_configs/base-text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+    "size": 707,
+    "target": "dreamlite_configs/base-tokenizer_added_tokens.json",
+    "upstream_path": "tokenizer/added_tokens.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+    "size": 1671853,
+    "target": "dreamlite_configs/base-tokenizer_merges.txt",
+    "upstream_path": "tokenizer/merges.txt"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+    "size": 613,
+    "target": "dreamlite_configs/base-tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "355f2b4e5bad7b01f11ef6cb68ebc176f61b95c3276092ea225b1bea0e01e95c",
+    "size": 5404,
+    "target": "dreamlite_configs/base-tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+    "size": 2776833,
+    "target": "dreamlite_configs/base-tokenizer_vocab.json",
+    "upstream_path": "tokenizer/vocab.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "CC-BY-NC-4.0",
+    "newline": false,
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "c60a5d2b6ec62fca9edddc029ccdad333030febede4cca78c6755605be7c3d4d",
+    "size": 76765,
+    "target": "dreamlite_configs/base-unet-header.json",
+    "upstream_path": "unet/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "unet/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "5bb219157837199dbe325e23e3ca0d9f8ef28b09b11e5970463b593ce526d3f2",
+    "size": 1971,
+    "target": "dreamlite_configs/base-unet_config.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "CC-BY-NC-4.0",
+    "newline": false,
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "96b160258c4e2e3503f1f996d5e3c3a203b3dcad34f5ff599e80c90bb4202fd6",
+    "size": 6147,
+    "target": "dreamlite_configs/base-vae-header.json",
+    "upstream_path": "vae/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-base",
+    "revision": "a9a0f151ffd99d3c37f3fd0472f5e8f1b31215aa",
+    "sha256": "27fa78b2c236868031fa2108168aa9c8332d694c315c27c81f0b62677d8de6bc",
+    "size": 634,
+    "target": "dreamlite_configs/base-vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "5a0f5fabffc3b22cb7dd0d166433f6a5529973f1dcec1b1ff89bfdb1012881d4",
+    "size": 525,
+    "target": "dreamlite_configs/mobile-model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "a20515a2393e2ed1e41a9e9fecab581cb626dc8361ee578eac8f71e8d5a9e90a",
+    "size": 481,
+    "target": "dreamlite_configs/mobile-scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "CC-BY-NC-4.0",
+    "newline": false,
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "a2c5a97990a9505cda6ea286e8ca8e3b75697d61ccbb2f5d877afaf648c59de5",
+    "size": 39099,
+    "target": "dreamlite_configs/mobile-text_encoder-header.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "79ca0168d4f0286439068ab397e610088756790a6e61dbbb8ae401e6b705f5f2",
+    "size": 1546,
+    "target": "dreamlite_configs/mobile-text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+    "size": 707,
+    "target": "dreamlite_configs/mobile-tokenizer_added_tokens.json",
+    "upstream_path": "tokenizer/added_tokens.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+    "size": 1671853,
+    "target": "dreamlite_configs/mobile-tokenizer_merges.txt",
+    "upstream_path": "tokenizer/merges.txt"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+    "size": 613,
+    "target": "dreamlite_configs/mobile-tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "355f2b4e5bad7b01f11ef6cb68ebc176f61b95c3276092ea225b1bea0e01e95c",
+    "size": 5404,
+    "target": "dreamlite_configs/mobile-tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+    "size": 2776833,
+    "target": "dreamlite_configs/mobile-tokenizer_vocab.json",
+    "upstream_path": "tokenizer/vocab.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "CC-BY-NC-4.0",
+    "newline": false,
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "c60a5d2b6ec62fca9edddc029ccdad333030febede4cca78c6755605be7c3d4d",
+    "size": 76765,
+    "target": "dreamlite_configs/mobile-unet-header.json",
+    "upstream_path": "unet/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "unet/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "2d849f94c07e29a2dc18f481584cfdaa93a0113a5863513c504e8df7b6e1b7a1",
+    "size": 1972,
+    "target": "dreamlite_configs/mobile-unet_config.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "CC-BY-NC-4.0",
+    "newline": false,
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "96b160258c4e2e3503f1f996d5e3c3a203b3dcad34f5ff599e80c90bb4202fd6",
+    "size": 6147,
+    "target": "dreamlite_configs/mobile-vae-header.json",
+    "upstream_path": "vae/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "CC-BY-NC-4.0",
+    "repo": "carlofkl/DreamLite-mobile",
+    "revision": "a48c656c291fe98f74a0405961c9e4e3eee5d6c8",
+    "sha256": "27fa78b2c236868031fa2108168aa9c8332d694c315c27c81f0b62677d8de6bc",
+    "size": 634,
+    "target": "dreamlite_configs/mobile-vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-dev",
+    "revision": "3de623fc3c33e44ffbe2bad470d0f45bccf2eb21",
+    "sha256": "4f601e115ed85ab891646f03d17dca39d61278eca4b618e8c642cad71495fee8",
+    "size": 378,
+    "target": "flux1_configs/dev_transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Kontext-dev",
+    "revision": "24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
+    "sha256": "2d089886bffb8ca8eb5019a1a455cf0adfd809a45730d7ec7bc6fa11b7335204",
+    "size": 688,
+    "target": "flux1_kontext_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Kontext-dev",
+    "revision": "24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
+    "sha256": "3b9fa933c87d2fb3a51c693713a61ec44f1e9387ab56df94357fe24b53ea1da1",
+    "size": 486,
+    "target": "flux1_kontext_configs/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Kontext-dev",
+    "revision": "24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
+    "sha256": "a28ea3b85656797e494a394e90046521fd144de8510f6a15dde5ee6a63898e30",
+    "size": 741,
+    "target": "flux1_kontext_configs/text_encoder_2_config.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Kontext-dev",
+    "revision": "24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
+    "sha256": "1178c969299d9896cc4a00fac39675907ac0fd23e2181675f95ccd36dd961b15",
+    "size": 561,
+    "target": "flux1_kontext_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Kontext-dev",
+    "revision": "24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
+    "sha256": "fe79edc06e85c16e296eed429e25675a61dffa181cf13465b8f2b49c6e010017",
+    "size": 452,
+    "target": "flux1_kontext_configs/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Kontext-dev",
+    "revision": "24e9dedc4ef646698dc8eb4e18ae2cec3c9fea0d",
+    "sha256": "eceae082880f54ee4b02888e8fc8afd22791aa75f24fc737491ede9be830c187",
+    "size": 914,
+    "target": "flux1_kontext_configs/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Krea-dev",
+    "revision": "8162a9c7b05a641be098422bf2fcf335615c2f28",
+    "sha256": "24946df21ff25e210486b5f6b14208983a90c9c73f8d48cfa724c0e4e03f7201",
+    "size": 536,
+    "target": "flux1_krea_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Krea-dev",
+    "revision": "8162a9c7b05a641be098422bf2fcf335615c2f28",
+    "sha256": "63b6d2fa93579e383a308009bfd5ae12e61f8950017dd749302f8d54bb3520b6",
+    "size": 273,
+    "target": "flux1_krea_configs/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Krea-dev",
+    "revision": "8162a9c7b05a641be098422bf2fcf335615c2f28",
+    "sha256": "9001e5a8ae0571a362f806b87b6105dd1a15c33dca237b606d2561164109beeb",
+    "size": 782,
+    "target": "flux1_krea_configs/text_encoder_2_config.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Krea-dev",
+    "revision": "8162a9c7b05a641be098422bf2fcf335615c2f28",
+    "sha256": "d79d5c8c6ce85112a923d621a5412886ddbbb0636210fc0f72f450582e675542",
+    "size": 613,
+    "target": "flux1_krea_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Krea-dev",
+    "revision": "8162a9c7b05a641be098422bf2fcf335615c2f28",
+    "sha256": "a8d4ca92dc64ca8116c370ab91339e18a723ab950c18de513d09c3922df7a2d1",
+    "size": 394,
+    "target": "flux1_krea_configs/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Krea-dev",
+    "revision": "8162a9c7b05a641be098422bf2fcf335615c2f28",
+    "sha256": "780ee2abafdd8abcb64d97be0154f1481f51e3cce1899fbad98723e4fb6c15e0",
+    "size": 121262,
+    "target": "flux1_krea_configs/transformer_diffusion_pytorch_model.safetensors.index.json",
+    "upstream_path": "transformer/diffusion_pytorch_model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.1-Krea-dev",
+    "revision": "8162a9c7b05a641be098422bf2fcf335615c2f28",
+    "sha256": "ad6f0acb584ceb3d136d1e32b684dec65db24bffe9223df2bac0b45539d4e6b5",
+    "size": 820,
+    "target": "flux1_krea_configs/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-header",
+    "license": "FLUX.1-dev Non-Commercial License",
+    "newline": true,
+    "repo": "black-forest-labs/FLUX.1-dev",
+    "revision": "3de623fc3c33e44ffbe2bad470d0f45bccf2eb21",
+    "sha256": "5a7b5299ae398cd98828a28bb5a56f240bc9ee1dbca471930bcc401b1c3107ac",
+    "size": 79972,
+    "target": "flux1_transformer_tensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+      "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+      "transformer/diffusion_pytorch_model-00003-of-00003.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "FLUX Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.2-klein-9B",
+    "revision": "92196c8e11f7b6cf2b7493e037d8c5345c559216",
+    "sha256": "51a76cb1cf3ed37423a1128c79c22faee8e6fbe7f5aaeb737f0a258930dbaac0",
+    "size": 446,
+    "target": "flux2_klein_9b_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.2-klein-9B",
+    "revision": "92196c8e11f7b6cf2b7493e037d8c5345c559216",
+    "sha256": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e",
+    "size": 486,
+    "target": "flux2_klein_9b_configs/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.2-klein-9B",
+    "revision": "92196c8e11f7b6cf2b7493e037d8c5345c559216",
+    "sha256": "57866e90a1d6328a7ed53eca732bce106f86c76ab99d7629e01f0a319fa57998",
+    "size": 1538,
+    "target": "flux2_klein_9b_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.2-klein-9B",
+    "revision": "92196c8e11f7b6cf2b7493e037d8c5345c559216",
+    "sha256": "e82d0d325aff03c3b3b33a1634c47a5f88867478f53071b9c9a39c99010c5d46",
+    "size": 542,
+    "target": "flux2_klein_9b_configs/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "FLUX Non-Commercial License",
+    "repo": "black-forest-labs/FLUX.2-klein-9B",
+    "revision": "92196c8e11f7b6cf2b7493e037d8c5345c559216",
+    "sha256": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948",
+    "size": 821,
+    "target": "flux2_klein_9b_configs/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "cd800176008d6a0c01ef766b869077d9cca3c0179c1e6e6c8f2f7ab9f9010390",
+    "size": 587,
+    "target": "flux_lite_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "390beb09da68ea97c5db68686777cc2ec14722709558a6b8563bb22436cced8e",
+    "size": 418,
+    "target": "flux_lite_configs/scheduler.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "aa2de0e8a7e79c8dc4fa87cbe26fa67ccafcb473d1958f6dab827c3dbab1ea2a",
+    "size": 722,
+    "target": "flux_lite_configs/text_encoder.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "acc77b429359ab6e8b16b606a10f220bc6972176e56a25a9ea053de38a250582",
+    "size": 904,
+    "target": "flux_lite_configs/text_encoder_2.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a",
+    "size": 19885,
+    "target": "flux_lite_configs/text_encoder_2_index.json",
+    "upstream_path": "text_encoder_2/model.safetensors.index.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "00ded71621afa8f055c4dccf1805d6f2cab12eebe5fd61a95491a009c8c13878",
+    "size": 20847,
+    "target": "flux_lite_configs/tokenizer_2_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
+    "size": 2543,
+    "target": "flux_lite_configs/tokenizer_2_special_tokens_map.json",
+    "upstream_path": "tokenizer_2/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "42f7827770491fb6c61962b9be49cb0552a93c17140d74098631861d90d5fd0c",
+    "size": 735,
+    "target": "flux_lite_configs/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+    "size": 588,
+    "target": "flux_lite_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "dd013a71c638a8b1052dfbe1ddb54f1e0163e003d4563e216d12009d4607f4fa",
+    "size": 565,
+    "target": "flux_lite_configs/transformer.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "92e7ad7c215ea34f4c8bdefc916dbec0988409581e9e1c45a4900aa083b69372",
+    "size": 84806,
+    "target": "flux_lite_configs/transformer_index.json",
+    "upstream_path": "transformer/diffusion_pytorch_model.safetensors.index.json"
+  },
+  {
+    "gated": false,
+    "license": "FLUX.1-dev Non-Commercial License",
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "fa6d06fa45bd6bafcaa565cbc6a044f292ec1e188e7818562cc255de62a63dc8",
+    "size": 926,
+    "target": "flux_lite_configs/vae.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 2,
+    "kind": "safetensors-header",
+    "license": "FLUX.1-dev Non-Commercial License",
+    "newline": true,
+    "repo": "Freepik/flux.1-lite-8B",
+    "revision": "16b9373dd3d05bc5f125558f5e2b8470fbb873e8",
+    "sha256": "427332764240620d43354579f54a20c39ef5ff8a0cecee08e89325021ed418d8",
+    "size": 55990,
+    "target": "flux_lite_transformer_tensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+      "transformer/diffusion_pytorch_model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "6dcf42120d2aeb2b2219dca2ed7ced3e11e8e7d06b2a316075140df3d0d03067",
+    "size": 836,
+    "target": "hidream_configs/dev/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "78f07e7ee89d542bdbc4ef7dea5a7acee7ca5138a7256895e0ad1b251cb995ac",
+    "size": 498,
+    "target": "hidream_configs/dev/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "c0efd277569d6f63b752b632b208ed5eddb00cb3ec69a615dcd76e967f5078ea",
+    "size": 576,
+    "target": "hidream_configs/dev/text_encoder_2_config.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "16ddaf69c44b5940b86bc53a009d3a23d9299e45e99ad7fc432e23be543c7f1c",
+    "size": 32877,
+    "target": "hidream_configs/dev/text_encoder_2_model.safetensors.json",
+    "upstream_path": "text_encoder_2/model.safetensors",
+    "upstream_paths": [
+      "text_encoder_2/model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "eb1bbf7f5b360baf88505d979fc02b47f7e82603639eb1835cdd2447b784cfb3",
+    "size": 741,
+    "target": "hidream_configs/dev/text_encoder_3_config.json",
+    "upstream_path": "text_encoder_3/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "efd6b4f29c8c63aaac47ed076801bbf623747169bde8085cbca2ca155f7cc6bd",
+    "size": 7359,
+    "target": "hidream_configs/dev/text_encoder_3_model-00001-of-00002.safetensors.json",
+    "upstream_path": "text_encoder_3/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder_3/model-00001-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "042c6432fabc97134b5cd0bb5787c18baecb51e73780ed0817a41d4247a53519",
+    "size": 6974,
+    "target": "hidream_configs/dev/text_encoder_3_model-00002-of-00002.safetensors.json",
+    "upstream_path": "text_encoder_3/model-00002-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder_3/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a",
+    "size": 19885,
+    "target": "hidream_configs/dev/text_encoder_3_model.safetensors.index.json",
+    "upstream_path": "text_encoder_3/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "65295d66c6ec90847bfb701c99bcb5c888d709ef3a400c49633e691690c93904",
+    "size": 580,
+    "target": "hidream_configs/dev/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "e26ee4ad7bef17180d8fa5840431fb4a7120996d685a40e0364bcdc32f409440",
+    "size": 12163,
+    "target": "hidream_configs/dev/text_encoder_model.safetensors.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "7daa489bf0eaa4b0123ded64c2068544fc622f8c67603d1511815e2c1ffc1d61",
+    "size": 876,
+    "target": "hidream_configs/dev/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "bdab3e7e0befc6d8af7b07a24feef8497fbcd3640ba67f226a276bf0e8369a0a",
+    "size": 16945,
+    "target": "hidream_configs/dev/transformer_diffusion_pytorch_model-00001-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00001-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00001-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "2ac05ac9053be36e9502b86ca78e98f219bc3696c3f825590781411ba53a2239",
+    "size": 16579,
+    "target": "hidream_configs/dev/transformer_diffusion_pytorch_model-00002-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00002-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00002-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "7b812e24b9c10f010aff4dc6a65a5edde0a97a8447750483fc02f0d57fb59814",
+    "size": 16531,
+    "target": "hidream_configs/dev/transformer_diffusion_pytorch_model-00003-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00003-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00003-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "8d01e47a2bf89153b54e0b1f7a94921d8a3ed741c4290010c9fb0d95c802aed2",
+    "size": 15893,
+    "target": "hidream_configs/dev/transformer_diffusion_pytorch_model-00004-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00004-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00004-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "054e3293ae97f78af2a6ede0092e5b6d71b223efa89d6078aa3e336572737ccf",
+    "size": 16016,
+    "target": "hidream_configs/dev/transformer_diffusion_pytorch_model-00005-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00005-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00005-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "85be2c01afb46ec8b079e8bb6485cf1d88a58212183cf276c77e16084ca3b1de",
+    "size": 16016,
+    "target": "hidream_configs/dev/transformer_diffusion_pytorch_model-00006-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00006-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00006-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "1e5743e9dc7cefa00ec79be88adf4df7d46bdc2f2bfe621e99306e565ce675e5",
+    "size": 13174,
+    "target": "hidream_configs/dev/transformer_diffusion_pytorch_model-00007-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00007-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00007-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "4bc6f02f4725201cfbb22e98772974e549cd8249df74aba0e95645aa47917f0b",
+    "size": 181734,
+    "target": "hidream_configs/dev/transformer_diffusion_pytorch_model.safetensors.index.json",
+    "upstream_path": "transformer/diffusion_pytorch_model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "ad6f0acb584ceb3d136d1e32b684dec65db24bffe9223df2bac0b45539d4e6b5",
+    "size": 820,
+    "target": "hidream_configs/dev/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Dev",
+    "revision": "0fad2ea0ccf9a80ddf019ea777eedb27c1ccb232",
+    "sha256": "c878bae3c3f4db2ddc4e7b791efd812273cf245224b7f13782a4043619909b7f",
+    "size": 13903,
+    "target": "hidream_configs/dev/vae_diffusion_pytorch_model.safetensors.json",
+    "upstream_path": "vae/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "17cc70f9342a20adb25c4a48db64ec0cd5991ca4c92ba71200a294b39ae04748",
+    "size": 838,
+    "target": "hidream_configs/full/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "8508d023ce65787971c928e400b37ed70144aaf88fe07cb2771e7cce49bdaa9c",
+    "size": 750,
+    "target": "hidream_configs/full/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "c0efd277569d6f63b752b632b208ed5eddb00cb3ec69a615dcd76e967f5078ea",
+    "size": 576,
+    "target": "hidream_configs/full/text_encoder_2_config.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "16ddaf69c44b5940b86bc53a009d3a23d9299e45e99ad7fc432e23be543c7f1c",
+    "size": 32877,
+    "target": "hidream_configs/full/text_encoder_2_model.safetensors.json",
+    "upstream_path": "text_encoder_2/model.safetensors",
+    "upstream_paths": [
+      "text_encoder_2/model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "eb1bbf7f5b360baf88505d979fc02b47f7e82603639eb1835cdd2447b784cfb3",
+    "size": 741,
+    "target": "hidream_configs/full/text_encoder_3_config.json",
+    "upstream_path": "text_encoder_3/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "efd6b4f29c8c63aaac47ed076801bbf623747169bde8085cbca2ca155f7cc6bd",
+    "size": 7359,
+    "target": "hidream_configs/full/text_encoder_3_model-00001-of-00002.safetensors.json",
+    "upstream_path": "text_encoder_3/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder_3/model-00001-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "042c6432fabc97134b5cd0bb5787c18baecb51e73780ed0817a41d4247a53519",
+    "size": 6974,
+    "target": "hidream_configs/full/text_encoder_3_model-00002-of-00002.safetensors.json",
+    "upstream_path": "text_encoder_3/model-00002-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder_3/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a",
+    "size": 19885,
+    "target": "hidream_configs/full/text_encoder_3_model.safetensors.index.json",
+    "upstream_path": "text_encoder_3/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "65295d66c6ec90847bfb701c99bcb5c888d709ef3a400c49633e691690c93904",
+    "size": 580,
+    "target": "hidream_configs/full/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "e26ee4ad7bef17180d8fa5840431fb4a7120996d685a40e0364bcdc32f409440",
+    "size": 12163,
+    "target": "hidream_configs/full/text_encoder_model.safetensors.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "7daa489bf0eaa4b0123ded64c2068544fc622f8c67603d1511815e2c1ffc1d61",
+    "size": 876,
+    "target": "hidream_configs/full/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "bdab3e7e0befc6d8af7b07a24feef8497fbcd3640ba67f226a276bf0e8369a0a",
+    "size": 16945,
+    "target": "hidream_configs/full/transformer_diffusion_pytorch_model-00001-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00001-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00001-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "2ac05ac9053be36e9502b86ca78e98f219bc3696c3f825590781411ba53a2239",
+    "size": 16579,
+    "target": "hidream_configs/full/transformer_diffusion_pytorch_model-00002-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00002-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00002-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "7b812e24b9c10f010aff4dc6a65a5edde0a97a8447750483fc02f0d57fb59814",
+    "size": 16531,
+    "target": "hidream_configs/full/transformer_diffusion_pytorch_model-00003-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00003-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00003-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "8d01e47a2bf89153b54e0b1f7a94921d8a3ed741c4290010c9fb0d95c802aed2",
+    "size": 15893,
+    "target": "hidream_configs/full/transformer_diffusion_pytorch_model-00004-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00004-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00004-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "054e3293ae97f78af2a6ede0092e5b6d71b223efa89d6078aa3e336572737ccf",
+    "size": 16016,
+    "target": "hidream_configs/full/transformer_diffusion_pytorch_model-00005-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00005-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00005-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "85be2c01afb46ec8b079e8bb6485cf1d88a58212183cf276c77e16084ca3b1de",
+    "size": 16016,
+    "target": "hidream_configs/full/transformer_diffusion_pytorch_model-00006-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00006-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00006-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "1e5743e9dc7cefa00ec79be88adf4df7d46bdc2f2bfe621e99306e565ce675e5",
+    "size": 13174,
+    "target": "hidream_configs/full/transformer_diffusion_pytorch_model-00007-of-00007.safetensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00007-of-00007.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00007-of-00007.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "4bc6f02f4725201cfbb22e98772974e549cd8249df74aba0e95645aa47917f0b",
+    "size": 181734,
+    "target": "hidream_configs/full/transformer_diffusion_pytorch_model.safetensors.index.json",
+    "upstream_path": "transformer/diffusion_pytorch_model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "MIT / Llama 3.1 Community License",
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "ad6f0acb584ceb3d136d1e32b684dec65db24bffe9223df2bac0b45539d4e6b5",
+    "size": 820,
+    "target": "hidream_configs/full/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "MIT / Llama 3.1 Community License",
+    "newline": false,
+    "repo": "HiDream-ai/HiDream-I1-Full",
+    "revision": "8ccbbfb270ccdae26d6bb0081df67dc81e4033bf",
+    "sha256": "c878bae3c3f4db2ddc4e7b791efd812273cf245224b7f13782a4043619909b7f",
+    "size": 13903,
+    "target": "hidream_configs/full/vae_diffusion_pytorch_model.safetensors.json",
+    "upstream_path": "vae/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Llama 3.1 Community License",
+    "repo": "meta-llama/Llama-3.1-8B-Instruct",
+    "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+    "sha256": "29e4c210b0d6ac178b16b2a255a568bdb23b581e50ca1ef6a6d071dd85704e6e",
+    "size": 855,
+    "target": "hidream_configs/text_encoder_4_config.json",
+    "upstream_path": "config.json"
+  },
+  {
+    "gated": true,
+    "license": "Llama 3.1 Community License",
+    "repo": "meta-llama/Llama-3.1-8B-Instruct",
+    "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+    "sha256": "146776fce3f6db1103aa6f249e65ee5544c5923ce6f971b092eee79aa6e5d37b",
+    "size": 23950,
+    "target": "hidream_configs/text_encoder_4_model.safetensors.index.json",
+    "upstream_path": "model.safetensors.index.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "2efa723f3c6d0d3417cdaae521007ab606d20c5f8436183eaf37f10169f9e0a5",
+    "size": 700,
+    "target": "hunyuan_dit_v12_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "8fec1b96351b2199255f683080e59cee41372334e369465d4c1fca6a242f71cc",
+    "size": 572,
+    "target": "hunyuan_dit_v12_configs/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "e5e73dc1b19e8a61543714a7f61e7873e1b69a774b2a9fe238b1421cc88a5e11",
+    "size": 776,
+    "target": "hunyuan_dit_v12_configs/text_encoder_2_config.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "7d1c96db95f747494d7c9000a04e24a65ad2ae8f80d40def94d26c8aa278052a",
+    "size": 19885,
+    "target": "hunyuan_dit_v12_configs/text_encoder_2_model.safetensors.index.json",
+    "upstream_path": "text_encoder_2/model.safetensors.index.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "968833abc78add3eeb3d2a06db3d6c7a8f1ec8b5ae1100305a6e0d5cee8aa8b2",
+    "size": 840,
+    "target": "hunyuan_dit_v12_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Tencent Hunyuan Community License",
+    "newline": false,
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "ff2f79e8c8e29b3070e939b8d6e05d150aaf364b748e11eb7ac4eecbc3c578c7",
+    "size": 22526,
+    "target": "hunyuan_dit_v12_configs/text_encoder_tensors.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "1a58e10cd96de03535d55f2706031b7c7c8a6c5d0ee452cc58408d5890ad51f1",
+    "size": 861,
+    "target": "hunyuan_dit_v12_configs/tokenizer_2_tokenizer_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "83a1be3898d73c1f884980d96e0fb94b2728b8165be1804b8d2da077279fb1ff",
+    "size": 1241,
+    "target": "hunyuan_dit_v12_configs/tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "ddfc9fee88d59bf4f69f6e1e6d8324f0ef24494b46edc5bd9401037d876dcbe2",
+    "size": 540,
+    "target": "hunyuan_dit_v12_configs/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Tencent Hunyuan Community License",
+    "newline": false,
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "2de5adbe0ea1cb5121bd357005b043f8543aae4781bad699e1ec4fcde3ad82e0",
+    "size": 64516,
+    "target": "hunyuan_dit_v12_configs/transformer_distilled_tensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Tencent Hunyuan Community License",
+    "newline": false,
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "2de5adbe0ea1cb5121bd357005b043f8543aae4781bad699e1ec4fcde3ad82e0",
+    "size": 64516,
+    "target": "hunyuan_dit_v12_configs/transformer_tensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "d59730ff7b5f2f4f5abd2f9572727d60ac1f8d3288e77554b10b998c606f9b12",
+    "size": 735,
+    "target": "hunyuan_dit_v12_configs/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Tencent Hunyuan Community License",
+    "newline": false,
+    "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+    "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c",
+    "sha256": "6d4c52d26263ee3a4c50f5e53f767666ad095a823730078ba3f244a314956de6",
+    "size": 14036,
+    "target": "hunyuan_dit_v12_configs/vae_tensors.json",
+    "upstream_path": "vae/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "kind": "janus-text-config",
+    "license": "DeepSeek Model License",
+    "repo": "deepseek-community/Janus-Pro-1B",
+    "revision": "1655280bb75959cc1cb85529a2a8b26e7016072e",
+    "sha256": "c25c9c90e84595cad0cd88afe7c354f127f50467aef5e76e155234c2b0697900",
+    "size": 1139,
+    "target": "janus_pro_1b_config.json",
+    "upstream_path": "config.json"
+  },
+  {
+    "gated": false,
+    "indent": 2,
+    "kind": "janus-generation-header",
+    "license": "DeepSeek Model License",
+    "newline": true,
+    "repo": "deepseek-community/Janus-Pro-1B",
+    "revision": "1655280bb75959cc1cb85529a2a8b26e7016072e",
+    "sha256": "d187066d0b87b1d6f15895ec8b2b094980db6102d352bb4a59f99c209de22e6f",
+    "size": 16720,
+    "target": "janus_pro_1b_generation_tensors.json",
+    "upstream_path": "model.safetensors",
+    "upstream_paths": [
+      "model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "kind": "janus-text-config",
+    "license": "DeepSeek Model License",
+    "repo": "deepseek-community/Janus-Pro-7B",
+    "revision": "8f23139ed8d37346501091b3690291cb7b16f9fc",
+    "sha256": "f2de0e635957da98faf5daa956c646124f91df4e1c41dee3c4beaa4f2942f3fa",
+    "size": 1140,
+    "target": "janus_pro_7b_config.json",
+    "upstream_path": "config.json"
+  },
+  {
+    "gated": false,
+    "license": "DeepSeek Model License",
+    "repo": "deepseek-community/Janus-Pro-7B",
+    "revision": "8f23139ed8d37346501091b3690291cb7b16f9fc",
+    "sha256": "9dab02001d2ddcee8394353e9bdc9d8b9af95b520a9b57c91a89e870ef9d3e2a",
+    "size": 233,
+    "target": "janus_pro_7b_generation_config.json",
+    "upstream_path": "generation_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "6d7b93508390ab91ac5bfbe4aeb4dc2d83f7bb1b05fb069d714b5b0c75f70d44",
+    "size": 609,
+    "target": "koala_1b_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2",
+    "size": 479,
+    "target": "koala_1b_configs/scheduler.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "39b8b2e4b1949e36969caa425b6c81c68bace99198dd9078ce05d16ad401fe7f",
+    "size": 565,
+    "target": "koala_1b_configs/text_encoder.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34",
+    "size": 575,
+    "target": "koala_1b_configs/text_encoder_2.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+    "size": 725,
+    "target": "koala_1b_configs/tokenizer_2_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+    "size": 460,
+    "target": "koala_1b_configs/tokenizer_2_special_tokens_map.json",
+    "upstream_path": "tokenizer_2/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+    "size": 737,
+    "target": "koala_1b_configs/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+    "size": 472,
+    "target": "koala_1b_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "f15460025a93269674dadd6aae249a0870acc7ecbc4b36297282c739d6ded2d0",
+    "size": 1805,
+    "target": "koala_1b_configs/unet.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7",
+    "size": 631,
+    "target": "koala_1b_configs/vae.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 2,
+    "kind": "diffusers-metadata-headers",
+    "license": "Unspecified",
+    "newline": true,
+    "repo": "etri-vilab/koala-1b",
+    "revision": "8ef26f38fe4d141c35fda24966bd48777fc3c8ad",
+    "sha256": "23bb94771e886ecfb5ae9be10ad7147fce171bf505576a95a265faf49c183369",
+    "size": 233802,
+    "target": "koala_1b_tensor_shapes.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors",
+      "text_encoder_2/model.safetensors",
+      "unet/diffusion_pytorch_model.safetensors",
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "6d7b93508390ab91ac5bfbe4aeb4dc2d83f7bb1b05fb069d714b5b0c75f70d44",
+    "size": 609,
+    "target": "koala_700m_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2",
+    "size": 479,
+    "target": "koala_700m_configs/scheduler.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "39b8b2e4b1949e36969caa425b6c81c68bace99198dd9078ce05d16ad401fe7f",
+    "size": 565,
+    "target": "koala_700m_configs/text_encoder.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34",
+    "size": 575,
+    "target": "koala_700m_configs/text_encoder_2.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+    "size": 725,
+    "target": "koala_700m_configs/tokenizer_2_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+    "size": 460,
+    "target": "koala_700m_configs/tokenizer_2_special_tokens_map.json",
+    "upstream_path": "tokenizer_2/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+    "size": 737,
+    "target": "koala_700m_configs/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+    "size": 472,
+    "target": "koala_700m_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "d6483f943f4ead52331d4c5ad301357f2c38363993d66427f3cb9d5da771d288",
+    "size": 1776,
+    "target": "koala_700m_configs/unet.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7",
+    "size": 631,
+    "target": "koala_700m_configs/vae.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 2,
+    "kind": "diffusers-metadata-headers",
+    "license": "Unspecified",
+    "newline": true,
+    "repo": "etri-vilab/koala-700m",
+    "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63",
+    "sha256": "7c34e225d11e4bc1ce97d5959eb3b90df582f0c15d87118e08a602f6dbd3b91f",
+    "size": 204694,
+    "target": "koala_700m_tensor_shapes.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors",
+      "text_encoder_2/model.safetensors",
+      "unet/diffusion_pytorch_model.safetensors",
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "6d7b93508390ab91ac5bfbe4aeb4dc2d83f7bb1b05fb069d714b5b0c75f70d44",
+    "size": 609,
+    "target": "koala_lightning_1b_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2",
+    "size": 479,
+    "target": "koala_lightning_1b_configs/scheduler.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "39b8b2e4b1949e36969caa425b6c81c68bace99198dd9078ce05d16ad401fe7f",
+    "size": 565,
+    "target": "koala_lightning_1b_configs/text_encoder.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34",
+    "size": 575,
+    "target": "koala_lightning_1b_configs/text_encoder_2.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+    "size": 725,
+    "target": "koala_lightning_1b_configs/tokenizer_2_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+    "size": 460,
+    "target": "koala_lightning_1b_configs/tokenizer_2_special_tokens_map.json",
+    "upstream_path": "tokenizer_2/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+    "size": 737,
+    "target": "koala_lightning_1b_configs/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+    "size": 472,
+    "target": "koala_lightning_1b_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "e3750f487ac0ca185653740fcb3abe2404c83f01fae720b44e04fc7dcc550718",
+    "size": 1916,
+    "target": "koala_lightning_1b_configs/unet.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7",
+    "size": 631,
+    "target": "koala_lightning_1b_configs/vae.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 2,
+    "kind": "diffusers-metadata-headers",
+    "license": "Unspecified",
+    "newline": true,
+    "repo": "etri-vilab/koala-lightning-1b",
+    "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb",
+    "sha256": "c72c5a16246dc09a646a65a95258dcaa5a7d3ee490007d7fd50b853e0c6f4eee",
+    "size": 233812,
+    "target": "koala_lightning_1b_tensor_shapes.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors",
+      "text_encoder_2/model.safetensors",
+      "unet/diffusion_pytorch_model.safetensors",
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "6d7b93508390ab91ac5bfbe4aeb4dc2d83f7bb1b05fb069d714b5b0c75f70d44",
+    "size": 609,
+    "target": "koala_lightning_700m_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "af3e45a949aff8b8341ab8b811429ec03fee857a700a1d9477363e4fff9666e2",
+    "size": 479,
+    "target": "koala_lightning_700m_configs/scheduler.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "39b8b2e4b1949e36969caa425b6c81c68bace99198dd9078ce05d16ad401fe7f",
+    "size": 565,
+    "target": "koala_lightning_700m_configs/text_encoder.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "a892d1c3a69a7e9247a24de2bc1d5891e3109a54696e53be20093af671072c34",
+    "size": 575,
+    "target": "koala_lightning_700m_configs/text_encoder_2.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "c9d23941f76a41cbd50eda9290f57be7828f0a7a677939e9ef181f7e12bd1bdf",
+    "size": 725,
+    "target": "koala_lightning_700m_configs/tokenizer_2_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+    "size": 460,
+    "target": "koala_lightning_700m_configs/tokenizer_2_special_tokens_map.json",
+    "upstream_path": "tokenizer_2/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563",
+    "size": 737,
+    "target": "koala_lightning_700m_configs/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+    "size": 472,
+    "target": "koala_lightning_700m_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "0d79881291e2551a5c8b669f11f6b1fd37aeb0a9e44a178cbcbbacd57bf21d37",
+    "size": 1892,
+    "target": "koala_lightning_700m_configs/unet.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Unspecified",
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "f18b16fa4381c90ab44a3d7abd2e90afd05a2c31b8ca69998bc93c6453aeb7b7",
+    "size": 631,
+    "target": "koala_lightning_700m_configs/vae.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 2,
+    "kind": "diffusers-metadata-headers",
+    "license": "Unspecified",
+    "newline": true,
+    "repo": "etri-vilab/koala-lightning-700m",
+    "revision": "358e0e3576adf2ebc563b64cfcf8a088a4a6407a",
+    "sha256": "291b7c4893dca08321bf223d85ae382cacf456e5dd12211c7d9c022145eea13a",
+    "size": 204704,
+    "target": "koala_lightning_700m_tensor_shapes.json",
+    "upstream_path": "text_encoder/model.safetensors",
+    "upstream_paths": [
+      "text_encoder/model.safetensors",
+      "text_encoder_2/model.safetensors",
+      "unet/diffusion_pytorch_model.safetensors",
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Krea 2 Community License",
+    "repo": "krea/Krea-2-Turbo",
+    "revision": "98e0fe118d17c9e3547fbb2e25acdbae2cadf7c7",
+    "sha256": "65b85015e515bbfc3ffe6c03e10537a47121bd3756e0d21a1a87126da60bc4a8",
+    "size": 588,
+    "target": "krea2_configs/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Krea 2 Community License",
+    "repo": "krea/Krea-2-Turbo",
+    "revision": "98e0fe118d17c9e3547fbb2e25acdbae2cadf7c7",
+    "sha256": "54949c79def0d1060353c3fbfd4d2d2c4815ae241da6d6d28c99634c4eac6e6e",
+    "size": 791,
+    "target": "krea2_configs/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-header",
+    "license": "Krea 2 Community License",
+    "newline": true,
+    "repo": "krea/Krea-2-Turbo",
+    "revision": "98e0fe118d17c9e3547fbb2e25acdbae2cadf7c7",
+    "sha256": "a82002c77faeae3c559ea44fef8ec226bbd06fcc6682a41f7aacd2e9c75fe7e6",
+    "size": 28486,
+    "target": "krea2_transformer_tensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+      "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+      "transformer/diffusion_pytorch_model-00003-of-00003.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-header",
+    "license": "Krea 2 Community License",
+    "newline": false,
+    "repo": "krea/Krea-2-Turbo",
+    "revision": "98e0fe118d17c9e3547fbb2e25acdbae2cadf7c7",
+    "sha256": "3ed4c51fba66310e57d0d6e7f59311326301097e98467ef06a404d3874d7d57b",
+    "size": 14461,
+    "target": "krea2_vae_tensors.json",
+    "upstream_path": "vae/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Alpha-VLLM/Lumina-Image-2.0",
+    "revision": "53504abd8178b30685b6c4c7a4cd181ff78b73e9",
+    "sha256": "be4fbb2d6e5f64bf520db805f83eb786573520b619f59a133a5958e3eb4d9900",
+    "size": 852,
+    "target": "lumina2_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Alpha-VLLM/Lumina-Image-2.0",
+    "revision": "53504abd8178b30685b6c4c7a4cd181ff78b73e9",
+    "sha256": "1076c6ab28db3b433cb9e5bbbb0fd6c30f2f0b63d7c7d9723bacdec4833e7562",
+    "size": 22496,
+    "target": "lumina2_configs/text_encoder_model.safetensors.index.json",
+    "upstream_path": "text_encoder/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Alpha-VLLM/Lumina-Image-2.0",
+    "revision": "53504abd8178b30685b6c4c7a4cd181ff78b73e9",
+    "sha256": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+    "size": 636,
+    "target": "lumina2_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Alpha-VLLM/Lumina-Image-2.0",
+    "revision": "53504abd8178b30685b6c4c7a4cd181ff78b73e9",
+    "sha256": "bb8245b8d39a065fdf869ee4fce48db9cc491473eb7ff1b41d321fb4caf540d1",
+    "size": 46379,
+    "target": "lumina2_configs/tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Alpha-VLLM/Lumina-Next-SFT-diffusers",
+    "revision": "0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+    "sha256": "41691d3ce1da7f192958e7b510f07e77f97d892ab57be235adb303b951ada6c8",
+    "size": 698,
+    "target": "lumina_next_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Alpha-VLLM/Lumina-Next-SFT-diffusers",
+    "revision": "0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+    "sha256": "d47b0173786ca23b98fac689f80055aa6e33c3cc728714b3c1d13ea3e6dbb8e9",
+    "size": 12505,
+    "target": "lumina_next_configs/text_encoder_model.safetensors.index.json",
+    "upstream_path": "text_encoder/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Gemma Terms of Use",
+    "newline": false,
+    "repo": "Alpha-VLLM/Lumina-Next-SFT-diffusers",
+    "revision": "0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+    "sha256": "b3a4e47b3ddd22092266b08bcb349c430496143cd135a11c48e5b2d44d7e3cfc",
+    "size": 8294,
+    "target": "lumina_next_configs/text_encoder_tensors.json",
+    "upstream_path": "text_encoder/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00001-of-00002.safetensors",
+      "text_encoder/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Alpha-VLLM/Lumina-Next-SFT-diffusers",
+    "revision": "0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+    "sha256": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+    "size": 636,
+    "target": "lumina_next_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Alpha-VLLM/Lumina-Next-SFT-diffusers",
+    "revision": "0ee5ec90043acf5cb41fe96274af36eb7fad8d95",
+    "sha256": "c10840544aaa731378719a541c9f79744ea6865bb49ad3261554a2013e7b8347",
+    "size": 40017,
+    "target": "lumina_next_configs/tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA NSCLv1 / Gemma Terms of Use",
+    "repo": "nvidia/PixelDiT-1300M-1024px",
+    "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
+    "sha256": "66ea80d2d57d14f797ebda1058e3075cc19943adaa219ad11124543c865c3939",
+    "size": 927,
+    "target": "pixeldit_configs/model_config.json",
+    "upstream_path": "config.json"
+  },
+  {
+    "gated": true,
+    "license": "NVIDIA NSCLv1 / Gemma Terms of Use",
+    "optional": true,
+    "repo": "nvidia/PixelDiT-1300M-1024px",
+    "revision": "7c63b99a7a399918a1d6478b095698a65f664847",
+    "sha256": "9b108358c51c7869b5a9e2dbbaa52f744d2b16a0359768cad696d1c44b6ac7ab",
+    "size": 43910,
+    "target": "pixeldit_configs/model_headers/pixeldit_t2i_v1.json",
+    "upstream_path": "model_headers/pixeldit_t2i_v1.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/gemma-2-2b-it",
+    "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+    "sha256": "b3195cba8e4a8e637f15bc0bab6b48fd0f4e02967fac72925e2dfb02c4d5b8d7",
+    "size": 881,
+    "target": "pixeldit_configs/text_encoder_config.json",
+    "upstream_path": "config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/gemma-2-2b-it",
+    "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+    "sha256": "069b655f964da6484bea4ab6ecfc34f6c5f47448a5b88711218555a76dce34e8",
+    "size": 187,
+    "target": "pixeldit_configs/text_encoder_generation_config.json",
+    "upstream_path": "generation_config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Gemma Terms of Use",
+    "newline": false,
+    "repo": "Efficient-Large-Model/gemma-2-2b-it",
+    "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+    "sha256": "912d4750aba0807d6b92e0fa4cd30c7608a103f34b014133695038edab2aa5d3",
+    "size": 15591,
+    "target": "pixeldit_configs/text_encoder_headers/model-00001-of-00002.json",
+    "upstream_path": "model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "model-00001-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Gemma Terms of Use",
+    "newline": false,
+    "repo": "Efficient-Large-Model/gemma-2-2b-it",
+    "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+    "sha256": "15b6153882d22f44f71512904b47c11ddbfbda5500cc32665d752f09015894d2",
+    "size": 1021,
+    "target": "pixeldit_configs/text_encoder_headers/model-00002-of-00002.json",
+    "upstream_path": "model-00002-of-00002.safetensors",
+    "upstream_paths": [
+      "model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/gemma-2-2b-it",
+    "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+    "sha256": "ada0043f3e3b2e5ab2f445cad9c0fbbf9d91ad444675e6a82b822591c63abf5a",
+    "size": 24223,
+    "target": "pixeldit_configs/text_encoder_model.safetensors.index.json",
+    "upstream_path": "model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/gemma-2-2b-it",
+    "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+    "sha256": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+    "size": 636,
+    "target": "pixeldit_configs/text_encoder_special_tokens_map.json",
+    "upstream_path": "special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/gemma-2-2b-it",
+    "revision": "569d9809d0c8b6722d4d31b5a77a2ec7a400650a",
+    "sha256": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+    "size": 46996,
+    "target": "pixeldit_configs/text_encoder_tokenizer_config.json",
+    "upstream_path": "tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2dot5-community",
+    "repo": "playgroundai/playground-v2.5-1024px-aesthetic",
+    "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
+    "sha256": "e69bc6c32f552e1a967c4c4c706f6ce264dc31f3d34e8972a107ee89b585da8a",
+    "size": 684,
+    "target": "playground_v25_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2dot5-community",
+    "repo": "playgroundai/playground-v2.5-1024px-aesthetic",
+    "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
+    "sha256": "0ed36bdd654252bf88170e7d9beefa9da6854ffe96efd2a18931c0ca1837a9fb",
+    "size": 497,
+    "target": "playground_v25_configs/scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2dot5-community",
+    "repo": "playgroundai/playground-v2.5-1024px-aesthetic",
+    "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
+    "sha256": "10bddfdedc5621be3f4563750b70e0a29f464b8a2b2cc8f51e70e118934522cb",
+    "size": 560,
+    "target": "playground_v25_configs/text_encoder.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2dot5-community",
+    "repo": "playgroundai/playground-v2.5-1024px-aesthetic",
+    "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
+    "sha256": "63ad1cce6af27eb467a5453b091ab6f6a00ccb524cac6e8ff6602a4901b198b3",
+    "size": 570,
+    "target": "playground_v25_configs/text_encoder_2.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2dot5-community",
+    "repo": "playgroundai/playground-v2.5-1024px-aesthetic",
+    "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
+    "sha256": "73cd3f7bd618835b6d09eefd5155b84ccdeea07c32a4d201574af19bd405a5bc",
+    "size": 1778,
+    "target": "playground_v25_configs/unet.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2dot5-community",
+    "repo": "playgroundai/playground-v2.5-1024px-aesthetic",
+    "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
+    "sha256": "900dba765a6f61896ed12fa863b951a7053e9d13c8d249aa9ff757721fcf86ee",
+    "size": 746,
+    "target": "playground_v25_configs/vae.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "a49b74b866b324104d36d5f7eedcdb528427826a764a849e1e5e2c622e7be7ae",
+    "size": 680,
+    "target": "playground_v2_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "b149fef4111690fba4388e7912748526ea5fd73188da0161490c797bb601a04c",
+    "size": 561,
+    "target": "playground_v2_configs/scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "10bddfdedc5621be3f4563750b70e0a29f464b8a2b2cc8f51e70e118934522cb",
+    "size": 560,
+    "target": "playground_v2_configs/text_encoder.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "63ad1cce6af27eb467a5453b091ab6f6a00ccb524cac6e8ff6602a4901b198b3",
+    "size": 570,
+    "target": "playground_v2_configs/text_encoder_2.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "6a757fc443f84ad1def3b893aac3858178f2a1513e3cf97b35ff131b5d88edd5",
+    "size": 586,
+    "target": "playground_v2_configs/tokenizer/special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "7eb36a76a02551ce8583dbee08d062e672997a5fe1db82ebc642d88c7e79cc96",
+    "size": 704,
+    "target": "playground_v2_configs/tokenizer/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+    "size": 460,
+    "target": "playground_v2_configs/tokenizer_2/special_tokens_map.json",
+    "upstream_path": "tokenizer_2/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+    "size": 855,
+    "target": "playground_v2_configs/tokenizer_2/tokenizer_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "740736c5e06f3b13db1a393f973bec58c4579f1dbd7e6789f9f89010065970e5",
+    "size": 1773,
+    "target": "playground_v2_configs/unet.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": false,
+    "license": "playground-v2-community",
+    "repo": "playgroundai/playground-v2-1024px-aesthetic",
+    "revision": "737a24ebe3ae4e5421110879168be188853d86c8",
+    "sha256": "f8629f6833ba5f365a15d36d1ab5c13a96e1ff502799004d75ff4756477319dd",
+    "size": 602,
+    "target": "playground_v2_configs/vae.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Qwen Research License",
+    "repo": "Qwen/Qwen-Image-2.1",
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "sha256": "cf1ecd104ea090855d60d8cec0895c1e9d6ee41b2f87e231b678beecd1cf7809",
+    "size": 447,
+    "target": "qwen_image21_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "Qwen Research License",
+    "repo": "Qwen/Qwen-Image-2.1",
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "sha256": "5895f3a167c14a967fe9ac70c64924ae5acc79799e0679fd12907e594a713cd1",
+    "size": 485,
+    "target": "qwen_image21_configs/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Qwen Research License",
+    "repo": "Qwen/Qwen-Image-2.1",
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "sha256": "6001331949f7f86ab6d791a80b12246d4f8da5159fa08c3e62368a39f36d63a9",
+    "size": 1517,
+    "target": "qwen_image21_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Qwen Research License",
+    "repo": "Qwen/Qwen-Image-2.1",
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "sha256": "56ae3281c4e6c2d1aa3658252d187488071815fd79bef15808bb0205fc1a2241",
+    "size": 370,
+    "target": "qwen_image21_configs/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Qwen Research License",
+    "repo": "Qwen/Qwen-Image-2.1",
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "sha256": "9785d527b278cb8b210e9f48a8028d92a4190968ce7e24c8fc85d9d1b82f6ba2",
+    "size": 2079,
+    "target": "qwen_image21_configs/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-names",
+    "license": "Qwen Research License",
+    "newline": true,
+    "repo": "Qwen/Qwen-Image-2.1",
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "sha256": "58e483afe8d7fb2e09a852744581cc047aa3b950bec384b12208d13397626a32",
+    "size": 13578,
+    "target": "qwen_image21_transformer_tensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+      "transformer/diffusion_pytorch_model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+    "revision": "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+    "sha256": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+    "size": 636,
+    "target": "sana_configs/1.6b_sprint/special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+    "revision": "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+    "sha256": "733f241a6692770dfba10383e2c5a56a4f88b320732d9ee8fa16118737eca84d",
+    "size": 890,
+    "target": "sana_configs/1.6b_sprint/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+    "revision": "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+    "sha256": "92764588f700e36874c52f9f05bba143857e5069fc69b14450f907a1cdf879ed",
+    "size": 22495,
+    "target": "sana_configs/1.6b_sprint/text_encoder_index.json",
+    "upstream_path": "text_encoder/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+    "revision": "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+    "sha256": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+    "size": 46996,
+    "target": "sana_configs/1.6b_sprint/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Gemma Terms of Use",
+    "newline": false,
+    "repo": "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+    "revision": "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+    "sha256": "1f2e919b3e964774163f716e60a8514731920945156f64559f373f4e557b9188",
+    "size": 13971,
+    "target": "sana_configs/1.6b_sprint_headers/text_encoder_1.json",
+    "upstream_path": "text_encoder/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00001-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Gemma Terms of Use",
+    "newline": false,
+    "repo": "Efficient-Large-Model/Sana_Sprint_1.6B_1024px_diffusers",
+    "revision": "19683c58b7ea290e55cedd8950ae1d86ada7ef96",
+    "sha256": "6399f623a83b34265462e7365a90c6b4dec4f627323c3bebf69e824c19022d5a",
+    "size": 913,
+    "target": "sana_configs/1.6b_sprint_headers/text_encoder_2.json",
+    "upstream_path": "text_encoder/model-00002-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_1600M_1024px_diffusers",
+    "revision": "ac0da2ff55fbe434795be0dce883042e4d49e2fc",
+    "sha256": "3b45a277b19814724be26e4985dd24c5c3efb01bebe5139af77f99254101961a",
+    "size": 875,
+    "target": "sana_configs/1600m/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_1600M_1024px_diffusers",
+    "revision": "ac0da2ff55fbe434795be0dce883042e4d49e2fc",
+    "sha256": "92764588f700e36874c52f9f05bba143857e5069fc69b14450f907a1cdf879ed",
+    "size": 22495,
+    "target": "sana_configs/1600m/text_encoder_model.safetensors.index.json",
+    "upstream_path": "text_encoder/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_1600M_1024px_diffusers",
+    "revision": "ac0da2ff55fbe434795be0dce883042e4d49e2fc",
+    "sha256": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+    "size": 46996,
+    "target": "sana_configs/1600m/tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+    "revision": "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+    "sha256": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351",
+    "size": 636,
+    "target": "sana_configs/4.8b_1.5/special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+    "revision": "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+    "sha256": "733f241a6692770dfba10383e2c5a56a4f88b320732d9ee8fa16118737eca84d",
+    "size": 890,
+    "target": "sana_configs/4.8b_1.5/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+    "revision": "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+    "sha256": "92764588f700e36874c52f9f05bba143857e5069fc69b14450f907a1cdf879ed",
+    "size": 22495,
+    "target": "sana_configs/4.8b_1.5/text_encoder_index.json",
+    "upstream_path": "text_encoder/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+    "revision": "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+    "sha256": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+    "size": 46996,
+    "target": "sana_configs/4.8b_1.5/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Gemma Terms of Use",
+    "newline": false,
+    "repo": "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+    "revision": "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+    "sha256": "1f2e919b3e964774163f716e60a8514731920945156f64559f373f4e557b9188",
+    "size": 13971,
+    "target": "sana_configs/4.8b_1.5_headers/text_encoder_1.json",
+    "upstream_path": "text_encoder/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00001-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Gemma Terms of Use",
+    "newline": false,
+    "repo": "Efficient-Large-Model/SANA1.5_4.8B_1024px_diffusers",
+    "revision": "9468102c3cebb657f8c4b5f1e5a71e989a15f10d",
+    "sha256": "6399f623a83b34265462e7365a90c6b4dec4f627323c3bebf69e824c19022d5a",
+    "size": 913,
+    "target": "sana_configs/4.8b_1.5_headers/text_encoder_2.json",
+    "upstream_path": "text_encoder/model-00002-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_600M_1024px_diffusers",
+    "revision": "28f3af7689de15f3883d5863059a2fca0aa9b829",
+    "sha256": "3b45a277b19814724be26e4985dd24c5c3efb01bebe5139af77f99254101961a",
+    "size": 875,
+    "target": "sana_configs/600m/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_600M_1024px_diffusers",
+    "revision": "28f3af7689de15f3883d5863059a2fca0aa9b829",
+    "sha256": "92764588f700e36874c52f9f05bba143857e5069fc69b14450f907a1cdf879ed",
+    "size": 22495,
+    "target": "sana_configs/600m/text_encoder_model.safetensors.index.json",
+    "upstream_path": "text_encoder/model.safetensors.index.json"
+  },
+  {
+    "gated": true,
+    "license": "Gemma Terms of Use",
+    "repo": "Efficient-Large-Model/Sana_600M_1024px_diffusers",
+    "revision": "28f3af7689de15f3883d5863059a2fca0aa9b829",
+    "sha256": "cb32b7929c62608d46572e813112b3ad8a841fb98fdd6a4da8559e368a951c89",
+    "size": 46996,
+    "target": "sana_configs/600m/tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-names",
+    "license": "Gemma Terms of Use",
+    "newline": true,
+    "repo": "Efficient-Large-Model/Sana_1600M_1024px_diffusers",
+    "revision": "ac0da2ff55fbe434795be0dce883042e4d49e2fc",
+    "sha256": "2a73aec3622dee6b2db72b38dde8ba0dac0b5c3ee4b6ded39424be04f98c5342",
+    "size": 11479,
+    "target": "sana_configs/text_encoder_tensors.json",
+    "upstream_path": "text_encoder/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00001-of-00002.safetensors",
+      "text_encoder/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/stable-diffusion-3.5-large",
+    "revision": "ceddf0a7fdf2064ea28e2213e3b84e4afa170a0f",
+    "sha256": "b5e97ca0d3c0cd9a1e3ed91a71bbdd489de7941b23fe038b3aaa9acf36fd1543",
+    "size": 706,
+    "target": "sd35_configs/large_model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/stable-diffusion-3.5-large",
+    "revision": "ceddf0a7fdf2064ea28e2213e3b84e4afa170a0f",
+    "sha256": "677e1ed36ca0de4ac8cc766ca58869e8649673d5f1d47eb8f8aef511a18ae8f7",
+    "size": 141,
+    "target": "sd35_configs/large_scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/stable-diffusion-3.5-large",
+    "revision": "ceddf0a7fdf2064ea28e2213e3b84e4afa170a0f",
+    "sha256": "9035948b0904c536918a88b5d984a52cfca26a5c57efa9e90149790cf38c151e",
+    "size": 740,
+    "target": "sd35_configs/large_text_encoder_3_config.json",
+    "upstream_path": "text_encoder_3/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/stable-diffusion-3.5-large",
+    "revision": "ceddf0a7fdf2064ea28e2213e3b84e4afa170a0f",
+    "sha256": "ee8af543f7c9ec4219a536b3d6cbc8bd0b2e3374b0f6826dbe1ba534483787f9",
+    "size": 397,
+    "target": "sd35_configs/large_transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+    "sha256": "b5e97ca0d3c0cd9a1e3ed91a71bbdd489de7941b23fe038b3aaa9acf36fd1543",
+    "size": 706,
+    "target": "sd35_configs/medium_model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+    "sha256": "677e1ed36ca0de4ac8cc766ca58869e8649673d5f1d47eb8f8aef511a18ae8f7",
+    "size": 141,
+    "target": "sd35_configs/medium_scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+    "sha256": "9035948b0904c536918a88b5d984a52cfca26a5c57efa9e90149790cf38c151e",
+    "size": 740,
+    "target": "sd35_configs/medium_text_encoder_3_config.json",
+    "upstream_path": "text_encoder_3/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+    "sha256": "b6ea8128277df286573ce1937c36ce42a5a84e976331091ffccb1d05893dc299",
+    "size": 524,
+    "target": "sd35_configs/medium_transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Non-Commercial Research Community License",
+    "repo": "stabilityai/stable-diffusion-3-medium-diffusers",
+    "revision": "ea42f8cef0f178587cf766dc8129abd379c90671",
+    "sha256": "11d5414a4f9667e99b87670b369d99c62259903bcd091e423156e97f75bc5722",
+    "size": 372,
+    "target": "sd35_configs/sd3_medium_transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-names",
+    "license": "Stability AI Community License",
+    "newline": false,
+    "repo": "stabilityai/stable-diffusion-3.5-large",
+    "revision": "ceddf0a7fdf2064ea28e2213e3b84e4afa170a0f",
+    "sha256": "96bf1332d557c8b841dc2f4e4812d9e8ce41b2a94c182dfefefc3980ea49fdeb",
+    "size": 58081,
+    "target": "sd35_large_transformer_tensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+      "transformer/diffusion_pytorch_model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "indent": 2,
+    "kind": "safetensors-names",
+    "license": "Stability AI Community License",
+    "newline": false,
+    "repo": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+    "sha256": "417a4b99c8ef893776d82ef5fa7986ac23a6b796ce48c4982863d7470f27f773",
+    "size": 11490,
+    "target": "sd35_t5_tensors.json",
+    "upstream_path": "text_encoder_3/model-00001-of-00002.safetensors",
+    "upstream_paths": [
+      "text_encoder_3/model-00001-of-00002.safetensors",
+      "text_encoder_3/model-00002-of-00002.safetensors"
+    ]
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sd-turbo",
+    "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+    "sha256": "679fe7c2a03a419a046f4330bb2e32570d96e7a6da51b7df147d4a87bc7f775c",
+    "size": 616,
+    "target": "sd_turbo_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sd-turbo",
+    "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+    "sha256": "5599066c725fc2747a201fa3165ad7c8c3de3be629ce325451752e8f94c0d1ae",
+    "size": 553,
+    "target": "sd_turbo_configs/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sd-turbo",
+    "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+    "sha256": "9f6935d3d41bf8ce49b1d7ed912b29e770649d1aa3f3972215284f9397cd97d2",
+    "size": 618,
+    "target": "sd_turbo_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sd-turbo",
+    "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+    "sha256": "c2d0fb8b86ad86b1f46134d4a5f93fd1e688c932a78efc8d149087c33a53ad06",
+    "size": 574,
+    "target": "sd_turbo_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sd-turbo",
+    "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+    "sha256": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+    "size": 855,
+    "target": "sd_turbo_configs/tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sd-turbo",
+    "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+    "sha256": "ca09d494527ebe13343006e22b4468d45bf12aa34e76cf03639b6dbba1fb5c6d",
+    "size": 1867,
+    "target": "sd_turbo_configs/unet_config.json",
+    "upstream_path": "unet/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sd-turbo",
+    "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+    "sha256": "699a58ef7ecf3bffa201a507a3eaa3eed7efabab457ac547bf82df798b52a9be",
+    "size": 655,
+    "target": "sd_turbo_configs/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sdxl-turbo",
+    "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
+    "sha256": "13847eb34084bc56e9f8b10f84d2c650cf8cb00016b2530429af0b894d4e1aa2",
+    "size": 459,
+    "target": "sdxl_turbo_configs/scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sdxl-turbo",
+    "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
+    "sha256": "6a757fc443f84ad1def3b893aac3858178f2a1513e3cf97b35ff131b5d88edd5",
+    "size": 586,
+    "target": "sdxl_turbo_configs/tokenizer/special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sdxl-turbo",
+    "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
+    "sha256": "7eb36a76a02551ce8583dbee08d062e672997a5fe1db82ebc642d88c7e79cc96",
+    "size": 704,
+    "target": "sdxl_turbo_configs/tokenizer/tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sdxl-turbo",
+    "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
+    "sha256": "f118ab3a983206e4f32583448de6bd6aae4ee21869135cef1f5848a753cdaab6",
+    "size": 460,
+    "target": "sdxl_turbo_configs/tokenizer_2/special_tokens_map.json",
+    "upstream_path": "tokenizer_2/special_tokens_map.json"
+  },
+  {
+    "gated": true,
+    "license": "Stability AI Community License",
+    "repo": "stabilityai/sdxl-turbo",
+    "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
+    "sha256": "516314ccab66918d7cb647480ac27abd3520d14e1e5825aac99f50c851c16071",
+    "size": 855,
+    "target": "sdxl_turbo_configs/tokenizer_2/tokenizer_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "stable-cascade-nc-community",
+    "repo": "stabilityai/stable-cascade",
+    "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+    "sha256": "19c24bc45601f47185dfb4f740f88adc7044659f94106d023ec948fd7b2b01ba",
+    "size": 1318,
+    "target": "stable_cascade_configs/decoder_config.json",
+    "upstream_path": "decoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "stable-cascade-nc-community",
+    "repo": "stabilityai/stable-cascade",
+    "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+    "sha256": "eee850bfb204c810fc8f7c493d5182f0ed836376ada93e949125827b685d0c69",
+    "size": 1318,
+    "target": "stable_cascade_configs/decoder_lite_config.json",
+    "upstream_path": "decoder_lite/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "stable-cascade-nc-community",
+    "newline": false,
+    "repo": "stabilityai/stable-cascade",
+    "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+    "sha256": "05df160b7afbac7cfe29117041eda6c0fcfb583b39809e78c085a54b7dc69547",
+    "size": 49152,
+    "target": "stable_cascade_configs/decoder_lite_tensors.json",
+    "upstream_path": "decoder_lite/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "decoder_lite/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "stable-cascade-nc-community",
+    "repo": "stabilityai/stable-cascade",
+    "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+    "sha256": "0c8c28b033d3f7462c7b63ba0e891efad044766a147f5fdee8257e03aaa749f9",
+    "size": 451,
+    "target": "stable_cascade_configs/decoder_model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "stable-cascade-nc-community",
+    "newline": false,
+    "repo": "stabilityai/stable-cascade",
+    "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+    "sha256": "132beffc92d23c555d8a1ba67e6bc770843171d52cdc97daef56614f013c2fb6",
+    "size": 88136,
+    "target": "stable_cascade_configs/decoder_tensors.json",
+    "upstream_path": "decoder/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "decoder/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "stable-cascade-nc-community",
+    "repo": "stabilityai/stable-cascade-prior",
+    "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+    "sha256": "a1251310772bceb7092629d110d55c4d1d46d1c19a35c3fce3e1cc6cc83e5ab6",
+    "size": 1102,
+    "target": "stable_cascade_configs/prior_config.json",
+    "upstream_path": "prior/config.json"
+  },
+  {
+    "gated": false,
+    "license": "stable-cascade-nc-community",
+    "repo": "stabilityai/stable-cascade-prior",
+    "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+    "sha256": "9b1e31708bd90986ee0b4dea8e62e2162aa12d9ad00c7dd6fe71e7758c577c6d",
+    "size": 1102,
+    "target": "stable_cascade_configs/prior_lite_config.json",
+    "upstream_path": "prior_lite/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "stable-cascade-nc-community",
+    "newline": false,
+    "repo": "stabilityai/stable-cascade-prior",
+    "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+    "sha256": "a653727dfd91f965372b029f1808538b6eaaddd8f56d27559a2cb709f0922b77",
+    "size": 39753,
+    "target": "stable_cascade_configs/prior_lite_tensors.json",
+    "upstream_path": "prior_lite/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "prior_lite/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "stable-cascade-nc-community",
+    "repo": "stabilityai/stable-cascade-prior",
+    "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+    "sha256": "8e98f1353f0c9f91f145034b0d503893abb61fe1cb9f6ad24f5fe76e9e129c5f",
+    "size": 551,
+    "target": "stable_cascade_configs/prior_model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "stable-cascade-nc-community",
+    "newline": false,
+    "repo": "stabilityai/stable-cascade-prior",
+    "revision": "7ca32c21c3b4d4e35bbb94fcfedfb4fa2259bd91",
+    "sha256": "465a8c226e5f4903179cac56924c41a12db2083c508f2db491943b9eac8a599f",
+    "size": 79241,
+    "target": "stable_cascade_configs/prior_tensors.json",
+    "upstream_path": "prior/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "prior/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "stable-cascade-nc-community",
+    "repo": "stabilityai/stable-cascade",
+    "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+    "sha256": "e2c72481b491f9e219ca487580f14a9c83269545dd40ce1de4174b180fdef95c",
+    "size": 117,
+    "target": "stable_cascade_configs/scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "stable-cascade-nc-community",
+    "repo": "stabilityai/stable-cascade",
+    "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+    "sha256": "2431aea24ee1438b0ccabcfc8a5b47dfc10ab09500a730161b8530ccd057775d",
+    "size": 328,
+    "target": "stable_cascade_configs/vqgan_config.json",
+    "upstream_path": "vqgan/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "stable-cascade-nc-community",
+    "newline": false,
+    "repo": "stabilityai/stable-cascade",
+    "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+    "sha256": "df745151f9495f011faf32808a6cbfa4970adb18acc9644a314cee8cd39a7967",
+    "size": 5347,
+    "target": "stable_cascade_configs/vqgan_tensors.json",
+    "upstream_path": "vqgan/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vqgan/diffusion_pytorch_model.safetensors"
+    ]
+  }
+]

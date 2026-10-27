@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.sd3_transformer import SD3Transformer2DModel
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 CONFIGS = FIXTURES / "sd35_configs"
 
 

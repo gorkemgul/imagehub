@@ -1,10 +1,10 @@
 """Random-weight parity for the Stable Cascade stage A decoder."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.models.paella_vq import PaellaVQModel
 
@@ -14,9 +14,13 @@ paella_module = pytest.importorskip(
     "diffusers.pipelines.deprecated.wuerstchen.modeling_paella_vq_model"
 )
 
-PUBLISHED = json.loads(
-    Path("tests/fixtures/stable_cascade_configs/vqgan_config.json").read_text(encoding="utf-8")
-)
+
+def published_config():
+    return json.loads(
+        restricted_fixture("stable_cascade_configs/vqgan_config.json").read_text(encoding="utf-8")
+    )
+
+
 TINY = {
     "levels": 2,
     "bottleneck_blocks": 2,
@@ -46,10 +50,11 @@ def build(config):
 
 @pytest.mark.parametrize(
     ("config", "shape"),
-    [(TINY, (2, 4, 6, 7)), (PUBLISHED, (2, 4, 32, 32)), (PUBLISHED, (1, 4, 17, 23))],
+    [(TINY, (2, 4, 6, 7)), (None, (2, 4, 32, 32)), (None, (1, 4, 17, 23))],
     ids=["tiny", "published_32", "published_odd"],
 )
 def test_decode_random_weights(record, request, config, shape):
+    config = published_config() if config is None else config
     reference, ours = build(config)
     latents = torch.randn(*shape)
     with torch.inference_mode():
@@ -61,7 +66,7 @@ def test_decode_random_weights(record, request, config, shape):
 
 
 def test_encode_random_weights(record):
-    reference, ours = build(PUBLISHED)
+    reference, ours = build(published_config())
     images = torch.randn(1, 3, 64, 64)
     with torch.inference_mode():
         expected = reference.encode(images, return_dict=False)[0]

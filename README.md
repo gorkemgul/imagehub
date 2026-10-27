@@ -36,6 +36,7 @@ result.images[0].save("edited.png")
 ## Models
 
 The [model catalog](docs/catalog.md) lists every supported checkpoint with its source, pinned revision, and license.
+Creating a pipeline for a checkpoint without commercial-use rights emits an `ImagehubLicenseWarning`, which standard Python warning filters can silence.
 
 <details>
 <summary>All model families</summary>
@@ -80,7 +81,7 @@ The [model catalog](docs/catalog.md) lists every supported checkpoint with its s
 | Show-o | `show-o-512` | `t2i` | T | CPU fp32 parity |
 | Emu3 | `emu3-gen` | `t2i` | T | CPU fp32 parity with shortened 24×16 end-to-end runs |
 | NextStep-1 | `nextstep-1-large` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
-| PixelDiT | `pixeldit` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 text encoder |
+| PixelDiT | `pixeldit` | `t2i` | T | CPU fp32 parity; code is NSCLv1, non-commercial |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
@@ -113,11 +114,19 @@ requires bit-identical output from the reference implementation. The
 
 ```bash
 uv venv -p 3.13 .venv && uv pip install --python .venv -e ".[dev,image]"
+.venv/bin/python scripts/fetch_fixtures.py
 .venv/bin/python -m pytest
 ```
+
+Some published configuration and tokenizer fixtures retain checkpoint-specific license terms and
+are fetched into the ignored `tests/fixtures/_restricted` cache. Set `HF_TOKEN` before running the
+fetcher to include gated repositories; tests for unavailable fixtures skip with the same command.
 
 Reference comparisons are optional; install `.[dev,image,reference]` and run `IMAGEHUB_REFERENCE_TESTS=1 .venv/bin/python -m pytest tests/reference` with local checkpoint paths configured.
 
 ## License
 
-The library is licensed under Apache-2.0. Each checkpoint has its own license; see the [model catalog](docs/catalog.md).
+The project is Apache-2.0 overall. Clearly marked third-party derivatives retain their own license;
+in particular, the PixelDiT source is NSCLv1 and non-commercial. Each checkpoint also has its own
+license; see the [model catalog](docs/catalog.md), [NOTICE](NOTICE), and
+[third-party notices](THIRD_PARTY_NOTICES.md).

@@ -1,17 +1,17 @@
 """HiDream-I1 transformer parity with random weights (exact, CPU float32)."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
-CONFIGS = Path(__file__).parents[1] / "fixtures" / "hidream_configs"
+CONFIGS = fixture_path("hidream_configs")
 
 TINY = {
     "patch_size": 2,
@@ -28,13 +28,16 @@ TINY = {
     "max_resolution": [8, 8],
     "llama_layers": [0, 1, 2, 2],
 }
+
+
 # Published width, head layout and expert counts with fewer layers: the full 16 + 32 layer model
 # (~17B parameters, 68 GB in float32) does not fit next to the reference in 96 GB.
-PUBLISHED_WIDTH = (
-    json.loads((CONFIGS / "transformer_config.json").read_text(encoding="utf-8"))
-    | {"num_layers": 2, "num_single_layers": 2, "llama_layers": [0, 5, 31, 31]}
-    | {"max_resolution": [16, 16]}
-)
+def published_width():
+    return (
+        json.loads((CONFIGS / "transformer_config.json").read_text(encoding="utf-8"))
+        | {"num_layers": 2, "num_single_layers": 2, "llama_layers": [0, 5, 31, 31]}
+        | {"max_resolution": [16, 16]}
+    )
 
 
 def _inputs(config, height, width, *, llama_layers, text_length=7, t5_length=5):
@@ -109,4 +112,4 @@ def test_hidream_tiny_routes_every_expert():
 
 @pytest.mark.parametrize(("height", "width"), [(8, 8), (8, 12)], ids=["square", "wide"])
 def test_hidream_published_width_exact(height, width):
-    _compare(PUBLISHED_WIDTH, height, width, llama_layers=32)
+    _compare(published_width(), height, width, llama_layers=32)

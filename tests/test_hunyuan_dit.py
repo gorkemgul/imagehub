@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.backends.hunyuan_dit import (
     HunyuanDiTBackend,
@@ -44,7 +45,7 @@ def test_v12_catalog_defaults(model_id, steps):
 
 @pytest.mark.parametrize("variant", ["", "_distilled"])
 def test_v12_published_headers_load_on_meta(variant):
-    fixtures = Path(__file__).parent / "fixtures" / "hunyuan_dit_v12_configs"
+    fixtures = fixture_path("hunyuan_dit_v12_configs")
     config = read_json(fixtures / "transformer_config.json")
     assert config["use_style_cond_and_image_meta_size"] is False
     shapes = json.loads((fixtures / f"transformer{variant}_tensors.json").read_text())

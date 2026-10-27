@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 from helpers import write_tiny_sdxl
 
 from imagehub import pipeline
@@ -20,10 +21,7 @@ def tiny_sdxl(tmp_path_factory):
 @pytest.fixture(scope="module")
 def tiny_turbo(tmp_path_factory):
     config = json.loads(
-        (
-            __import__("pathlib").Path(__file__).parent
-            / "fixtures/sdxl_turbo_configs/scheduler_config.json"
-        ).read_text()
+        (restricted_fixture("sdxl_turbo_configs/scheduler_config.json")).read_text()
     )
     return write_tiny_sdxl(
         tmp_path_factory.mktemp("tiny-turbo"), scheduler_config=config, sample_size=4
@@ -33,9 +31,7 @@ def tiny_turbo(tmp_path_factory):
 @pytest.fixture(scope="module")
 def tiny_playground(tmp_path_factory):
     config = json.loads(
-        (
-            Path(__file__).parent / "fixtures/playground_v25_configs/scheduler_config.json"
-        ).read_text()
+        (restricted_fixture("playground_v25_configs/scheduler_config.json")).read_text()
     )
     return write_tiny_sdxl(
         tmp_path_factory.mktemp("tiny-playground"), scheduler_config=config, sample_size=4
@@ -73,7 +69,7 @@ def test_turbo_uses_model_scheduler_defaults_and_native_size(tiny_turbo):
 
 def test_playground_v2_uses_model_guidance_and_euler_ancestral_scheduler(tmp_path):
     config = json.loads(
-        (Path(__file__).parent / "fixtures/playground_v2_configs/scheduler_config.json").read_text()
+        restricted_fixture("playground_v2_configs/scheduler_config.json").read_text()
     )
     root = write_tiny_sdxl(tmp_path / "tiny-playground-v2", scheduler_config=config, sample_size=4)
     result = pipeline("t2i", backend="playground-v2", model=root)("a cat", seed=7, steps=1)

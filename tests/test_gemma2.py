@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.gemma2 import Gemma2Model
 
-FIXTURES = Path(__file__).parent / "fixtures" / "sana_configs"
+FIXTURES = fixture_path("sana_configs")
 CONFIG = FIXTURES / "1600m" / "text_encoder_config.json"
 TENSORS = FIXTURES / "text_encoder_tensors.json"
 

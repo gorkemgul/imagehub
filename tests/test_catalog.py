@@ -361,7 +361,7 @@ def test_catalog_contents():
 
     qwen_image = model_info("qwen-image")
     assert qwen_image.family == "qwen-image"
-    assert qwen_image.catalog_id == "qwen-image-2"
+    assert qwen_image.catalog_id == "qwen-image"
     assert qwen_image.license == "Apache-2.0"
     assert model_info("qwen-image-2.1").license == "Qwen Research License"
     assert len(set(qwen_image.files)) == len(qwen_image.files) == 29
@@ -592,7 +592,12 @@ def test_catalog_contents():
         assert spec.catalog_id == "stable-diffusion-3"
         assert spec.provenance == "author"
         assert spec.format == "diffusers"
-        assert spec.license == "Stability AI Community License"
+        expected_license = (
+            "Stability AI Non-Commercial Research Community License"
+            if model_id == "sd3-medium"
+            else "Stability AI Community License"
+        )
+        assert spec.license == expected_license
         assert spec.gated
         assert not any("fp16" in name or "single_file" in name for name in spec.files)
 
@@ -615,6 +620,18 @@ def test_provenance_and_formats():
         assert model_info(f"sd-v1-{version}").provenance == "author"
     assert "unet/diffusion_pytorch_model.bin" in model_info("sd-v1-1").files
     assert "unet/diffusion_pytorch_model.safetensors" in model_info("sd-v1-4").files
+
+
+def test_implementation_license_metadata_defaults_and_pixeldit_exception():
+    regular = model_info("qwen-image")
+    assert regular.commercial_use is True
+    assert regular.code_license == "Apache-2.0"
+    assert regular.code_commercial_use is True
+
+    pixeldit = model_info("pixeldit")
+    assert pixeldit.commercial_use is False
+    assert pixeldit.code_license == "NSCLv1"
+    assert pixeldit.code_commercial_use is False
 
 
 def test_flux2_klein_9b_catalog_entry():
@@ -823,9 +840,14 @@ def test_pixart_sigma_transformer_only_catalog_entries():
         assert spec.task is Task.T2I
         assert spec.family == "pixart"
         assert (spec.repo_id, spec.revision) == (repo, revision)
+        expected_license = (
+            "CreativeML-OpenRAIL++-M"
+            if model_id == "pixart-sigma-xl-512"
+            else "OpenRAIL (exact terms unspecified)"
+        )
+        assert spec.license == expected_license
         assert spec.provenance == "author"
         assert spec.catalog_id == "pixart-sigma"
-        assert spec.license == "CreativeML-OpenRAIL++-M"
         assert not spec.gated
         assert spec.base == base.id
         assert spec.files == transformer

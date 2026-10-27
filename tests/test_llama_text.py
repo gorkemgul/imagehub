@@ -1,14 +1,19 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.exceptions import CheckpointError
 from imagehub.models.llama_text import LlamaTextModel, inverse_frequencies
 
-CONFIGS = Path(__file__).parent / "fixtures" / "hidream_configs"
-CONFIG = json.loads((CONFIGS / "text_encoder_4_config.json").read_text(encoding="utf-8"))
+
+def published_config():
+    return json.loads(
+        restricted_fixture("hidream_configs/text_encoder_4_config.json").read_text(encoding="utf-8")
+    )
+
+
 TINY = {
     "vocab_size": 20,
     "hidden_size": 16,
@@ -29,11 +34,13 @@ TINY = {
 
 def test_matches_llama_31_8b_tensor_layout():
     index = json.loads(
-        (CONFIGS / "text_encoder_4_model.safetensors.index.json").read_text(encoding="utf-8")
+        restricted_fixture("hidream_configs/text_encoder_4_model.safetensors.index.json").read_text(
+            encoding="utf-8"
+        )
     )
     published = {name for name in index["weight_map"] if name != "lm_head.weight"}
     with torch.device("meta"):
-        model = LlamaTextModel(CONFIG)
+        model = LlamaTextModel(published_config())
     state = model.state_dict()
     assert {f"model.{name}" for name in state} == published
     assert list(state["embed_tokens.weight"].shape) == [128256, 4096]
@@ -52,8 +59,9 @@ def test_matches_llama_31_8b_tensor_layout():
 
 
 def test_llama3_rope_scaling_of_the_published_config():
-    scaled = inverse_frequencies(CONFIG)
-    plain = inverse_frequencies({**CONFIG, "rope_scaling": None})
+    config = published_config()
+    scaled = inverse_frequencies(config)
+    plain = inverse_frequencies({**config, "rope_scaling": None})
     assert scaled.shape == plain.shape == (64,)
     assert plain[0] == 1.0
     # High frequencies are untouched, the lowest are divided by the factor, the rest in between.
@@ -65,13 +73,14 @@ def test_llama3_rope_scaling_of_the_published_config():
 
 
 def test_rope_parameters_accept_the_current_config_form():
-    legacy = inverse_frequencies(CONFIG)
+    config = published_config()
+    legacy = inverse_frequencies(config)
     current = inverse_frequencies(
         {
             "head_dim": 128,
             "rope_theta": None,
             "rope_scaling": None,
-            "rope_parameters": {**CONFIG["rope_scaling"], "rope_theta": CONFIG["rope_theta"]},
+            "rope_parameters": {**config["rope_scaling"], "rope_theta": config["rope_theta"]},
         }
     )
     assert torch.equal(legacy, current)

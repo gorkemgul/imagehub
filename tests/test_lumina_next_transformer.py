@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.lumina_next_transformer import LuminaNextDiT2DModel, rotary_frequencies
 
-FIXTURES = Path(__file__).parent / "fixtures" / "lumina_next_configs"
+FIXTURES = fixture_path("lumina_next_configs")
 TINY = {
     "in_channels": 4,
     "hidden_size": 32,

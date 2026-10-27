@@ -1,18 +1,18 @@
 """Qwen3-VL text encoder structural parity with random weights."""
 
 import json
-from pathlib import Path
 from typing import Any
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.qwen3_vl_text import Qwen3VLTextModel
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
 
-FIXTURES = Path(__file__).parents[1] / "fixtures"
+FIXTURES = fixture_path()
 CONFIG = FIXTURES / "qwen_image21_configs" / "text_encoder_config.json"
 
 TINY = {

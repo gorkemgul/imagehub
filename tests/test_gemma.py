@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.gemma import GemmaModel
 
-FIXTURES = Path(__file__).parent / "fixtures" / "lumina_next_configs"
+FIXTURES = fixture_path("lumina_next_configs")
 TINY = {
     "vocab_size": 16,
     "hidden_size": 16,

@@ -10,6 +10,7 @@ from typing import cast
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import max_diff, snapshot_dir
 
 from imagehub import pipeline
@@ -42,7 +43,7 @@ MODEL_IDS = tuple(MODELS)
 PROMPT = "a photograph of an astronaut riding a horse"
 MAX_SEQUENCE_LENGTH = 300
 
-FIXTURES = Path(__file__).parents[1] / "fixtures" / "sana_configs"
+FIXTURES = fixture_path("sana_configs")
 SANA_FIXTURE_MODELS = {
     "sana-sprint-1.6b-1024": {
         "config": "1.6b_sprint",

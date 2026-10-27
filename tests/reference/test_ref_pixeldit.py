@@ -1,5 +1,7 @@
 """PixelDiT parity against the pinned official implementation and local checkpoint."""
 
+# Derivative of NVlabs PixelDiT under NSCLv1; non-commercial. See licenses/pixeldit.
+
 import gc
 import json
 import sys
@@ -7,6 +9,7 @@ from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import max_diff, snapshot_dir
 
 from imagehub import pipeline
@@ -21,7 +24,7 @@ np = pytest.importorskip("numpy")
 transformers = pytest.importorskip("transformers")
 
 REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/pixeldit")
-FIXTURES = Path(__file__).parents[1] / "fixtures" / "pixeldit_configs"
+FIXTURES = fixture_path("pixeldit_configs")
 PROMPT = "a blue ceramic cat on a wooden table"
 TINY_CONFIG = {
     "in_channels": 3,

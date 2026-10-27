@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/stepfun-ai/NextStep-1",
+  "revision": "a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0",
+  "license": "Apache-2.0",
+  "commercial_use": true,
+  "policy": "The implementation is ported from the upstream source; pretrained weights are downloaded separately and keep their own license."
+}

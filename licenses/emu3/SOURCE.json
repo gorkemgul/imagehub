@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/baaivision/Emu3",
+  "revision": "dbbf9858194d70b8c58293e219ecffe22df0f9c7",
+  "license": "Apache-2.0",
+  "commercial_use": true,
+  "policy": "The implementation is ported from the upstream source; pretrained weights are downloaded separately and keep their own license."
+}

@@ -8,6 +8,7 @@ build/
 .mypy_cache/
 .ruff_cache/
 /checkpoints/
+/tests/fixtures/_restricted/
 
 # Local research notes (not published)
 /docs/research/

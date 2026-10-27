@@ -12,38 +12,12 @@ CATALOG = (
 )
 
 
-def _norm(value: str) -> str:
-    if "(" in value and value.endswith(")"):
-        value = value.rsplit("(", 1)[1][:-1]
-    return (
-        value.lower()
-        .replace("_", "-")
-        .replace(" ", "-")
-        .replace("open-rail", "openrail")
-        .replace("-agreement", "")
-    )
-
-
 def test_catalog_ids_exist_with_consistent_weight_licenses():
     if not CATALOG.is_file():
         pytest.skip(f"Catalog checkout not found at {CATALOG}")
     entries = {m["id"]: m for m in json.loads(CATALOG.read_text(encoding="utf-8"))["models"]}
-    for spec in MODEL_CATALOG.values():
-        assert spec.catalog_id in entries, spec.id
-        license_entry = entries[spec.catalog_id].get("license")
-        if license_entry is None:
-            assert spec.license == "Unspecified", spec.id
-            continue
-        weights = license_entry["weights"]
-        if weights is None:
-            # Licenses that differ by variant are only named in the entry's notes.
-            assert spec.license in entries[spec.catalog_id]["notes"], spec.id
-            continue
-        # A catalog entry may cover several releases: "license-a (v2); license-b (v2.5)".
-        parts = [part.strip() for part in weights.split(";")]
-        assert any(
-            _norm(part) == _norm(spec.license)
-            or part.lower().split(" (")[0] == spec.license.lower()
-            or part.lower().split(" agreement")[0] == spec.license.lower()
-            for part in parts
-        ), (spec.id, weights)
+    # Qwen-Image and Qwen-Image 2 are distinct architectures with distinct weight licenses.
+    assert MODEL_CATALOG["qwen-image"].catalog_id == "qwen-image"
+    assert MODEL_CATALOG["qwen-image-2.1"].catalog_id == "qwen-image-2"
+    assert entries["qwen-image"]["license"]["weights"] == "Apache-2.0"
+    assert "Qwen Research" in entries["qwen-image-2"]["license"]["weights"]

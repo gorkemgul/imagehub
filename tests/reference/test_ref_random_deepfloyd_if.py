@@ -1,10 +1,10 @@
 """DeepFloyd IF U-Net and DDPM random-weight parity against diffusers."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.schedulers.ddpm import DDPMScheduler
@@ -12,7 +12,7 @@ from imagehub.schedulers.ddpm import DDPMScheduler
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
-FIXTURES = Path(__file__).parents[1] / "fixtures" / "deepfloyd_if_configs"
+FIXTURES = fixture_path("deepfloyd_if_configs")
 
 
 def _published_small(stage: str) -> dict:

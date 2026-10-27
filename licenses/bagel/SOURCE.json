@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/bytedance-seed/BAGEL",
+  "revision": "a2fa77dd8caeefc41e6607ae0ec17408d3f4ee9f",
+  "license": "Apache-2.0",
+  "commercial_use": true,
+  "policy": "The implementation is ported from the upstream source; pretrained weights are downloaded separately and keep their own license."
+}

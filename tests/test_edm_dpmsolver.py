@@ -1,20 +1,22 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.schedulers.edm_dpmsolver import EDMDPMSolverMultistepScheduler
 
-CONFIG = json.loads(
-    (Path(__file__).parent / "fixtures/playground_v25_configs/scheduler_config.json").read_text(
-        encoding="utf-8"
+
+def published_config():
+    return json.loads(
+        restricted_fixture("playground_v25_configs/scheduler_config.json").read_text(
+            encoding="utf-8"
+        )
     )
-)
 
 
 def test_release_config_and_state_reset():
-    scheduler = EDMDPMSolverMultistepScheduler(CONFIG)
+    scheduler = EDMDPMSolverMultistepScheduler(published_config())
     scheduler.set_timesteps(2)
     assert scheduler.timesteps.dtype == torch.float32
     assert scheduler.sigmas.dtype == torch.float32
@@ -27,7 +29,7 @@ def test_release_config_and_state_reset():
 
 
 def test_requires_set_timesteps_before_sampling():
-    scheduler = EDMDPMSolverMultistepScheduler(CONFIG)
+    scheduler = EDMDPMSolverMultistepScheduler(published_config())
     sample = torch.randn(1, 4, 3, 3)
     with pytest.raises(RuntimeError, match="set_timesteps"):
         scheduler.scale_model_input(sample, torch.tensor(1.0))
@@ -55,4 +57,4 @@ def test_requires_set_timesteps_before_sampling():
 )
 def test_rejects_unsupported_options(option):
     with pytest.raises(ValueError, match="Unsupported EDM DPM-Solver setting"):
-        EDMDPMSolverMultistepScheduler(CONFIG | option)
+        EDMDPMSolverMultistepScheduler(published_config() | option)

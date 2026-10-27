@@ -1,8 +1,8 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import write_tiny_flux2
 
 from imagehub import pipeline
@@ -12,7 +12,7 @@ from imagehub.exceptions import CheckpointError
 from imagehub.models.flux2_transformer import Flux2Transformer2DModel
 from imagehub.models.qwen3 import Qwen3Model
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 
 
 @pytest.fixture(scope="module")

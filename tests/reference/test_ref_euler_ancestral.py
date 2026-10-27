@@ -1,22 +1,23 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.schedulers.euler_ancestral import EulerAncestralDiscreteScheduler
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
-CONFIG = json.loads(
-    (Path(__file__).parents[1] / "fixtures/sdxl_turbo_configs/scheduler_config.json").read_text()
-)
+
+
+def published_config():
+    return json.loads(restricted_fixture("sdxl_turbo_configs/scheduler_config.json").read_text())
 
 
 @pytest.mark.parametrize("steps", [1, 2, 4, 50])
 @pytest.mark.parametrize("spacing", ["leading", "trailing"])
 def test_ancestral_timesteps_and_sigmas_match_diffusers_exactly(steps, spacing):
-    config = CONFIG | {"timestep_spacing": spacing}
+    config = published_config() | {"timestep_spacing": spacing}
     actual = EulerAncestralDiscreteScheduler(config)
     expected = diffusers.EulerAncestralDiscreteScheduler.from_config(config)
     actual.set_timesteps(steps)
@@ -26,8 +27,9 @@ def test_ancestral_timesteps_and_sigmas_match_diffusers_exactly(steps, spacing):
 
 
 def test_ancestral_seeded_trajectory_matches_diffusers_exactly():
-    actual = EulerAncestralDiscreteScheduler(CONFIG)
-    expected = diffusers.EulerAncestralDiscreteScheduler.from_config(CONFIG)
+    config = published_config()
+    actual = EulerAncestralDiscreteScheduler(config)
+    expected = diffusers.EulerAncestralDiscreteScheduler.from_config(config)
     actual.set_timesteps(4)
     expected.set_timesteps(4)
     sample = torch.randn((2, 4, 3, 5), generator=torch.Generator().manual_seed(2))
@@ -56,9 +58,7 @@ def test_ancestral_seeded_trajectory_matches_diffusers_exactly():
 @pytest.mark.parametrize("steps", [2, 30, 50])
 def test_playground_v2_schedule_matches_diffusers_exactly(steps):
     config = json.loads(
-        (
-            Path(__file__).parents[1] / "fixtures/playground_v2_configs/scheduler_config.json"
-        ).read_text()
+        (restricted_fixture("playground_v2_configs/scheduler_config.json")).read_text()
     )
     actual = EulerAncestralDiscreteScheduler(config)
     expected = diffusers.EulerAncestralDiscreteScheduler.from_config(config)

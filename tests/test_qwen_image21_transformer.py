@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.qwen_image21_transformer import QwenImage21Transformer2DModel
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 CONFIG_PATH = FIXTURES / "qwen_image21_configs" / "transformer_config.json"
 TENSORS_PATH = FIXTURES / "qwen_image21_transformer_tensors.json"
 

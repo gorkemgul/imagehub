@@ -1,0 +1,6 @@
+{
+  "source": "CompVis/stable-diffusion-v1-1",
+  "revision": "574555a657f0c8d6e970a02c7e095e9d4220dcbf",
+  "license": "CreativeML-OpenRAIL-M",
+  "form": "derived factual tensor names and shapes"
+}

@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/HiDream-ai/HiDream-O1-Image",
+  "revision": "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4",
+  "license": "MIT",
+  "commercial_use": true,
+  "policy": "The implementation is ported from the upstream source; pretrained weights are downloaded separately and keep their own license."
+}

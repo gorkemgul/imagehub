@@ -1,5 +1,7 @@
 """PixelDiT text-to-image backend."""
 
+# Derivative of NVlabs PixelDiT under NSCLv1; non-commercial. See licenses/pixeldit.
+
 from __future__ import annotations
 
 import math

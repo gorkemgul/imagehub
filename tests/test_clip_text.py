@@ -1,8 +1,8 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import (
     TINY_TEXT_CONFIG,
     meta_shapes,
@@ -13,7 +13,7 @@ from helpers import (
 
 from imagehub.models.clip_text import CLIPTextModel, CLIPTextModelWithProjection
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 
 
 def test_matches_published_tensor_layout():

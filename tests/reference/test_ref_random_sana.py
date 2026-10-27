@@ -1,10 +1,10 @@
 """Sana transformer and DC-AE random-weight parity against diffusers."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.autoencoder_dc import AutoencoderDC
 from imagehub.models.sana_transformer import SanaTransformer2DModel
@@ -12,7 +12,7 @@ from imagehub.models.sana_transformer import SanaTransformer2DModel
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
-CONFIGS = Path(__file__).parents[1] / "fixtures" / "sana_configs"
+CONFIGS = fixture_path("sana_configs")
 TINY_TRANSFORMER = {
     "num_attention_heads": 2,
     "attention_head_dim": 8,

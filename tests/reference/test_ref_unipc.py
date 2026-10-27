@@ -1,27 +1,28 @@
 """Exact small-tensor parity for HiDream Full's published UniPC scheduler."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.schedulers.unipc import UniPCMultistepScheduler
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
-CONFIG = json.loads(
-    (
-        Path(__file__).parents[1] / "fixtures/hidream_configs/full/scheduler_scheduler_config.json"
-    ).read_text()
-)
+
+def published_config():
+    return json.loads(
+        restricted_fixture("hidream_configs/full/scheduler_scheduler_config.json").read_text()
+    )
 
 
 @pytest.mark.parametrize("steps", [1, 2, 4, 7, 16, 50])
 def test_unipc_flow_schedule_and_trajectory_match(steps):
-    reference = diffusers.UniPCMultistepScheduler.from_config(CONFIG)
-    native = UniPCMultistepScheduler(CONFIG)
+    config = published_config()
+    reference = diffusers.UniPCMultistepScheduler.from_config(config)
+    native = UniPCMultistepScheduler(config)
     reference.set_timesteps(steps)
     native.set_timesteps(steps)
     assert torch.equal(native.timesteps, reference.timesteps)
