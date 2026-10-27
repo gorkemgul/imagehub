@@ -2,6 +2,8 @@ from collections.abc import Mapping
 from typing import Any, Literal, overload
 
 from imagehub.backends.base import Backend
+from imagehub.catalog import model_info
+from imagehub.licensing import warn_if_noncommercial
 from imagehub.pipelines import Pipeline, TextToImagePipeline
 from imagehub.registry import BackendRegistry, backend_registry
 from imagehub.types import Task
@@ -46,7 +48,11 @@ def pipeline(
     """
     selected = Task(task)
     if isinstance(backend, str):
-        instance = (registry or backend_registry).create(selected, backend, **backend_options)
+        selected_registry = registry or backend_registry
+        model_id = selected_registry.model_id(selected, backend)
+        if model_id is not None:
+            warn_if_noncommercial(model_info(model_id))
+        instance = selected_registry.create(selected, backend, **backend_options)
     else:
         if backend_options:
             raise ValueError("Model construction options cannot be used with an existing backend")

@@ -5,6 +5,10 @@ class ImageHubError(Exception):
     """Base class for library-specific errors."""
 
 
+class ImagehubLicenseWarning(UserWarning):
+    """A selected checkpoint or implementation is not licensed for commercial use."""
+
+
 class MissingDependencyError(ImageHubError, ImportError):
     """An optional dependency is not installed."""
 

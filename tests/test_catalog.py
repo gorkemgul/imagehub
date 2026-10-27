@@ -624,10 +624,12 @@ def test_provenance_and_formats():
 
 def test_implementation_license_metadata_defaults_and_pixeldit_exception():
     regular = model_info("qwen-image")
+    assert regular.commercial_use is True
     assert regular.code_license == "Apache-2.0"
     assert regular.code_commercial_use is True
 
     pixeldit = model_info("pixeldit")
+    assert pixeldit.commercial_use is False
     assert pixeldit.code_license == "NSCLv1"
     assert pixeldit.code_commercial_use is False
 

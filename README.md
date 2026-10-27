@@ -36,6 +36,7 @@ result.images[0].save("edited.png")
 ## Models
 
 The [model catalog](docs/catalog.md) lists every supported checkpoint with its source, pinned revision, and license.
+Creating a pipeline for a checkpoint without commercial-use rights emits an `ImagehubLicenseWarning`, which standard Python warning filters can silence.
 
 <details>
 <summary>All model families</summary>

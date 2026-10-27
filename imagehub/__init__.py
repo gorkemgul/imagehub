@@ -2,6 +2,7 @@
 
 from imagehub.backends.base import Backend, TextToImageBackend
 from imagehub.catalog import ModelSpec, available_models, model_info
+from imagehub.exceptions import ImagehubLicenseWarning
 from imagehub.factory import pipeline
 from imagehub.image import Image
 from imagehub.pipelines import Pipeline, TextToImagePipeline
@@ -14,6 +15,7 @@ __all__ = [
     "Backend",
     "BackendRegistry",
     "Image",
+    "ImagehubLicenseWarning",
     "ImageResult",
     "ModelSpec",
     "Pipeline",

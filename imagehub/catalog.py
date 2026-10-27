@@ -19,6 +19,36 @@ from imagehub.types import Task
 
 PROVENANCES = ("author", "community-mirror", "community-conversion")
 
+# Weight-license classifications are resolved when catalog entries are created, so
+# runtime callers do not need to interpret license text.
+_WEIGHT_LICENSE_COMMERCIAL_USE = {
+    "Apache-2.0": True,
+    "CC-BY-NC-4.0": False,
+    "CreativeML-OpenRAIL++-M": True,
+    "CreativeML-OpenRAIL-M": True,
+    "DeepFloyd IF License (non-commercial)": False,
+    "DeepSeek Model License": True,
+    "FLUX Non-Commercial License": False,
+    "FLUX.1-dev Non-Commercial License": False,
+    "Ideogram 4 Non-Commercial License": False,
+    "Krea 2 Community License": True,
+    "MIT": True,
+    "NVIDIA License (NSCLv1; non-commercial research or evaluation)": False,
+    "NVIDIA Open Model License": True,
+    "OpenRAIL (exact terms unspecified)": False,
+    "OpenRAIL++": True,
+    "Qwen Research License": False,
+    "Stability AI Community License": True,
+    "Stability AI Non-Commercial Research Community License": False,
+    "Tencent Hunyuan Community License": True,
+    "Unspecified": False,
+    "mit": True,
+    "playground-v2-community": True,
+    "playground-v2dot5-community": True,
+    "sai-nc-community": False,
+    "stable-cascade-nc-community": False,
+}
+
 
 def _released_reference() -> dict[str, dict[str, str]]:
     return {
@@ -67,6 +97,7 @@ class ModelSpec:
     reference: Mapping[str, Mapping[str, str]] = field(default_factory=_released_reference)
     gated: bool = False
     license: str = "See model card"
+    commercial_use: bool | None = None
     code_license: str = "Apache-2.0"
     code_commercial_use: bool = True
     base: str | None = None
@@ -91,6 +122,12 @@ class ModelSpec:
         object.__setattr__(self, "base_exclude", tuple(self.base_exclude))
         object.__setattr__(self, "overlay", MappingProxyType(dict(self.overlay)))
         object.__setattr__(self, "subfolders", MappingProxyType(dict(self.subfolders)))
+        if self.commercial_use is None:
+            object.__setattr__(
+                self,
+                "commercial_use",
+                _WEIGHT_LICENSE_COMMERCIAL_USE.get(self.license, False),
+            )
         if not re.fullmatch(r"[0-9a-f]{40}", self.revision):
             raise ValueError("revision must be a 40-character lowercase commit hash")
         if self.provenance not in PROVENANCES:
