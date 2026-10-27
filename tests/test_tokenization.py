@@ -1,7 +1,7 @@
 import json
-from pathlib import Path
 
 import pytest
+from fixture_files import fixture_path
 from helpers import write_tiny_tokenizer
 
 from imagehub.tokenization import (
@@ -79,7 +79,7 @@ def test_specials_are_exact_case_on_raw_text(tmp_path):
 
 
 BOS_T, EOS_T = "<|startoftext|>", "<|endoftext|>"
-TURBO_CONFIGS = Path(__file__).parent / "fixtures" / "sdxl_turbo_configs"
+TURBO_CONFIGS = fixture_path("sdxl_turbo_configs")
 
 
 def _tiny_with_config(tmp_path, config):

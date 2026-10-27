@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.lumina2_transformer import Lumina2Transformer2DModel
 
-FIXTURES = Path(__file__).parent / "fixtures" / "lumina2_configs"
+FIXTURES = fixture_path("lumina2_configs")
 TINY = {
     "in_channels": 4,
     "hidden_size": 32,

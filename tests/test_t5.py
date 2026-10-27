@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.t5 import T5EncoderModel
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 CONFIG_PATH = FIXTURES / "sd35_configs" / "medium_text_encoder_3_config.json"
 TENSORS_PATH = FIXTURES / "sd35_t5_tensors.json"
 

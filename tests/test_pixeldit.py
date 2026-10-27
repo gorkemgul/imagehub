@@ -1,8 +1,11 @@
+# Derivative of NVlabs PixelDiT under NSCLv1; non-commercial. See licenses/pixeldit.
+
 import json
 from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import TINY_GEMMA_CONFIG, write_tiny_gemma_tokenizer
 
 from imagehub.backends.pixeldit import PixelDiTBackend, sample_flow_dpm
@@ -11,7 +14,7 @@ from imagehub.models.gemma2 import Gemma2Model
 from imagehub.models.pixeldit import PixelDiT
 from imagehub.types import T2IRequest
 
-FIXTURES = Path(__file__).parent / "fixtures" / "pixeldit_configs"
+FIXTURES = fixture_path("pixeldit_configs")
 TINY_CONFIG = {
     "in_channels": 3,
     "patch_size": 2,

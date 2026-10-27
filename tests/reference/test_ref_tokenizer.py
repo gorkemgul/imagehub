@@ -1,9 +1,9 @@
 import json
 import random
 import shutil
-from pathlib import Path
 
 import pytest
+from fixture_files import fixture_path
 from helpers import checkpoint_dir, snapshot_dir, write_tiny_tokenizer
 
 from imagehub.tokenization import CLIPTokenizer
@@ -28,7 +28,7 @@ PROMPTS = [
     "",
 ]
 
-TURBO_CONFIGS = Path(__file__).parents[1] / "fixtures" / "sdxl_turbo_configs"
+TURBO_CONFIGS = fixture_path("sdxl_turbo_configs")
 
 
 def test_tiny_tokenizer_matches_transformers(tmp_path):

@@ -1,27 +1,28 @@
 """Wuerstchen DDPM scheduler parity against diffusers on the Stable Cascade config."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.schedulers.ddpm_wuerstchen import DDPMWuerstchenScheduler
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
-CONFIG = json.loads(
-    (
-        Path(__file__).parents[1] / "fixtures/stable_cascade_configs/scheduler_config.json"
-    ).read_text()
-)
+
+def published_config():
+    return json.loads(
+        restricted_fixture("stable_cascade_configs/scheduler_config.json").read_text()
+    )
 
 
 @pytest.mark.parametrize("steps", [12, 20, 60])
 def test_timesteps_match_reference(steps, record):
-    ours = DDPMWuerstchenScheduler(CONFIG)
-    reference = diffusers.DDPMWuerstchenScheduler.from_config(CONFIG)
+    config = published_config()
+    ours = DDPMWuerstchenScheduler(config)
+    reference = diffusers.DDPMWuerstchenScheduler.from_config(config)
     ours.set_timesteps(steps)
     reference.set_timesteps(steps)
     exact = torch.equal(ours.timesteps, reference.timesteps)
@@ -31,7 +32,7 @@ def test_timesteps_match_reference(steps, record):
 
 @pytest.mark.parametrize("scaler", [1.0, 2.0, 0.5])
 def test_trajectory_matches_reference(scaler, record):
-    config = CONFIG | {"scaler": scaler}
+    config = published_config() | {"scaler": scaler}
     ours = DDPMWuerstchenScheduler(config)
     reference = diffusers.DDPMWuerstchenScheduler.from_config(config)
     ours.set_timesteps(12)

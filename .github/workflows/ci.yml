@@ -46,6 +46,17 @@ jobs:
       - name: Type check
         run: mypy
 
+      - name: Restore restricted fixture cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: tests/fixtures/_restricted
+          key: restricted-fixtures-${{ hashFiles('tests/fixtures/RESTRICTED.json') }}
+
+      - name: Fetch licensed test fixtures
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/fetch_fixtures.py
+
       # Reference comparisons need the reference libraries and model weights; they skip by default.
       - name: Tests
         run: python -m pytest -q

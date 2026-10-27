@@ -1,11 +1,11 @@
 import json
-from pathlib import Path
 
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.paella_vq import PaellaVQModel
 
-FIXTURES = Path(__file__).parent / "fixtures/stable_cascade_configs"
+FIXTURES = fixture_path("stable_cascade_configs")
 TINY = {
     "levels": 2,
     "bottleneck_blocks": 2,

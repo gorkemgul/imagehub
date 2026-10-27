@@ -2,6 +2,7 @@
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.schedulers.dpmsolver_multistep import DPMSolverMultistepScheduler
 
@@ -94,9 +95,8 @@ FLOW_CONFIG = CONFIG | {
 
 def _sana_config():
     import json
-    from pathlib import Path
 
-    path = Path(__file__).parents[1] / "fixtures/sana_configs/1600m/scheduler_scheduler_config.json"
+    path = restricted_fixture("sana_configs/1600m/scheduler_scheduler_config.json")
     return {k: v for k, v in json.loads(path.read_text()).items() if not k.startswith("_")}
 
 

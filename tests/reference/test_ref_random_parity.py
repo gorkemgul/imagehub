@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 from helpers import (
     LCM_SCHEDULER,
     SD1_SCHEDULER,
@@ -207,28 +208,38 @@ def test_llama_static_cache_random_weights(config):
             cache_position = cache_position.new_tensor([prompt.shape[1] + step])
 
 
-JANUS_VQ = json.loads(
-    (Path(__file__).parents[1] / "fixtures/janus_pro_1b_config.json").read_text(encoding="utf-8")
-)["vq_config"]
-TINY_JANUS_VQ = JANUS_VQ | {
+TINY_JANUS_VQ = {
     "base_channels": 32,
     "channel_multiplier": [1, 2],
+    "depth": 2,
+    "double_latent": False,
+    "dropout": 0.0,
     "embed_dim": 4,
+    "hidden_act": "gelu",
     "image_token_embed_dim": 32,
+    "in_channels": 3,
+    "initializer_range": 0.02,
     "latent_channels": 32,
+    "model_type": "janus_vqgan",
     "num_embeddings": 64,
     "num_hidden_layers": 2,
     "num_patches": 2,
     "num_res_blocks": 1,
+    "out_channels": 3,
     "projection_dim": 32,
 }
 
 
-@pytest.mark.parametrize("config", [TINY_JANUS_VQ, JANUS_VQ], ids=["tiny", "janus-1b"])
+def published_janus_vq():
+    return json.loads(restricted_fixture("janus_pro_1b_config.json").read_text())["vq_config"]
+
+
+@pytest.mark.parametrize("config", [TINY_JANUS_VQ, None], ids=["tiny", "janus-1b"])
 def test_janus_vq_decode_random_weights(config):
     from transformers.models.janus.configuration_janus import JanusVQVAEConfig
     from transformers.models.janus.modeling_janus import JanusVQVAE
 
+    config = published_janus_vq() if config is None else config
     torch.manual_seed(0)
     ref = JanusVQVAE(JanusVQVAEConfig(**config)).eval()
     ours = JanusGenerationModel(config).eval()
@@ -672,7 +683,7 @@ def test_flow_match_euler_matches_diffusers():
 
 
 def test_edm_dpmsolver_matches_diffusers():
-    fixture = Path(__file__).parents[1] / "fixtures/playground_v25_configs/scheduler_config.json"
+    fixture = restricted_fixture("playground_v25_configs/scheduler_config.json")
     config = json.loads(fixture.read_text(encoding="utf-8"))
     ref = diffusers.EDMDPMSolverMultistepScheduler.from_config(config)
     ours = EDMDPMSolverMultistepScheduler(config)

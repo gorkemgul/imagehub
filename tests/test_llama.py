@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.llama import LlamaCache, LlamaModel
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 
 
 @pytest.mark.parametrize(

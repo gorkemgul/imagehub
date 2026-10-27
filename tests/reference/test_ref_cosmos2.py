@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import (
     TINY_COSMOS2_TEXT,
     TINY_COSMOS2_TRANSFORMER,
@@ -33,7 +34,7 @@ np = pytest.importorskip("numpy")
 
 MODEL_ID = "cosmos-predict2-2b-t2i"
 PROMPT = "a photograph of an astronaut riding a horse"
-FIXTURES = Path(__file__).parents[1] / "fixtures" / "cosmos2_configs"
+FIXTURES = fixture_path("cosmos2_configs")
 CPU = torch.device("cpu")
 
 

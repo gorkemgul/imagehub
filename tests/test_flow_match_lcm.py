@@ -6,15 +6,14 @@ import torch
 
 from imagehub.schedulers.flow_match_lcm import FlowMatchLCMScheduler
 
-CONFIG = json.loads(
-    (Path(__file__).parent / "fixtures/hidream_configs/scheduler_scheduler_config.json").read_text(
-        encoding="utf-8"
-    )
-)
+
+def published_config():
+    path = Path(__file__).parent / "fixtures/hidream_configs/scheduler_scheduler_config.json"
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def test_published_config_schedule():
-    scheduler = FlowMatchLCMScheduler(CONFIG)
+    scheduler = FlowMatchLCMScheduler(published_config())
     assert len(scheduler) == 1000
     scheduler.set_timesteps(4, mu=0.8)
     assert scheduler.timesteps.dtype == torch.float32
@@ -25,7 +24,7 @@ def test_published_config_schedule():
 
 
 def test_step_renoises_from_the_generator():
-    scheduler = FlowMatchLCMScheduler(CONFIG)
+    scheduler = FlowMatchLCMScheduler(published_config())
     scheduler.set_timesteps(2)
     sample = torch.randn(2, 3, 4, 4)
     model_output = torch.randn(2, 3, 4, 4)
@@ -40,7 +39,7 @@ def test_step_renoises_from_the_generator():
 
 
 def test_last_step_is_the_prediction():
-    scheduler = FlowMatchLCMScheduler(CONFIG)
+    scheduler = FlowMatchLCMScheduler(published_config())
     scheduler.set_timesteps(1)
     sample, model_output = torch.randn(1, 2, 2, 2), torch.randn(1, 2, 2, 2)
     result = scheduler.step(model_output, scheduler.timesteps[0], sample)
@@ -48,7 +47,7 @@ def test_last_step_is_the_prediction():
 
 
 def test_generator_list_draws_per_sample_noise():
-    scheduler = FlowMatchLCMScheduler(CONFIG)
+    scheduler = FlowMatchLCMScheduler(published_config())
     scheduler.set_timesteps(2)
     zeros = torch.zeros(2, 1, 2, 2)
     generators = [torch.Generator().manual_seed(seed) for seed in (3, 4)]
@@ -73,11 +72,11 @@ def test_generator_list_draws_per_sample_noise():
 )
 def test_rejects_unsupported_options(change):
     with pytest.raises(ValueError, match="Unsupported FlowMatch LCM"):
-        FlowMatchLCMScheduler(CONFIG | change)
+        FlowMatchLCMScheduler(published_config() | change)
 
 
 def test_step_validation():
-    scheduler = FlowMatchLCMScheduler(CONFIG)
+    scheduler = FlowMatchLCMScheduler(published_config())
     sample = torch.zeros(1, 1, 2, 2)
     with pytest.raises(RuntimeError):
         scheduler.step(sample, torch.tensor(1000.0), sample)

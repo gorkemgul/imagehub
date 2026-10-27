@@ -1,8 +1,8 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.stable_cascade_unet import StableCascadeUNet
 from tests.test_stable_cascade_unet import DECODER_TINY, PRIOR_TINY
@@ -10,7 +10,7 @@ from tests.test_stable_cascade_unet import DECODER_TINY, PRIOR_TINY
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
-FIXTURES = Path(__file__).parents[1] / "fixtures/stable_cascade_configs"
+FIXTURES = fixture_path("stable_cascade_configs")
 
 
 def _build(config):

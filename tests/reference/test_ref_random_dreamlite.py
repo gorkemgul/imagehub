@@ -1,10 +1,10 @@
 """DreamLite native component parity against random diffusers weights."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.autoencoder_tiny import AutoencoderTiny
 from imagehub.models.dreamlite import DreamLiteUNetModel
@@ -49,7 +49,7 @@ TINY_VAE = {
     "num_encoder_blocks": [1, 1, 1, 1],
     "num_decoder_blocks": [1, 1, 1, 1],
 }
-PUBLISHED_CONFIG = Path(__file__).parents[1] / "fixtures/dreamlite_configs/base-unet_config.json"
+PUBLISHED_CONFIG = fixture_path("dreamlite_configs/base-unet_config.json")
 
 
 def test_dreamlite_unet_random_weights_exact():

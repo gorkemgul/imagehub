@@ -1,18 +1,18 @@
 """FLUX.1 transformer structural parity with random weights."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.flux_transformer import FluxTransformer2DModel
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
-CONFIGS = Path(__file__).parents[1] / "fixtures" / "flux1_configs"
-TENSORS = Path(__file__).parents[1] / "fixtures" / "flux1_transformer_tensors.json"
+CONFIGS = fixture_path("flux1_configs")
+TENSORS = fixture_path("flux1_transformer_tensors.json")
 
 TINY = {
     "patch_size": 1,
@@ -47,15 +47,13 @@ def _ids(height: int, width: int, text_length: int):
 @pytest.mark.parametrize("variant", ["schnell", "dev", "lite"])
 def test_flux1_published_layout(variant):
     config_path = (
-        Path(__file__).parents[1] / "fixtures/flux_lite_configs/transformer.json"
+        fixture_path("flux_lite_configs/transformer.json")
         if variant == "lite"
         else CONFIGS / f"{variant}_transformer_config.json"
     )
     config = json.loads(config_path.read_text(encoding="utf-8"))
     tensor_path = (
-        Path(__file__).parents[1] / "fixtures/flux_lite_transformer_tensors.json"
-        if variant == "lite"
-        else TENSORS
+        fixture_path("flux_lite_transformer_tensors.json") if variant == "lite" else TENSORS
     )
     published = json.loads(tensor_path.read_text(encoding="utf-8"))
     with torch.device("meta"):

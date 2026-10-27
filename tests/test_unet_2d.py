@@ -1,9 +1,9 @@
 import json
 import math
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import (
     SDXL_UNET,
     TINY_UNET_CONFIG,
@@ -16,7 +16,7 @@ from helpers import (
 from imagehub.models.layers import timestep_embedding
 from imagehub.models.unet_2d import UNet2DConditionModel
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 
 
 def test_matches_published_tensor_layout():

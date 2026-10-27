@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/FoundationVision/Infinity",
+  "revision": "9f9fcd1de7ead377ddf1106db1249a35f3a59143",
+  "license": "MIT",
+  "commercial_use": true,
+  "policy": "The implementation is ported from the upstream source; pretrained weights are downloaded separately and keep their own license."
+}

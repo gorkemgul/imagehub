@@ -1,8 +1,8 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.schedulers.flow_match_euler import (
     FlowMatchEulerDiscreteScheduler,
@@ -34,9 +34,7 @@ def test_scheduler_shapes_and_euler_step():
 
 
 def test_qwen_image_mu_uses_pipeline_latent_sequence_length():
-    fixture = (
-        Path(__file__).parent / "fixtures/qwen_image21_configs/scheduler_scheduler_config.json"
-    )
+    fixture = restricted_fixture("qwen_image21_configs/scheduler_scheduler_config.json")
     config = json.loads(fixture.read_text(encoding="utf-8"))
     assert qwen_image_mu(1024, 1024, config) == pytest.approx(0.6935483870967742)
     assert qwen_image_mu(1024, 2048, config) == 0.9

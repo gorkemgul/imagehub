@@ -67,6 +67,8 @@ class ModelSpec:
     reference: Mapping[str, Mapping[str, str]] = field(default_factory=_released_reference)
     gated: bool = False
     license: str = "See model card"
+    code_license: str = "Apache-2.0"
+    code_commercial_use: bool = True
     base: str | None = None
     base_exclude: tuple[str, ...] = ()
     overlay: Mapping[str, str] = field(default_factory=dict)
@@ -95,6 +97,8 @@ class ModelSpec:
             raise ValueError(f"provenance must be one of {', '.join(PROVENANCES)}")
         if self.image_input not in (None, "optional", "required"):
             raise ValueError("image_input must be None, 'optional' or 'required'")
+        if not self.code_license.strip():
+            raise ValueError("code_license must be nonempty")
         if self.base is not None and not any(entry.id == self.base for entry in _entries):
             raise ValueError(f"base model {self.base!r} does not exist")
         if self.overlay and self.base is None:
@@ -202,7 +206,7 @@ _entries.append(
         repo_id="Qwen/Qwen-Image",
         revision="75e0b4be04f60ec59a75f475837eced720f823b6",
         provenance="author",
-        catalog_id="qwen-image-2",
+        catalog_id="qwen-image",
         format="diffusers",
         license="Apache-2.0",
         reference={"diffusers": {"version": "0.40.0"}, "transformers": {"version": "5.18.0"}},
@@ -1226,7 +1230,11 @@ for _model_id, _repo, _revision, _defaults, _transformer_files in (
             provenance="author",
             catalog_id="stable-diffusion-3",
             format="diffusers",
-            license="Stability AI Community License",
+            license=(
+                "Stability AI Non-Commercial Research Community License"
+                if _model_id == "sd3-medium"
+                else "Stability AI Community License"
+            ),
             gated=True,
             config={"defaults": _defaults},
             files=_SD35_COMMON_FILES + _transformer_files,
@@ -1272,6 +1280,12 @@ _entries.append(
         catalog_id="bagel",
         format="transformers",
         license="Apache-2.0",
+        reference={
+            "repository": {
+                "url": "https://github.com/bytedance-seed/BAGEL",
+                "revision": "a2fa77dd8caeefc41e6607ae0ec17408d3f4ee9f",
+            }
+        },
         config={
             "defaults": {
                 "steps": 50,
@@ -1848,8 +1862,12 @@ for _id, _repo, _revision, _size in (
             revision=_revision,
             provenance="author",
             catalog_id="pixart-sigma",
+            license=(
+                "OpenRAIL (exact terms unspecified)"
+                if _id in {"pixart-sigma-xl-256", "pixart-sigma-xl-2k"}
+                else "CreativeML-OpenRAIL++-M"
+            ),
             format="diffusers",
-            license="CreativeML-OpenRAIL++-M",
             gated=False,
             base="pixart-sigma-xl-1024",
             config={
@@ -2411,6 +2429,13 @@ _entries.append(
         catalog_id="ideogram-4",
         format="diffusers",
         license="Ideogram 4 Non-Commercial License",
+        reference={
+            "repository": {
+                "url": "https://github.com/ideogram-oss/ideogram4",
+                "revision": "990fe1c4e950bb9e9dc90e01c0ad98ba434f83c2",
+            },
+            "transformers": {"version": "5.18.0"},
+        },
         gated=True,
         config={"defaults": {"preset": "V4_QUALITY_48"}},
         files=(
@@ -3055,6 +3080,12 @@ for _llamagen_id, _llamagen_file, _llamagen_size in (
             catalog_id="llamagen",
             format="pytorch",
             license="MIT",
+            reference={
+                "repository": {
+                    "url": "https://github.com/FoundationVision/LlamaGen",
+                    "revision": "ce98ec41803a74a90ce68c40ababa9eaeffeb4ec",
+                }
+            },
             gated=False,
             config={
                 "gpt_checkpoint": _llamagen_file,
@@ -3656,6 +3687,8 @@ _entries.append(
         catalog_id="pixeldit",
         format="pytorch",
         license="NVIDIA License (NSCLv1; non-commercial research or evaluation)",
+        code_license="NSCLv1",
+        code_commercial_use=False,
         config={
             "defaults": {
                 "steps": 50,

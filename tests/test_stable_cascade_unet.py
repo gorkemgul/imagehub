@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.stable_cascade_unet import StableCascadeUNet
 
-FIXTURES = Path(__file__).parent / "fixtures/stable_cascade_configs"
+FIXTURES = fixture_path("stable_cascade_configs")
 PUBLISHED = ["prior", "prior_lite", "decoder", "decoder_lite"]
 
 PRIOR_TINY = {

@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/showlab/Show-o",
+  "revision": "45a5a2de01d1ebd10cd5864d29310a76476cdf23",
+  "license": "Apache-2.0",
+  "commercial_use": true,
+  "policy": "The implementation is ported from the upstream source; pretrained weights are downloaded separately and keep their own license."
+}

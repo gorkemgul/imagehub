@@ -1,5 +1,7 @@
 # Third-party architecture and license notices
 
+## Implementation code
+
 imagehub implements native PyTorch inference for the model families listed below. These are new
 implementations written with reference to upstream architecture definitions and checkpoint layouts;
 they do not invoke the upstream inference packages at runtime. Layer structure, parameter names,
@@ -21,23 +23,41 @@ and outputs can be compared with them.
 | [distill-sd](https://github.com/segmind/distill-sd) at `c1e97a7` | Segmind and contributors | Small-SD and Tiny-SD pruned U-Net layouts, checkpoint configurations and loading recipe | [CreativeML OpenRAIL-M](licenses/Segmind-distill-sd-CreativeML-OpenRAIL-M.txt) |
 | [BK-SDM](https://github.com/Nota-NetsPresso/BK-SDM) at `e13670c` | Nota Inc. and contributors | BK-SDM and BK-SDM v2 published U-Net pruning layouts and checkpoint configurations | [CreativeML OpenRAIL-M](licenses/BK-SDM-CreativeML-OpenRAIL-M.txt) |
 | [DreamShaper 8](https://huggingface.co/Lykon/dreamshaper-8/tree/a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917) | Lykon | Published Stable Diffusion 1.5 fine-tune configuration and recommended inference settings | [CreativeML OpenRAIL-M](https://huggingface.co/Lykon/dreamshaper-8) |
-| [LlamaGen](https://github.com/FoundationVision/LlamaGen) at `ce98ec4` | FoundationVision and contributors | GPT-XL caption embedder and autoregressive sampler, VQ-16 image tokenizer, 2D RoPE layout and KV-cache generation order | [MIT](licenses/LlamaGen-MIT.txt) |
-| [Infinity](https://github.com/FoundationVision/Infinity) at `9f9fcd1` | FoundationVision and contributors | Bitwise next-scale transformer, binary spherical quantizer, image decoder, 2D RoPE and scale-by-scale sampling order | [MIT](licenses/Infinity-MIT.txt) |
-| [HART](https://github.com/mit-han-lab/hart) at `e28a41f` | MIT HAN Lab and contributors | Multi-scale autoregressive transformer, hybrid tokenizer decoder, residual diffusion head and sampling order | [MIT](licenses/HART-MIT.txt) |
-| [Show-o](https://github.com/showlab/Show-o) at `45a5a2d` | NUS Show Lab and contributors | Phi-1.5 omni-attention, MAGVIT-v2 lookup-free image tokenizer, universal prompting and discrete denoising order | [Apache 2.0](licenses/Show-o-Apache-2.0.txt) |
+| [LlamaGen](https://github.com/FoundationVision/LlamaGen) at `ce98ec4` | FoundationVision and contributors | GPT-XL caption embedder and autoregressive sampler, VQ-16 image tokenizer, 2D RoPE layout and KV-cache generation order | [MIT](licenses/llamagen/LICENSE) |
+| [Infinity](https://github.com/FoundationVision/Infinity) at `9f9fcd1` | FoundationVision and contributors | Bitwise next-scale transformer, binary spherical quantizer, image decoder, 2D RoPE and scale-by-scale sampling order | [MIT](licenses/infinity/LICENSE) |
+| [HART](https://github.com/mit-han-lab/hart) at `e28a41f` | MIT HAN Lab and contributors | Multi-scale autoregressive transformer, hybrid tokenizer decoder, residual diffusion head and sampling order | [MIT](licenses/hart/LICENSE) |
+| [Show-o](https://github.com/showlab/Show-o) at `45a5a2d` | NUS Show Lab and contributors | Phi-1.5 omni-attention, MAGVIT-v2 lookup-free image tokenizer, universal prompting and discrete denoising order | [Apache 2.0](licenses/show-o/LICENSE) |
 | [Lumina-DiMOO](https://github.com/Alpha-VLLM/Lumina-DiMOO) at `81344e6` | Alpha-VLLM and contributors | LLaDA multimodal vocabulary, bidirectional masked-token transformer, prompt format and cosine discrete-denoising order | [Apache 2.0](licenses/Lumina-DiMOO-Apache-2.0.txt) |
-| [Emu3](https://github.com/baaivision/Emu3) at `dbbf985` | Beijing Academy of Artificial Intelligence and contributors | Causal multimodal decoder, byte BPE, constrained vision-token generation and spatiotemporal vision tokenizer | [Apache 2.0](licenses/Transformers-Apache-2.0.txt) |
-| [PixelDiT](https://github.com/NVlabs/PixelDiT) at `f7d7c35` | NVIDIA Corporation and contributors | Dual-level pixel diffusion transformer, pixel-wise modulation and FLOW DPM-Solver sampling order | [NVIDIA NSCLv1](licenses/PixelDiT-NSCLv1.txt) |
+| [Emu3](https://github.com/baaivision/Emu3) at `dbbf985` | Beijing Academy of Artificial Intelligence and contributors | Causal multimodal decoder, byte BPE, constrained vision-token generation and spatiotemporal vision tokenizer | [Apache 2.0](licenses/emu3/LICENSE) |
+| [PixelDiT](https://github.com/NVlabs/PixelDiT) at `f7d7c35` | NVIDIA Corporation and contributors | Dual-level pixel diffusion transformer, pixel-wise modulation and FLOW DPM-Solver sampling order; this derivative is non-commercial | [NVIDIA NSCLv1](licenses/pixeldit/LICENSE), [upstream notice](licenses/pixeldit/NOTICE) |
 | [ideogram4](https://github.com/ideogram-oss/ideogram4) at `990fe1c` | Ideogram AI and contributors | Ideogram 4 transformer and text-model hidden-state selection, fp8 linear dequantization, sampler presets and prompt format | [Apache 2.0](licenses/Ideogram4-Apache-2.0.txt) |
-| [HiDream-O1-Image](https://github.com/HiDream-ai/HiDream-O1-Image) at `2c2d29f` | HiDream.ai and contributors | Pixel patch projections, timestep conditioning, mixed causal/generation attention mask and sampling order | [MIT](licenses/HiDream-O1-MIT.txt) |
+| [HiDream-O1-Image](https://github.com/HiDream-ai/HiDream-O1-Image) at `2c2d29f` | HiDream.ai and contributors | Pixel patch projections, timestep conditioning, mixed causal/generation attention mask and sampling order | [MIT](licenses/hidream-o1/LICENSE) |
 | [Meissonic](https://github.com/viiika/Meissonic) at `a9de06c` | The MeissonFlow Team and contributors | Masked-token transformer, rotary position layout, micro-conditioning and sampling order | [Apache 2.0](licenses/Meissonic-Apache-2.0.txt) |
 | [Cosmos-Predict2](https://huggingface.co/nvidia/Cosmos-Predict2-2B-Text2Image/tree/acdb5fde992a73ef0355f287977d002cbfd127e0) | NVIDIA Corporation | Published transformer, T5, WAN VAE and scheduler configuration and inference settings | [NVIDIA Open Model License](https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/) |
-| [NextStep-1](https://github.com/stepfun-ai/NextStep-1/tree/a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0) | StepFun and contributors | Causal continuous-token transformer, flow-matching head, prompt format and autoregressive sampling order | [Apache 2.0](licenses/Transformers-Apache-2.0.txt) |
-| [BAGEL](https://github.com/bytedance-seed/BAGEL/tree/a2fa77dd8caeefc41e6607ae0ec17408d3f4ee9f) | ByteDance Seed and contributors | Mixture-of-Transformers routing, latent projections, FLUX autoencoder layout, prompt caching and rectified-flow sampling order | [Apache 2.0](licenses/Transformers-Apache-2.0.txt) |
+| [NextStep-1](https://github.com/stepfun-ai/NextStep-1/tree/a3303b62e11fc7cd473ba0e4b1f32eda73f4acc0) | StepFun and contributors | Causal continuous-token transformer, flow-matching head, prompt format and autoregressive sampling order | [Apache 2.0](licenses/nextstep/LICENSE) |
+| [BAGEL](https://github.com/bytedance-seed/BAGEL/tree/a2fa77dd8caeefc41e6607ae0ec17408d3f4ee9f) | ByteDance Seed and contributors | Mixture-of-Transformers routing, latent projections, FLUX autoencoder layout, prompt caching and rectified-flow sampling order | [Apache 2.0](licenses/bagel/LICENSE) |
 
-Model weights are not distributed with imagehub; each checkpoint is downloaded by the user from the
+## Checkpoint licenses
+
+Model weights are not distributed with imagehub. Each checkpoint is downloaded by the user from the
 repository listed in the [model catalog](docs/catalog.md), and its weight license — recorded there —
 binds whoever downloads it. Several catalog licenses are non-commercial (`sai-nc-community`,
 `CC-BY-NC-4.0`, `FLUX.1-dev Non-Commercial License`, `FLUX Non-Commercial License`,
-`Ideogram 4 Non-Commercial License`, `NVIDIA NSCLv1` and `stable-cascade-nc-community`); read the license before
-downloading.
+`Ideogram 4 Non-Commercial License`, `Qwen Research License`, `DeepFloyd IF License`,
+`Stability AI Non-Commercial Research Community License`, `NVIDIA NSCLv1`, and
+`stable-cascade-nc-community`); read the license before downloading. Conditional commercial terms
+and gated access are recorded per checkpoint in the catalog.
+
+## Test fixtures
+
+Restrictive, non-commercial, custom-license, and unknown-license checkpoint fixtures are not
+redistributed. Tests that require those published bytes skip when the fixture is unavailable. Every
+kept file is covered by [the fixture provenance manifest](tests/fixtures/PROVENANCE.json), including
+its source, immutable revision, license, and whether it is project-authored synthetic data. The
+Segmind distill-sd and BK-SDM entries contribute checkpoint layouts and factual shape metadata only;
+no source code from those OpenRAIL-M repositories is included in the library.
+
+## Generated images
+
+The PNG files in `artifacts/` were generated by imagehub. Their model, revision, prompt, seed, model
+license, and artifact license are recorded in [artifacts/PROVENANCE.json](artifacts/PROVENANCE.json).

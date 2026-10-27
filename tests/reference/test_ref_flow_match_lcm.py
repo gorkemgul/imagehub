@@ -12,18 +12,15 @@ pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 pytest.importorskip("numpy")
 
-CONFIG = json.loads(
-    (
-        Path(__file__).parents[1] / "fixtures/hidream_configs/scheduler_scheduler_config.json"
-    ).read_text(encoding="utf-8")
-)
 # The pipeline passes a resolution-dependent mu; the static shift ignores it.
 MU = 1.0986122886681098
 
 
 def _pair():
-    config = {k: v for k, v in CONFIG.items() if not k.startswith("_")}
-    return diffusers.FlowMatchLCMScheduler.from_config(config), FlowMatchLCMScheduler(CONFIG)
+    path = Path(__file__).parents[1] / "fixtures/hidream_configs/scheduler_scheduler_config.json"
+    published = json.loads(path.read_text(encoding="utf-8"))
+    config = {k: v for k, v in published.items() if not k.startswith("_")}
+    return diffusers.FlowMatchLCMScheduler.from_config(config), FlowMatchLCMScheduler(published)
 
 
 def test_initial_schedule_matches():

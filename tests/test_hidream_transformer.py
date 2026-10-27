@@ -1,13 +1,13 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.checkpoints import CheckpointError
 from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
 
-CONFIGS = Path(__file__).parent / "fixtures" / "hidream_configs"
+CONFIGS = fixture_path("hidream_configs")
 
 TINY = {
     "patch_size": 2,

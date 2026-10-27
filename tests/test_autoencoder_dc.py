@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.autoencoder_dc import AutoencoderDC
 
-FIXTURES = Path(__file__).parent / "fixtures" / "sana_configs"
+FIXTURES = fixture_path("sana_configs")
 TINY = {
     "latent_channels": 8,
     "attention_head_dim": 8,

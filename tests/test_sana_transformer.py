@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.sana_transformer import SanaTransformer2DModel
 
-FIXTURES = Path(__file__).parent / "fixtures" / "sana_configs"
+FIXTURES = fixture_path("sana_configs")
 TINY = {
     "num_attention_heads": 2,
     "attention_head_dim": 8,

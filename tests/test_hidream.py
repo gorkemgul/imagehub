@@ -1,8 +1,8 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import write_tiny_hidream
 
 from imagehub import pipeline
@@ -14,7 +14,7 @@ from imagehub.models.clip_text import CLIPTextModelWithProjection
 from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
 from imagehub.models.t5 import T5EncoderModel
 
-FIXTURES = Path(__file__).parent / "fixtures/hidream_configs"
+FIXTURES = fixture_path("hidream_configs")
 
 
 @pytest.mark.parametrize("variant", ["dev", "full"])

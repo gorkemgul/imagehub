@@ -1,10 +1,9 @@
-from pathlib import Path
-
 import torch
+from fixture_files import fixture_path
 
 from imagehub.tokenization_deepseek import DeepSeekTokenizer
 
-TOKENIZER = Path(__file__).parent / "fixtures" / "deepseek_tokenizer"
+TOKENIZER = fixture_path("deepseek_tokenizer")
 
 
 def test_deepseek_tiny_bpe_pretokenizer_and_special_tokens():

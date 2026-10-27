@@ -1,15 +1,15 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.backends.dreamlite import DreamLiteBackend
 from imagehub.models.autoencoder_tiny import AutoencoderTiny
 from imagehub.models.dreamlite import DreamLiteUNetModel
 from imagehub.types import T2IRequest
 
-FIXTURES = Path(__file__).parent / "fixtures/dreamlite_configs"
+FIXTURES = fixture_path("dreamlite_configs")
 
 
 @pytest.mark.parametrize("variant", ["base", "mobile"])

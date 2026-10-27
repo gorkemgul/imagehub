@@ -9,7 +9,7 @@ description = "Open-weight image generation architectures, natively reimplemente
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
-license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md", "licenses/*.txt"]
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md", "licenses/**"]
 authors = [{ name = "gorkemgul" }]
 dependencies = ["torch>=2.2"]
 
@@ -31,6 +31,7 @@ only-include = [
   "imagehub",
   "tests",
   "LICENSE",
+  "NOTICE",
   "THIRD_PARTY_NOTICES.md",
   "licenses",
   "README.md",
@@ -53,6 +54,7 @@ markers = [
   "reference: optional comparison against upstream implementations",
   "mps: requires Apple MPS",
   "cuda: requires CUDA",
+  "restricted_fixture: requires checkpoint material that is not redistributed",
 ]
 
 [tool.ruff]

@@ -2,17 +2,17 @@
 
 import json
 import math
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.lumina_next_transformer import LuminaNextDiT2DModel, rotary_frequencies
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 
-FIXTURES = Path(__file__).parents[1] / "fixtures" / "lumina_next_configs"
+FIXTURES = fixture_path("lumina_next_configs")
 TINY = {
     "in_channels": 4,
     "hidden_size": 32,
@@ -25,8 +25,11 @@ TINY = {
     "learn_sigma": True,
     "patch_size": 2,
 }
-PUBLISHED = json.loads((FIXTURES / "transformer_config.json").read_text(encoding="utf-8"))
-PUBLISHED = {key: value for key, value in PUBLISHED.items() if not key.startswith("_")}
+
+
+def published_config():
+    config = json.loads((FIXTURES / "transformer_config.json").read_text(encoding="utf-8"))
+    return {key: value for key, value in config.items() if not key.startswith("_")}
 
 
 def _random_reference(config):
@@ -110,16 +113,17 @@ def test_lumina_next_tiny_single_batch_exact(record):
 
 
 def test_lumina_next_published_config_exact(record):
-    config = PUBLISHED | {"num_layers": 2}
+    config = published_config() | {"num_layers": 2}
     _compare(
         config, (16, 24), 16, [16, 9], [0.2, 0.8], True, (1.3, 1.0), record, "lumina_next_full"
     )
 
 
 def test_lumina_next_published_layout() -> None:
+    config = published_config()
     with torch.device("meta"):
-        expected = diffusers.LuminaNextDiT2DModel(**PUBLISHED).state_dict()
-        actual = LuminaNextDiT2DModel(PUBLISHED).state_dict()
+        expected = diffusers.LuminaNextDiT2DModel(**config).state_dict()
+        actual = LuminaNextDiT2DModel(config).state_dict()
     assert sorted(actual) == sorted(expected)
     assert {name: tuple(value.shape) for name, value in actual.items()} == {
         name: tuple(value.shape) for name, value in expected.items()

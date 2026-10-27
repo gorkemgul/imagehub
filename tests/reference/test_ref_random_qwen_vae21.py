@@ -1,10 +1,10 @@
 """Qwen-Image 2.1 VAE structural parity with random weights."""
 
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 
 from imagehub.models.autoencoder_kl_qwen_image21 import AutoencoderKLQwenImage21
 
@@ -16,15 +16,23 @@ if not hasattr(diffusers, "QwenImage21Pipeline"):
         allow_module_level=True,
     )
 
-CONFIG_PATH = Path(__file__).parents[1] / "fixtures/qwen_image21_configs/vae_config.json"
-PUBLISHED = {
-    name: value
-    for name, value in json.loads(CONFIG_PATH.read_text(encoding="utf-8")).items()
-    if not name.startswith("_")
-}
-TINY = PUBLISHED | {
+
+def published_config():
+    config = json.loads(
+        restricted_fixture("qwen_image21_configs/vae_config.json").read_text(encoding="utf-8")
+    )
+    return {name: value for name, value in config.items() if not name.startswith("_")}
+
+
+TINY = {
+    "attn_scales": [],
     "base_dim": 4,
     "decoder_base_dim": 4,
+    "dropout": 0.0,
+    "in_channels": 4,
+    "is_residual": True,
+    "out_channels": 4,
+    "patch_size": None,
     "z_dim": 4,
     "dim_mult": [1, 2, 2],
     "num_res_blocks": 1,
@@ -32,13 +40,15 @@ TINY = PUBLISHED | {
     "latents_mean": [0.0] * 4,
     "latents_std": [1.0] * 4,
     "scale_factor_spatial": 4,
+    "scale_factor_temporal": 8,
 }
 
 
 def test_qwen_vae21_published_layout():
+    config = published_config()
     with torch.device("meta"):
-        expected = diffusers.AutoencoderKLQwenImage21(**PUBLISHED).state_dict()
-        actual = AutoencoderKLQwenImage21(PUBLISHED).state_dict()
+        expected = diffusers.AutoencoderKLQwenImage21(**config).state_dict()
+        actual = AutoencoderKLQwenImage21(config).state_dict()
     assert sorted(actual) == sorted(expected)
     assert {name: tuple(value.shape) for name, value in actual.items()} == {
         name: tuple(value.shape) for name, value in expected.items()
@@ -47,10 +57,11 @@ def test_qwen_vae21_published_layout():
 
 @pytest.mark.parametrize(
     ("config", "sample_size"),
-    [(TINY, 8), (PUBLISHED, 64)],
+    [(TINY, 8), (None, 64)],
     ids=["tiny", "published"],
 )
 def test_qwen_vae21_random_weights_exact(config, sample_size):
+    config = published_config() if config is None else config
     torch.manual_seed(0)
     reference = diffusers.AutoencoderKLQwenImage21(**config).eval()
     model = AutoencoderKLQwenImage21(config).eval()

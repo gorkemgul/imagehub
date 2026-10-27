@@ -13,6 +13,7 @@ from typing import Any
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 from imagehub.tokenization import BOS, EOS, bytes_to_unicode
 
@@ -103,7 +104,7 @@ def max_diff(actual: torch.Tensor, expected: torch.Tensor) -> dict[str, float]:
     }
 
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 
 TINY_TEXT_CONFIG = {
     "vocab_size": TINY_VOCAB_SIZE,
@@ -2887,7 +2888,7 @@ def write_tiny_auraflow(
     return root
 
 
-COSMOS2_FIXTURES = Path(__file__).parent / "fixtures" / "cosmos2_configs"
+COSMOS2_FIXTURES = fixture_path("cosmos2_configs")
 TINY_COSMOS2_TEXT = {
     "architectures": ["T5EncoderModel"],
     "d_ff": 32,

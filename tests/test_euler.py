@@ -3,12 +3,13 @@ from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import SDXL_SCHEDULER
 
 from imagehub.schedulers.euler import EulerDiscreteScheduler
 from imagehub.schedulers.pndm import PNDMScheduler
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 
 
 @pytest.mark.parametrize(

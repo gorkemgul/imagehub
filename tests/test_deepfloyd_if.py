@@ -5,6 +5,7 @@ from typing import Any, cast
 
 import pytest
 import torch
+from fixture_files import fixture_path
 
 import imagehub.backends.deepfloyd_if as deepfloyd_if
 from imagehub.backends.deepfloyd_if import DeepFloydIFBackend
@@ -12,7 +13,7 @@ from imagehub.models.unet_2d import UNet2DConditionModel
 from imagehub.schedulers.ddpm import DDPMScheduler
 from imagehub.types import T2IRequest
 
-FIXTURES = Path(__file__).parent / "fixtures" / "deepfloyd_if_configs"
+FIXTURES = fixture_path("deepfloyd_if_configs")
 
 
 @pytest.mark.parametrize("stage", ("stage_i", "stage_ii"))

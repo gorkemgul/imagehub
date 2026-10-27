@@ -2,10 +2,11 @@ import json
 from pathlib import Path
 
 import torch
+from fixture_files import fixture_path
 
 from imagehub.models.autoencoder_kl_qwen_image import AutoencoderKLQwenImage
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 CONFIG_PATH = FIXTURES / "krea2_configs" / "vae_config.json"
 TENSORS_PATH = FIXTURES / "krea2_vae_tensors.json"
 CHECKPOINT = (

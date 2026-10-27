@@ -1,5 +1,7 @@
 """Native PixelDiT text-to-image denoiser."""
 
+# Derivative of NVlabs PixelDiT under NSCLv1; non-commercial. See licenses/pixeldit.
+
 from __future__ import annotations
 
 import math

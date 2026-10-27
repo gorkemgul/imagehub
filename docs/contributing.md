@@ -11,9 +11,14 @@ reproduce the reference implementation, and the evidence has to be in the reposi
 
 ```bash
 uv venv -p 3.13 .venv && uv pip install --python .venv -e ".[dev,image,docs]"
+.venv/bin/python scripts/fetch_fixtures.py
 .venv/bin/python -m pytest
 .venv/bin/mkdocs serve        # preview this site
 ```
+
+Set `HF_TOKEN` when your accepted repository licenses grant access to gated fixtures. Restricted
+files are verified against `tests/fixtures/RESTRICTED.json` and remain in the ignored
+`tests/fixtures/_restricted` cache.
 
 ## Adding a model
 

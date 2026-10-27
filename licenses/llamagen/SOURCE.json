@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/FoundationVision/LlamaGen",
+  "revision": "ce98ec41803a74a90ce68c40ababa9eaeffeb4ec",
+  "license": "MIT",
+  "commercial_use": true,
+  "policy": "The implementation is ported from the upstream source; pretrained weights are downloaded separately and keep their own license."
+}

@@ -1,13 +1,13 @@
 import json
-from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import fixture_path
 from helpers import TINY_VAE_CONFIG, meta_shapes, published_shapes, sdxl_published_shapes
 
 from imagehub.models.autoencoder_kl import AutoencoderKL
 
-FIXTURES = Path(__file__).parent / "fixtures"
+FIXTURES = fixture_path()
 
 
 def test_matches_published_tensor_layout():

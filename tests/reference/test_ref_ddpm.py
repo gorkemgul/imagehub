@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 import torch
+from fixture_files import restricted_fixture
 from helpers import max_diff, snapshot_dir
 
 from imagehub.schedulers.ddpm import DDPMScheduler
@@ -89,10 +90,7 @@ def test_ddpm_trajectory_matches_reference(prediction_type, record):
 
 def test_hunyuan_dit_v12_scheduler_config_trajectory_exact():
     config = json.loads(
-        (
-            Path(__file__).parents[1]
-            / "fixtures/hunyuan_dit_v12_configs/scheduler_scheduler_config.json"
-        ).read_text()
+        (restricted_fixture("hunyuan_dit_v12_configs/scheduler_scheduler_config.json")).read_text()
     )
     assert config["beta_end"] == 0.018
     reference = diffusers.DDPMScheduler.from_config(config)
