@@ -10,10 +10,10 @@ from imagehub.backends.dreamlite import DreamLiteComponents, decode_latents, den
 from imagehub.models.autoencoder_tiny import AutoencoderTiny
 from imagehub.models.dreamlite import DreamLiteUNetModel
 
-from .test_ref_random_dreamlite import TINY_UNET, TINY_VAE
-
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
+
+from .test_ref_random_dreamlite import TINY_UNET, TINY_VAE  # noqa: E402
 
 SCHEDULER = {
     "base_image_seq_len": 1,

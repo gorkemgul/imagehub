@@ -26,12 +26,12 @@ from imagehub.models.gemma import GemmaModel
 from imagehub.models.lumina_next_transformer import LuminaNextDiT2DModel, rotary_frequencies
 from imagehub.tokenization_gemma import GemmaTokenizer
 
-from .test_ref_gemma_tokenizer import FIXED_PROMPTS, FUZZ_PIECES
-
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 np = pytest.importorskip("numpy")
+
+from .test_ref_gemma_tokenizer import FIXED_PROMPTS, FUZZ_PIECES  # noqa: E402
 
 CPU = torch.device("cpu")
 MODEL_ID = "lumina-next"

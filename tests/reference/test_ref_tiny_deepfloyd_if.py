@@ -6,11 +6,11 @@ import torch
 from imagehub.backends.deepfloyd_if import _denoise
 from imagehub.schedulers.ddpm import DDPMScheduler
 
-from .test_ref_random_deepfloyd_if import _random_pair, _tiny
-
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 np = pytest.importorskip("numpy")
+
+from .test_ref_random_deepfloyd_if import _random_pair, _tiny  # noqa: E402
 
 
 @pytest.fixture(scope="module")
