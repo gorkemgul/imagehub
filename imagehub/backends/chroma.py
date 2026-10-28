@@ -14,6 +14,7 @@ import torch
 from torch import Tensor
 
 from imagehub.backends.base import TextToImageBackend
+from imagehub.backends.stable_diffusion import resolve_device
 from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
@@ -307,7 +308,7 @@ class ChromaBackend(TextToImageBackend):
         super().__init__()
         self.source = Path(model)
         self.model_id = model_id
-        self.device = torch.device(device)
+        self.device = resolve_device(device)
         self.dtype = dtype or torch.float32
         if self.dtype not in _DTYPES:
             raise ValueError("dtype must be torch.float32, torch.float16 or torch.bfloat16")

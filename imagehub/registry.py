@@ -152,6 +152,15 @@ for _task, _name, _path in (
 ):
     backend_registry.register(_task, _name, _path)
 
+# The canonical family selector is also the full checkpoint's catalog id. Preserve its catalog
+# context so selecting it still applies checkpoint defaults and emits the license warning.
+backend_registry.register(
+    Task.T2I,
+    "stable-cascade",
+    "imagehub.backends.stable_cascade:StableCascadeBackend",
+    model_id="stable-cascade",
+)
+
 # Published model IDs are also valid selectors. Their checkpoint files stay local
 # and explicit, just like family selectors; listing a model never downloads it.
 for _spec in MODEL_CATALOG.values():

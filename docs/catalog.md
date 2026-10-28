@@ -124,8 +124,8 @@ use` govern this repository's implementation for that row; they default to Apach
 | `janus-pro-1b` | `janus` | [deepseek-community/Janus-Pro-1B](https://huggingface.co/deepseek-community/Janus-Pro-1B) | `1655280` | community conversion | full | no | DeepSeek Model License | Apache-2.0 | yes | `janus-pro` |
 | `janus-pro-7b` | `janus` | [deepseek-community/Janus-Pro-7B](https://huggingface.co/deepseek-community/Janus-Pro-7B) | `8f23139` | community conversion | full | no | DeepSeek Model License | Apache-2.0 | yes | `janus-pro` |
 | `bagel-7b-mot` | `bagel` | [ByteDance-Seed/BAGEL-7B-MoT](https://huggingface.co/ByteDance-Seed/BAGEL-7B-MoT) | `5019f57` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `bagel` |
-| `stable-cascade` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | no | stable-cascade-nc-community | Apache-2.0 | yes | `wuerstchen` |
-| `stable-cascade-lite` | `stable_cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | no | stable-cascade-nc-community | Apache-2.0 | yes | `wuerstchen` |
+| `stable-cascade` | `stable-cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | no | stable-cascade-nc-community | Apache-2.0 | yes | `wuerstchen` |
+| `stable-cascade-lite` | `stable-cascade` | [stabilityai/stable-cascade](https://huggingface.co/stabilityai/stable-cascade) | `a89f66d` | author | full | no | stable-cascade-nc-community | Apache-2.0 | yes | `wuerstchen` |
 | `wuerstchen-v2` | `wuerstchen` | [warp-ai/wuerstchen](https://huggingface.co/warp-ai/wuerstchen) | `c3da414` | author | full | no | mit | Apache-2.0 | yes | `wuerstchen` |
 | `hidream-i1-fast` | `hidream` | [HiDream-ai/HiDream-I1-Fast](https://huggingface.co/HiDream-ai/HiDream-I1-Fast) | `4856a5d` | author | full | yes | MIT | Apache-2.0 | yes | `hidream-i1` |
 | `hidream-i1-dev` | `hidream` | [HiDream-ai/HiDream-I1-Dev](https://huggingface.co/HiDream-ai/HiDream-I1-Dev) | `0fad2ea` | author | full | yes | MIT | Apache-2.0 | yes | `hidream-i1` |

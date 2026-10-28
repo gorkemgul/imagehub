@@ -26,7 +26,7 @@ def main() -> None:
         columns = [column.strip() for column in line.strip().strip("|").split("|")]
         model_id = columns[0].strip("`")
         spec = MODEL_CATALOG[model_id]
-        original = columns[:6]
+        original = [columns[0], f"`{spec.family}`", *columns[2:6]]
         awesome_catalog = columns[-1]
         if model_id == "qwen-image":
             awesome_catalog = f"`{spec.catalog_id}`"

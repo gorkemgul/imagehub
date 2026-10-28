@@ -1429,7 +1429,7 @@ def test_hidream_variant_catalog_entries(model_id, repo_id, revision, defaults):
 def test_stable_cascade_catalog_entries(model_id, decoder, prior):
     spec = model_info(model_id)
     assert spec.task is Task.T2I
-    assert spec.family == "stable_cascade"
+    assert spec.family == "stable-cascade"
     assert spec.source == "https://huggingface.co/stabilityai/stable-cascade"
     assert spec.repo_id == "stabilityai/stable-cascade"
     assert spec.revision == "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16"

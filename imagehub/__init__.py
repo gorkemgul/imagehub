@@ -2,7 +2,16 @@
 
 from imagehub.backends.base import Backend, TextToImageBackend
 from imagehub.catalog import ModelSpec, available_models, model_info
-from imagehub.exceptions import ImagehubLicenseWarning
+from imagehub.exceptions import (
+    BackendBusyError,
+    BackendContractError,
+    CheckpointError,
+    DownloadError,
+    ImageHubError,
+    ImageHubLicenseWarning,
+    ImagehubLicenseWarning,
+    MissingDependencyError,
+)
 from imagehub.factory import pipeline
 from imagehub.image import Image
 from imagehub.pipelines import Pipeline, TextToImagePipeline
@@ -13,11 +22,18 @@ __version__ = "0.1.0"
 
 __all__ = [
     "Backend",
+    "BackendBusyError",
+    "BackendContractError",
     "BackendRegistry",
+    "CheckpointError",
+    "DownloadError",
     "Image",
+    "ImageHubError",
+    "ImageHubLicenseWarning",
     "ImagehubLicenseWarning",
     "ImageResult",
     "ModelSpec",
+    "MissingDependencyError",
     "Pipeline",
     "T2IRequest",
     "Task",

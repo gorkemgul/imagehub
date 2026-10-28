@@ -4,12 +4,13 @@ from types import MethodType
 
 import pytest
 import torch
-from test_ref_random_dreamlite import TINY_UNET, TINY_VAE
 
 import imagehub.backends.dreamlite as native_pipeline
 from imagehub.backends.dreamlite import DreamLiteComponents, decode_latents, denoise
 from imagehub.models.autoencoder_tiny import AutoencoderTiny
 from imagehub.models.dreamlite import DreamLiteUNetModel
+
+from .test_ref_random_dreamlite import TINY_UNET, TINY_VAE
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")

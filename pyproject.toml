@@ -12,6 +12,27 @@ license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md", "licenses/**"]
 authors = [{ name = "gorkemgul" }]
 dependencies = ["torch>=2.2"]
+keywords = ["artificial-intelligence", "diffusion", "image-generation", "pytorch"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/gorkemgul/imagehub"
+Repository = "https://github.com/gorkemgul/imagehub"
+Documentation = "https://github.com/gorkemgul/imagehub/tree/main/docs"
+Issues = "https://github.com/gorkemgul/imagehub/issues"
 
 [project.optional-dependencies]
 image = ["pillow>=10"]

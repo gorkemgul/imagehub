@@ -11,7 +11,6 @@ from typing import cast
 import pytest
 import torch
 from helpers import max_diff, snapshot_dir
-from test_ref_gemma_tokenizer import FIXED_PROMPTS, FUZZ_PIECES
 
 from imagehub import pipeline
 from imagehub.backends.lumina_next import (
@@ -26,6 +25,8 @@ from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.gemma import GemmaModel
 from imagehub.models.lumina_next_transformer import LuminaNextDiT2DModel, rotary_frequencies
 from imagehub.tokenization_gemma import GemmaTokenizer
+
+from .test_ref_gemma_tokenizer import FIXED_PROMPTS, FUZZ_PIECES
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
