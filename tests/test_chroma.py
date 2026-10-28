@@ -60,6 +60,12 @@ def test_backend_registered():
     assert "chroma1-flash" in backend_registry.names("t2i")
 
 
+def test_backend_rejects_unavailable_device(tmp_path: Path):
+    if not torch.cuda.is_available():
+        with pytest.raises(ValueError, match="not available"):
+            ChromaBackend(tmp_path / "missing", device="cuda")
+
+
 def test_transformer_meta_construction():
     config = read_json(FIXTURES / "transformer" / "config.json")
     with torch.device("meta"):

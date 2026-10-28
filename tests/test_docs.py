@@ -1,11 +1,18 @@
+import ast
 import json
+import re
+import warnings
 from pathlib import Path
 
 import pytest
 
+import imagehub
+from imagehub import ImageHubLicenseWarning, pipeline
 from imagehub.catalog import MODEL_CATALOG
+from imagehub.registry import available_backends
 
 ROOT = Path(__file__).resolve().parents[1]
+PYTHON_BLOCK = re.compile(r"^```python\n(.*?)^```", re.MULTILINE | re.DOTALL)
 
 
 def test_every_model_is_documented():
@@ -21,6 +28,58 @@ def test_no_merge_conflict_markers():
     for path in paths:
         for line in path.read_text(encoding="utf-8").splitlines():
             assert not line.startswith(("<<<<<<< ", ">>>>>>> ")), path
+
+
+def test_documented_pipeline_examples_name_registered_backends(tmp_path):
+    paths = [
+        ROOT / "README.md",
+        *(path for path in (ROOT / "docs").rglob("*.md") if "design" not in path.parts),
+    ]
+    registered = set(available_backends("t2i")["t2i"])
+    documented: set[str] = set()
+    for path in paths:
+        for block in PYTHON_BLOCK.findall(path.read_text(encoding="utf-8")):
+            if "pipeline(" not in block:
+                continue
+            if path.name == "api.md" and block.lstrip().startswith("pipeline(task, *, backend"):
+                continue
+            tree = ast.parse(block, filename=str(path))
+            for call in (
+                node
+                for node in ast.walk(tree)
+                if isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Name)
+                and node.func.id == "pipeline"
+            ):
+                # The API page displays the function signature rather than a runnable example.
+                if call.args and isinstance(call.args[0], ast.Name) and call.args[0].id == "task":
+                    continue
+                backend = next((kw.value for kw in call.keywords if kw.arg == "backend"), None)
+                assert isinstance(backend, ast.Constant) and isinstance(backend.value, str), path
+                assert backend.value in registered, (path, backend.value)
+                documented.add(backend.value)
+
+    assert documented
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", ImageHubLicenseWarning)
+        for backend in documented:
+            created = pipeline("t2i", backend=backend, model=tmp_path / "missing")
+            assert created.backend is not None
+
+
+def test_caller_facing_exceptions_are_exported_from_top_level():
+    names = {
+        "ImageHubError",
+        "MissingDependencyError",
+        "BackendBusyError",
+        "BackendContractError",
+        "CheckpointError",
+        "DownloadError",
+        "ImageHubLicenseWarning",
+        "ImagehubLicenseWarning",
+    }
+    assert names <= set(imagehub.__all__)
+    assert all(hasattr(imagehub, name) for name in names)
 
 
 def test_site_describes_per_model_reference_and_uses_dynamic_counts():

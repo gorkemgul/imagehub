@@ -11,6 +11,8 @@ from imagehub.catalog import model_info
 from imagehub.models.ovis_image_transformer import OvisImageTransformer2DModel
 from imagehub.tokenization_qwen import Qwen2Tokenizer
 
+FIXTURES = Path(__file__).parent / "fixtures" / "ovis_image_configs"
+
 
 def test_ovis_image_catalog_is_pinned() -> None:
     spec = model_info("ovis-image-7b")
@@ -20,11 +22,10 @@ def test_ovis_image_catalog_is_pinned() -> None:
 
 
 def test_ovis_image_published_transformer_header() -> None:
-    fixture = Path("tests/fixtures/ovis_image_configs")
-    config = json.loads((fixture / "transformer_config.json").read_text())
+    config = json.loads((FIXTURES / "transformer_config.json").read_text())
     expected: dict[str, list[int]] = {}
     for filename in ("transformer_00001_tensors.json", "transformer_00002_tensors.json"):
-        expected.update(json.loads((fixture / filename).read_text()))
+        expected.update(json.loads((FIXTURES / filename).read_text()))
     with torch.device("meta"):
         model = OvisImageTransformer2DModel(config)
     actual = model.state_dict()
@@ -33,12 +34,11 @@ def test_ovis_image_published_transformer_header() -> None:
 
 
 def test_ovis_image_tokenizer_uses_byte_level_newline(tmp_path: Path) -> None:
-    fixture = Path("tests/fixtures/ovis_image_configs")
     for destination, source in {
         "tokenizer.json": "tokenizer_tokenizer.json",
         "tokenizer_config.json": "tokenizer_tokenizer_config.json",
     }.items():
-        shutil.copyfile(fixture / source, tmp_path / destination)
+        shutil.copyfile(FIXTURES / source, tmp_path / destination)
     tokenizer = Qwen2Tokenizer(tmp_path)
     assert tokenizer.tokenize("line1\nline2") == [1056, 16, 198, 1056, 17]
 

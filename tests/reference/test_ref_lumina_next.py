@@ -11,7 +11,6 @@ from typing import cast
 import pytest
 import torch
 from helpers import max_diff, snapshot_dir
-from test_ref_gemma_tokenizer import FIXED_PROMPTS, FUZZ_PIECES
 
 from imagehub import pipeline
 from imagehub.backends.lumina_next import (
@@ -31,6 +30,8 @@ pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 np = pytest.importorskip("numpy")
+
+from .test_ref_gemma_tokenizer import FIXED_PROMPTS, FUZZ_PIECES  # noqa: E402
 
 CPU = torch.device("cpu")
 MODEL_ID = "lumina-next"

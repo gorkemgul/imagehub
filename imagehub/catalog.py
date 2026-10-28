@@ -3050,7 +3050,7 @@ for _model_id, _decoder, _prior in (
         ModelSpec(
             id=_model_id,
             task=Task.T2I,
-            family="stable_cascade",
+            family="stable-cascade",
             source="https://huggingface.co/stabilityai/stable-cascade",
             repo_id="stabilityai/stable-cascade",
             revision=_STABLE_CASCADE_REVISION,

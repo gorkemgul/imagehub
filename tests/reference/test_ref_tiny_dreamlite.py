@@ -4,7 +4,6 @@ from types import MethodType
 
 import pytest
 import torch
-from test_ref_random_dreamlite import TINY_UNET, TINY_VAE
 
 import imagehub.backends.dreamlite as native_pipeline
 from imagehub.backends.dreamlite import DreamLiteComponents, decode_latents, denoise
@@ -13,6 +12,8 @@ from imagehub.models.dreamlite import DreamLiteUNetModel
 
 pytestmark = pytest.mark.reference
 diffusers = pytest.importorskip("diffusers")
+
+from .test_ref_random_dreamlite import TINY_UNET, TINY_VAE  # noqa: E402
 
 SCHEDULER = {
     "base_image_seq_len": 1,

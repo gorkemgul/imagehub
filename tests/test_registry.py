@@ -96,6 +96,14 @@ def test_catalog_alias_passes_model_id_but_family_does_not(tmp_path):
     assert xl_family.model_id is None
 
 
+def test_stable_cascade_canonical_family_and_compatibility_alias(tmp_path):
+    canonical = backend_registry.create("t2i", "stable-cascade", model=tmp_path)
+    compatibility = backend_registry.create("t2i", "stable_cascade", model=tmp_path)
+    assert type(canonical) is type(compatibility)
+    assert canonical.model_id == "stable-cascade"
+    assert compatibility.model_id is None
+
+
 def test_alias_registration_passes_model_id_to_any_factory(tmp_path):
     seen = []
 

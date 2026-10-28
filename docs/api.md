@@ -85,6 +85,17 @@ download_pretrained(model_id, destination, *, revision=None, token=None, progres
 The same function backs `python -m imagehub.pretrained <model-id> <empty-directory> [--revision REF]`.
 See [Downloading weights](guides/weights.md).
 
+## Exceptions and warnings
+
+Catch `ImageHubError` to handle any library-specific operational failure. More specific recovery is
+available with `MissingDependencyError` for an unavailable optional dependency, `CheckpointError`
+for missing or incompatible checkpoint files, `DownloadError` for download or verification
+failures, `BackendBusyError` for invalid concurrent backend use, and `BackendContractError` when an
+adapter violates the task contract. Argument validation can still raise standard Python exceptions.
+
+Restricted checkpoints emit `ImageHubLicenseWarning`; configure it with Python's `warnings` filters
+when needed. `ImagehubLicenseWarning` is retained as a compatibility alias.
+
 ## Extending
 
 | Name | Purpose |

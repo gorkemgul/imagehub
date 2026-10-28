@@ -138,7 +138,9 @@ def test_published_unet_layout():
     if not checkpoint.exists():
         pytest.skip("Kandinsky 2.2 decoder U-Net checkpoint is not present")
     config = json.loads(
-        Path("tests/fixtures/kandinsky22_configs/unet_config.json").read_text(encoding="utf-8")
+        (Path(__file__).parents[1] / "fixtures/kandinsky22_configs/unet_config.json").read_text(
+            encoding="utf-8"
+        )
     )
     with torch.device("meta"):
         model = UNet2DConditionModel(config)
@@ -158,7 +160,9 @@ def test_published_movq_layout():
     if not checkpoint.exists():
         pytest.skip("Kandinsky 2.2 MoVQ checkpoint is not present")
     config = json.loads(
-        Path("tests/fixtures/kandinsky22_configs/movq_config.json").read_text(encoding="utf-8")
+        (Path(__file__).parents[1] / "fixtures/kandinsky22_configs/movq_config.json").read_text(
+            encoding="utf-8"
+        )
     )
     with torch.device("meta"):
         model = VQModel(config)

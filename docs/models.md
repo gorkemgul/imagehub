@@ -1416,7 +1416,12 @@ python -m imagehub.pretrained stable-cascade-lite checkpoints/stable-cascade-lit
 ```python
 from imagehub import pipeline
 
-with pipeline("t2i", model="stable-cascade-lite", device="mps") as pipe:
+with pipeline(
+    "t2i",
+    backend="stable-cascade-lite",
+    model="checkpoints/stable-cascade-lite",
+    device="mps",
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1478,7 +1483,9 @@ python -m imagehub.pretrained wuerstchen-v2 checkpoints/wuerstchen-v2
 ```python
 from imagehub import pipeline
 
-with pipeline("t2i", model="wuerstchen-v2", device="mps") as pipe:
+with pipeline(
+    "t2i", backend="wuerstchen-v2", model="checkpoints/wuerstchen-v2", device="mps"
+) as pipe:
     result = pipe("a cat, oil painting", seed=42)
     result.images[0].save("cat.png")
 ```
@@ -1533,7 +1540,7 @@ python -m imagehub.pretrained glm-image checkpoints/glm-image
 ```python
 from imagehub import pipeline
 
-with pipeline("t2i", model="glm-image", device="mps") as pipe:
+with pipeline("t2i", backend="glm-image", model="checkpoints/glm-image", device="mps") as pipe:
     result = pipe('A neon sign that reads "Open Late" on a rainy street', seed=42)
     result.images[0].save("sign.png")
 ```

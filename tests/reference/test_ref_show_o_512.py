@@ -9,7 +9,6 @@ from types import SimpleNamespace
 import pytest
 import torch
 from helpers import max_diff, snapshot_dir
-from test_ref_show_o_random import _official_magvit, _official_phi, _official_showo
 
 from imagehub import pipeline
 from imagehub.backends.show_o import (
@@ -23,6 +22,8 @@ from imagehub.checkpoints import load_weights
 from imagehub.models.magvit_v2 import MAGVITv2
 from imagehub.models.show_o import ShowOModel
 from imagehub.tokenization_codegen import CodeGenTokenizer
+
+from .test_ref_show_o_random import _official_magvit, _official_phi, _official_showo
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")

@@ -60,3 +60,14 @@ jobs:
       # Reference comparisons need the reference libraries and model weights; they skip by default.
       - name: Tests
         run: python -m pytest -q
+
+      - name: Installed wheel tests
+        run: |
+          wheel_root="$(mktemp -d)"
+          python -m build --wheel --outdir "${wheel_root}/dist"
+          wheel_path=("${wheel_root}"/dist/*.whl)
+          python -m zipfile -e "${wheel_path[0]}" "${wheel_root}/site"
+          cd "${wheel_root}"
+          PYTHONPATH="${wheel_root}/site" python -m pytest -q --import-mode=importlib \
+            "${GITHUB_WORKSPACE}/tests" \
+            --deselect tests/test_catalog_link.py::test_catalog_ids_exist_with_consistent_weight_licenses
