@@ -167,19 +167,28 @@ def grid(d: dict, from_uri: str) -> str:
     return f'{search}\n\n<div class="ih-grid" markdown>\n\n' + "\n\n".join(cards) + "\n\n</div>"
 
 
-def compare(model_id: str, d: dict, prefix: str, caption: bool = True) -> str:
+def compare(
+    model_id: str, d: dict, prefix: str, caption: bool = True, *, turkish: bool = False
+) -> str:
     """Before/after slider for one gallery pair; images use markdown so MkDocs fixes the paths."""
     g = d["gallery"][model_id]
     base = f"{prefix}assets/gallery/{model_id}"
     diff = g["max_pixel_diff"]
-    result = "pixel-identical" if diff == 0 else f"max pixel difference {diff}"
+    if turkish:
+        result = "pikseller aynı" if diff == 0 else f"maksimum piksel farkı {diff}"
+        reference = "referans"
+        slider_label = "Referans ile imagehub çıktısı arasında kaydır"
+    else:
+        result = "pixel-identical" if diff == 0 else f"max pixel difference {diff}"
+        reference = "reference"
+        slider_label = "Slide between the reference and imagehub output"
     figure = (
         f'<figure class="ih-compare" style="--pos:50%" markdown>\n'
         f'<span class="ih-compare__stage" markdown="span">'
-        f"![recorded reference]({base}.reference.webp){{ loading=lazy }}"
+        f"![{reference}]({base}.reference.webp){{ loading=lazy }}"
         f"![imagehub]({base}.imagehub.webp){{ .ih-compare__top loading=lazy }}"
-        f'<input type="range" min="0" max="100" value="50" aria-label="Slide between the reference and imagehub output">'
-        f'<span class="ih-compare__tag ih-compare__tag--l">reference</span>'
+        f'<input type="range" min="0" max="100" value="50" aria-label="{slider_label}">'
+        f'<span class="ih-compare__tag ih-compare__tag--l">{reference}</span>'
         f'<span class="ih-compare__tag ih-compare__tag--r">imagehub</span></span>\n'
     )
     if caption:
@@ -257,8 +266,13 @@ Each family page has the architecture notes, settings, license and the recorded 
     )
 
 
-def results_page(d: dict) -> str:
-    rows = ["| Model | Family | Status | Steps | Size | Latents max abs | Pixels max abs |"]
+def results_table(d: dict, *, turkish: bool = False) -> str:
+    if turkish:
+        rows = [
+            "| Model | Aile | Durum | Adım | Boyut | Latent maks. mutlak fark | Piksel maks. mutlak fark |"
+        ]
+    else:
+        rows = ["| Model | Family | Status | Steps | Size | Latents max abs | Pixels max abs |"]
     rows.append("| --- | --- | --- | --- | --- | --- | --- |")
     for fam in d["families"].values():
         for model_id in fam["models"]:
@@ -278,6 +292,10 @@ def results_page(d: dict) -> str:
                 f"| [`{model_id}`](../models/{fam['slug']}.md) | {fam['title']} | "
                 f"{entry.get('status', '—')} | {e2e.get('steps', '—')} | {size} | {fmt(lat)} | {fmt(pix)} |"
             )
+    return "\n".join(rows)
+
+
+def results_page(d: dict) -> str:
     env = d["validation"]["environment"]
     return (
         GENERATED_MARK
@@ -292,7 +310,7 @@ Measured on CPU, float32, Python {env["python"]}, PyTorch {env["torch"]}, diffus
 {env["diffusers"]}, transformers {env["transformers"]} ({env["machine"]}).
 
 """
-        + "\n".join(rows)
+        + results_table(d)
         + "\n"
     )
 
@@ -313,6 +331,16 @@ def gallery_page(d: dict) -> str:
             if model_id in d["gallery"]:
                 out.append(compare(model_id, d, "../") + "\n")
     out.append("</div>\n")
+    return "\n".join(out)
+
+
+def gallery_content(d: dict, *, turkish: bool = False) -> str:
+    out = ['<div class="ih-gallery" markdown>\n']
+    for fam in d["families"].values():
+        for model_id in fam["models"]:
+            if model_id in d["gallery"]:
+                out.append(compare(model_id, d, "../", turkish=turkish) + "\n")
+    out.append("</div>")
     return "\n".join(out)
 
 
@@ -339,6 +367,7 @@ def on_config(config):
 
 def on_page_markdown(markdown, page, config, files):
     d = data(config)
+    turkish = page.file.src_uri.endswith(".tr.md")
     uri = page.file.src_uri.replace(".tr.md", ".md")
     depth_prefix = "../" * (posixpath.dirname(uri).count("/") + 1 if posixpath.dirname(uri) else 0)
     env = d["validation"]["environment"]
@@ -359,6 +388,7 @@ def on_page_markdown(markdown, page, config, files):
         "diffusers": env["diffusers"],
         "transformers": env["transformers"],
         "torch": env["torch"],
+        "python": env["python"],
         "gallery-count": str(len(d["gallery"])),
         "max-pixel-diff": str(
             max(
@@ -379,17 +409,26 @@ def on_page_markdown(markdown, page, config, files):
         if key == "model-grid":
             return grid(d, uri)
         if key == "image-input":
-            rows = ["| Model | Image input | Option |", "| --- | --- | --- |"]
+            heading = (
+                "| Model | Görüntü girdisi | Seçenek |"
+                if turkish
+                else "| Model | Image input | Option |"
+            )
+            rows = [heading, "| --- | --- | --- |"]
             rows += [
                 f"| [`{m.id}`]({model_link(m.id, d, uri)}) | {m.image_input} | `image` |"
                 for m in MODEL_CATALOG.values()
                 if m.image_input
             ]
             return "\n".join(rows)
+        if key == "results-table":
+            return results_table(d, turkish=turkish)
+        if key == "gallery":
+            return gallery_content(d, turkish=turkish)
         if key == "banner":
             return banner()
         if key == "compare":
-            return compare(match.group(2), d, depth_prefix)
+            return compare(match.group(2), d, depth_prefix, turkish=turkish)
         if key in replacements:
             return replacements[key]
         raise ValueError(f"{page.file.src_uri}: unknown placeholder ih:{key}")

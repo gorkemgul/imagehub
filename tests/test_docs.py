@@ -13,6 +13,22 @@ from imagehub.registry import available_backends
 
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON_BLOCK = re.compile(r"^```python\n(.*?)^```", re.MULTILINE | re.DOTALL)
+FENCED_BLOCK = re.compile(r"^```[^\n]*\n.*?^```", re.MULTILINE | re.DOTALL)
+
+
+TRANSLATED_PAGES = (
+    "guides/devices.md",
+    "guides/image-input.md",
+    "guides/index.md",
+    "guides/installation.md",
+    "guides/reproducibility.md",
+    "guides/weights.md",
+    "parity/index.md",
+    "parity/gallery.md",
+    "parity/results.md",
+    "api.md",
+    "contributing.md",
+)
 
 
 def test_every_model_is_documented():
@@ -30,6 +46,21 @@ def test_no_merge_conflict_markers():
             assert not line.startswith(("<<<<<<< ", ">>>>>>> ")), path
 
 
+def test_turkish_pages_exist_and_keep_code_blocks_unchanged():
+    generated_without_code = {"parity/gallery.md", "parity/results.md"}
+    for relative in TRANSLATED_PAGES:
+        source = ROOT / "docs" / relative
+        translated = source.with_name(f"{source.stem}.tr.md")
+        assert translated.is_file(), translated
+        translated_blocks = FENCED_BLOCK.findall(translated.read_text(encoding="utf-8"))
+        if relative in generated_without_code:
+            assert not translated_blocks
+        else:
+            assert source.is_file(), source
+            source_blocks = FENCED_BLOCK.findall(source.read_text(encoding="utf-8"))
+            assert translated_blocks == source_blocks, translated
+
+
 def test_documented_pipeline_examples_name_registered_backends(tmp_path):
     paths = [
         ROOT / "README.md",
@@ -41,7 +72,9 @@ def test_documented_pipeline_examples_name_registered_backends(tmp_path):
         for block in PYTHON_BLOCK.findall(path.read_text(encoding="utf-8")):
             if "pipeline(" not in block:
                 continue
-            if path.name == "api.md" and block.lstrip().startswith("pipeline(task, *, backend"):
+            if path.name in {"api.md", "api.tr.md"} and block.lstrip().startswith(
+                "pipeline(task, *, backend"
+            ):
                 continue
             tree = ast.parse(block, filename=str(path))
             for call in (

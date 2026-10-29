@@ -78,10 +78,20 @@ plugins:
             Home: Ana sayfa
             Quickstart: Hızlı başlangıç
             Guides: Rehberler
+            Installation: Kurulum
+            Downloading weights: Ağırlıkları indirme
+            Devices and precision: Aygıtlar ve hassasiyet
+            Image input: Görüntü girdisi
+            Reproducibility: Tekrarlanabilirlik
             Models: Modeller
             Parity: Eşdeğerlik
-            Reference: Başvuru
-            Contributing: Katkı
+            Gallery: Galeri
+            Results: Sonuçlar
+            Full validation record: Tam doğrulama kaydı
+            Reference: Referans
+            API: API
+            Model catalog: Model kataloğu
+            Contributing: Katkıda bulunma
 
 markdown_extensions:
   - abbr
