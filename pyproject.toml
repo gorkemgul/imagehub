@@ -8,8 +8,8 @@ version = "0.1.0"
 description = "Open-weight image generation architectures, natively reimplemented in PyTorch with parity evidence"
 readme = "README.md"
 requires-python = ">=3.11"
-license = "Apache-2.0"
-license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md", "licenses/**"]
+license = "Apache-2.0 AND LicenseRef-NVIDIA-NSCLv1"
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md", "licenses/*", "licenses/**/*"]
 authors = [{ name = "gorkemgul" }]
 dependencies = ["torch>=2.2"]
 keywords = ["artificial-intelligence", "diffusion", "image-generation", "pytorch"]
@@ -17,7 +17,6 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
