@@ -102,10 +102,6 @@ Creating a pipeline for a checkpoint without commercial-use rights emits an `Ima
 
 Every listed checkpoint is validated against its reference implementation, with CPU float32 image outputs required to match bit-for-bit. The [validation documentation](docs/validation.md) describes the coverage and recorded results.
 
-The Validation column states the evidence available for each family. Full CPU float32 validation
-requires bit-identical output from the reference implementation. The
-[validation documentation](docs/validation.md) describes the coverage and recorded results.
-
 ## Documentation
 
 [Model catalog](docs/catalog.md) · [Model architecture notes](docs/models.md) · [Validation](docs/validation.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
@@ -130,3 +126,13 @@ The project is Apache-2.0 overall. Clearly marked third-party derivatives retain
 in particular, the PixelDiT source is NSCLv1 and non-commercial. Each checkpoint also has its own
 license; see the [model catalog](docs/catalog.md), [NOTICE](NOTICE), and
 [third-party notices](THIRD_PARTY_NOTICES.md).
+
+## Roadmap
+
+Planned work after the first release:
+
+- [ ] Opt-in fast attention backends (FlashAttention, SageAttention, xFormers) — #192
+- [ ] LoRA adapter loading for inference — #193
+- [ ] Training support: LoRA fine-tuning as `imagehub[training]` — #194
+- [ ] GPU and half-precision validation — #195
+- [ ] More model families — #11
