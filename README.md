@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(max-width: 600px)" srcset="./docs/assets/banner-mobile.svg" />
+    <img src="./docs/assets/banner.svg" alt="imagehub — one API for open text-to-image models. The input &quot;a photograph of an astronaut riding a horse&quot; passes through a small neural network, and the output switches between images from different open models." width="100%" />
+  </picture>
+</p>
+
 <h2 align="center">Open-weight text-to-image architectures in native PyTorch.</h2>
 
 imagehub provides one API for open-weight text-to-image architectures using native PyTorch reimplementations; PyTorch is the only required runtime dependency. CPU float32 outputs are bit-identical to the reference implementations; see [validation](docs/validation.md). It supports Python 3.11 and later.
