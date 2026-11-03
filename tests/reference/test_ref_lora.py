@@ -1,8 +1,11 @@
 """LoRA loading parity against diffusers ``load_lora_weights`` (PEFT backend) on CPU float32."""
 
+import os
+from pathlib import Path
+
 import pytest
 import torch
-from helpers import write_tiny_sd, write_tiny_sdxl
+from helpers import checkpoint_dir, max_diff, write_tiny_sd, write_tiny_sdxl
 from lora_helpers import (
     TEXT_TARGETS,
     UNET_TARGETS,
@@ -168,3 +171,37 @@ def test_stacked_and_fused_adapters_match_diffusers(tmp_path, family):
     ref.fuse_lora()
     fused = reference_images(ref)
     assert torch.equal(native_images(family, root, lora=stacked, lora_fuse=True), fused)
+
+
+# latent-consistency/lcm-lora-sdv1-5 at this revision: a published kohya-layout adapter with
+# per-module alphas and 1x1 convolution (proj_in / proj_out) adapters.
+LCM_LORA_REVISION = "cf2fced511dbe7e26c8d1d397e728fbab875db4b"
+
+
+def test_published_lcm_lora_matches_diffusers(record):
+    root = checkpoint_dir(5)
+    value = os.environ.get("IMAGEHUB_LCM_LORA_SD15")
+    if not value:
+        pytest.skip(
+            "Set IMAGEHUB_LCM_LORA_SD15 to pytorch_lora_weights.safetensors from "
+            f"latent-consistency/lcm-lora-sdv1-5 at {LCM_LORA_REVISION}"
+        )
+    path = Path(value)
+    ref = reference_pipeline("sd", root)
+    ref.load_lora_weights(str(path), adapter_name="lcm")
+    expected = ref(
+        "a photograph of an astronaut riding a horse",
+        num_inference_steps=2,
+        height=256,
+        width=256,
+        generator=torch.Generator("cpu").manual_seed(0),
+        output_type="np",
+    ).images
+    expected = torch.from_numpy((expected * 255).round().astype("uint8"))
+    with pipeline("t2i", backend="sd-v1-5", model=root, lora=path) as pipe:
+        result = pipe(
+            "a photograph of an astronaut riding a horse", steps=2, height=256, width=256, seed=0
+        )
+    actual = torch.stack([image.tensor for image in result.images])
+    record("lcm_lora_e2e_pixels", **max_diff(actual.float(), expected.float()), tolerance=0)
+    assert torch.equal(actual, expected)
