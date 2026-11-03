@@ -271,6 +271,16 @@ def _alpha_from_metadata(
     return float(alpha) if isinstance(alpha, int | float) else float(rank)
 
 
+def _native_name(module: str, names: set[str]) -> str | None:
+    """The native spelling of a file's module name, or ``None`` if the model lacks it."""
+    if module in names:
+        return module
+    # transformers 5 drops CLIP's ``text_model`` level, so newer files omit it.
+    if f"text_model.{module}" in names:
+        return f"text_model.{module}"
+    return None
+
+
 def read_lora_file(
     path: LoRASource,
     components: Mapping[str, nn.Module | None],
@@ -311,6 +321,8 @@ def read_lora_file(
             if component == "unet":
                 name = _sgm_to_diffusers(name, unet_layers_per_block)
             module = tables[component].get(name)
+            if module is None and component != "unet":
+                module = tables[component].get(f"text_model_{name}")
             if module is None:
                 unresolved.append(key)
                 continue
@@ -334,13 +346,17 @@ def read_lora_file(
     metadata = {} if legacy else _metadata_alpha(source)
     missing = []
     result = []
+    names: dict[str, set[str]] = {}
     for (component, module), (down, up) in sorted(pairs.items()):
         target = components.get(component)
-        if target is None or module not in _module_names(target):
+        if target is not None and component not in names:
+            names[component] = _module_names(target)
+        native = _native_name(module, names.get(component, set()))
+        if native is None:
             missing.append(f"{component}.{module}")
             continue
         alpha = _alpha_from_metadata(metadata, component, module, int(down.shape[0]))
-        result.append(LoRAModuleWeights(component, module, down, up, alpha))
+        result.append(LoRAModuleWeights(component, native, down, up, alpha))
     if missing:
         raise ValueError(f"{source}: LoRA keys that match no module: {_first(missing)}")
     return result

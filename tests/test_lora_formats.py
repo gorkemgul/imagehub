@@ -215,3 +215,12 @@ def test_stacked_and_fused_adapters_match_unfused(tmp_path, sd1):
     with torch.no_grad():
         torch.testing.assert_close(text(ids)[0], unfused, atol=1e-5, rtol=1e-5)
     fresh(components)
+
+
+def test_transformers_5_text_encoder_spelling_loads(tmp_path, sd1):
+    components = fresh(sd1)
+    weights = random_lora({"text_encoder": components["text_encoder"]}, ("q_proj",))
+    renamed = {(c, m.removeprefix("text_model.")): v for (c, m), v in weights.items()}
+    path = write_peft(tmp_path / "a.safetensors", renamed)
+    load_lora_file(components, LoRASpec(path), adapter="lora_0")
+    assert_loaded(components, weights, 2.0)
