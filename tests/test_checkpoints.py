@@ -11,6 +11,7 @@ from imagehub.checkpoints import (
     load_safetensors,
     load_weights,
     read_json,
+    read_safetensors_metadata,
     save_safetensors,
 )
 from imagehub.exceptions import CheckpointError
@@ -510,3 +511,21 @@ def test_from_pretrained_skips_the_models_unused_prefixes(tmp_path):
     Skipping.from_pretrained(tmp_path)
     with pytest.raises(CheckpointError, match="decoder.weight"):
         TinyModel.from_pretrained(tmp_path)
+
+
+def test_safetensors_metadata_round_trip(tmp_path):
+    path = tmp_path / "a.safetensors"
+    save_safetensors({"x": torch.ones(2)}, path, metadata={"format": "pt", "k": '{"a": 1}'})
+    assert read_safetensors_metadata(path) == {"format": "pt", "k": '{"a": 1}'}
+    assert torch.equal(load_safetensors(path)["x"], torch.ones(2))
+
+
+def test_safetensors_metadata_absent(tmp_path):
+    path = tmp_path / "a.safetensors"
+    save_safetensors({"x": torch.ones(2)}, path)
+    assert read_safetensors_metadata(path) == {}
+
+
+def test_safetensors_metadata_must_be_strings(tmp_path):
+    with pytest.raises(TypeError, match="metadata"):
+        save_safetensors({"x": torch.ones(1)}, tmp_path / "a.safetensors", metadata={"k": 1})
