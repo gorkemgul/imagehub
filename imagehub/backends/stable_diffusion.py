@@ -22,6 +22,7 @@ from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
+from imagehub.lora_formats import LoRAOption, apply_lora, parse_lora_option
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.autoencoder_tiny import AutoencoderTiny
 from imagehub.models.clip_text import CLIPTextModel
@@ -289,8 +290,15 @@ class StableDiffusionBackend(TextToImageBackend):
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
         model_id: str | None = None,
+        lora: LoRAOption = None,
+        lora_scale: float = 1.0,
+        lora_fuse: bool = False,
     ) -> None:
         super().__init__()
+        if not isinstance(lora_fuse, bool):
+            raise TypeError("lora_fuse must be a bool")
+        self.lora = parse_lora_option(lora, lora_scale)
+        self.lora_fuse = lora_fuse
         self.source = Path(model)
         self.model_id = model_id
         self.device = resolve_device(device)
@@ -370,6 +378,14 @@ class StableDiffusionBackend(TextToImageBackend):
                 "selected; both use the Stable Diffusion layout, so it was loaded",
                 UserWarning,
                 stacklevel=2,
+            )
+        if self.lora:
+            c = self.components
+            apply_lora(
+                {"unet": c.unet, "text_encoder": c.text_encoder},
+                self.lora,
+                fuse=self.lora_fuse,
+                unet_layers_per_block=c.unet.config.get("layers_per_block"),
             )
 
     def _unload(self) -> None:
