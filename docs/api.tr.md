@@ -27,6 +27,7 @@ Bir pipeline oluşturur. Nesneyi oluşturmak ağa erişmez ve ağırlıkları y�
 | `model` | *(backend seçeneği)* indirilmiş snapshot'ın bulunduğu klasör |
 | `device` | *(backend seçeneği)* `"cpu"` (varsayılan), `"mps"`, `"cuda"` |
 | `dtype` | *(backend seçeneği)* `torch.float32` (varsayılan), `torch.float16`, `torch.bfloat16` |
+| `lora`, `lora_scale`, `lora_fuse` | *(backend seçeneği, Stable Diffusion 1.x ve SDXL)* LoRA adaptör dosyaları ([ayrıntılar](models/index.md#lora-adapters)) |
 
 ## `Pipeline`
 

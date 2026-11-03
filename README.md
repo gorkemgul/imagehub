@@ -40,6 +40,15 @@ with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-konte
 result.images[0].save("edited.png")
 ```
 
+The Stable Diffusion 1.x and SDXL backends also load LoRA adapters in the diffusers and kohya
+layouts ([details](docs/models.md#lora-adapters)):
+
+```python
+with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
+              lora="style.safetensors", lora_scale=0.8) as pipe:
+    result = pipe("a watercolor fox", seed=0)
+```
+
 ## Models
 
 The [model catalog](docs/catalog.md) lists every supported checkpoint with its source, pinned revision, and license.
