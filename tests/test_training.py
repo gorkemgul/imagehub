@@ -35,7 +35,9 @@ def write_folder(root, sizes=((40, 48), (48, 40), (32, 32))):
     lines = []
     for index, (width, height) in enumerate(sizes):
         pixels = torch.randint(0, 256, (height, width, 3), generator=g, dtype=torch.uint8)
-        PIL.fromarray(pixels.numpy()).save(root / f"{index}.png")
+        PIL.frombytes("RGB", (width, height), bytes(pixels.flatten().tolist())).save(
+            root / f"{index}.png"
+        )
         lines.append(json.dumps({"file_name": f"{index}.png", "text": f"a cat number {index}"}))
     (root / "metadata.jsonl").write_text("\n".join(lines) + "\n")
     return root
