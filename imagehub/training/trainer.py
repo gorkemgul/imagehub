@@ -34,6 +34,7 @@ from imagehub.training.distributed import (
     reduce_sum,
     setup_distributed,
 )
+from imagehub.training.reporting import Reporter, start_reporters
 from imagehub.training.schedules import lr_lambda
 from imagehub.training.sd1 import StableDiffusionLoRAObjective
 from imagehub.training.specs import get_training_spec, list_training_specs
@@ -102,7 +103,7 @@ class Trainer:
         self.log_history: list[dict[str, float]] = []
         self.components: StableDiffusionComponents | None = None
         self.injection: LoRAInjection | None = None
-        self._run: Any = None
+        self._reporters: list[Reporter] = []
 
     # Setup -------------------------------------------------------------------------------
 
@@ -230,16 +231,16 @@ class Trainer:
         total = reduce_sum([total], self.distributed, self.device)[0] / self.distributed.world_size
         return total, lr
 
-    def _log(self, record: dict[str, float], run: Any) -> None:
+    def _log(self, record: dict[str, float]) -> None:
         self.log_history.append(record)
         if not self.is_main_process:
             return
         print("  ".join(f"{k} {_format(v)}" for k, v in record.items()), flush=True)
-        if run is not None:
-            # Named like diffusers' training scripts, so dashboards line up.
-            names = {"loss": "train_loss"}
-            values = {names.get(k, k): v for k, v in record.items() if k != "step"}
-            run.log(values, step=self.global_step)
+        # Named like diffusers' training scripts, so dashboards line up.
+        names = {"loss": "train_loss"}
+        values = {names.get(k, k): v for k, v in record.items() if k != "step"}
+        for reporter in self._reporters:
+            reporter.log(values, self.global_step)
 
     def train(self, resume_from_checkpoint: bool | str | os.PathLike[str] = False) -> TrainOutput:
         """Train until ``args.max_steps`` optimizer steps; optionally resume a checkpoint first."""
@@ -251,7 +252,10 @@ class Trainer:
                 else Path(resume_from_checkpoint)
             )
             self._load_checkpoint(path)
-        run = self._run = self._start_reporting()
+        if self.is_main_process:
+            self._reporters = start_reporters(
+                self.args.report_to, self.args.run_name, self.args.to_dict()
+            )
         interval = self.args.evaluation_interval
         losses = []
         started = time.perf_counter()
@@ -264,11 +268,11 @@ class Trainer:
                     raise FloatingPointError(f"Loss is {loss} at step {self.global_step}")
                 losses.append(loss)
                 if self.global_step % self.args.logging_steps == 0:
-                    self._log({"step": float(self.global_step), "loss": loss, "lr": lr}, run)
+                    self._log({"step": float(self.global_step), "loss": loss, "lr": lr})
                 if interval is not None and self.global_step % interval == 0:
                     if self.eval_dataset is not None:
                         metrics = self.evaluate()
-                        self._log({"step": float(self.global_step)} | metrics, run)
+                        self._log({"step": float(self.global_step)} | metrics)
                     if self.args.validation_prompts:
                         self.generate_samples()
                         last_sampled = self.global_step
@@ -280,9 +284,9 @@ class Trainer:
             if losses and self.args.validation_prompts and last_sampled != self.global_step:
                 self.generate_samples()
         finally:
-            self._run = None
-            if run is not None:
-                run.finish()
+            reporters, self._reporters = self._reporters, []
+            for reporter in reporters:
+                reporter.finish()
         runtime = time.perf_counter() - started
         mean = sum(losses) / len(losses) if losses else 0.0
         metrics = {
@@ -291,15 +295,6 @@ class Trainer:
             "train_loss": mean,
         }
         return TrainOutput(self.global_step, mean, metrics, list(self.log_history))
-
-    def _start_reporting(self) -> Any:
-        if self.args.report_to != "wandb" or not self.is_main_process:
-            return None
-        try:
-            import wandb
-        except ImportError as error:
-            raise ImportError('report_to="wandb" needs the wandb package') from error
-        return wandb.init(project="imagehub", name=self.args.run_name, config=self.args.to_dict())
 
     # Evaluation --------------------------------------------------------------------------
 
@@ -348,7 +343,7 @@ class Trainer:
     def generate_samples(self) -> Path:
         """Write one image per validation prompt to ``output_dir/samples/step-N/``.
 
-        During a ``report_to="wandb"`` run the images are also logged as ``validation``.
+        During a run with ``report_to`` the images are also logged as ``validation``.
         """
         self._setup()
         assert self.components is not None
@@ -384,14 +379,9 @@ class Trainer:
                     paths.append(directory / f"{index}.png")
             finally:
                 components.unet.train()
-            if self._run is not None:
-                import wandb
-
-                images = [
-                    wandb.Image(str(path), caption=prompt)
-                    for path, prompt in zip(paths, args.validation_prompts, strict=True)
-                ]
-                self._run.log({"validation": images}, step=self.global_step)
+            images = list(zip(paths, args.validation_prompts, strict=True))
+            for reporter in self._reporters:
+                reporter.log_images("validation", images, self.global_step)
         barrier(self.distributed)
         return directory
 

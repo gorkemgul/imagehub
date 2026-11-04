@@ -426,3 +426,75 @@ def test_wandb_receives_losses_and_validation_images(tmp_path, tiny_sd, monkeypa
     assert len(images) == 1 and images[0][0].caption == "a cat"
     assert images[0][0].path.endswith("step-2/0.png")
     assert logged[-1] == ("finished", None)
+
+
+def test_clearml_and_wandb_together(tmp_path, tiny_sd, monkeypatch):
+    import sys
+    import types
+
+    events = []
+
+    class Logger:
+        def report_scalar(self, title, series, value, iteration):
+            events.append(("scalar", title, iteration))
+
+        def report_image(self, title, series, iteration, local_path):
+            events.append(("image", title, series, iteration, local_path))
+
+    class Task:
+        @staticmethod
+        def init(project_name, task_name):
+            events.append(("init", project_name, task_name))
+            return Task()
+
+        def connect(self, values, name):
+            events.append(("connect", name, values["max_steps"]))
+
+        def get_logger(self):
+            return Logger()
+
+        def close(self):
+            events.append(("close",))
+
+    class Run:
+        def log(self, values, step):
+            events.append(("wandb", sorted(values), step))
+
+        def finish(self):
+            events.append(("wandb-finish",))
+
+    monkeypatch.setitem(sys.modules, "clearml", types.SimpleNamespace(Task=Task))
+    monkeypatch.setitem(
+        sys.modules,
+        "wandb",
+        types.SimpleNamespace(init=lambda **kwargs: Run(), Image=lambda path, caption: path),
+    )
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    args = arguments(
+        tmp_path,
+        max_steps=2,
+        report_to=["wandb", "clearml"],
+        run_name="dog",
+        validation_prompts=("a cat",),
+        validation_num_inference_steps=1,
+    )
+    assert args.report_to == ("wandb", "clearml")
+    Trainer("sd-v1-5", tiny_sd, args, data).train()
+    assert events[0][0] == "init" and events[0][1:] == ("imagehub", "dog")
+    assert ("connect", "TrainingArguments", 2) in events
+    assert [e[2] for e in events if e[0] == "scalar" and e[1] == "train_loss"] == [1, 2]
+    images = [e for e in events if e[0] == "image"]
+    assert len(images) == 1 and images[0][1:4] == ("validation", "0: a cat", 2)
+    assert events[-2:] == [("wandb-finish",), ("close",)]
+
+
+def test_missing_tracker_package_is_reported(tmp_path, tiny_sd, monkeypatch):
+    import sys
+
+    monkeypatch.setitem(sys.modules, "clearml", None)
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    trainer = Trainer("sd-v1-5", tiny_sd, arguments(tmp_path, report_to="clearml"), data)
+    with pytest.raises(ImportError, match="clearml package"):
+        trainer.train()
+    with pytest.raises(ValueError, match="twice"):
+        arguments(tmp_path, report_to=["wandb", "wandb"])

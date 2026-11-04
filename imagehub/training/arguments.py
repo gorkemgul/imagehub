@@ -8,11 +8,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from imagehub.training.reporting import REPORTERS
+
 EVAL_STRATEGIES = ("no", "steps")
 LR_SCHEDULERS = ("constant", "constant_with_warmup", "linear", "cosine")
 MIXED_PRECISION = ("no", "fp16", "bf16")
 PREDICTION_TYPES = ("epsilon", "v_prediction")
-REPORTERS = ("none", "wandb")
 
 
 def _positive_int(name: str, value: Any) -> None:
@@ -31,6 +32,17 @@ def _number(name: str, value: Any, *, positive: bool = False) -> float:
     if value < 0 or (positive and value == 0):
         raise ValueError(f"{name} must be {'positive' if positive else 'non-negative'}")
     return float(value)
+
+
+def _reporters(value: Any) -> tuple[str, ...]:
+    """``"none"``, one tracker name or a sequence of them, as a tuple of names."""
+    names = (value,) if isinstance(value, str) else tuple(value)
+    names = tuple(name for name in names if name != "none")
+    for name in names:
+        _choice("report_to", name, REPORTERS)
+    if len(set(names)) != len(names):
+        raise ValueError("report_to lists a tracker twice")
+    return names
 
 
 def _choice(name: str, value: Any, choices: tuple[str, ...]) -> None:
@@ -74,7 +86,7 @@ class TrainingArguments:
     validation_prompts: tuple[str, ...] = ()
     validation_num_inference_steps: int = 25
     validation_guidance_scale: float = 7.5
-    report_to: str = "none"
+    report_to: str | tuple[str, ...] = "none"
     run_name: str | None = None
     seed: int = 0
     device: str = "cpu"
@@ -123,7 +135,7 @@ class TrainingArguments:
             )
         _choice("lr_scheduler", self.lr_scheduler, LR_SCHEDULERS)
         _choice("mixed_precision", self.mixed_precision, MIXED_PRECISION)
-        _choice("report_to", self.report_to, REPORTERS)
+        object.__setattr__(self, "report_to", _reporters(self.report_to))
         _choice("eval_strategy", self.eval_strategy, EVAL_STRATEGIES)
         if self.prediction_type is not None:
             _choice("prediction_type", self.prediction_type, PREDICTION_TYPES)
@@ -149,6 +161,7 @@ class TrainingArguments:
         values = {name: getattr(self, name) for name in self.__dataclass_fields__}
         values["output_dir"] = str(self.output_dir)
         values["validation_prompts"] = list(values["validation_prompts"])
+        values["report_to"] = list(values["report_to"])
         if values["lora_target_modules"] is not None:
             values["lora_target_modules"] = list(values["lora_target_modules"])
         return values

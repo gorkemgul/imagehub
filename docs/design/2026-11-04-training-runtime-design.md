@@ -50,7 +50,9 @@ process generates one image per prompt with the checkpoint's scheduler and the c
 (seed `seed`) and saves `output_dir/samples/step-N/<index>.png`. Generation reuses the inference
 pipeline functions, so it matches `pipeline(..., lora=adapter)`.
 
-Eval loss and sample paths are added to `log_history` and, with `report_to="wandb"`, to the run.
+Eval loss is added to `log_history`. `report_to` takes `"wandb"`, `"clearml"` or a list of both;
+each tracker receives `train_loss` (named as in the diffusers scripts), `lr`, `eval_loss` and the
+validation images. The packages stay optional and are imported only when requested.
 
 ## Distributed data-parallel training
 
