@@ -8,10 +8,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from imagehub.training.reporting import REPORTERS
+
+EVAL_STRATEGIES = ("no", "steps")
 LR_SCHEDULERS = ("constant", "constant_with_warmup", "linear", "cosine")
 MIXED_PRECISION = ("no", "fp16", "bf16")
 PREDICTION_TYPES = ("epsilon", "v_prediction")
-REPORTERS = ("none", "wandb")
 
 
 def _positive_int(name: str, value: Any) -> None:
@@ -32,6 +34,17 @@ def _number(name: str, value: Any, *, positive: bool = False) -> float:
     return float(value)
 
 
+def _reporters(value: Any) -> tuple[str, ...]:
+    """``"none"``, one tracker name or a sequence of them, as a tuple of names."""
+    names = (value,) if isinstance(value, str) else tuple(value)
+    names = tuple(name for name in names if name != "none")
+    for name in names:
+        _choice("report_to", name, REPORTERS)
+    if len(set(names)) != len(names):
+        raise ValueError("report_to lists a tracker twice")
+    return names
+
+
 def _choice(name: str, value: Any, choices: tuple[str, ...]) -> None:
     if value not in choices:
         raise ValueError(f"{name} must be one of {', '.join(choices)}")
@@ -45,7 +58,8 @@ class TrainingArguments:
     output_dir: str | os.PathLike[str]
     max_steps: int
     learning_rate: float = 1e-4
-    train_batch_size: int = 1
+    per_device_train_batch_size: int = 1
+    per_device_eval_batch_size: int = 1
     gradient_accumulation_steps: int = 1
     lr_scheduler: str = "constant"
     lr_warmup_steps: int = 0
@@ -67,7 +81,12 @@ class TrainingArguments:
     prediction_type: str | None = None
     logging_steps: int = 10
     save_steps: int = 500
-    report_to: str = "none"
+    eval_strategy: str = "no"
+    eval_steps: int | None = None
+    validation_prompts: tuple[str, ...] = ()
+    validation_num_inference_steps: int = 25
+    validation_guidance_scale: float = 7.5
+    report_to: str | tuple[str, ...] = "none"
     run_name: str | None = None
     seed: int = 0
     device: str = "cpu"
@@ -76,14 +95,27 @@ class TrainingArguments:
         object.__setattr__(self, "output_dir", Path(self.output_dir))
         for name in (
             "max_steps",
-            "train_batch_size",
+            "per_device_train_batch_size",
+            "per_device_eval_batch_size",
             "gradient_accumulation_steps",
             "resolution",
             "lora_rank",
             "logging_steps",
             "save_steps",
+            "validation_num_inference_steps",
         ):
             _positive_int(name, getattr(self, name))
+        if self.eval_steps is not None:
+            _positive_int("eval_steps", self.eval_steps)
+        object.__setattr__(
+            self,
+            "validation_guidance_scale",
+            _number("validation_guidance_scale", self.validation_guidance_scale),
+        )
+        prompts = tuple(self.validation_prompts)
+        if not all(isinstance(p, str) and p.strip() for p in prompts):
+            raise ValueError("validation_prompts must be non-empty strings")
+        object.__setattr__(self, "validation_prompts", prompts)
         _non_negative_int("lr_warmup_steps", self.lr_warmup_steps)
         if isinstance(self.seed, bool) or not isinstance(self.seed, int):
             raise ValueError("seed must be an int")
@@ -103,7 +135,8 @@ class TrainingArguments:
             )
         _choice("lr_scheduler", self.lr_scheduler, LR_SCHEDULERS)
         _choice("mixed_precision", self.mixed_precision, MIXED_PRECISION)
-        _choice("report_to", self.report_to, REPORTERS)
+        object.__setattr__(self, "report_to", _reporters(self.report_to))
+        _choice("eval_strategy", self.eval_strategy, EVAL_STRATEGIES)
         if self.prediction_type is not None:
             _choice("prediction_type", self.prediction_type, PREDICTION_TYPES)
         for name in ("center_crop", "random_flip"):
@@ -117,9 +150,18 @@ class TrainingArguments:
         if not isinstance(self.device, str) or not self.device:
             raise ValueError("device must be a device name such as 'cpu' or 'cuda'")
 
+    @property
+    def evaluation_interval(self) -> int | None:
+        """Optimizer steps between evaluations, or ``None`` when evaluation is off."""
+        if self.eval_strategy == "no":
+            return None
+        return self.eval_steps or self.logging_steps
+
     def to_dict(self) -> dict[str, Any]:
         values = {name: getattr(self, name) for name in self.__dataclass_fields__}
         values["output_dir"] = str(self.output_dir)
+        values["validation_prompts"] = list(values["validation_prompts"])
+        values["report_to"] = list(values["report_to"])
         if values["lora_target_modules"] is not None:
             values["lora_target_modules"] = list(values["lora_target_modules"])
         return values

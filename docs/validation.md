@@ -30,6 +30,20 @@ PyTorch 2.15.0, torchvision 0.29.1).
 Exact resume (six straight steps against three, resume, three) and mixed-precision runs are
 covered by the unit tests.
 
+### Training runtime (CPU)
+
+| Check | Result |
+| --- | --- |
+| Two-process gloo run vs one-process replay of both processes' batches and noise with averaged gradients (cosine schedule, clipping) | adapter identical; logged loss equal |
+| Both processes after a two-process run | identical adapters and logs |
+| Two-process resume from step 2 vs uninterrupted 4 steps | identical |
+| Resuming a two-process checkpoint in one process | refused |
+| `eval_loss` of two processes vs one process | equal (to float rounding of the sum) |
+| `evaluate()` twice on the same adapter; training with and without evaluation | identical |
+| Validation image vs `pipeline(..., lora=adapter)` | pixels identical |
+
+A multi-GPU NCCL run has not been made yet.
+
 ## LoRA adapters
 
 Validated on CPU on November 4, 2026 against diffusers 0.40.0 `load_lora_weights` with

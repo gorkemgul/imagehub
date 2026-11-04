@@ -15,7 +15,7 @@ trainer.save_model("runs/my-dog/final")
 """
 
 from imagehub.training.arguments import TrainingArguments
-from imagehub.training.data import ImageFolderDataset, preprocess_image
+from imagehub.training.data import ImageFolderDataset, StableDiffusionCollator, preprocess_image
 from imagehub.training.sd1 import StableDiffusionLoRAObjective
 from imagehub.training.specs import (
     TrainingSpec,
@@ -27,6 +27,7 @@ from imagehub.training.trainer import Trainer, TrainOutput
 
 __all__ = [
     "ImageFolderDataset",
+    "StableDiffusionCollator",
     "StableDiffusionLoRAObjective",
     "TrainOutput",
     "Trainer",

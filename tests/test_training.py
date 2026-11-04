@@ -60,13 +60,14 @@ def arguments(tmp_path, **overrides):
 
 def test_training_profiles():
     spec = get_training_spec("sd-v1-5")
-    assert spec.support is TrainingSupport.LORA
+    assert spec.support is TrainingSupport.NATIVE
+    assert spec.methods == ("lora",)
     assert spec.family == "stable-diffusion"
     assert spec.target_modules == ("to_q", "to_k", "to_v", "to_out.0")
     for distilled in ("sdxs-512-0.9", "sd-turbo", "lcm-dreamshaper-v7"):
         assert get_training_spec(distilled).support is TrainingSupport.INFERENCE_ONLY
     assert get_training_spec("sdxl-base-1.0").support is TrainingSupport.INFERENCE_ONLY
-    trainable = list_training_specs(support="lora")
+    trainable = list_training_specs(support="native")
     assert trainable and all(s.family == "stable-diffusion" for s in trainable)
     assert len(list_training_specs()) > len(trainable)
     with pytest.raises(KeyError, match="sd-v1-5"):
@@ -193,7 +194,7 @@ def test_training_changes_only_the_adapter_and_lowers_the_loss(tmp_path, tiny_sd
     assert math.isfinite(result.training_loss)
     assert after < before
     assert len(result.log_history) == 30
-    assert "step 30/30" in capsys.readouterr().out
+    assert "step 30  loss" in capsys.readouterr().out
     for key, value in unet.state_dict().items():
         if "lora_" not in key:
             assert torch.equal(value, frozen[key]), key
@@ -223,7 +224,9 @@ def test_resume_is_exact(tmp_path, tiny_sd):
 
 def test_gradient_accumulation_consumes_micro_batches(tmp_path, tiny_sd):
     dataset = ImageFolderDataset(write_folder(tmp_path / "data"))
-    args = arguments(tmp_path, max_steps=2, gradient_accumulation_steps=2, train_batch_size=2)
+    args = arguments(
+        tmp_path, max_steps=2, gradient_accumulation_steps=2, per_device_train_batch_size=2
+    )
     trainer = Trainer("sd-v1-5", tiny_sd, args, dataset)
     output = trainer.train()
     assert output.global_step == 2
@@ -290,7 +293,208 @@ def test_training_support_table_matches_the_profiles(page):
     table = text.split("<!-- training-support:start -->")[1].split("<!-- training-support:end -->")[
         0
     ]
-    rows = [line.split("|")[1:3] for line in table.strip().splitlines()[2:]]
-    documented = [(name.strip().strip("`"), support.strip()) for name, support in rows]
-    expected = [(s.model_id, s.support.value) for s in list_training_specs(support="lora")]
+    rows = [line.split("|")[1:4] for line in table.strip().splitlines()[2:]]
+    documented = [(n.strip().strip("`"), s.strip(), m.strip()) for n, s, m in rows]
+    expected = [
+        (s.model_id, s.support.value, ", ".join(s.methods))
+        for s in list_training_specs(support="native")
+    ]
     assert documented == expected
+
+
+# Evaluation, validation images and collators -------------------------------------------------
+
+
+def test_evaluate_is_repeatable_and_tracks_the_adapter(tmp_path, tiny_sd):
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    args = arguments(tmp_path, max_steps=5, learning_rate=1e-2, per_device_eval_batch_size=2)
+    trainer = Trainer("sd-v1-5", tiny_sd, args, data, eval_dataset=data)
+    first = trainer.evaluate()
+    assert trainer.evaluate() == first
+    assert math.isfinite(first["eval_loss"])
+    trainer.train()
+    assert trainer.evaluate()["eval_loss"] != first["eval_loss"]
+    with pytest.raises(ValueError, match="eval_dataset"):
+        Trainer("sd-v1-5", tiny_sd, args, data).evaluate()
+
+
+def test_evaluation_during_training_leaves_training_unchanged(tmp_path, tiny_sd):
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    common = dict(max_steps=4, random_flip=True, center_crop=False)
+    plain = Trainer("sd-v1-5", tiny_sd, arguments(tmp_path / "a", **common), data)
+    plain.train()
+    evaluated = Trainer(
+        "sd-v1-5",
+        tiny_sd,
+        arguments(tmp_path / "b", eval_strategy="steps", eval_steps=2, **common),
+        data,
+        eval_dataset=data,
+    )
+    output = evaluated.train()
+    expected, actual = (
+        plain.injection.adapter_state_dict(),
+        evaluated.injection.adapter_state_dict(),
+    )
+    assert all(torch.equal(actual[k], expected[k]) for k in expected)
+    evals = [entry for entry in output.log_history if "eval_loss" in entry]
+    assert [entry["step"] for entry in evals] == [2.0, 4.0]
+
+
+def test_validation_images_match_the_pipeline(tmp_path, tiny_sd):
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    args = arguments(
+        tmp_path,
+        max_steps=3,
+        learning_rate=1e-2,
+        eval_strategy="steps",
+        eval_steps=2,
+        validation_prompts=("a cat", "a dog"),
+        validation_num_inference_steps=2,
+        validation_guidance_scale=3.0,
+        seed=5,
+    )
+    trainer = Trainer("sd-v1-5", tiny_sd, args, data)
+    trainer.train()
+    samples = args.output_dir / "samples"
+    assert sorted(p.name for p in samples.iterdir()) == ["step-2", "step-3"]
+    adapter = trainer.save_model(tmp_path / "final")
+    with pipeline("t2i", backend="sd-v1-5", model=tiny_sd, lora=adapter) as pipe:
+        for index, prompt in enumerate(args.validation_prompts):
+            expected = pipe(prompt, seed=5, steps=2, guidance=3.0, width=32, height=32)
+            with PIL.open(samples / "step-3" / f"{index}.png") as image:
+                actual = torch.frombuffer(
+                    bytearray(image.convert("RGB").tobytes()), dtype=torch.uint8
+                )
+            assert torch.equal(actual.view(32, 32, 3), expected.images[0].tensor)
+
+
+def test_custom_data_collator(tmp_path, tiny_sd):
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    calls = []
+
+    def collate(features):
+        calls.append(len(features))
+        pixels = torch.zeros(len(features), 3, 32, 32)
+        ids = torch.zeros(len(features), 77, dtype=torch.long)
+        return {"pixel_values": pixels, "input_ids": ids}
+
+    trainer = Trainer(
+        "sd-v1-5", tiny_sd, arguments(tmp_path, max_steps=2), data, data_collator=collate
+    )
+    trainer.train()
+    assert calls == [1, 1]
+
+    def broken(features):
+        return {"pixels": torch.zeros(1, 3, 32, 32)}
+
+    with pytest.raises(ValueError, match="pixel_values"):
+        Trainer("sd-v1-5", tiny_sd, arguments(tmp_path / "b"), data, data_collator=broken).train()
+
+
+def test_wandb_receives_losses_and_validation_images(tmp_path, tiny_sd, monkeypatch):
+    import sys
+    import types
+
+    logged = []
+
+    class Run:
+        def log(self, values, step):
+            logged.append((step, values))
+
+        def finish(self):
+            logged.append(("finished", None))
+
+    class Image:
+        def __init__(self, path, caption):
+            self.path, self.caption = path, caption
+
+    fake = types.SimpleNamespace(init=lambda **kwargs: Run(), Image=Image)
+    monkeypatch.setitem(sys.modules, "wandb", fake)
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    args = arguments(
+        tmp_path,
+        max_steps=2,
+        report_to="wandb",
+        eval_strategy="steps",
+        eval_steps=2,
+        validation_prompts=("a cat",),
+        validation_num_inference_steps=1,
+    )
+    Trainer("sd-v1-5", tiny_sd, args, data).train()
+    assert [step for step, values in logged if values and "train_loss" in values] == [1, 2]
+    images = [values["validation"] for step, values in logged if values and "validation" in values]
+    assert len(images) == 1 and images[0][0].caption == "a cat"
+    assert images[0][0].path.endswith("step-2/0.png")
+    assert logged[-1] == ("finished", None)
+
+
+def test_clearml_and_wandb_together(tmp_path, tiny_sd, monkeypatch):
+    import sys
+    import types
+
+    events = []
+
+    class Logger:
+        def report_scalar(self, title, series, value, iteration):
+            events.append(("scalar", title, iteration))
+
+        def report_image(self, title, series, iteration, local_path):
+            events.append(("image", title, series, iteration, local_path))
+
+    class Task:
+        @staticmethod
+        def init(project_name, task_name):
+            events.append(("init", project_name, task_name))
+            return Task()
+
+        def connect(self, values, name):
+            events.append(("connect", name, values["max_steps"]))
+
+        def get_logger(self):
+            return Logger()
+
+        def close(self):
+            events.append(("close",))
+
+    class Run:
+        def log(self, values, step):
+            events.append(("wandb", sorted(values), step))
+
+        def finish(self):
+            events.append(("wandb-finish",))
+
+    monkeypatch.setitem(sys.modules, "clearml", types.SimpleNamespace(Task=Task))
+    monkeypatch.setitem(
+        sys.modules,
+        "wandb",
+        types.SimpleNamespace(init=lambda **kwargs: Run(), Image=lambda path, caption: path),
+    )
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    args = arguments(
+        tmp_path,
+        max_steps=2,
+        report_to=["wandb", "clearml"],
+        run_name="dog",
+        validation_prompts=("a cat",),
+        validation_num_inference_steps=1,
+    )
+    assert args.report_to == ("wandb", "clearml")
+    Trainer("sd-v1-5", tiny_sd, args, data).train()
+    assert events[0][0] == "init" and events[0][1:] == ("imagehub", "dog")
+    assert ("connect", "TrainingArguments", 2) in events
+    assert [e[2] for e in events if e[0] == "scalar" and e[1] == "train_loss"] == [1, 2]
+    images = [e for e in events if e[0] == "image"]
+    assert len(images) == 1 and images[0][1:4] == ("validation", "0: a cat", 2)
+    assert events[-2:] == [("wandb-finish",), ("close",)]
+
+
+def test_missing_tracker_package_is_reported(tmp_path, tiny_sd, monkeypatch):
+    import sys
+
+    monkeypatch.setitem(sys.modules, "clearml", None)
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    trainer = Trainer("sd-v1-5", tiny_sd, arguments(tmp_path, report_to="clearml"), data)
+    with pytest.raises(ImportError, match="clearml package"):
+        trainer.train()
+    with pytest.raises(ValueError, match="twice"):
+        arguments(tmp_path, report_to=["wandb", "wandb"])

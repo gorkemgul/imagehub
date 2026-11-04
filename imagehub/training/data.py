@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -125,3 +126,41 @@ def preprocess_image(
     if random_flip and torch.rand(1, generator=generator) < 0.5:
         pixels = pixels.flip(-1)
     return (pixels - 0.5) / 0.5
+
+
+class StableDiffusionCollator:
+    """Batch ``{"image", "text"}`` items into ``{"pixel_values", "input_ids"}``.
+
+    Images go through :func:`preprocess_image` with ``generator``; captions through the
+    checkpoint's CLIP tokenizer.
+    """
+
+    def __init__(
+        self,
+        tokenizer: Callable[[str], list[int]],
+        *,
+        resolution: int,
+        center_crop: bool,
+        random_flip: bool,
+        generator: torch.Generator | None = None,
+    ) -> None:
+        self.tokenizer = tokenizer
+        self.resolution = resolution
+        self.center_crop = center_crop
+        self.random_flip = random_flip
+        self.generator = generator
+
+    def __call__(self, features: Sequence[Mapping[str, Any]]) -> dict[str, Tensor]:
+        pixels, ids = [], []
+        for feature in features:
+            pixels.append(
+                preprocess_image(
+                    feature["image"],
+                    resolution=self.resolution,
+                    center_crop=self.center_crop,
+                    random_flip=self.random_flip,
+                    generator=self.generator,
+                )
+            )
+            ids.append(self.tokenizer(feature["text"]))
+        return {"pixel_values": torch.stack(pixels), "input_ids": torch.tensor(ids)}
