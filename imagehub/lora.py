@@ -16,6 +16,8 @@ import torch
 from torch import Tensor, nn
 from torch.nn import functional as F
 
+_INITS = ("uniform", "gaussian")
+
 
 @dataclass(frozen=True)
 class LoRAConfig:
@@ -27,6 +29,7 @@ class LoRAConfig:
     target_modules: tuple[str, ...] = ("to_q", "to_k", "to_v", "to_out.0")
     freeze_base: bool = True
     seed: int = 0
+    init: str = "uniform"
 
     def __post_init__(self) -> None:
         if isinstance(self.rank, bool) or not isinstance(self.rank, int) or self.rank <= 0:
@@ -57,6 +60,8 @@ class LoRAConfig:
             raise TypeError("LoRA freeze_base must be a bool")
         if isinstance(self.seed, bool) or not isinstance(self.seed, int):
             raise TypeError("LoRA seed must be an int")
+        if self.init not in _INITS:
+            raise ValueError(f"LoRA init must be one of {_INITS}")
 
     @property
     def scaling(self) -> float:
@@ -119,8 +124,15 @@ class LoRALayer(nn.Module):
         scale: float = 1.0,
         dropout: float = 0.0,
         generator: torch.Generator | None = None,
+        init: str = "uniform",
     ) -> None:
-        """Add adapter ``name``; with no tensors, ``A`` is seeded uniform and ``B`` is zero."""
+        """Add adapter ``name``; with no tensors, ``A`` is seeded and ``B`` is zero.
+
+        ``init="uniform"`` draws ``A`` like PEFT's default (Kaiming uniform, ``a=sqrt(5)``);
+        ``init="gaussian"`` draws ``N(0, 1/rank)`` like PEFT's ``init_lora_weights="gaussian"``.
+        """
+        if init not in _INITS:
+            raise ValueError(f"LoRA init must be one of {_INITS}")
         if not name or "." in name:
             raise ValueError(f"Invalid LoRA adapter name {name!r}")
         if name in self.lora_A:
@@ -140,10 +152,13 @@ class LoRALayer(nn.Module):
         lora_b.to(device=weight.device, dtype=weight.dtype)
         with torch.no_grad():
             if down is None or up is None:
-                bound = 1.0 / math.sqrt(self._fan_in())
-                values = torch.empty(lora_a.weight.shape).uniform_(
-                    -bound, bound, generator=generator
-                )
+                if init == "gaussian":
+                    values = torch.randn(lora_a.weight.shape, generator=generator) * (1 / rank)
+                else:
+                    bound = 1.0 / math.sqrt(self._fan_in())
+                    values = torch.empty(lora_a.weight.shape).uniform_(
+                        -bound, bound, generator=generator
+                    )
                 lora_a.weight.copy_(values)
                 lora_b.weight.zero_()
             else:
@@ -506,6 +521,7 @@ def inject_lora(model: nn.Module, config: LoRAConfig, *, adapter: str = "default
                 alpha=config.alpha,
                 dropout=config.dropout,
                 generator=generator,
+                init=config.init,
             )
             layers[name] = layer
             if config.freeze_base:

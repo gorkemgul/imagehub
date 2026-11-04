@@ -41,6 +41,7 @@ def inputs():
         dict(dropout=1.0),
         dict(target_modules=()),
         dict(target_modules=("a", "a")),
+        dict(init="normal"),
     ],
 )
 def test_config_rejects_invalid_values(bad):
@@ -192,3 +193,18 @@ def test_restored_injection_is_inactive():
     injection.restore()
     with pytest.raises(RuntimeError, match="restored"):
         injection.merge()
+
+
+def test_gaussian_init_is_seeded_with_std_one_over_rank():
+    def draw():
+        model = nn.Sequential(nn.Linear(512, 512))
+        injection = inject_lora(
+            model, LoRAConfig(rank=4, init="gaussian", seed=1, target_modules=("0",))
+        )
+        return injection.adapter_state_dict()
+
+    first, second = draw(), draw()
+    down = first["0.lora_A.weight"]
+    assert torch.equal(down, second["0.lora_A.weight"])
+    assert abs(down.std().item() - 0.25) < 0.01
+    assert not first["0.lora_B.weight"].any()
