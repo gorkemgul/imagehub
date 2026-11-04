@@ -72,6 +72,60 @@ with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
 
 `adapter.safetensors` uses the diffusers layout, so diffusers `load_lora_weights` reads it too.
 
+## Evaluation and sample images
+
+```python
+trainer = Trainer(
+    model="sd-v1-5",
+    checkpoint="checkpoints/sd-v1-5",
+    args=TrainingArguments(
+        output_dir="runs/my-dog",
+        max_steps=1000,
+        eval_strategy="steps",
+        eval_steps=200,
+        validation_prompts=["a photo of sks dog in a bucket"],
+    ),
+    train_dataset=ImageFolderDataset("my_images"),
+    eval_dataset=ImageFolderDataset("my_val_images"),
+)
+trainer.train()
+print(trainer.evaluate())   # {"eval_loss": 0.1234}
+```
+
+`eval_loss` is the training loss without gradients over the evaluation images. Diffusion loss
+depends on the random noise and timestep, so these are seeded by image position and the images
+are center-cropped: evaluating the same adapter twice gives the same number, and the curve over
+training follows the adapter, not the dice. At every evaluation point (and at the end) each
+validation prompt is rendered with the current adapter to `output_dir/samples/step-N/<i>.png`,
+exactly as `pipeline(..., lora=...)` would render it with `seed`, `validation_num_inference_steps`
+and `validation_guidance_scale`.
+
+## Custom batches
+
+`data_collator` turns a list of dataset items into a batch. The default resizes, crops, flips and
+normalizes the images and tokenizes the captions. A custom one returns
+`{"pixel_values": (B, 3, H, W) in [-1, 1], "input_ids": (B, 77)}`:
+
+```python
+trainer = Trainer(..., data_collator=my_collator)
+```
+
+Exact resume is guaranteed for the default collator, whose random state the checkpoint holds.
+
+## Several GPUs
+
+Run the same script with `torchrun`; nothing in it changes:
+
+```bash
+torchrun --nproc_per_node=4 train.py
+```
+
+Each process trains on its own share of every batch and the adapter gradients are averaged, so all
+processes keep the same adapter. The effective batch is `per_device_train_batch_size ×
+gradient_accumulation_steps × number of processes`. Only the first process prints, writes
+checkpoints, samples and `save_model` output. A checkpoint resumes with the same number of
+processes. Distributed runs use CUDA (NCCL) or the CPU (gloo); MPS cannot.
+
 ## Settings
 
 Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
@@ -80,7 +134,7 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | Argument | Default | Meaning |
 | --- | --- | --- |
 | `learning_rate` | `1e-4` | AdamW learning rate |
-| `train_batch_size` | `1` | images per micro-batch |
+| `per_device_train_batch_size`, `per_device_eval_batch_size` | `1`, `1` | images per micro-batch on each process |
 | `gradient_accumulation_steps` | `1` | micro-batches per optimizer step |
 | `lr_scheduler`, `lr_warmup_steps` | `"constant"`, `0` | also `constant_with_warmup`, `linear`, `cosine` |
 | `max_grad_norm` | `1.0` | gradient clipping; `0` turns it off |
@@ -91,8 +145,26 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `lora_target_modules` | `to_q`, `to_k`, `to_v`, `to_out.0` | U-Net layers that get an adapter |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | objective options |
 | `logging_steps`, `save_steps` | `10`, `500` | how often to log and to checkpoint |
+| `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` evaluates every `eval_steps` |
+| `validation_prompts` | none | prompts rendered at each evaluation point |
+| `validation_num_inference_steps`, `validation_guidance_scale` | `25`, `7.5` | sampling settings for those images |
 | `report_to`, `run_name` | `"none"`, `None` | `"wandb"` also logs to Weights & Biases if installed |
 | `seed`, `device` | `0`, `"cpu"` | random seed; `"cuda"` or `"mps"` to train on a GPU |
+
+## Choosing rank and alpha
+
+The adapter's update is scaled by `lora_alpha / lora_rank`. Diffusion tools use small ranks and
+scales near 1, while language and speech trainers tend to use larger ones:
+
+| Source | Rank | Alpha | Scale |
+| --- | --- | --- | --- |
+| imagehub default, diffusers training scripts (SD 1.5, SDXL, FLUX.1) | 4 | 4 | 1 |
+| kohya sd-scripts default | 4 | 1 | 0.25 |
+| PEFT default | 8 | 8 | 1 |
+| voicehub default (speech) | 8 | 16 | 2 |
+
+Rank 4 is enough for a style or a simple subject. For more detail, raise the rank to 16-32 and keep
+alpha equal to the rank, so the scale and a good learning rate stay the same.
 
 ## Supported models
 
@@ -103,8 +175,12 @@ every catalog model.
 from imagehub.training import get_training_spec
 
 spec = get_training_spec("sd-v1-5")
-print(spec.support.value, spec.family)   # lora stable-diffusion
+print(spec.support.value, spec.methods)   # native ('lora',)
 ```
+
+`native` means the model trains from images and captions with an objective checked against the
+reference training script; `inference_only` means there is no training path yet. `methods` lists
+what can be trained (`lora` today).
 
 <!-- training-support:start -->
 | Model | Support | Methods |

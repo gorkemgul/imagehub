@@ -73,6 +73,62 @@ with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
 
 `adapter.safetensors` diffusers düzenindedir; diffusers `load_lora_weights` de okur.
 
+## Değerlendirme ve örnek görüntüler
+
+```python
+trainer = Trainer(
+    model="sd-v1-5",
+    checkpoint="checkpoints/sd-v1-5",
+    args=TrainingArguments(
+        output_dir="runs/my-dog",
+        max_steps=1000,
+        eval_strategy="steps",
+        eval_steps=200,
+        validation_prompts=["a photo of sks dog in a bucket"],
+    ),
+    train_dataset=ImageFolderDataset("my_images"),
+    eval_dataset=ImageFolderDataset("my_val_images"),
+)
+trainer.train()
+print(trainer.evaluate())   # {"eval_loss": 0.1234}
+```
+
+`eval_loss`, değerlendirme görüntüleri üzerinde gradyansız hesaplanan eğitim loss'udur. Difüzyon
+loss'u rastgele gürültüye ve zaman adımına bağlıdır; bu yüzden bunlar görüntünün sırasına göre
+tohumlanır ve görüntüler ortadan kırpılır. Aynı adaptörü iki kez değerlendirmek aynı sayıyı verir;
+eğitim boyunca eğri zara değil adaptöre göre değişir. Her değerlendirme noktasında (ve sonda) her
+doğrulama prompt'u o anki adaptörle `output_dir/samples/step-N/<i>.png` olarak çizilir; görüntü,
+`seed`, `validation_num_inference_steps` ve `validation_guidance_scale` ile
+`pipeline(..., lora=...)` çıktısının aynısıdır.
+
+## Özel batch'ler
+
+`data_collator`, veri setinden gelen öğe listesini bir batch'e çevirir. Varsayılanı görüntüleri
+yeniden boyutlandırır, kırpar, çevirir, normalize eder ve alt yazıları tokenize eder. Kendi
+collator'ınız `{"pixel_values": [-1, 1] aralığında (B, 3, H, W), "input_ids": (B, 77)}`
+döndürmelidir:
+
+```python
+trainer = Trainer(..., data_collator=my_collator)
+```
+
+Birebir devam ettirme, rastgelelik durumu checkpoint'te saklanan varsayılan collator için
+garantilidir.
+
+## Birden fazla GPU
+
+Aynı betiği `torchrun` ile çalıştırın; içinde hiçbir şey değişmez:
+
+```bash
+torchrun --nproc_per_node=4 train.py
+```
+
+Her süreç her batch'in kendi payıyla eğitilir ve adaptör gradyanlarının ortalaması alınır; böylece
+bütün süreçlerde aynı adaptör kalır. Etkin batch `per_device_train_batch_size ×
+gradient_accumulation_steps × süreç sayısı`dır. Yalnız ilk süreç yazdırır; checkpoint'leri, örnek
+görüntüleri ve `save_model` çıktısını o yazar. Checkpoint aynı süreç sayısıyla devam ettirilir.
+Dağıtık eğitim CUDA (NCCL) veya CPU (gloo) ile çalışır; MPS ile çalışmaz.
+
 ## Ayarlar
 
 Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
@@ -81,7 +137,7 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | Argüman | Varsayılan | Anlamı |
 | --- | --- | --- |
 | `learning_rate` | `1e-4` | AdamW öğrenme hızı |
-| `train_batch_size` | `1` | mikro-batch başına görüntü |
+| `per_device_train_batch_size`, `per_device_eval_batch_size` | `1`, `1` | her süreçte mikro-batch başına görüntü |
 | `gradient_accumulation_steps` | `1` | optimizer adımı başına mikro-batch |
 | `lr_scheduler`, `lr_warmup_steps` | `"constant"`, `0` | ayrıca `constant_with_warmup`, `linear`, `cosine` |
 | `max_grad_norm` | `1.0` | gradyan kırpma; `0` kapatır |
@@ -92,8 +148,26 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `lora_target_modules` | `to_q`, `to_k`, `to_v`, `to_out.0` | adaptör takılan U-Net katmanları |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | hedef seçenekleri |
 | `logging_steps`, `save_steps` | `10`, `500` | kayıt ve checkpoint sıklığı |
+| `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` her `eval_steps` adımda değerlendirir |
+| `validation_prompts` | yok | her değerlendirme noktasında çizilen prompt'lar |
+| `validation_num_inference_steps`, `validation_guidance_scale` | `25`, `7.5` | bu görüntülerin örnekleme ayarları |
 | `report_to`, `run_name` | `"none"`, `None` | `"wandb"`, kuruluysa Weights & Biases'e de yazar |
 | `seed`, `device` | `0`, `"cpu"` | rastgelelik tohumu; GPU için `"cuda"` veya `"mps"` |
+
+## Rank ve alpha seçimi
+
+Adaptörün güncellemesi `lora_alpha / lora_rank` ile ölçeklenir. Difüzyon araçları küçük rank ve 1
+civarı ölçek kullanır; dil ve konuşma eğiticileri genelde daha büyüklerini kullanır:
+
+| Kaynak | Rank | Alpha | Ölçek |
+| --- | --- | --- | --- |
+| imagehub varsayılanı, diffusers eğitim betikleri (SD 1.5, SDXL, FLUX.1) | 4 | 4 | 1 |
+| kohya sd-scripts varsayılanı | 4 | 1 | 0.25 |
+| PEFT varsayılanı | 8 | 8 | 1 |
+| voicehub varsayılanı (konuşma) | 8 | 16 | 2 |
+
+Bir stil ya da basit bir konu için rank 4 yeter. Daha fazla ayrıntı için rank'ı 16-32'ye çıkarın ve
+alpha'yı rank'a eşit tutun; böylece ölçek ve uygun öğrenme hızı değişmez.
 
 ## Desteklenen modeller
 
@@ -104,8 +178,12 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 from imagehub.training import get_training_spec
 
 spec = get_training_spec("sd-v1-5")
-print(spec.support.value, spec.family)   # lora stable-diffusion
+print(spec.support.value, spec.methods)   # native ('lora',)
 ```
+
+`native`, modelin görüntü ve alt yazılarla, referans eğitim betiğine karşı doğrulanmış bir hedefle
+eğitildiği anlamına gelir; `inference_only` henüz eğitim yolu olmadığını söyler. `methods` neyin
+eğitilebildiğini listeler (bugün `lora`).
 
 <!-- training-support:start -->
 | Model | Destek | Yöntemler |
