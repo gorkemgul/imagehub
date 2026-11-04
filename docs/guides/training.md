@@ -205,6 +205,9 @@ what can be trained (`lora` today).
 | `juggernaut-xl-v9` | native | lora |
 | `animagine-xl-4.0` | native | lora |
 | `dreamshaper-xl-1.0` | native | lora |
+| `sd3-medium` | native | lora |
+| `sd3.5-medium` | native | lora |
+| `sd3.5-large` | native | lora |
 | `ssd-1b` | native | lora |
 | `segmind-vega` | native | lora |
 | `koala-700m` | native | lora |
