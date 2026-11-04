@@ -251,6 +251,9 @@ class ScaleShiftResnetBlock(nn.Module):
         hidden = self.norm2(hidden) * (1 + scale) + shift
         hidden = self.conv2(self.act(hidden))
         if self.conv_shortcut is not None:
+            # As diffusers does in training: the copy changes the backward summation order.
+            if self.training:
+                residual = residual.contiguous()
             residual = self.conv_shortcut(residual)
         return (residual + hidden) / self.output_scale_factor
 

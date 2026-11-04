@@ -30,6 +30,22 @@ PyTorch 2.15.0, torchvision 0.29.1).
 Exact resume (six straight steps against three, resume, three) and mixed-precision runs are
 covered by the unit tests.
 
+### Stable Diffusion XL
+
+Against `examples/text_to_image/train_text_to_image_lora_sdxl.py` (diffusers 0.40.0, peft 0.21.2):
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Image transform (resize, crop, original size and crop corner) vs the script, 4 image sizes | — | identical | identical |
+| First-step loss, epsilon and v-prediction, with and without min-SNR | tiny SDXL | 0 | 0 |
+| First-step LoRA gradients | tiny SDXL | 0 | 0 |
+| Saved adapter loaded by diffusers `load_lora_weights` vs imagehub, 3 steps | tiny SDXL | 0 (pixels) | 0 |
+| Gradients with and without gradient checkpointing (SD 1.x and SDXL) | tiny | identical | identical |
+
+Like diffusers, the U-Net's resnet blocks make the shortcut input contiguous in training mode; the
+copy does not change outputs but does change the backward summation order, and with it the
+gradients are bit-identical.
+
 ### Training runtime (CPU)
 
 | Check | Result |

@@ -98,6 +98,23 @@ def _offsets(
     return top, left
 
 
+def _resized_pixels(image: Any, resolution: int) -> tuple[Tensor, tuple[int, int]]:
+    """``(3, H, W)`` pixels in ``[0, 1]`` with the short side ``resolution``, and the original
+    ``(height, width)``."""
+    if isinstance(image, Tensor):
+        if image.ndim != 3 or image.shape[0] != 3 or not image.is_floating_point():
+            raise ValueError("Image tensors must be floating point with shape (3, H, W)")
+        pixels = image.float()
+        if min(pixels.shape[1:]) != resolution:
+            raise ValueError(f"Image tensors must have a short side of {resolution}")
+        return pixels, (int(pixels.shape[1]), int(pixels.shape[2]))
+    rgb = image.convert("RGB")
+    resized = _resize(rgb, resolution)
+    data = torch.frombuffer(bytearray(resized.tobytes()), dtype=torch.uint8)
+    pixels = data.view(resized.size[1], resized.size[0], 3).permute(2, 0, 1).float() / 255
+    return pixels, (rgb.size[1], rgb.size[0])
+
+
 def preprocess_image(
     image: Any,
     *,
@@ -111,21 +128,33 @@ def preprocess_image(
     Tensors are ``(3, H, W)`` in ``[0, 1]``; they are cropped but not resized, so their short side
     must already be ``resolution``.
     """
-    if isinstance(image, Tensor):
-        if image.ndim != 3 or image.shape[0] != 3 or not image.is_floating_point():
-            raise ValueError("Image tensors must be floating point with shape (3, H, W)")
-        pixels = image.float()
-        if min(pixels.shape[1:]) != resolution:
-            raise ValueError(f"Image tensors must have a short side of {resolution}")
-    else:
-        resized = _resize(image.convert("RGB"), resolution)
-        data = torch.frombuffer(bytearray(resized.tobytes()), dtype=torch.uint8)
-        pixels = data.view(resized.size[1], resized.size[0], 3).permute(2, 0, 1).float() / 255
+    pixels, _ = _resized_pixels(image, resolution)
     top, left = _offsets(pixels.shape[1], pixels.shape[2], resolution, center_crop, generator)
     pixels = pixels[:, top : top + resolution, left : left + resolution]
     if random_flip and torch.rand(1, generator=generator) < 0.5:
         pixels = pixels.flip(-1)
     return (pixels - 0.5) / 0.5
+
+
+def preprocess_image_xl(
+    image: Any,
+    *,
+    resolution: int,
+    center_crop: bool,
+    random_flip: bool,
+    generator: torch.Generator | None = None,
+) -> tuple[Tensor, tuple[int, int], tuple[int, int]]:
+    """The SDXL script's transform: resize, flip, then crop.
+
+    Returns the ``[-1, 1]`` pixels, the original ``(height, width)`` and the crop's
+    ``(top, left)``, which SDXL takes as size conditioning.
+    """
+    pixels, original_size = _resized_pixels(image, resolution)
+    if random_flip and torch.rand(1, generator=generator) < 0.5:
+        pixels = pixels.flip(-1)
+    top, left = _offsets(pixels.shape[1], pixels.shape[2], resolution, center_crop, generator)
+    pixels = pixels[:, top : top + resolution, left : left + resolution]
+    return (pixels - 0.5) / 0.5, original_size, (top, left)
 
 
 class StableDiffusionCollator:
@@ -164,3 +193,49 @@ class StableDiffusionCollator:
             )
             ids.append(self.tokenizer(feature["text"]))
         return {"pixel_values": torch.stack(pixels), "input_ids": torch.tensor(ids)}
+
+
+class StableDiffusionXLCollator:
+    """Batch items for SDXL: pixels, ids for both CLIP tokenizers and ``time_ids``.
+
+    ``time_ids`` rows are ``(original height, original width, crop top, crop left, resolution,
+    resolution)``, as the SDXL training script computes them.
+    """
+
+    def __init__(
+        self,
+        tokenizer: Callable[[str], list[int]],
+        tokenizer_2: Callable[[str], list[int]],
+        *,
+        resolution: int,
+        center_crop: bool,
+        random_flip: bool,
+        generator: torch.Generator | None = None,
+    ) -> None:
+        self.tokenizer = tokenizer
+        self.tokenizer_2 = tokenizer_2
+        self.resolution = resolution
+        self.center_crop = center_crop
+        self.random_flip = random_flip
+        self.generator = generator
+
+    def __call__(self, features: Sequence[Mapping[str, Any]]) -> dict[str, Tensor]:
+        pixels, ids, ids_2, time_ids = [], [], [], []
+        for feature in features:
+            image, original_size, crop = preprocess_image_xl(
+                feature["image"],
+                resolution=self.resolution,
+                center_crop=self.center_crop,
+                random_flip=self.random_flip,
+                generator=self.generator,
+            )
+            pixels.append(image)
+            ids.append(self.tokenizer(feature["text"]))
+            ids_2.append(self.tokenizer_2(feature["text"]))
+            time_ids.append([*original_size, *crop, self.resolution, self.resolution])
+        return {
+            "pixel_values": torch.stack(pixels),
+            "input_ids": torch.tensor(ids),
+            "input_ids_2": torch.tensor(ids_2),
+            "time_ids": torch.tensor(time_ids, dtype=torch.float32),
+        }
