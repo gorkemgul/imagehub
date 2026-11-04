@@ -66,9 +66,12 @@ def test_training_profiles():
     assert spec.target_modules == ("to_q", "to_k", "to_v", "to_out.0")
     for distilled in ("sdxs-512-0.9", "sd-turbo", "lcm-dreamshaper-v7"):
         assert get_training_spec(distilled).support is TrainingSupport.INFERENCE_ONLY
-    assert get_training_spec("sdxl-base-1.0").support is TrainingSupport.INFERENCE_ONLY
+    assert get_training_spec("flux1-dev").support is TrainingSupport.INFERENCE_ONLY
+    assert get_training_spec("sdxl-base-1.0").family == "stable-diffusion-xl"
+    for excluded in ("sdxl-refiner-1.0", "sdxl-turbo", "dmd2-sdxl-1step", "playground-v2.5"):
+        assert get_training_spec(excluded).support is TrainingSupport.INFERENCE_ONLY
     trainable = list_training_specs(support="native")
-    assert trainable and all(s.family == "stable-diffusion" for s in trainable)
+    assert {s.family for s in trainable} == {"stable-diffusion", "stable-diffusion-xl"}
     assert len(list_training_specs()) > len(trainable)
     with pytest.raises(KeyError, match="sd-v1-5"):
         get_training_spec("sd-v1-55")
@@ -168,7 +171,7 @@ def test_lr_schedules():
 def test_trainer_refuses_inference_only_models(tmp_path):
     dataset = ImageFolderDataset(write_folder(tmp_path / "data"))
     with pytest.raises(ValueError, match="sd-v1-5"):
-        Trainer("sdxl-base-1.0", tmp_path, arguments(tmp_path), dataset)
+        Trainer("flux1-dev", tmp_path, arguments(tmp_path), dataset)
 
 
 def test_training_changes_only_the_adapter_and_lowers_the_loss(tmp_path, tiny_sd, capsys):

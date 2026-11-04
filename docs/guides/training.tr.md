@@ -146,6 +146,7 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | görüntü dönüşümü |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | `4`, `4`, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`) |
 | `lora_target_modules` | `to_q`, `to_k`, `to_v`, `to_out.0` | adaptör takılan U-Net katmanları |
+| `gradient_checkpointing` | `False` | belleği azaltmak için U-Net bloklarını geri yayılımda yeniden hesaplar |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | hedef seçenekleri |
 | `logging_steps`, `save_steps` | `10`, `500` | kayıt ve checkpoint sıklığı |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` her `eval_steps` adımda değerlendirir |
@@ -203,10 +204,27 @@ eğitilebildiğini listeler (bugün `lora`).
 | `bk-sdm-v2-base` | native | lora |
 | `bk-sdm-v2-small` | native | lora |
 | `bk-sdm-v2-tiny` | native | lora |
+| `sdxl-base-1.0` | native | lora |
+| `juggernaut-xl-v9` | native | lora |
+| `animagine-xl-4.0` | native | lora |
+| `dreamshaper-xl-1.0` | native | lora |
+| `ssd-1b` | native | lora |
+| `segmind-vega` | native | lora |
+| `koala-700m` | native | lora |
+| `koala-1b` | native | lora |
+| `playground-v2` | native | lora |
 <!-- training-support:end -->
 
-Diğer bütün modeller şimdilik `inference_only`; birkaç adımlık damıtılmış `sd-turbo`,
-`lcm-dreamshaper-v7` ve `sdxs-512-0.9` de dahil. Sırada SDXL ve transformer aileleri var.
+Diğer bütün modeller şimdilik `inference_only`: birkaç adımlık damıtılmış checkpoint'ler
+(`sd-turbo`, `lcm-dreamshaper-v7`, `sdxs-512-0.9`, SDXL Lightning, Hyper-SD, DMD2, `sdxl-turbo`,
+KOALA Lightning), SDXL refiner (görüntüden görüntüye) ve Playground v2.5 (DDPM değil, EDM). Sırada
+transformer aileleri var (#202).
+
+SDXL'de dönüşüm, diffusers'ın SDXL betiğindeki gibi önce yeniden boyutlandırır, sonra çevirir,
+sonra kırpar; her görüntünün özgün boyutunu ve kırpma köşesini U-Net'in boyut koşullaması olarak
+kaydeder. Karışık hassasiyette otomatik kodlayıcı float32 kalır. `gradient_checkpointing=True`,
+bellekten kazanmak için U-Net'in transformer ve resnet bloklarını geri yayılımda yeniden hesaplar;
+gradyanlar aynıdır.
 
 ## Neler doğrulandı
 

@@ -143,6 +143,7 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | image transform |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | `4`, `4`, `0.0` | adapter size and scale (`alpha / rank`) |
 | `lora_target_modules` | `to_q`, `to_k`, `to_v`, `to_out.0` | U-Net layers that get an adapter |
+| `gradient_checkpointing` | `False` | recompute U-Net blocks in the backward pass to save memory |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | objective options |
 | `logging_steps`, `save_steps` | `10`, `500` | how often to log and to checkpoint |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` evaluates every `eval_steps` |
@@ -200,10 +201,26 @@ what can be trained (`lora` today).
 | `bk-sdm-v2-base` | native | lora |
 | `bk-sdm-v2-small` | native | lora |
 | `bk-sdm-v2-tiny` | native | lora |
+| `sdxl-base-1.0` | native | lora |
+| `juggernaut-xl-v9` | native | lora |
+| `animagine-xl-4.0` | native | lora |
+| `dreamshaper-xl-1.0` | native | lora |
+| `ssd-1b` | native | lora |
+| `segmind-vega` | native | lora |
+| `koala-700m` | native | lora |
+| `koala-1b` | native | lora |
+| `playground-v2` | native | lora |
 <!-- training-support:end -->
 
-Every other model is `inference_only` for now, including the few-step distilled `sd-turbo`,
-`lcm-dreamshaper-v7` and `sdxs-512-0.9`. SDXL and the transformer families come next.
+Every other model is `inference_only` for now: the few-step distilled checkpoints (`sd-turbo`,
+`lcm-dreamshaper-v7`, `sdxs-512-0.9`, SDXL Lightning, Hyper-SD, DMD2, `sdxl-turbo`, KOALA
+Lightning), the SDXL refiner (image to image) and Playground v2.5 (EDM, not DDPM). The transformer
+families come next (#202).
+
+For SDXL the transform resizes, flips and then crops, as diffusers' SDXL script does, and records
+each image's original size and crop corner as the U-Net's size conditioning. The autoencoder stays
+in float32 under mixed precision. `gradient_checkpointing=True` recomputes the U-Net's transformer
+and resnet blocks in the backward pass to save memory; the gradients are the same.
 
 ## What is checked
 

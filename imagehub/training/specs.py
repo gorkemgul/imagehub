@@ -34,17 +34,39 @@ class TrainingSpec:
 
 
 _UNET_ATTENTION = ("to_q", "to_k", "to_v", "to_out.0")
-# Few-step distilled checkpoints are not trained with the denoising objective, and the tiny
-# autoencoder of SDXS has no posterior to sample training latents from.
-_EXCLUDED = frozenset({"sd-turbo", "lcm-dreamshaper-v7", "sdxs-512-0.9"})
+# Catalog families with a training family, and their default LoRA targets.
+_TRAINABLE = {
+    "stable-diffusion": _UNET_ATTENTION,
+    "stable-diffusion-xl": _UNET_ATTENTION,
+}
+# Few-step distilled checkpoints are not trained with the denoising objective; the tiny
+# autoencoder of SDXS has no posterior to sample training latents from; the SDXL refiner is an
+# image-to-image model; Playground v2.5 uses the EDM formulation, not DDPM.
+_EXCLUDED = frozenset(
+    {
+        "sd-turbo",
+        "lcm-dreamshaper-v7",
+        "sdxs-512-0.9",
+        "sdxl-refiner-1.0",
+        "sdxl-lightning-2step",
+        "sdxl-lightning-4step",
+        "sdxl-lightning-8step",
+        "hyper-sdxl-1step",
+        "dmd2-sdxl-4step",
+        "dmd2-sdxl-1step",
+        "sdxl-turbo",
+        "koala-lightning-700m",
+        "koala-lightning-1b",
+        "playground-v2.5",
+    }
+)
 
 
 def _spec(model_id: str) -> TrainingSpec:
     model = MODEL_CATALOG[model_id]
-    if model.family == "stable-diffusion" and model_id not in _EXCLUDED:
-        return TrainingSpec(
-            model_id, model.family, TrainingSupport.NATIVE, ("lora",), _UNET_ATTENTION
-        )
+    targets = _TRAINABLE.get(model.family)
+    if targets is not None and model_id not in _EXCLUDED:
+        return TrainingSpec(model_id, model.family, TrainingSupport.NATIVE, ("lora",), targets)
     return TrainingSpec(model_id, model.family, TrainingSupport.INFERENCE_ONLY)
 
 
