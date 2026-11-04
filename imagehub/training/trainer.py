@@ -20,6 +20,7 @@ from imagehub.checkpoints import save_safetensors
 from imagehub.lora import LoRAConfig, LoRAInjection, inject_lora
 from imagehub.lora_formats import read_lora_file
 from imagehub.training.arguments import TrainingArguments
+from imagehub.training.checkpointing import enable_gradient_checkpointing
 from imagehub.training.data import _pil
 from imagehub.training.distributed import (
     average_gradients,
@@ -133,6 +134,9 @@ class Trainer:
         # Trainable parameters and optimizer state stay in float32 under mixed precision.
         for parameter in injection.parameters():
             parameter.data = parameter.data.float()
+        if args.gradient_checkpointing:
+            if not enable_gradient_checkpointing(trained, family.checkpoint_blocks):
+                raise ValueError(f"{self.spec.family} does not support gradient checkpointing")
         trained.train()
         self.trained = trained
         self.objective = family.objective(components, args)

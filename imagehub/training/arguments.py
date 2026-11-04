@@ -76,6 +76,7 @@ class TrainingArguments:
     lora_alpha: float = 4.0
     lora_dropout: float = 0.0
     lora_target_modules: tuple[str, ...] | None = None
+    gradient_checkpointing: bool = False
     noise_offset: float = 0.0
     snr_gamma: float | None = None
     prediction_type: str | None = None
@@ -139,7 +140,7 @@ class TrainingArguments:
         _choice("eval_strategy", self.eval_strategy, EVAL_STRATEGIES)
         if self.prediction_type is not None:
             _choice("prediction_type", self.prediction_type, PREDICTION_TYPES)
-        for name in ("center_crop", "random_flip"):
+        for name in ("center_crop", "random_flip", "gradient_checkpointing"):
             if not isinstance(getattr(self, name), bool):
                 raise ValueError(f"{name} must be a bool")
         if self.lora_target_modules is not None:

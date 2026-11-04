@@ -41,6 +41,8 @@ class TrainingFamily:
     prefix: str
     #: Keys the collator must produce.
     batch_keys: tuple[str, ...]
+    #: Block classes recomputed in the backward pass with ``gradient_checkpointing``.
+    checkpoint_blocks: tuple[type, ...] = ()
 
     def load(
         self,
@@ -83,6 +85,7 @@ class TrainingFamily:
 
 _FAMILIES = {
     "stable-diffusion": "imagehub.training.sd1:StableDiffusionFamily",
+    "stable-diffusion-xl": "imagehub.training.sdxl:StableDiffusionXLFamily",
 }
 
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Mapping
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import torch
 from torch import Tensor, nn
@@ -18,6 +18,8 @@ from imagehub.backends.stable_diffusion import (
     initial_latents,
 )
 from imagehub.models.autoencoder_kl import AutoencoderKL
+from imagehub.models.layers import ResnetBlock
+from imagehub.models.unet_2d import ScaleShiftResnetBlock, TransformerBlock
 from imagehub.schedulers.ddpm import DDPMScheduler
 from imagehub.training.data import StableDiffusionCollator
 from imagehub.training.family import Collator, Objective, TrainingFamily
@@ -117,10 +119,17 @@ class StableDiffusionLoRAObjective(Objective):
         sigma = ((1.0 - alphas) ** 0.5).to(device=timesteps.device)[timesteps].float()
         return (alpha / sigma) ** 2
 
+    def encode_condition(self, batch: Mapping[str, Tensor]) -> Any:
+        """What the denoiser is conditioned on, from the batch (no gradients)."""
+        return self.encode_text(batch["input_ids"])
+
+    def predict(self, noisy: Tensor, timesteps: Tensor, condition: Any) -> Tensor:
+        return self.components.unet(noisy, timesteps, condition)
+
     def loss(
         self,
         latents: Tensor,
-        encoder_hidden_states: Tensor,
+        encoder_hidden_states: Any,
         noise: Tensor,
         timesteps: Tensor,
     ) -> Tensor:
@@ -132,7 +141,7 @@ class StableDiffusionLoRAObjective(Objective):
             target = noise
         else:
             target = sqrt_alpha * noise - sqrt_one_minus * latents
-        prediction = self.components.unet(noisy, timesteps, encoder_hidden_states)
+        prediction = self.predict(noisy, timesteps, encoder_hidden_states)
         if self.snr_gamma is None:
             return F.mse_loss(prediction.float(), target.float(), reduction="mean")
         snr = self.snr(timesteps)
@@ -145,8 +154,8 @@ class StableDiffusionLoRAObjective(Objective):
 
     def loss_from(self, batch: Mapping[str, Tensor], draws: Mapping[str, Tensor]) -> Tensor:
         latents = self.encode_images(batch["pixel_values"], draws["posterior"])
-        hidden = self.encode_text(batch["input_ids"])
-        return self.loss(latents, hidden, draws["noise"], draws["timesteps"])
+        condition = self.encode_condition(batch)
+        return self.loss(latents, condition, draws["noise"], draws["timesteps"])
 
 
 class StableDiffusionFamily(TrainingFamily):
@@ -154,6 +163,7 @@ class StableDiffusionFamily(TrainingFamily):
 
     prefix = "unet"
     batch_keys = ("pixel_values", "input_ids")
+    checkpoint_blocks = (TransformerBlock, ResnetBlock, ScaleShiftResnetBlock)
 
     def load(
         self,
