@@ -107,23 +107,23 @@ print(spec.support.value, spec.family)   # lora stable-diffusion
 ```
 
 <!-- training-support:start -->
-| Model | Support |
-| --- | --- |
-| `sd-v1-1` | lora |
-| `sd-v1-2` | lora |
-| `sd-v1-3` | lora |
-| `sd-v1-4` | lora |
-| `sd-v1-5` | lora |
-| `dreamshaper-8` | lora |
-| `segmind-small-sd` | lora |
-| `segmind-tiny-sd` | lora |
-| `bk-sdm-base` | lora |
-| `bk-sdm-small` | lora |
-| `bk-sdm-tiny` | lora |
-| `sd-v2-1` | lora |
-| `bk-sdm-v2-base` | lora |
-| `bk-sdm-v2-small` | lora |
-| `bk-sdm-v2-tiny` | lora |
+| Model | Support | Methods |
+| --- | --- | --- |
+| `sd-v1-1` | native | lora |
+| `sd-v1-2` | native | lora |
+| `sd-v1-3` | native | lora |
+| `sd-v1-4` | native | lora |
+| `sd-v1-5` | native | lora |
+| `dreamshaper-8` | native | lora |
+| `segmind-small-sd` | native | lora |
+| `segmind-tiny-sd` | native | lora |
+| `bk-sdm-base` | native | lora |
+| `bk-sdm-small` | native | lora |
+| `bk-sdm-tiny` | native | lora |
+| `sd-v2-1` | native | lora |
+| `bk-sdm-v2-base` | native | lora |
+| `bk-sdm-v2-small` | native | lora |
+| `bk-sdm-v2-tiny` | native | lora |
 <!-- training-support:end -->
 
 Every other model is `inference_only` for now, including the few-step distilled `sd-turbo`,

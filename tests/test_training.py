@@ -60,13 +60,14 @@ def arguments(tmp_path, **overrides):
 
 def test_training_profiles():
     spec = get_training_spec("sd-v1-5")
-    assert spec.support is TrainingSupport.LORA
+    assert spec.support is TrainingSupport.NATIVE
+    assert spec.methods == ("lora",)
     assert spec.family == "stable-diffusion"
     assert spec.target_modules == ("to_q", "to_k", "to_v", "to_out.0")
     for distilled in ("sdxs-512-0.9", "sd-turbo", "lcm-dreamshaper-v7"):
         assert get_training_spec(distilled).support is TrainingSupport.INFERENCE_ONLY
     assert get_training_spec("sdxl-base-1.0").support is TrainingSupport.INFERENCE_ONLY
-    trainable = list_training_specs(support="lora")
+    trainable = list_training_specs(support="native")
     assert trainable and all(s.family == "stable-diffusion" for s in trainable)
     assert len(list_training_specs()) > len(trainable)
     with pytest.raises(KeyError, match="sd-v1-5"):
@@ -193,7 +194,7 @@ def test_training_changes_only_the_adapter_and_lowers_the_loss(tmp_path, tiny_sd
     assert math.isfinite(result.training_loss)
     assert after < before
     assert len(result.log_history) == 30
-    assert "step 30/30" in capsys.readouterr().out
+    assert "step 30  loss" in capsys.readouterr().out
     for key, value in unet.state_dict().items():
         if "lora_" not in key:
             assert torch.equal(value, frozen[key]), key
@@ -223,7 +224,9 @@ def test_resume_is_exact(tmp_path, tiny_sd):
 
 def test_gradient_accumulation_consumes_micro_batches(tmp_path, tiny_sd):
     dataset = ImageFolderDataset(write_folder(tmp_path / "data"))
-    args = arguments(tmp_path, max_steps=2, gradient_accumulation_steps=2, train_batch_size=2)
+    args = arguments(
+        tmp_path, max_steps=2, gradient_accumulation_steps=2, per_device_train_batch_size=2
+    )
     trainer = Trainer("sd-v1-5", tiny_sd, args, dataset)
     output = trainer.train()
     assert output.global_step == 2
@@ -290,7 +293,10 @@ def test_training_support_table_matches_the_profiles(page):
     table = text.split("<!-- training-support:start -->")[1].split("<!-- training-support:end -->")[
         0
     ]
-    rows = [line.split("|")[1:3] for line in table.strip().splitlines()[2:]]
-    documented = [(name.strip().strip("`"), support.strip()) for name, support in rows]
-    expected = [(s.model_id, s.support.value) for s in list_training_specs(support="lora")]
+    rows = [line.split("|")[1:4] for line in table.strip().splitlines()[2:]]
+    documented = [(n.strip().strip("`"), s.strip(), m.strip()) for n, s, m in rows]
+    expected = [
+        (s.model_id, s.support.value, ", ".join(s.methods))
+        for s in list_training_specs(support="native")
+    ]
     assert documented == expected

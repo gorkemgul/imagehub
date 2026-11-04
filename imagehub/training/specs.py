@@ -12,12 +12,16 @@ from imagehub.catalog import MODEL_CATALOG
 class TrainingSupport(StrEnum):
     """How far a model's training path is implemented and verified.
 
-    ``LORA`` trains LoRA adapters with an objective checked against the reference training
-    script. ``INFERENCE_ONLY`` has no training path yet.
+    ``NATIVE`` trains from images and captions with an objective checked against the reference
+    training script. ``INFERENCE_ONLY`` has no training path yet.
     """
 
-    LORA = "lora"
+    NATIVE = "native"
     INFERENCE_ONLY = "inference_only"
+
+    @property
+    def is_trainable(self) -> bool:
+        return self is not TrainingSupport.INFERENCE_ONLY
 
 
 @dataclass(frozen=True)
@@ -25,6 +29,7 @@ class TrainingSpec:
     model_id: str
     family: str
     support: TrainingSupport
+    methods: tuple[str, ...] = ()
     target_modules: tuple[str, ...] = ()
 
 
@@ -37,7 +42,9 @@ _EXCLUDED = frozenset({"sd-turbo", "lcm-dreamshaper-v7", "sdxs-512-0.9"})
 def _spec(model_id: str) -> TrainingSpec:
     model = MODEL_CATALOG[model_id]
     if model.family == "stable-diffusion" and model_id not in _EXCLUDED:
-        return TrainingSpec(model_id, model.family, TrainingSupport.LORA, _UNET_ATTENTION)
+        return TrainingSpec(
+            model_id, model.family, TrainingSupport.NATIVE, ("lora",), _UNET_ATTENTION
+        )
     return TrainingSpec(model_id, model.family, TrainingSupport.INFERENCE_ONLY)
 
 

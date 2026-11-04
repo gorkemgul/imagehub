@@ -1,4 +1,5 @@
-"""A small LoRA training loop: seeded sampling, AdamW, schedules, checkpoints and exact resume."""
+"""A small LoRA training loop: seeded sampling, AdamW, schedules, evaluation, data-parallel
+processes, checkpoints and exact resume."""
 
 from __future__ import annotations
 
@@ -7,7 +8,7 @@ import math
 import os
 import re
 import time
-from collections.abc import Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -15,20 +16,33 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from imagehub.backends.stable_diffusion import StableDiffusionComponents, resolve_device
+from imagehub.backends.stable_diffusion import (
+    StableDiffusionComponents,
+    decode_latents,
+    denoise,
+    initial_latents,
+)
 from imagehub.checkpoints import save_safetensors
 from imagehub.lora import LoRAConfig, LoRAInjection, inject_lora
 from imagehub.lora_formats import read_lora_file
 from imagehub.training.arguments import TrainingArguments
-from imagehub.training.data import preprocess_image
+from imagehub.training.data import StableDiffusionCollator, _pil
+from imagehub.training.distributed import (
+    average_gradients,
+    barrier,
+    gather,
+    reduce_sum,
+    setup_distributed,
+)
 from imagehub.training.schedules import lr_lambda
 from imagehub.training.sd1 import StableDiffusionLoRAObjective
-from imagehub.training.specs import TrainingSupport, get_training_spec, list_training_specs
+from imagehub.training.specs import get_training_spec, list_training_specs
 
 _DTYPES = {"no": torch.float32, "fp16": torch.float16, "bf16": torch.bfloat16}
 ADAPTER_FILE = "adapter.safetensors"
 CONFIG_FILE = "adapter_config.json"
 STATE_FILE = "trainer_state.pt"
+Collator = Callable[[Sequence[Mapping[str, Any]]], Mapping[str, Tensor]]
 
 
 @dataclass
@@ -39,11 +53,22 @@ class TrainOutput:
     log_history: list[dict[str, float]] = field(default_factory=list)
 
 
-class Trainer:
-    """Train a LoRA adapter for the U-Net of a Stable Diffusion 1.x checkpoint.
+def _check_dataset(dataset: Any, name: str) -> None:
+    if not hasattr(dataset, "__len__") or len(dataset) == 0:
+        raise ValueError(f"{name} must be a non-empty sized dataset")
+    first = dataset[0]
+    if not isinstance(first, Mapping) or not {"image", "text"} <= set(first):
+        raise ValueError(f'{name} items must be mappings with "image" and "text"')
 
-    ``train_dataset`` is any sized dataset whose items are ``{"image": PIL image or (3, H, W)
-    tensor in [0, 1], "text": str}``, such as :class:`ImageFolderDataset`.
+
+class Trainer:
+    """Train a LoRA adapter for the U-Net of a Stable Diffusion 1.x / 2.x checkpoint.
+
+    Datasets are sized and their items are ``{"image": PIL image or (3, H, W) tensor in [0, 1],
+    "text": str}``, such as :class:`ImageFolderDataset`. ``data_collator`` replaces the default
+    :class:`StableDiffusionCollator`; it maps a list of items to ``{"pixel_values": (B, 3, H, W)
+    in [-1, 1], "input_ids": (B, 77)}``. Under ``torchrun`` every process trains on its own share
+    of each batch and the LoRA gradients are averaged.
     """
 
     def __init__(
@@ -52,22 +77,27 @@ class Trainer:
         checkpoint: str | os.PathLike[str],
         args: TrainingArguments,
         train_dataset: Any,
+        eval_dataset: Any = None,
+        data_collator: Collator | None = None,
     ) -> None:
         if not isinstance(args, TrainingArguments):
             raise TypeError("args must be a TrainingArguments")
         self.spec = get_training_spec(model)
-        if self.spec.support is not TrainingSupport.LORA:
-            supported = ", ".join(s.model_id for s in list_training_specs(support="lora"))
+        if not self.spec.support.is_trainable:
+            trainable = list_training_specs(support="native")
+            supported = ", ".join(s.model_id for s in trainable)
             raise ValueError(f"{model!r} cannot be trained yet. Trainable models: {supported}")
-        if not hasattr(train_dataset, "__len__") or len(train_dataset) == 0:
-            raise ValueError("train_dataset must be a non-empty sized dataset")
-        first = train_dataset[0]
-        if not isinstance(first, dict) or not {"image", "text"} <= set(first):
-            raise ValueError('train_dataset items must be dicts with "image" and "text"')
+        _check_dataset(train_dataset, "train_dataset")
+        if eval_dataset is not None:
+            _check_dataset(eval_dataset, "eval_dataset")
+        if data_collator is not None and not callable(data_collator):
+            raise TypeError("data_collator must be callable")
         self.model_id = model
         self.checkpoint = Path(checkpoint)
         self.args = args
         self.train_dataset = train_dataset
+        self.eval_dataset = eval_dataset
+        self.data_collator = data_collator
         self.global_step = 0
         self.log_history: list[dict[str, float]] = []
         self.components: StableDiffusionComponents | None = None
@@ -79,7 +109,7 @@ class Trainer:
         if self.components is not None:
             return
         args = self.args
-        self.device = resolve_device(args.device)
+        self.distributed, self.device = setup_distributed(args.device)
         self.dtype = _DTYPES[args.mixed_precision]
         components = StableDiffusionComponents.load(
             self.checkpoint, device=self.device, dtype=self.dtype, model_id=self.model_id
@@ -124,39 +154,52 @@ class Trainer:
         self.scaler = (
             torch.amp.GradScaler(self.device.type) if args.mixed_precision == "fp16" else None
         )
-        self.data_generator = torch.Generator().manual_seed(args.seed)
-        self.noise_generator = torch.Generator().manual_seed(args.seed + 1)
+        rank = self.distributed.rank
+        # Every process shares the data order; augmentation and noise differ per process.
+        self.order_generator = torch.Generator().manual_seed(args.seed)
+        self.augment_generator = torch.Generator().manual_seed(args.seed + 1 + 2 * rank)
+        self.noise_generator = torch.Generator().manual_seed(args.seed + 2 + 2 * rank)
+        self.collator: Collator = self.data_collator or StableDiffusionCollator(
+            components.tokenizer,
+            resolution=args.resolution,
+            center_crop=args.center_crop,
+            random_flip=args.random_flip,
+            generator=self.augment_generator,
+        )
         self.epoch = 0
         self.position = 0
-        self.order = torch.randperm(len(self.train_dataset), generator=self.data_generator)
+        self.order = torch.randperm(len(self.train_dataset), generator=self.order_generator)
         self.components = components
         self.injection = injection
 
+    @property
+    def is_main_process(self) -> bool:
+        return self.components is None or self.distributed.is_main
+
     # Data --------------------------------------------------------------------------------
 
-    def _next_batch(self) -> tuple[Tensor, Tensor]:
-        assert self.components is not None
-        args = self.args
-        pixels, ids = [], []
-        for _ in range(args.train_batch_size):
+    def _next_indices(self, count: int) -> list[int]:
+        indices = []
+        for _ in range(count):
             if self.position >= len(self.order):
                 self.epoch += 1
                 self.position = 0
-                self.order = torch.randperm(len(self.train_dataset), generator=self.data_generator)
-            item = self.train_dataset[int(self.order[self.position])]
+                self.order = torch.randperm(len(self.train_dataset), generator=self.order_generator)
+            indices.append(int(self.order[self.position]))
             self.position += 1
-            pixels.append(
-                preprocess_image(
-                    item["image"],
-                    resolution=args.resolution,
-                    center_crop=args.center_crop,
-                    random_flip=args.random_flip,
-                    generator=self.data_generator,
-                )
-            )
-            ids.append(self.components.tokenizer(item["text"]))
-        batch = torch.stack(pixels).to(device=self.device, dtype=self.dtype)
-        return batch, torch.tensor(ids, device=self.device)
+        return indices
+
+    def _to_device(self, batch: Mapping[str, Tensor]) -> tuple[Tensor, Tensor]:
+        if not {"pixel_values", "input_ids"} <= set(batch):
+            raise ValueError('data_collator must return "pixel_values" and "input_ids"')
+        pixels = batch["pixel_values"].to(device=self.device, dtype=self.dtype)
+        return pixels, batch["input_ids"].to(device=self.device, dtype=torch.long)
+
+    def _next_batch(self) -> tuple[Tensor, Tensor]:
+        size = self.args.per_device_train_batch_size
+        indices = self._next_indices(size * self.distributed.world_size)
+        own = indices[self.distributed.rank * size : (self.distributed.rank + 1) * size]
+        return self._to_device(self.collator([self.train_dataset[i] for i in own]))
 
     # Loop --------------------------------------------------------------------------------
 
@@ -171,6 +214,7 @@ class Trainer:
             loss = loss / args.gradient_accumulation_steps
             (self.scaler.scale(loss) if self.scaler is not None else loss).backward()
             total += float(loss.detach())
+        average_gradients(self.parameters, self.distributed)
         if self.scaler is not None:
             self.scaler.unscale_(self.optimizer)
         if args.max_grad_norm > 0:
@@ -182,7 +226,16 @@ class Trainer:
             self.optimizer.step()
         self.lr_scheduler.step()
         self.global_step += 1
+        total = reduce_sum([total], self.distributed, self.device)[0] / self.distributed.world_size
         return total, lr
+
+    def _log(self, record: dict[str, float], run: Any) -> None:
+        self.log_history.append(record)
+        if not self.is_main_process:
+            return
+        print("  ".join(f"{k} {_format(v)}" for k, v in record.items()), flush=True)
+        if run is not None:
+            run.log({k: v for k, v in record.items() if k != "step"}, step=self.global_step)
 
     def train(self, resume_from_checkpoint: bool | str | os.PathLike[str] = False) -> TrainOutput:
         """Train until ``args.max_steps`` optimizer steps; optionally resume a checkpoint first."""
@@ -195,9 +248,11 @@ class Trainer:
             )
             self._load_checkpoint(path)
         run = self._start_reporting()
+        interval = self.args.evaluation_interval
         losses = []
         started = time.perf_counter()
         last_saved = None
+        last_sampled = None
         try:
             while self.global_step < self.args.max_steps:
                 loss, lr = self._step()
@@ -205,20 +260,21 @@ class Trainer:
                     raise FloatingPointError(f"Loss is {loss} at step {self.global_step}")
                 losses.append(loss)
                 if self.global_step % self.args.logging_steps == 0:
-                    record = {"step": float(self.global_step), "loss": loss, "lr": lr}
-                    self.log_history.append(record)
-                    print(
-                        f"step {self.global_step}/{self.args.max_steps}  "
-                        f"loss {loss:.4f}  lr {lr:.3g}",
-                        flush=True,
-                    )
-                    if run is not None:
-                        run.log({"train_loss": loss, "lr": lr}, step=self.global_step)
+                    self._log({"step": float(self.global_step), "loss": loss, "lr": lr}, run)
+                if interval is not None and self.global_step % interval == 0:
+                    if self.eval_dataset is not None:
+                        metrics = self.evaluate()
+                        self._log({"step": float(self.global_step)} | metrics, run)
+                    if self.args.validation_prompts:
+                        self.generate_samples()
+                        last_sampled = self.global_step
                 if self.global_step % self.args.save_steps == 0:
                     self._save_checkpoint()
                     last_saved = self.global_step
             if losses and last_saved != self.global_step:
                 self._save_checkpoint()
+            if losses and self.args.validation_prompts and last_sampled != self.global_step:
+                self.generate_samples()
         finally:
             if run is not None:
                 run.finish()
@@ -232,13 +288,92 @@ class Trainer:
         return TrainOutput(self.global_step, mean, metrics, list(self.log_history))
 
     def _start_reporting(self) -> Any:
-        if self.args.report_to != "wandb":
+        if self.args.report_to != "wandb" or not self.is_main_process:
             return None
         try:
             import wandb
         except ImportError as error:
             raise ImportError('report_to="wandb" needs the wandb package') from error
         return wandb.init(project="imagehub", name=self.args.run_name, config=self.args.to_dict())
+
+    # Evaluation --------------------------------------------------------------------------
+
+    def evaluate(self, eval_dataset: Any = None) -> dict[str, float]:
+        """Mean training loss over ``eval_dataset`` without gradients.
+
+        Noise, timesteps and crops come from generators reset to the same seed on every call,
+        so repeated evaluations of the same adapter agree.
+        """
+        self._setup()
+        assert self.components is not None
+        dataset = eval_dataset if eval_dataset is not None else self.eval_dataset
+        if dataset is None:
+            raise ValueError("evaluate() needs an eval_dataset")
+        if eval_dataset is not None:
+            _check_dataset(eval_dataset, "eval_dataset")
+        args, state = self.args, self.distributed
+        collator = self.data_collator or StableDiffusionCollator(
+            self.components.tokenizer,
+            resolution=args.resolution,
+            center_crop=True,
+            random_flip=False,
+            generator=torch.Generator().manual_seed(args.seed + 3),
+        )
+        noise = torch.Generator().manual_seed(args.seed + 4 + state.rank)
+        start = len(dataset) * state.rank // state.world_size
+        end = len(dataset) * (state.rank + 1) // state.world_size
+        size = args.per_device_eval_batch_size
+        total, count = 0.0, 0
+        unet = self.components.unet
+        unet.eval()
+        try:
+            with torch.no_grad():
+                for first in range(start, end, size):
+                    items = [dataset[i] for i in range(first, min(first + size, end))]
+                    pixels, ids = self._to_device(collator(items))
+                    total += float(self.objective(pixels, ids, noise)) * len(items)
+                    count += len(items)
+        finally:
+            unet.train()
+        summed_loss, summed_count = reduce_sum([total, float(count)], state, self.device)
+        return {"eval_loss": summed_loss / summed_count}
+
+    def generate_samples(self) -> Path:
+        """Write one image per validation prompt to ``output_dir/samples/step-N/``."""
+        self._setup()
+        assert self.components is not None
+        args = self.args
+        directory = Path(args.output_dir) / "samples" / f"step-{self.global_step}"
+        if self.is_main_process:
+            directory.mkdir(parents=True, exist_ok=True)
+            components = self.components
+            image_module = _pil()
+            shape = (
+                1,
+                self.objective.latent_channels,
+                args.resolution // self.objective.downsample,
+                args.resolution // self.objective.downsample,
+            )
+            components.unet.eval()
+            try:
+                for index, prompt in enumerate(args.validation_prompts):
+                    latents = denoise(
+                        components,
+                        prompt=prompt,
+                        negative_prompt=None,
+                        steps=args.validation_num_inference_steps,
+                        guidance=args.validation_guidance_scale,
+                        latents=initial_latents(args.seed, shape).to(self.device),
+                    )
+                    pixels = decode_latents(components, latents)[0]
+                    image = image_module.frombytes(
+                        "RGB", (pixels.shape[1], pixels.shape[0]), bytes(pixels.flatten().tolist())
+                    )
+                    image.save(directory / f"{index}.png")
+            finally:
+                components.unet.train()
+        barrier(self.distributed)
+        return directory
 
     # Saving ------------------------------------------------------------------------------
 
@@ -247,12 +382,12 @@ class Trainer:
         return {f"unet.{k}": v.float() for k, v in self.injection.adapter_state_dict().items()}
 
     def _write_adapter(self, directory: Path) -> Path:
+        assert self.injection is not None
         directory.mkdir(parents=True, exist_ok=True)
-        modules = sorted({name for name in self.injection.module_names}) if self.injection else []
         metadata = {
             "unet.r": self.args.lora_rank,
             "unet.lora_alpha": self.args.lora_alpha,
-            "unet.target_modules": modules,
+            "unet.target_modules": list(self.injection.module_names),
         }
         path = directory / ADAPTER_FILE
         save_safetensors(
@@ -275,28 +410,45 @@ class Trainer:
         return path
 
     def save_model(self, path: str | os.PathLike[str] | None = None) -> Path:
-        """Write ``adapter.safetensors`` (diffusers layout) and ``adapter_config.json``."""
+        """Write ``adapter.safetensors`` (diffusers layout) and ``adapter_config.json``.
+
+        In a distributed run only the main process writes; every process gets the path.
+        """
         if self.injection is None:
             raise RuntimeError("Call train() before save_model()")
-        return self._write_adapter(Path(path) if path is not None else Path(self.args.output_dir))
+        directory = Path(path) if path is not None else Path(self.args.output_dir)
+        if self.is_main_process:
+            self._write_adapter(directory)
+        barrier(self.distributed)
+        return directory / ADAPTER_FILE
 
     def _save_checkpoint(self) -> Path:
         directory = Path(self.args.output_dir) / f"checkpoint-{self.global_step}"
-        self._write_adapter(directory)
-        state = {
-            "global_step": self.global_step,
-            "epoch": self.epoch,
-            "position": self.position,
-            "order": self.order,
-            "data_rng": self.data_generator.get_state(),
-            "noise_rng": self.noise_generator.get_state(),
-            "optimizer": self.optimizer.state_dict(),
-            "lr_scheduler": self.lr_scheduler.state_dict(),
-            "scaler": self.scaler.state_dict() if self.scaler is not None else None,
-            "log_history": self.log_history,
-            "args": self.args.to_dict(),
-        }
-        torch.save(state, directory / STATE_FILE)
+        streams = gather(
+            {
+                "augment": self.augment_generator.get_state(),
+                "noise": self.noise_generator.get_state(),
+            },
+            self.distributed,
+        )
+        if self.is_main_process:
+            self._write_adapter(directory)
+            state = {
+                "global_step": self.global_step,
+                "world_size": self.distributed.world_size,
+                "epoch": self.epoch,
+                "position": self.position,
+                "order": self.order,
+                "order_rng": self.order_generator.get_state(),
+                "process_rng": streams,
+                "optimizer": self.optimizer.state_dict(),
+                "lr_scheduler": self.lr_scheduler.state_dict(),
+                "scaler": self.scaler.state_dict() if self.scaler is not None else None,
+                "log_history": self.log_history,
+                "args": self.args.to_dict(),
+            }
+            torch.save(state, directory / STATE_FILE)
+        barrier(self.distributed)
         return directory
 
     def _latest_checkpoint(self) -> Path:
@@ -314,6 +466,12 @@ class Trainer:
         state_path = directory / STATE_FILE
         if not state_path.is_file():
             raise FileNotFoundError(f"{state_path} is missing")
+        state = torch.load(state_path, map_location="cpu", weights_only=True)
+        if state["world_size"] != self.distributed.world_size:
+            raise ValueError(
+                f"{directory} was written by {state['world_size']} processes; resume it with "
+                f"the same number (this run has {self.distributed.world_size})"
+            )
         weights = read_lora_file(directory / ADAPTER_FILE, {"unet": self.components.unet})
         self.injection.load_adapter_state_dict(
             {
@@ -322,15 +480,22 @@ class Trainer:
                 for kind, tensor in (("down", item.down), ("up", item.up))
             }
         )
-        state = torch.load(state_path, map_location="cpu", weights_only=True)
         self.global_step = int(state["global_step"])
         self.epoch = int(state["epoch"])
         self.position = int(state["position"])
         self.order = state["order"]
-        self.data_generator.set_state(state["data_rng"])
-        self.noise_generator.set_state(state["noise_rng"])
+        self.order_generator.set_state(state["order_rng"])
+        streams = state["process_rng"][self.distributed.rank]
+        self.augment_generator.set_state(streams["augment"])
+        self.noise_generator.set_state(streams["noise"])
         self.optimizer.load_state_dict(state["optimizer"])
         self.lr_scheduler.load_state_dict(state["lr_scheduler"])
         if self.scaler is not None and state["scaler"] is not None:
             self.scaler.load_state_dict(state["scaler"])
         self.log_history = list(state["log_history"])
+
+
+def _format(value: float) -> str:
+    if float(value).is_integer() and abs(value) < 1e9:
+        return str(int(value))
+    return f"{value:.4g}"
