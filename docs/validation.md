@@ -5,6 +5,31 @@ Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB u
 12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
 References are recorded per model in `validation.json` under `reference`.
 
+## LoRA training
+
+Validated on CPU on November 4, 2026 against the step of diffusers 0.40.0
+`examples/text_to_image/train_text_to_image_lora.py` with peft 0.21.2 (transformers 5.18.0,
+PyTorch 2.15.0, torchvision 0.29.1).
+
+- Both sides start from the same LoRA weights and get the same pixels, token ids, posterior noise,
+  noise and timesteps. Every loss, gradient and parameter below is **bit-identical**.
+- The reference script passes an already-consumed parameter generator to `clip_grad_norm_`, so it
+  never clips. imagehub clips; the multi-step comparison clips the reference explicitly.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Image transform (resize, center / random crop, flip, normalize) vs torchvision | 4 image sizes | identical | identical |
+| LR multipliers (constant, constant with warmup, linear, cosine), 20 steps | — | identical | identical |
+| First-step loss and LoRA gradients, epsilon and v-prediction, with and without min-SNR | tiny SD 1.x | 0 | 0 |
+| First-step loss and LoRA gradients, epsilon, 256×256, batch 2 | `sd-v1-5` | 0 | 0 |
+| Four trainer steps (AdamW, cosine with warmup, clipping): losses and parameters | tiny SD 1.x | 0 | 0 |
+| Saved adapter loaded by diffusers `load_lora_weights` vs imagehub, 3 steps | tiny SD 1.x | 0 (pixels) | 0 |
+
+Exact resume (six straight steps against three, resume, three) and mixed-precision runs are
+covered by the unit tests.
+
 ## LoRA adapters
 
 Validated on CPU on November 4, 2026 against diffusers 0.40.0 `load_lora_weights` with

@@ -9,3 +9,4 @@ Belirli işlere odaklanan kısa sayfalar.
 | [Aygıtlar ve hassasiyet](devices.md) | CPU, MPS veya CUDA seçmek ve her biri için neyin iddia edildiğini anlamak için |
 | [Görüntü girdisi](image-input.md) | görüntü kabul eden modellere girdi iletmek için |
 | [Tekrarlanabilirlik](reproducibility.md) | aynı görüntüyü yeniden ve referansla aynı biçimde üretmek için |
+| [LoRA eğitimi](training.md) | kendi görüntülerinizle bir LoRA adaptörü eğitmek için |

@@ -83,6 +83,7 @@ plugins:
             Devices and precision: Aygıtlar ve hassasiyet
             Image input: Görüntü girdisi
             Reproducibility: Tekrarlanabilirlik
+            LoRA training: LoRA eğitimi
             Models: Modeller
             Parity: Eşdeğerlik
             Gallery: Galeri
@@ -128,6 +129,7 @@ nav:
       - Devices and precision: guides/devices.md
       - Image input: guides/image-input.md
       - Reproducibility: guides/reproducibility.md
+      - LoRA training: guides/training.md
   - Models: []
   - Parity:
       - parity/index.md

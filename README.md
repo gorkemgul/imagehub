@@ -49,6 +49,28 @@ with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
     result = pipe("a watercolor fox", seed=0)
 ```
 
+## Train
+
+```bash
+pip install "imagehub[training]"
+```
+
+```python
+from imagehub.training import ImageFolderDataset, Trainer, TrainingArguments
+
+trainer = Trainer(
+    model="sd-v1-5",
+    checkpoint="checkpoints/sd-v1-5",
+    args=TrainingArguments(output_dir="runs/my-dog", max_steps=1000),
+    train_dataset=ImageFolderDataset("my_images"),  # images + metadata.jsonl
+)
+trainer.train()
+trainer.save_model("runs/my-dog/final")  # load it back with lora=".../adapter.safetensors"
+```
+
+LoRA training covers the Stable Diffusion 1.x and 2.x checkpoints for now; see the
+[training guide](docs/guides/training.md).
+
 ## Models
 
 The [model catalog](docs/catalog.md) lists every supported checkpoint with its source, pinned revision, and license.
@@ -149,6 +171,6 @@ Planned work after the first release:
 
 - [ ] Opt-in fast attention backends (FlashAttention, SageAttention, xFormers) — #192
 - [x] LoRA adapter loading for inference — #193
-- [ ] Training support: LoRA fine-tuning as `imagehub[training]` — #194
+- [x] Training support: LoRA fine-tuning as `imagehub[training]` — #194
 - [ ] GPU and half-precision validation — #195
 - [ ] More model families — #11
