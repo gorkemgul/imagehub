@@ -10,6 +10,15 @@ from imagehub.backends.stable_diffusion import StableDiffusionComponents
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.schedulers.ddpm import DDPMScheduler
 
+_SCHEDULE_KEYS = (
+    "num_train_timesteps",
+    "beta_start",
+    "beta_end",
+    "beta_schedule",
+    "trained_betas",
+    "prediction_type",
+)
+
 
 class StableDiffusionLoRAObjective:
     """Noise-prediction loss with frozen VAE and text encoder.
@@ -29,7 +38,11 @@ class StableDiffusionLoRAObjective:
         if not isinstance(components.vae, AutoencoderKL):
             raise ValueError("Training needs a KL autoencoder to sample latents from")
         self.components = components
-        self.scheduler = DDPMScheduler(components.scheduler_config)
+        # Training needs only the noise schedule and prediction type of the snapshot's scheduler;
+        # its sampling settings do not apply.
+        self.scheduler = DDPMScheduler(
+            {k: v for k, v in components.scheduler_config.items() if k in _SCHEDULE_KEYS}
+        )
         self.prediction_type = prediction_type or self.scheduler.config["prediction_type"]
         if self.prediction_type not in ("epsilon", "v_prediction"):
             raise ValueError(f"Unknown prediction type {self.prediction_type!r}")

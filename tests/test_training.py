@@ -61,7 +61,8 @@ def test_training_profiles():
     assert spec.support is TrainingSupport.LORA
     assert spec.family == "stable-diffusion"
     assert spec.target_modules == ("to_q", "to_k", "to_v", "to_out.0")
-    assert get_training_spec("sdxs-512-0.9").support is TrainingSupport.INFERENCE_ONLY
+    for distilled in ("sdxs-512-0.9", "sd-turbo", "lcm-dreamshaper-v7"):
+        assert get_training_spec(distilled).support is TrainingSupport.INFERENCE_ONLY
     assert get_training_spec("sdxl-base-1.0").support is TrainingSupport.INFERENCE_ONLY
     trainable = list_training_specs(support="lora")
     assert trainable and all(s.family == "stable-diffusion" for s in trainable)
@@ -260,3 +261,20 @@ def test_save_model_needs_training(tmp_path, tiny_sd):
     trainer = Trainer("sd-v1-5", tiny_sd, arguments(tmp_path), dataset)
     with pytest.raises(RuntimeError, match="train"):
         trainer.save_model()
+
+
+def test_objective_ignores_sampling_scheduler_settings(tiny_sd):
+    from imagehub.backends.stable_diffusion import StableDiffusionComponents
+    from imagehub.training import StableDiffusionLoRAObjective
+
+    components = StableDiffusionComponents.load(
+        tiny_sd, device=torch.device("cpu"), dtype=torch.float32
+    )
+    components.scheduler_config = components.scheduler_config | {
+        "timestep_spacing": "linspace",
+        "use_karras_sigmas": True,
+        "prediction_type": "v_prediction",
+    }
+    objective = StableDiffusionLoRAObjective(components)
+    assert objective.prediction_type == "v_prediction"
+    assert objective.num_train_timesteps == 1000

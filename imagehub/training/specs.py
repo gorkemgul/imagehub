@@ -29,8 +29,9 @@ class TrainingSpec:
 
 
 _UNET_ATTENTION = ("to_q", "to_k", "to_v", "to_out.0")
-# The tiny autoencoder of SDXS has no posterior to sample training latents from.
-_EXCLUDED = frozenset({"sdxs-512-0.9"})
+# Few-step distilled checkpoints are not trained with the denoising objective, and the tiny
+# autoencoder of SDXS has no posterior to sample training latents from.
+_EXCLUDED = frozenset({"sd-turbo", "lcm-dreamshaper-v7", "sdxs-512-0.9"})
 
 
 def _spec(model_id: str) -> TrainingSpec:
