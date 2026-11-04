@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any
 
 import torch
 from torch import Tensor
@@ -81,12 +80,17 @@ def barrier(state: DistributedState) -> None:
         dist.barrier()
 
 
-def gather(value: Any, state: DistributedState) -> list[Any]:
-    """Every process's ``value``, in rank order."""
+def gather_tensor(tensor: Tensor, state: DistributedState, device: torch.device) -> list[Tensor]:
+    """Every process's ``tensor`` (same shape and dtype everywhere), in rank order, on the CPU.
+
+    Generator states are gathered this way rather than with ``all_gather_object``, which needs
+    numpy.
+    """
     if not state.enabled:
-        return [value]
+        return [tensor]
     import torch.distributed as dist
 
-    values: list[Any] = [None] * state.world_size
-    dist.all_gather_object(values, value)
-    return values
+    local = tensor.to(device)
+    values = [torch.empty_like(local) for _ in range(state.world_size)]
+    dist.all_gather(values, local)
+    return [value.cpu() for value in values]

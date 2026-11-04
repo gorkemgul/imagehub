@@ -30,7 +30,7 @@ from imagehub.training.data import StableDiffusionCollator, _pil
 from imagehub.training.distributed import (
     average_gradients,
     barrier,
-    gather,
+    gather_tensor,
     reduce_sum,
     setup_distributed,
 )
@@ -434,13 +434,9 @@ class Trainer:
 
     def _save_checkpoint(self) -> Path:
         directory = Path(self.args.output_dir) / f"checkpoint-{self.global_step}"
-        streams = gather(
-            {
-                "augment": self.augment_generator.get_state(),
-                "noise": self.noise_generator.get_state(),
-            },
-            self.distributed,
-        )
+        augment = gather_tensor(self.augment_generator.get_state(), self.distributed, self.device)
+        noise = gather_tensor(self.noise_generator.get_state(), self.distributed, self.device)
+        streams = [{"augment": a, "noise": n} for a, n in zip(augment, noise, strict=True)]
         if self.is_main_process:
             self._write_adapter(directory)
             state = {
