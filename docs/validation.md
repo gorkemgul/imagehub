@@ -5,6 +5,38 @@ Reference: diffusers 0.40.0, transformers 5.18.0. Machine: Apple M2 Max, 96 GB u
 12 CPU threads. Sources, commits and file fingerprints are in [validation.json](validation.json).
 References are recorded per model in `validation.json` under `reference`.
 
+## LoRA adapters
+
+Validated on CPU on November 4, 2026 against diffusers 0.40.0 `load_lora_weights` with
+peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
+
+- Random adapters were written in each supported layout for tiny random-weight Stable Diffusion
+  1.x and SDXL snapshots, covering the U-Net attention, `proj_in` / `proj_out`, feed-forward and
+  CLIP text-encoder layers. Both sides generated 3 steps at 32×32 from seed 42.
+- One published adapter, `latent-consistency/lcm-lora-sdv1-5` at
+  `cf2fced511dbe7e26c8d1d397e728fbab875db4b` (kohya layout, per-module alphas, 278 layers of
+  which 96 are convolutions, 50 of them 3×3), was loaded on `sd-v1-5` and generated 2 steps at
+  256×256 from seed 0.
+- Every image is **bit-identical** to the diffusers one.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Family | Pixels max abs | Tolerance |
+| --- | --- | --- | --- |
+| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL | 0 | 0 |
+| diffusers / PEFT layout, no alpha | SD 1.x | 0 | 0 |
+| kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |
+| kohya layout, SDXL original block names | SDXL | 0 | 0 |
+| legacy diffusers layout | SD 1.x | 0 | 0 |
+| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL | 0 | 0 |
+| Two stacked adapters, fused | SD 1.x, SDXL | 0 | 0 |
+| Published LCM-LoRA on `sd-v1-5` | SD 1.x | 0 | 0 |
+
+diffusers 0.40 rewrites kohya and legacy text-encoder keys to the transformers 4 module names
+(`text_model.encoder...`), which transformers 5 CLIP models no longer have, so it cannot load those
+text-encoder adapters. Those two layouts are therefore compared on the U-Net; imagehub reads their
+text-encoder keys in both spellings, which the unit tests cover.
+
 ## Cosmos-Predict2
 
 `cosmos-predict2-2b-t2i` is pinned to NVIDIA revision `acdb5fd`. The offline suite strictly

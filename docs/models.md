@@ -12,6 +12,59 @@ image input, and passing `image` to one raises an error.
 | `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
 | `omnigen-v1` | optional | editing and subject-driven generation, referenced from the prompt | `image`, `image_guidance`, `max_input_image_size`, `use_input_image_size_as_output` |
 
+# LoRA adapters
+
+The Stable Diffusion 1.x and SDXL backends load LoRA adapter files on top of a checkpoint. This
+covers every model served by the `stable-diffusion` and `stable-diffusion-xl` backends, including
+their fine-tunes.
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
+              lora="style.safetensors", lora_scale=0.8) as pipe:
+    result = pipe("a watercolor fox", seed=0)
+
+pipeline("t2i", backend="sdxl-base-1.0", model="checkpoints/sdxl-base-1.0",
+         lora=[("style.safetensors", 0.8), ("character.safetensors", 0.5)])
+pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
+         lora="style.safetensors", lora_fuse=True)
+```
+
+The second call stacks two adapters with their own scales; the third merges the adapter into the
+weights after loading.
+
+| Option | Meaning |
+| --- | --- |
+| `lora` | a `.safetensors` path, or a list of paths and `(path, scale)` pairs |
+| `lora_scale` | the scale of a single path (default 1.0); use pairs for a list |
+| `lora_fuse` | merge the adapters into the base weights after loading (default `False`) |
+
+**Layouts.** Three published layouts are read, for the U-Net and the CLIP text encoders:
+
+| Layout | Example key |
+| --- | --- |
+| diffusers / PEFT | `unet.down_blocks.0.attentions.0.transformer_blocks.0.attn1.to_q.lora_A.weight` |
+| legacy diffusers | `unet.down_blocks.0.attentions.0.transformer_blocks.0.attn1.processor.to_q_lora.down.weight` |
+| kohya | `lora_unet_down_blocks_0_attentions_0_proj_in.lora_down.weight` (with `.alpha`) |
+
+kohya SDXL files that use the original U-Net block names (`input_blocks`, `middle_block`,
+`output_blocks`) are mapped to the diffusers names. Text-encoder keys are accepted with or without
+CLIP's `text_model` level. Adapters can patch linear and convolution layers. The alpha comes from
+the file (kohya `.alpha` tensors or the diffusers `lora_adapter_metadata` header) and equals the
+rank when the file has none.
+
+**Rejected files.** DoRA and LyCORIS (LoHa, LoKr) adapters, keys that match no module, and modules
+without both weights raise an error before the model is changed. Options are checked when the
+pipeline is created, before any weights load.
+
+**Programmatic use.** `imagehub.lora` holds the layers (`LoRALinear`, `LoRAConv2d`) and the
+`inject_lora`, `merge_lora`, `unmerge_lora`, `set_lora_scale` and `remove_lora` helpers;
+`imagehub.lora_formats.load_lora_file` loads a file into any set of native components.
+
+Outputs match diffusers `load_lora_weights` exactly on CPU in float32; the comparisons are in
+the validation record.
+
 # Cosmos-Predict2
 
 Catalog: [`cosmos-predict2-2b-t2i`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·

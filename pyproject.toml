@@ -38,6 +38,7 @@ image = ["pillow>=10"]
 reference = [
   "diffusers==0.40.0",
   "transformers==5.18.0",
+  "peft==0.21.2",
   "torchvision",
   "sentencepiece",
   "protobuf",

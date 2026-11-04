@@ -75,6 +75,34 @@ def read_snapshot(directory: str | os.PathLike[str]) -> dict[str, Any] | None:
     return read_json(path)
 
 
+def _read_header(source: Any, size: int) -> tuple[dict[str, Any], int]:
+    prefix = source.read(8)
+    if len(prefix) != 8:
+        raise CheckpointError("Truncated safetensors header")
+    header_length = struct.unpack("<Q", prefix)[0]
+    if not 2 <= header_length <= min(100_000_000, size - 8):
+        raise CheckpointError("Invalid safetensors header length")
+    try:
+        header = json.loads(source.read(header_length))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise CheckpointError("Invalid safetensors header") from error
+    if not isinstance(header, dict):
+        raise CheckpointError("Invalid safetensors header")
+    return header, header_length
+
+
+def read_safetensors_metadata(path: str | os.PathLike[str]) -> dict[str, str]:
+    """Return the string metadata stored in a safetensors header (empty when absent)."""
+    with Path(path).open("rb") as source:
+        header, _ = _read_header(source, os.fstat(source.fileno()).st_size)
+    metadata = header.get("__metadata__", {})
+    if not isinstance(metadata, dict) or not all(
+        isinstance(key, str) and isinstance(value, str) for key, value in metadata.items()
+    ):
+        raise CheckpointError("Invalid safetensors metadata")
+    return dict(metadata)
+
+
 def load_safetensors(path: str | os.PathLike[str]) -> dict[str, Tensor]:
     """Read the documented safetensors format.
 
@@ -84,18 +112,7 @@ def load_safetensors(path: str | os.PathLike[str]) -> dict[str, Tensor]:
     result: dict[str, Tensor] = {}
     with Path(path).open("rb") as source:
         size = os.fstat(source.fileno()).st_size
-        prefix = source.read(8)
-        if len(prefix) != 8:
-            raise CheckpointError("Truncated safetensors header")
-        header_length = struct.unpack("<Q", prefix)[0]
-        if not 2 <= header_length <= min(100_000_000, size - 8):
-            raise CheckpointError("Invalid safetensors header length")
-        try:
-            header = json.loads(source.read(header_length))
-        except (UnicodeDecodeError, json.JSONDecodeError) as error:
-            raise CheckpointError("Invalid safetensors header") from error
-        if not isinstance(header, dict):
-            raise CheckpointError("Invalid safetensors header")
+        header, header_length = _read_header(source, size)
         payload_start = 8 + header_length
         spans = []
         for name, entry in header.items():
@@ -140,9 +157,18 @@ def load_safetensors(path: str | os.PathLike[str]) -> dict[str, Tensor]:
     return result
 
 
-def save_safetensors(tensors: Mapping[str, Tensor], path: str | os.PathLike[str]) -> None:
-    """Write tensors in the safetensors format (used for tests and converted snapshots)."""
+def save_safetensors(
+    tensors: Mapping[str, Tensor],
+    path: str | os.PathLike[str],
+    *,
+    metadata: Mapping[str, str] | None = None,
+) -> None:
+    """Write tensors in the safetensors format (used for tests, snapshots and adapters)."""
     header: dict[str, Any] = {}
+    if metadata is not None:
+        if not all(isinstance(k, str) and isinstance(v, str) for k, v in metadata.items()):
+            raise TypeError("safetensors metadata keys and values must be strings")
+        header["__metadata__"] = dict(metadata)
     payloads: list[bytes] = []
     offset = 0
     for name in sorted(tensors):

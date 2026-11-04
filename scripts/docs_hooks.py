@@ -61,6 +61,7 @@ def _load(docs: Path) -> dict:
     parts = re.split(r"^# (.+)$", text, flags=re.M)
     sections = []  # (title, body, model ids)
     image_input_note = ""
+    lora_note = ""
     for title, body in zip(parts[1::2], parts[2::2], strict=True):
         head = body.split("**Architecture.**")[0]
         model_line = re.search(r"Models?:\s*(.+?)\s*·\s*Task:", head, flags=re.S)
@@ -71,6 +72,9 @@ def _load(docs: Path) -> dict:
             listed = ids[ids.index(first) : ids.index(last) + 1] + rest
         if title == "Image input":
             image_input_note = body.strip()
+            continue
+        if title == "LoRA adapters":
+            lora_note = body.strip()
             continue
         listed = [i for i in listed if i in MODEL_CATALOG]
         if not listed:
@@ -98,6 +102,7 @@ def _load(docs: Path) -> dict:
         "gallery": gallery,
         "families": families,
         "image_input_note": image_input_note,
+        "lora_note": lora_note,
     }
 
 
@@ -248,6 +253,7 @@ def _anchor(slug: str, d: dict) -> str:
 def models_index(d: dict) -> str:
     n_models, n_fam = len(MODEL_CATALOG), len(d["families"])
     image_note = d["image_input_note"]
+    lora_note = d["lora_note"]
     return (
         GENERATED_MARK
         + f"""# Models
@@ -260,6 +266,10 @@ Each family page has the architecture notes, settings, license and the recorded 
 ## Image input
 
 {image_note}
+
+## LoRA adapters
+
+{lora_note}
 
 [Weights, licenses and pinned revisions](../catalog.md){{ .md-button }}
 """
