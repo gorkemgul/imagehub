@@ -177,21 +177,10 @@ def test_first_sdxl_step_matches(tmp_path, prediction_type, snr_gamma):
     expected = reference.loss(batch, draws, prediction_type=prediction_type, snr_gamma=snr_gamma)
     expected.backward()
     assert torch.equal(loss, expected)
-    # The forward pass and the loss are bit-identical. The SDXL U-Net backward differs from
-    # diffusers in float32 summation order: relative to the largest LoRA gradient, the largest
-    # difference measured is 6.2e-7 (SD 1.x gradients are identical, with or without linear
-    # projections). Self-attention over a single 1x1 token has a zero true gradient, so the
-    # comparison is scaled by the largest gradient, not per tensor. Tolerance: next power of ten.
-    pairs = list(
-        zip(
-            injection.parameters(),
-            reference.lora_parameters(injection.module_names),
-            strict=True,
-        )
-    )
-    scale = max(float(theirs.grad.abs().max()) for _, theirs in pairs)
-    worst = max(float((mine.grad - theirs.grad).abs().max()) for mine, theirs in pairs) / scale
-    assert worst < 1e-6, worst
+    for mine, theirs in zip(
+        injection.parameters(), reference.lora_parameters(injection.module_names), strict=True
+    ):
+        assert torch.equal(mine.grad, theirs.grad)
 
 
 def test_saved_sdxl_adapter_matches_in_diffusers(tmp_path):

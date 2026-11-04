@@ -49,6 +49,9 @@ class ResnetBlock(nn.Module):
             h = h + self.time_emb_proj(F.silu(temb))[:, :, None, None]
         h = self.conv2(F.silu(self.norm2(h)))
         if self.conv_shortcut is not None:
+            # As diffusers does in training: the copy changes the backward summation order.
+            if self.training:
+                x = x.contiguous()
             x = self.conv_shortcut(x)
         return x + h
 
