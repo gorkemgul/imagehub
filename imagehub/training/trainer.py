@@ -301,8 +301,9 @@ class Trainer:
     def evaluate(self, eval_dataset: Any = None) -> dict[str, float]:
         """Mean training loss over ``eval_dataset`` without gradients.
 
-        Noise, timesteps and crops come from generators reset to the same seed on every call,
-        so repeated evaluations of the same adapter agree.
+        Images are center-cropped and noise and timesteps are seeded by dataset position, so
+        repeated evaluations of the same adapter agree, with any number of processes when the
+        eval batch size is 1.
         """
         self._setup()
         assert self.components is not None
@@ -319,7 +320,6 @@ class Trainer:
             random_flip=False,
             generator=torch.Generator().manual_seed(args.seed + 3),
         )
-        noise = torch.Generator().manual_seed(args.seed + 4 + state.rank)
         start = len(dataset) * state.rank // state.world_size
         end = len(dataset) * (state.rank + 1) // state.world_size
         size = args.per_device_eval_batch_size
@@ -331,6 +331,8 @@ class Trainer:
                 for first in range(start, end, size):
                     items = [dataset[i] for i in range(first, min(first + size, end))]
                     pixels, ids = self._to_device(collator(items))
+                    # Seeded by position, so the result does not depend on the process count.
+                    noise = torch.Generator().manual_seed(args.seed + 4 + first)
                     total += float(self.objective(pixels, ids, noise)) * len(items)
                     count += len(items)
         finally:

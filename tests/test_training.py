@@ -300,3 +300,92 @@ def test_training_support_table_matches_the_profiles(page):
         for s in list_training_specs(support="native")
     ]
     assert documented == expected
+
+
+# Evaluation, validation images and collators -------------------------------------------------
+
+
+def test_evaluate_is_repeatable_and_tracks_the_adapter(tmp_path, tiny_sd):
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    args = arguments(tmp_path, max_steps=5, learning_rate=1e-2, per_device_eval_batch_size=2)
+    trainer = Trainer("sd-v1-5", tiny_sd, args, data, eval_dataset=data)
+    first = trainer.evaluate()
+    assert trainer.evaluate() == first
+    assert math.isfinite(first["eval_loss"])
+    trainer.train()
+    assert trainer.evaluate()["eval_loss"] != first["eval_loss"]
+    with pytest.raises(ValueError, match="eval_dataset"):
+        Trainer("sd-v1-5", tiny_sd, args, data).evaluate()
+
+
+def test_evaluation_during_training_leaves_training_unchanged(tmp_path, tiny_sd):
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    common = dict(max_steps=4, random_flip=True, center_crop=False)
+    plain = Trainer("sd-v1-5", tiny_sd, arguments(tmp_path / "a", **common), data)
+    plain.train()
+    evaluated = Trainer(
+        "sd-v1-5",
+        tiny_sd,
+        arguments(tmp_path / "b", eval_strategy="steps", eval_steps=2, **common),
+        data,
+        eval_dataset=data,
+    )
+    output = evaluated.train()
+    expected, actual = (
+        plain.injection.adapter_state_dict(),
+        evaluated.injection.adapter_state_dict(),
+    )
+    assert all(torch.equal(actual[k], expected[k]) for k in expected)
+    evals = [entry for entry in output.log_history if "eval_loss" in entry]
+    assert [entry["step"] for entry in evals] == [2.0, 4.0]
+
+
+def test_validation_images_match_the_pipeline(tmp_path, tiny_sd):
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    args = arguments(
+        tmp_path,
+        max_steps=3,
+        learning_rate=1e-2,
+        eval_strategy="steps",
+        eval_steps=2,
+        validation_prompts=("a cat", "a dog"),
+        validation_num_inference_steps=2,
+        validation_guidance_scale=3.0,
+        seed=5,
+    )
+    trainer = Trainer("sd-v1-5", tiny_sd, args, data)
+    trainer.train()
+    samples = args.output_dir / "samples"
+    assert sorted(p.name for p in samples.iterdir()) == ["step-2", "step-3"]
+    adapter = trainer.save_model(tmp_path / "final")
+    with pipeline("t2i", backend="sd-v1-5", model=tiny_sd, lora=adapter) as pipe:
+        for index, prompt in enumerate(args.validation_prompts):
+            expected = pipe(prompt, seed=5, steps=2, guidance=3.0, width=32, height=32)
+            with PIL.open(samples / "step-3" / f"{index}.png") as image:
+                actual = torch.frombuffer(
+                    bytearray(image.convert("RGB").tobytes()), dtype=torch.uint8
+                )
+            assert torch.equal(actual.view(32, 32, 3), expected.images[0].tensor)
+
+
+def test_custom_data_collator(tmp_path, tiny_sd):
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    calls = []
+
+    def collate(features):
+        calls.append(len(features))
+        pixels = torch.zeros(len(features), 3, 32, 32)
+        ids = torch.zeros(len(features), 77, dtype=torch.long)
+        return {"pixel_values": pixels, "input_ids": ids}
+
+    trainer = Trainer(
+        "sd-v1-5", tiny_sd, arguments(tmp_path, max_steps=2), data, data_collator=collate
+    )
+    trainer.train()
+    assert calls == [1, 1]
+
+    def broken(features):
+        return {"pixels": torch.zeros(1, 3, 32, 32)}
+
+    with pytest.raises(ValueError, match="pixel_values"):
+        Trainer("sd-v1-5", tiny_sd, arguments(tmp_path / "b"), data, data_collator=broken).train()
