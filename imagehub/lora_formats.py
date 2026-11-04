@@ -58,7 +58,7 @@ _LEGACY_TEXT = (
     (".lora.up", ".lora_B"),
     (".lora.down", ".lora_A"),
 )
-_COMPONENTS = ("unet", "text_encoder", "text_encoder_2")
+_COMPONENTS = ("unet", "transformer", "text_encoder", "text_encoder_2", "text_encoder_3")
 _SGM_SINGLE = {
     "input_blocks_0_0": "conv_in",
     "out_2": "conv_out",

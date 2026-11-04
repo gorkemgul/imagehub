@@ -20,6 +20,7 @@ from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
+from imagehub.lora_formats import LoRAOption, apply_lora, parse_lora_option
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModelWithProjection
 from imagehub.models.sd3_transformer import SD3Transformer2DModel
@@ -262,8 +263,15 @@ class StableDiffusion3Backend(TextToImageBackend):
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
         model_id: str | None = None,
+        lora: LoRAOption = None,
+        lora_scale: float = 1.0,
+        lora_fuse: bool = False,
     ) -> None:
         super().__init__()
+        if not isinstance(lora_fuse, bool):
+            raise TypeError("lora_fuse must be a bool")
+        self.lora = parse_lora_option(lora, lora_scale)
+        self.lora_fuse = lora_fuse
         self.source = Path(model)
         self.model_id = model_id
         self.device = resolve_device(device)
@@ -348,6 +356,17 @@ class StableDiffusion3Backend(TextToImageBackend):
                 "both share the Stable Diffusion 3 architecture, so it was loaded",
                 UserWarning,
                 stacklevel=2,
+            )
+        if self.lora:
+            c = self.components
+            apply_lora(
+                {
+                    "transformer": c.transformer,
+                    "text_encoder": c.text_encoder,
+                    "text_encoder_2": c.text_encoder_2,
+                },
+                self.lora,
+                fuse=self.lora_fuse,
             )
 
     def _unload(self) -> None:
