@@ -9,3 +9,4 @@ Short, task-shaped pages.
 | [Devices and precision](devices.md) | choose CPU, MPS or CUDA, and understand what is claimed on each |
 | [Image input](image-input.md) | pass an input image to the models that accept one |
 | [Reproducibility](reproducibility.md) | get the same image twice, and the same as the reference |
+| [LoRA training](training.md) | fine-tune a LoRA adapter on your own images |
