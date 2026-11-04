@@ -157,7 +157,8 @@ pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
 **Profiles.** `TrainingSupport` has two values to start: `lora` (a verified LoRA objective) and
 `inference_only`. `TrainingSpec` records the catalog id, family, support level and the default
 LoRA target modules. Every catalog model has a profile; the ones served by the Stable Diffusion
-1.x backend are `lora`, the rest `inference_only`. `list_training_specs(support=...)` filters
+1.x backend are `lora`, except the few-step distilled `sd-turbo`, `lcm-dreamshaper-v7` and
+`sdxs-512-0.9`; the rest are `inference_only`. `list_training_specs(support=...)` filters
 them and feeds a training-support table in the docs. `Trainer` refuses an `inference_only`
 model with a message naming the supported ones.
 
@@ -180,7 +181,7 @@ default close to the diffusers `train_text_to_image_lora.py` script:
 | `logging_steps`, `save_steps` | `10`, `500` |
 | `report_to` | `"none"` (also `"wandb"`, imported only when requested) |
 | `seed` | `0` |
-| `device`, `dataloader_num_workers` | `"cpu"`, `0` |
+| `device` | `"cpu"` |
 
 **Data.** `ImageFolderDataset(path)` reads the Hugging Face imagefolder layout:
 
@@ -191,6 +192,7 @@ my_images/
 ```
 
 Missing files, missing captions and unreadable images fail when the dataset is created. Images
+are loaded in the training process; there are no data-loader workers. Images
 are resized to `resolution` on the short side, cropped (center or seeded random), optionally
 flipped and normalized to `[-1, 1]`. `train_dataset` also accepts any map-style dataset whose
 items are `{"image": PIL.Image | Tensor, "text": str}`, so a Hugging Face `datasets` dataset
@@ -201,7 +203,9 @@ gradients. Each step encodes images to latents (`latent_dist.sample() * scaling_
 samples noise (plus `noise_offset`) and a uniform timestep, adds noise with the DDPM schedule
 from the snapshot's scheduler config, and computes the MSE between the U-Net prediction and the
 `epsilon` or `v_prediction` target, with optional min-SNR weighting. Only the U-Net LoRA
-parameters train, with AdamW.
+parameters train, with AdamW. New adapters use PEFT's gaussian initialization, as the script does.
+The script's gradient clipping never runs (it receives an exhausted parameter generator);
+imagehub clips as documented.
 
 **Precision.** With `mixed_precision`, frozen components run in the requested dtype and the
 U-Net forward runs under autocast; LoRA parameters and optimizer state stay float32. fp16 uses a

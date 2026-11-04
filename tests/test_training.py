@@ -278,3 +278,17 @@ def test_objective_ignores_sampling_scheduler_settings(tiny_sd):
     objective = StableDiffusionLoRAObjective(components)
     assert objective.prediction_type == "v_prediction"
     assert objective.num_train_timesteps == 1000
+
+
+@pytest.mark.parametrize("page", ["training.md", "training.tr.md"])
+def test_training_support_table_matches_the_profiles(page):
+    from pathlib import Path
+
+    text = (Path(__file__).parents[1] / "docs" / "guides" / page).read_text(encoding="utf-8")
+    table = text.split("<!-- training-support:start -->")[1].split("<!-- training-support:end -->")[
+        0
+    ]
+    rows = [line.split("|")[1:3] for line in table.strip().splitlines()[2:]]
+    documented = [(name.strip().strip("`"), support.strip()) for name, support in rows]
+    expected = [(s.model_id, s.support.value) for s in list_training_specs(support="lora")]
+    assert documented == expected
