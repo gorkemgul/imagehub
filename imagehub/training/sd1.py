@@ -22,7 +22,13 @@ from imagehub.models.layers import ResnetBlock
 from imagehub.models.unet_2d import ScaleShiftResnetBlock, TransformerBlock
 from imagehub.schedulers.ddpm import DDPMScheduler
 from imagehub.training.data import StableDiffusionCollator
-from imagehub.training.family import Collator, Objective, TrainingFamily
+from imagehub.training.family import (
+    FLOW_MATCHING_OPTIONS,
+    Collator,
+    Objective,
+    TrainingFamily,
+    reject_options,
+)
 
 if TYPE_CHECKING:
     from imagehub.training.arguments import TrainingArguments
@@ -161,9 +167,13 @@ class StableDiffusionLoRAObjective(Objective):
 class StableDiffusionFamily(TrainingFamily):
     """Stable Diffusion 1.x / 2.x: LoRA on the U-Net attention projections."""
 
+    name = "Stable Diffusion"
     prefix = "unet"
     batch_keys = ("pixel_values", "input_ids")
     checkpoint_blocks = (TransformerBlock, ResnetBlock, ScaleShiftResnetBlock)
+
+    def validate(self, args: TrainingArguments) -> None:
+        reject_options(args, FLOW_MATCHING_OPTIONS + ("max_sequence_length",), self.name)
 
     def load(
         self,

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from imagehub.training.flow_matching import WEIGHTING_SCHEMES
 from imagehub.training.reporting import REPORTERS
 
 EVAL_STRATEGIES = ("no", "steps")
@@ -80,6 +81,12 @@ class TrainingArguments:
     noise_offset: float = 0.0
     snr_gamma: float | None = None
     prediction_type: str | None = None
+    weighting_scheme: str | None = None
+    logit_mean: float | None = None
+    logit_std: float | None = None
+    mode_scale: float | None = None
+    precondition_outputs: bool | None = None
+    max_sequence_length: int | None = None
     logging_steps: int = 10
     save_steps: int = 500
     eval_strategy: str = "no"
@@ -140,6 +147,24 @@ class TrainingArguments:
         _choice("eval_strategy", self.eval_strategy, EVAL_STRATEGIES)
         if self.prediction_type is not None:
             _choice("prediction_type", self.prediction_type, PREDICTION_TYPES)
+        if self.weighting_scheme is not None:
+            _choice("weighting_scheme", self.weighting_scheme, WEIGHTING_SCHEMES)
+        for name in ("logit_mean", "logit_std", "mode_scale"):
+            value = getattr(self, name)
+            if value is not None:
+                if isinstance(value, bool) or not isinstance(value, int | float):
+                    raise ValueError(f"{name} must be a number")
+                if not math.isfinite(value):
+                    raise ValueError(f"{name} must be a finite number")
+                object.__setattr__(self, name, float(value))
+        if self.logit_std is not None and self.logit_std <= 0:
+            raise ValueError("logit_std must be positive")
+        if self.precondition_outputs is not None and not isinstance(
+            self.precondition_outputs, bool
+        ):
+            raise ValueError("precondition_outputs must be a bool")
+        if self.max_sequence_length is not None:
+            _positive_int("max_sequence_length", self.max_sequence_length)
         for name in ("center_crop", "random_flip", "gradient_checkpointing"):
             if not isinstance(getattr(self, name), bool):
                 raise ValueError(f"{name} must be a bool")
