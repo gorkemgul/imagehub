@@ -102,6 +102,7 @@ class Trainer:
         self.log_history: list[dict[str, float]] = []
         self.components: StableDiffusionComponents | None = None
         self.injection: LoRAInjection | None = None
+        self._run: Any = None
 
     # Setup -------------------------------------------------------------------------------
 
@@ -235,7 +236,10 @@ class Trainer:
             return
         print("  ".join(f"{k} {_format(v)}" for k, v in record.items()), flush=True)
         if run is not None:
-            run.log({k: v for k, v in record.items() if k != "step"}, step=self.global_step)
+            # Named like diffusers' training scripts, so dashboards line up.
+            names = {"loss": "train_loss"}
+            values = {names.get(k, k): v for k, v in record.items() if k != "step"}
+            run.log(values, step=self.global_step)
 
     def train(self, resume_from_checkpoint: bool | str | os.PathLike[str] = False) -> TrainOutput:
         """Train until ``args.max_steps`` optimizer steps; optionally resume a checkpoint first."""
@@ -247,7 +251,7 @@ class Trainer:
                 else Path(resume_from_checkpoint)
             )
             self._load_checkpoint(path)
-        run = self._start_reporting()
+        run = self._run = self._start_reporting()
         interval = self.args.evaluation_interval
         losses = []
         started = time.perf_counter()
@@ -276,6 +280,7 @@ class Trainer:
             if losses and self.args.validation_prompts and last_sampled != self.global_step:
                 self.generate_samples()
         finally:
+            self._run = None
             if run is not None:
                 run.finish()
         runtime = time.perf_counter() - started
@@ -341,7 +346,10 @@ class Trainer:
         return {"eval_loss": summed_loss / summed_count}
 
     def generate_samples(self) -> Path:
-        """Write one image per validation prompt to ``output_dir/samples/step-N/``."""
+        """Write one image per validation prompt to ``output_dir/samples/step-N/``.
+
+        During a ``report_to="wandb"`` run the images are also logged as ``validation``.
+        """
         self._setup()
         assert self.components is not None
         args = self.args
@@ -357,6 +365,7 @@ class Trainer:
                 args.resolution // self.objective.downsample,
             )
             components.unet.eval()
+            paths = []
             try:
                 for index, prompt in enumerate(args.validation_prompts):
                     latents = denoise(
@@ -372,8 +381,17 @@ class Trainer:
                         "RGB", (pixels.shape[1], pixels.shape[0]), bytes(pixels.flatten().tolist())
                     )
                     image.save(directory / f"{index}.png")
+                    paths.append(directory / f"{index}.png")
             finally:
                 components.unet.train()
+            if self._run is not None:
+                import wandb
+
+                images = [
+                    wandb.Image(str(path), caption=prompt)
+                    for path, prompt in zip(paths, args.validation_prompts, strict=True)
+                ]
+                self._run.log({"validation": images}, step=self.global_step)
         barrier(self.distributed)
         return directory
 

@@ -148,7 +148,7 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` evaluates every `eval_steps` |
 | `validation_prompts` | none | prompts rendered at each evaluation point |
 | `validation_num_inference_steps`, `validation_guidance_scale` | `25`, `7.5` | sampling settings for those images |
-| `report_to`, `run_name` | `"none"`, `None` | `"wandb"` also logs to Weights & Biases if installed |
+| `report_to`, `run_name` | `"none"`, `None` | `"wandb"` also logs `train_loss`, `lr`, `eval_loss` and the sample images to Weights & Biases (if installed) |
 | `seed`, `device` | `0`, `"cpu"` | random seed; `"cuda"` or `"mps"` to train on a GPU |
 
 ## Choosing rank and alpha

@@ -389,3 +389,40 @@ def test_custom_data_collator(tmp_path, tiny_sd):
 
     with pytest.raises(ValueError, match="pixel_values"):
         Trainer("sd-v1-5", tiny_sd, arguments(tmp_path / "b"), data, data_collator=broken).train()
+
+
+def test_wandb_receives_losses_and_validation_images(tmp_path, tiny_sd, monkeypatch):
+    import sys
+    import types
+
+    logged = []
+
+    class Run:
+        def log(self, values, step):
+            logged.append((step, values))
+
+        def finish(self):
+            logged.append(("finished", None))
+
+    class Image:
+        def __init__(self, path, caption):
+            self.path, self.caption = path, caption
+
+    fake = types.SimpleNamespace(init=lambda **kwargs: Run(), Image=Image)
+    monkeypatch.setitem(sys.modules, "wandb", fake)
+    data = ImageFolderDataset(write_folder(tmp_path / "data"))
+    args = arguments(
+        tmp_path,
+        max_steps=2,
+        report_to="wandb",
+        eval_strategy="steps",
+        eval_steps=2,
+        validation_prompts=("a cat",),
+        validation_num_inference_steps=1,
+    )
+    Trainer("sd-v1-5", tiny_sd, args, data).train()
+    assert [step for step, values in logged if values and "train_loss" in values] == [1, 2]
+    images = [values["validation"] for step, values in logged if values and "validation" in values]
+    assert len(images) == 1 and images[0][0].caption == "a cat"
+    assert images[0][0].path.endswith("step-2/0.png")
+    assert logged[-1] == ("finished", None)

@@ -151,7 +151,7 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` her `eval_steps` adımda değerlendirir |
 | `validation_prompts` | yok | her değerlendirme noktasında çizilen prompt'lar |
 | `validation_num_inference_steps`, `validation_guidance_scale` | `25`, `7.5` | bu görüntülerin örnekleme ayarları |
-| `report_to`, `run_name` | `"none"`, `None` | `"wandb"`, kuruluysa Weights & Biases'e de yazar |
+| `report_to`, `run_name` | `"none"`, `None` | `"wandb"`, kuruluysa `train_loss`, `lr`, `eval_loss` ve örnek görüntüleri Weights & Biases'e de gönderir |
 | `seed`, `device` | `0`, `"cpu"` | rastgelelik tohumu; GPU için `"cuda"` veya `"mps"` |
 
 ## Rank ve alpha seçimi
