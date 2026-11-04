@@ -35,6 +35,7 @@ Issues = "https://github.com/gorkemgul/imagehub/issues"
 
 [project.optional-dependencies]
 image = ["pillow>=10"]
+training = ["pillow>=10"]
 reference = [
   "diffusers==0.40.0",
   "transformers==5.18.0",
