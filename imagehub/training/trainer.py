@@ -8,7 +8,7 @@ import math
 import os
 import re
 import time
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -16,17 +16,11 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from imagehub.backends.stable_diffusion import (
-    StableDiffusionComponents,
-    decode_latents,
-    denoise,
-    initial_latents,
-)
 from imagehub.checkpoints import save_safetensors
 from imagehub.lora import LoRAConfig, LoRAInjection, inject_lora
 from imagehub.lora_formats import read_lora_file
 from imagehub.training.arguments import TrainingArguments
-from imagehub.training.data import StableDiffusionCollator, _pil
+from imagehub.training.data import _pil
 from imagehub.training.distributed import (
     average_gradients,
     barrier,
@@ -34,16 +28,15 @@ from imagehub.training.distributed import (
     reduce_sum,
     setup_distributed,
 )
+from imagehub.training.family import Collator, get_family
 from imagehub.training.reporting import Reporter, start_reporters
 from imagehub.training.schedules import lr_lambda
-from imagehub.training.sd1 import StableDiffusionLoRAObjective
 from imagehub.training.specs import get_training_spec, list_training_specs
 
 _DTYPES = {"no": torch.float32, "fp16": torch.float16, "bf16": torch.bfloat16}
 ADAPTER_FILE = "adapter.safetensors"
 CONFIG_FILE = "adapter_config.json"
 STATE_FILE = "trainer_state.pt"
-Collator = Callable[[Sequence[Mapping[str, Any]]], Mapping[str, Tensor]]
 
 
 @dataclass
@@ -63,13 +56,15 @@ def _check_dataset(dataset: Any, name: str) -> None:
 
 
 class Trainer:
-    """Train a LoRA adapter for the U-Net of a Stable Diffusion 1.x / 2.x checkpoint.
+    """Train a LoRA adapter for a checkpoint whose training profile is ``native``.
 
     Datasets are sized and their items are ``{"image": PIL image or (3, H, W) tensor in [0, 1],
-    "text": str}``, such as :class:`ImageFolderDataset`. ``data_collator`` replaces the default
-    :class:`StableDiffusionCollator`; it maps a list of items to ``{"pixel_values": (B, 3, H, W)
-    in [-1, 1], "input_ids": (B, 77)}``. Under ``torchrun`` every process trains on its own share
-    of each batch and the LoRA gradients are averaged.
+    "text": str}``, such as :class:`ImageFolderDataset`. What differs between model families
+    (loading, the trained module, batches, the loss and sample images) comes from the profile's
+    :class:`~imagehub.training.family.TrainingFamily`. ``data_collator`` replaces the family's
+    default collator; for Stable Diffusion 1.x / 2.x it maps a list of items to
+    ``{"pixel_values": (B, 3, H, W) in [-1, 1], "input_ids": (B, 77)}``. Under ``torchrun`` every
+    process trains on its own share of each batch and the LoRA gradients are averaged.
     """
 
     def __init__(
@@ -99,9 +94,10 @@ class Trainer:
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator
+        self.family = get_family(self.spec.family)
         self.global_step = 0
         self.log_history: list[dict[str, float]] = []
-        self.components: StableDiffusionComponents | None = None
+        self.components: Any = None
         self.injection: LoRAInjection | None = None
         self._reporters: list[Reporter] = []
 
@@ -113,16 +109,18 @@ class Trainer:
         args = self.args
         self.distributed, self.device = setup_distributed(args.device)
         self.dtype = _DTYPES[args.mixed_precision]
-        components = StableDiffusionComponents.load(
+        family = self.family
+        components = family.load(
             self.checkpoint, device=self.device, dtype=self.dtype, model_id=self.model_id
         )
-        for module in (components.unet, components.text_encoder, components.vae):
+        trained = family.trainable(components)
+        for module in [trained, *family.frozen(components)]:
             module.requires_grad_(False)
-        components.text_encoder.eval()
-        components.vae.eval()
+        for module in family.frozen(components):
+            module.eval()
         self.target_modules = args.lora_target_modules or self.spec.target_modules
         injection = inject_lora(
-            components.unet,
+            trained,
             LoRAConfig(
                 rank=args.lora_rank,
                 alpha=args.lora_alpha,
@@ -135,13 +133,9 @@ class Trainer:
         # Trainable parameters and optimizer state stay in float32 under mixed precision.
         for parameter in injection.parameters():
             parameter.data = parameter.data.float()
-        components.unet.train()
-        self.objective = StableDiffusionLoRAObjective(
-            components,
-            prediction_type=args.prediction_type,
-            snr_gamma=args.snr_gamma,
-            noise_offset=args.noise_offset,
-        )
+        trained.train()
+        self.trained = trained
+        self.objective = family.objective(components, args)
         self.parameters = list(injection.parameters())
         self.optimizer = torch.optim.AdamW(
             self.parameters,
@@ -161,12 +155,8 @@ class Trainer:
         self.order_generator = torch.Generator().manual_seed(args.seed)
         self.augment_generator = torch.Generator().manual_seed(args.seed + 1 + 2 * rank)
         self.noise_generator = torch.Generator().manual_seed(args.seed + 2 + 2 * rank)
-        self.collator: Collator = self.data_collator or StableDiffusionCollator(
-            components.tokenizer,
-            resolution=args.resolution,
-            center_crop=args.center_crop,
-            random_flip=args.random_flip,
-            generator=self.augment_generator,
+        self.collator: Collator = self.data_collator or family.collator(
+            components, args, generator=self.augment_generator, train=True
         )
         self.epoch = 0
         self.position = 0
@@ -191,13 +181,20 @@ class Trainer:
             self.position += 1
         return indices
 
-    def _to_device(self, batch: Mapping[str, Tensor]) -> tuple[Tensor, Tensor]:
-        if not {"pixel_values", "input_ids"} <= set(batch):
-            raise ValueError('data_collator must return "pixel_values" and "input_ids"')
-        pixels = batch["pixel_values"].to(device=self.device, dtype=self.dtype)
-        return pixels, batch["input_ids"].to(device=self.device, dtype=torch.long)
+    def _to_device(self, batch: Mapping[str, Tensor]) -> dict[str, Tensor]:
+        missing = [key for key in self.family.batch_keys if key not in batch]
+        if missing:
+            keys = ", ".join(f'"{key}"' for key in self.family.batch_keys)
+            raise ValueError(f"data_collator must return {keys}")
+        # Floating-point inputs follow the training precision; ids and sizes keep their dtype.
+        return {
+            key: value.to(device=self.device, dtype=self.dtype)
+            if value.is_floating_point()
+            else value.to(self.device)
+            for key, value in batch.items()
+        }
 
-    def _next_batch(self) -> tuple[Tensor, Tensor]:
+    def _next_batch(self) -> dict[str, Tensor]:
         size = self.args.per_device_train_batch_size
         indices = self._next_indices(size * self.distributed.world_size)
         own = indices[self.distributed.rank * size : (self.distributed.rank + 1) * size]
@@ -211,8 +208,7 @@ class Trainer:
         self.optimizer.zero_grad(set_to_none=True)
         total = 0.0
         for _ in range(args.gradient_accumulation_steps):
-            pixels, ids = self._next_batch()
-            loss = self.objective(pixels, ids, self.noise_generator)
+            loss = self.objective(self._next_batch(), self.noise_generator)
             loss = loss / args.gradient_accumulation_steps
             (self.scaler.scale(loss) if self.scaler is not None else loss).backward()
             total += float(loss.detach())
@@ -313,30 +309,29 @@ class Trainer:
         if eval_dataset is not None:
             _check_dataset(eval_dataset, "eval_dataset")
         args, state = self.args, self.distributed
-        collator = self.data_collator or StableDiffusionCollator(
-            self.components.tokenizer,
-            resolution=args.resolution,
-            center_crop=True,
-            random_flip=False,
+        collator = self.data_collator or self.family.collator(
+            self.components,
+            args,
             generator=torch.Generator().manual_seed(args.seed + 3),
+            train=False,
         )
         start = len(dataset) * state.rank // state.world_size
         end = len(dataset) * (state.rank + 1) // state.world_size
         size = args.per_device_eval_batch_size
         total, count = 0.0, 0
-        unet = self.components.unet
-        unet.eval()
+        trained = self.trained
+        trained.eval()
         try:
             with torch.no_grad():
                 for first in range(start, end, size):
                     items = [dataset[i] for i in range(first, min(first + size, end))]
-                    pixels, ids = self._to_device(collator(items))
+                    batch = self._to_device(collator(items))
                     # Seeded by position, so the result does not depend on the process count.
                     noise = torch.Generator().manual_seed(args.seed + 4 + first)
-                    total += float(self.objective(pixels, ids, noise)) * len(items)
+                    total += float(self.objective(batch, noise)) * len(items)
                     count += len(items)
         finally:
-            unet.train()
+            trained.train()
         summed_loss, summed_count = reduce_sum([total, float(count)], state, self.device)
         return {"eval_loss": summed_loss / summed_count}
 
@@ -351,34 +346,19 @@ class Trainer:
         directory = Path(args.output_dir) / "samples" / f"step-{self.global_step}"
         if self.is_main_process:
             directory.mkdir(parents=True, exist_ok=True)
-            components = self.components
             image_module = _pil()
-            shape = (
-                1,
-                self.objective.latent_channels,
-                args.resolution // self.objective.downsample,
-                args.resolution // self.objective.downsample,
-            )
-            components.unet.eval()
+            self.trained.eval()
             paths = []
             try:
                 for index, prompt in enumerate(args.validation_prompts):
-                    latents = denoise(
-                        components,
-                        prompt=prompt,
-                        negative_prompt=None,
-                        steps=args.validation_num_inference_steps,
-                        guidance=args.validation_guidance_scale,
-                        latents=initial_latents(args.seed, shape).to(self.device),
-                    )
-                    pixels = decode_latents(components, latents)[0]
+                    pixels = self.family.sample(self.components, prompt, args, self.device)
                     image = image_module.frombytes(
                         "RGB", (pixels.shape[1], pixels.shape[0]), bytes(pixels.flatten().tolist())
                     )
                     image.save(directory / f"{index}.png")
                     paths.append(directory / f"{index}.png")
             finally:
-                components.unet.train()
+                self.trained.train()
             images = list(zip(paths, args.validation_prompts, strict=True))
             for reporter in self._reporters:
                 reporter.log_images("validation", images, self.global_step)
@@ -389,15 +369,17 @@ class Trainer:
 
     def _adapter_tensors(self) -> dict[str, Tensor]:
         assert self.injection is not None
-        return {f"unet.{k}": v.float() for k, v in self.injection.adapter_state_dict().items()}
+        prefix = self.family.prefix
+        return {f"{prefix}.{k}": v.float() for k, v in self.injection.adapter_state_dict().items()}
 
     def _write_adapter(self, directory: Path) -> Path:
         assert self.injection is not None
         directory.mkdir(parents=True, exist_ok=True)
+        prefix = self.family.prefix
         metadata = {
-            "unet.r": self.args.lora_rank,
-            "unet.lora_alpha": self.args.lora_alpha,
-            "unet.target_modules": list(self.injection.module_names),
+            f"{prefix}.r": self.args.lora_rank,
+            f"{prefix}.lora_alpha": self.args.lora_alpha,
+            f"{prefix}.target_modules": list(self.injection.module_names),
         }
         path = directory / ADAPTER_FILE
         save_safetensors(
@@ -478,7 +460,7 @@ class Trainer:
                 f"{directory} was written by {state['world_size']} processes; resume it with "
                 f"the same number (this run has {self.distributed.world_size})"
             )
-        weights = read_lora_file(directory / ADAPTER_FILE, {"unet": self.components.unet})
+        weights = read_lora_file(directory / ADAPTER_FILE, {self.family.prefix: self.trained})
         self.injection.load_adapter_state_dict(
             {
                 f"{item.module}.lora_{'A' if kind == 'down' else 'B'}.weight": tensor

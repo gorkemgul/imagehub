@@ -178,14 +178,12 @@ def test_training_changes_only_the_adapter_and_lowers_the_loss(tmp_path, tiny_sd
     trainer._setup()
     unet = trainer.components.unet
     frozen = {k: v.clone() for k, v in unet.state_dict().items() if "lora_" not in k}
-    probe_pixels, probe_ids = trainer._next_batch()
+    probe_batch = trainer._next_batch()
     trainer.position = 0
 
     def probe():
         with torch.no_grad():
-            return float(
-                trainer.objective(probe_pixels, probe_ids, torch.Generator().manual_seed(7))
-            )
+            return float(trainer.objective(probe_batch, torch.Generator().manual_seed(7)))
 
     before = probe()
     result = trainer.train()
@@ -498,3 +496,17 @@ def test_missing_tracker_package_is_reported(tmp_path, tiny_sd, monkeypatch):
         trainer.train()
     with pytest.raises(ValueError, match="twice"):
         arguments(tmp_path, report_to=["wandb", "wandb"])
+
+
+def test_training_families_are_registered_per_catalog_family():
+    from imagehub.training import TrainingFamily, get_family
+    from imagehub.training.family import training_families
+
+    for spec in list_training_specs(support="native"):
+        assert spec.family in training_families()
+    family = get_family("stable-diffusion")
+    assert isinstance(family, TrainingFamily)
+    assert family.prefix == "unet"
+    assert family.batch_keys == ("pixel_values", "input_ids")
+    with pytest.raises(KeyError, match="flux"):
+        get_family("flux")

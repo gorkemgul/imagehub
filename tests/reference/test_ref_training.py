@@ -149,7 +149,8 @@ def first_step(root, *, resolution, prediction_type, snr_gamma, record=None):
     )
     pixels = torch.rand(2, 3, resolution, resolution, generator=g) * 2 - 1
     ids = torch.tensor([ours.tokenizer("a cat"), ours.tokenizer("a dog in the snow")])
-    posterior, noise, timesteps = objective.draw(pixels, g)
+    draws = objective.draw({"pixel_values": pixels}, g)
+    posterior, noise, timesteps = draws["posterior"], draws["noise"], draws["timesteps"]
     latents = objective.encode_images(pixels, posterior)
     loss = objective.loss(latents, objective.encode_text(ids), noise, timesteps)
     loss.backward()
@@ -195,11 +196,11 @@ class Recording:
         self.inner = inner
         self.calls = []
 
-    def __call__(self, pixels, ids, generator):
-        posterior, noise, timesteps = self.inner.draw(pixels, generator)
-        self.calls.append((pixels.clone(), ids.clone(), posterior, noise, timesteps))
-        latents = self.inner.encode_images(pixels, posterior)
-        return self.inner.loss(latents, self.inner.encode_text(ids), noise, timesteps)
+    def __call__(self, batch, generator):
+        draws = self.inner.draw(batch, generator)
+        pixels, ids = batch["pixel_values"].clone(), batch["input_ids"].clone()
+        self.calls.append((pixels, ids, draws["posterior"], draws["noise"], draws["timesteps"]))
+        return self.inner.loss_from(batch, draws)
 
 
 def write_folder(root):
