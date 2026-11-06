@@ -142,12 +142,13 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `mixed_precision` | `"no"` | `"fp16"` or `"bf16"`; the adapter and optimizer stay float32 |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | image transform |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | `4`, `4`, `0.0` | adapter size and scale (`alpha / rank`) |
-| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, the eight joint-attention projections for SD 3 |
+| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, the eight joint-attention projections for SD 3, and `to_k`, `to_q`, `to_v` for Sana |
 | `gradient_checkpointing` | `False` | recompute U-Net or transformer blocks in the backward pass to save memory |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | U-Net (DDPM) objective options |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1 and Sana), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: compare the preconditioned output with the latents instead of `noise - latents` |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1) | T5 prompt length |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1), `300` (Sana) | text prompt length |
+| `complex_human_instruction` | `None` | Sana's optional prompt-enhancement instruction; other families reject it |
 | `guidance_scale` | `3.5` | FLUX.1: the guidance embedding's value in training, on checkpoints that have one |
 | `logging_steps`, `save_steps` | `10`, `500` | how often to log and to checkpoint |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` evaluates every `eval_steps` |
@@ -216,6 +217,9 @@ what can be trained (`lora` today).
 | `flux1-krea-dev` | native | lora |
 | `flux-1-lite-8b` | native | lora |
 | `flux1-kontext-dev` | native | lora |
+| `sana-1600m-1024` | native | lora |
+| `sana-600m-1024` | native | lora |
+| `sana-1.5-4.8b-1024` | native | lora |
 | `ssd-1b` | native | lora |
 | `segmind-vega` | native | lora |
 | `koala-700m` | native | lora |
@@ -226,7 +230,14 @@ what can be trained (`lora` today).
 Every other model is `inference_only` for now: the few-step distilled checkpoints (`sd-turbo`,
 `lcm-dreamshaper-v7`, `sdxs-512-0.9`, SDXL Lightning, Hyper-SD, DMD2, `sdxl-turbo`, KOALA
 Lightning), the SDXL refiner (image to image), Playground v2.5 (EDM, not DDPM) and
-`sd3.5-large-turbo` (few-step distilled). More transformer families follow (#202).
+`sd3.5-large-turbo` (few-step distilled), and `sana-sprint-1.6b-1024` (distilled). More
+transformer families follow (#202).
+
+Sana trains its transformer only, using the script's `to_k`, `to_q`, `to_v` targets. Its DC-AE
+has deterministic latents, so the training random stream draws noise then the flow timestep; the
+autoencoder stays float32 under mixed precision. Gemma 2 prompt conditioning uses Sana's attention
+mask and 300-token default; `complex_human_instruction` is optional and defaults to `None` as in
+the script. Gradient checkpointing recomputes the Sana transformer blocks.
 
 For SDXL the transform resizes, flips and then crops, as diffusers' SDXL script does, and records
 each image's original size and crop corner as the U-Net's size conditioning. The autoencoder stays
