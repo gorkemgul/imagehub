@@ -145,9 +145,10 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, the eight joint-attention projections for SD 3 |
 | `gradient_checkpointing` | `False` | recompute U-Net or transformer blocks in the backward pass to save memory |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | U-Net (DDPM) objective options |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | `"logit_normal"`, `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: compare the preconditioned output with the latents instead of `noise - latents` |
-| `max_sequence_length` | `77` | T5 prompt length for SD 3 |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1) | T5 prompt length |
+| `guidance_scale` | `3.5` | FLUX.1: the guidance embedding's value in training, on checkpoints that have one |
 | `logging_steps`, `save_steps` | `10`, `500` | how often to log and to checkpoint |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` evaluates every `eval_steps` |
 | `validation_prompts` | none | prompts rendered at each evaluation point |
@@ -211,6 +212,10 @@ what can be trained (`lora` today).
 | `sd3-medium` | native | lora |
 | `sd3.5-medium` | native | lora |
 | `sd3.5-large` | native | lora |
+| `flux1-dev` | native | lora |
+| `flux1-krea-dev` | native | lora |
+| `flux-1-lite-8b` | native | lora |
+| `flux1-kontext-dev` | native | lora |
 | `ssd-1b` | native | lora |
 | `segmind-vega` | native | lora |
 | `koala-700m` | native | lora |
@@ -234,6 +239,15 @@ timesteps drawn by `weighting_scheme` from the shifted schedule, the noisy laten
 prompt joins the CLIP-L and CLIP-G penultimate states with T5, as at inference. DDPM options
 (`snr_gamma`, `prediction_type`, `noise_offset`) are refused for SD 3, and the flow-matching
 options for the U-Net families.
+
+FLUX.1 dev, Krea dev and Lite train with the corresponding diffusers FLUX DreamBooth step:
+float32 VAE latents are shifted and scaled, packed with FLUX image ids, and compared directly with
+`noise - latents`. The CLIP pooled projection and T5 prompt use a 512-token default. The guidance
+embedding uses `guidance_scale` only on checkpoints that expose it. The adapter targets cover both
+double-stream and single-stream blocks. `flux1-kontext-dev` trains the same step, as the Kontext
+script does without condition images, and also targets the single-stream `proj_mlp` layers;
+image-conditioned Kontext training is not included. `flux1-schnell` is few-step distilled and
+stays `inference_only`.
 
 ```python
 trainer = Trainer(
