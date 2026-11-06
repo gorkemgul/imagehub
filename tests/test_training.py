@@ -71,7 +71,12 @@ def test_training_profiles():
     for excluded in ("sdxl-refiner-1.0", "sdxl-turbo", "dmd2-sdxl-1step", "playground-v2.5"):
         assert get_training_spec(excluded).support is TrainingSupport.INFERENCE_ONLY
     trainable = list_training_specs(support="native")
-    assert {s.family for s in trainable} == {"stable-diffusion", "stable-diffusion-xl"}
+    assert {s.family for s in trainable} == {
+        "stable-diffusion",
+        "stable-diffusion-xl",
+        "stable-diffusion-3",
+    }
+    assert get_training_spec("sd3.5-large-turbo").support is TrainingSupport.INFERENCE_ONLY
     assert len(list_training_specs()) > len(trainable)
     with pytest.raises(KeyError, match="sd-v1-5"):
         get_training_spec("sd-v1-55")

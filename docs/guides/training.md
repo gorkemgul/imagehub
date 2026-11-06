@@ -142,9 +142,12 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `mixed_precision` | `"no"` | `"fp16"` or `"bf16"`; the adapter and optimizer stay float32 |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | image transform |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | `4`, `4`, `0.0` | adapter size and scale (`alpha / rank`) |
-| `lora_target_modules` | `to_q`, `to_k`, `to_v`, `to_out.0` | U-Net layers that get an adapter |
-| `gradient_checkpointing` | `False` | recompute U-Net blocks in the backward pass to save memory |
-| `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | objective options |
+| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, the eight joint-attention projections for SD 3 |
+| `gradient_checkpointing` | `False` | recompute U-Net or transformer blocks in the backward pass to save memory |
+| `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | U-Net (DDPM) objective options |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | `"logit_normal"`, `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `precondition_outputs` | `True` | flow matching: compare the preconditioned output with the latents instead of `noise - latents` |
+| `max_sequence_length` | `77` | T5 prompt length for SD 3 |
 | `logging_steps`, `save_steps` | `10`, `500` | how often to log and to checkpoint |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` evaluates every `eval_steps` |
 | `validation_prompts` | none | prompts rendered at each evaluation point |
@@ -205,6 +208,9 @@ what can be trained (`lora` today).
 | `juggernaut-xl-v9` | native | lora |
 | `animagine-xl-4.0` | native | lora |
 | `dreamshaper-xl-1.0` | native | lora |
+| `sd3-medium` | native | lora |
+| `sd3.5-medium` | native | lora |
+| `sd3.5-large` | native | lora |
 | `ssd-1b` | native | lora |
 | `segmind-vega` | native | lora |
 | `koala-700m` | native | lora |
@@ -214,13 +220,36 @@ what can be trained (`lora` today).
 
 Every other model is `inference_only` for now: the few-step distilled checkpoints (`sd-turbo`,
 `lcm-dreamshaper-v7`, `sdxs-512-0.9`, SDXL Lightning, Hyper-SD, DMD2, `sdxl-turbo`, KOALA
-Lightning), the SDXL refiner (image to image) and Playground v2.5 (EDM, not DDPM). The transformer
-families come next (#202).
+Lightning), the SDXL refiner (image to image), Playground v2.5 (EDM, not DDPM) and
+`sd3.5-large-turbo` (few-step distilled). More transformer families follow (#202).
 
 For SDXL the transform resizes, flips and then crops, as diffusers' SDXL script does, and records
 each image's original size and crop corner as the U-Net's size conditioning. The autoencoder stays
 in float32 under mixed precision. `gradient_checkpointing=True` recomputes the U-Net's transformer
 and resnet blocks in the backward pass to save memory; the gradients are the same.
+
+SD 3 / 3.5 train with the flow-matching objective of diffusers' `train_dreambooth_lora_sd3.py`:
+timesteps drawn by `weighting_scheme` from the shifted schedule, the noisy latents
+`(1 - sigma) * latents + sigma * noise`, and preconditioned outputs compared with the latents. The
+prompt joins the CLIP-L and CLIP-G penultimate states with T5, as at inference. DDPM options
+(`snr_gamma`, `prediction_type`, `noise_offset`) are refused for SD 3, and the flow-matching
+options for the U-Net families.
+
+```python
+trainer = Trainer(
+    model="sd3.5-medium",
+    checkpoint="checkpoints/sd3.5-medium",
+    args=TrainingArguments(
+        output_dir="runs/my-dog-sd35",
+        max_steps=1000,
+        resolution=1024,
+        mixed_precision="bf16",
+        gradient_checkpointing=True,
+        weighting_scheme="logit_normal",
+    ),
+    train_dataset=ImageFolderDataset("my_images"),
+)
+```
 
 ## What is checked
 

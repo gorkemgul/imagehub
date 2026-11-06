@@ -37,12 +37,17 @@ class Objective:
 class TrainingFamily:
     """Loading, modules, batches, loss and sample images for one model family."""
 
+    #: Name used in messages.
+    name: str
     #: Adapter key prefix in the diffusers layout (``unet`` or ``transformer``).
     prefix: str
     #: Keys the collator must produce.
     batch_keys: tuple[str, ...]
     #: Block classes recomputed in the backward pass with ``gradient_checkpointing``.
     checkpoint_blocks: tuple[type, ...] = ()
+
+    def validate(self, args: TrainingArguments) -> None:
+        """Reject settings the family's objective does not use."""
 
     def load(
         self,
@@ -86,7 +91,25 @@ class TrainingFamily:
 _FAMILIES = {
     "stable-diffusion": "imagehub.training.sd1:StableDiffusionFamily",
     "stable-diffusion-xl": "imagehub.training.sdxl:StableDiffusionXLFamily",
+    "stable-diffusion-3": "imagehub.training.sd3:StableDiffusion3Family",
 }
+
+FLOW_MATCHING_OPTIONS = (
+    "weighting_scheme",
+    "logit_mean",
+    "logit_std",
+    "mode_scale",
+    "precondition_outputs",
+)
+DDPM_OPTIONS = ("prediction_type", "snr_gamma", "noise_offset")
+
+
+def reject_options(args: TrainingArguments, names: tuple[str, ...], family: str) -> None:
+    """Raise when any of ``names`` differs from its default for a family that ignores it."""
+    defaults = {"noise_offset": 0.0}
+    used = [name for name in names if getattr(args, name) != defaults.get(name)]
+    if used:
+        raise ValueError(f"{', '.join(used)} do not apply to {family} training")
 
 
 def get_family(name: str) -> TrainingFamily:

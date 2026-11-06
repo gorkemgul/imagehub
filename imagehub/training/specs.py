@@ -35,13 +35,25 @@ class TrainingSpec:
 
 _UNET_ATTENTION = ("to_q", "to_k", "to_v", "to_out.0")
 # Catalog families with a training family, and their default LoRA targets.
+_JOINT_ATTENTION = (
+    "attn.add_k_proj",
+    "attn.add_q_proj",
+    "attn.add_v_proj",
+    "attn.to_add_out",
+    "attn.to_k",
+    "attn.to_out.0",
+    "attn.to_q",
+    "attn.to_v",
+)
 _TRAINABLE = {
     "stable-diffusion": _UNET_ATTENTION,
     "stable-diffusion-xl": _UNET_ATTENTION,
+    "stable-diffusion-3": _JOINT_ATTENTION,
 }
 # Few-step distilled checkpoints are not trained with the denoising objective; the tiny
 # autoencoder of SDXS has no posterior to sample training latents from; the SDXL refiner is an
 # image-to-image model; Playground v2.5 uses the EDM formulation, not DDPM.
+# sd3.5-large-turbo is distilled as well.
 _EXCLUDED = frozenset(
     {
         "sd-turbo",
@@ -58,6 +70,7 @@ _EXCLUDED = frozenset(
         "koala-lightning-700m",
         "koala-lightning-1b",
         "playground-v2.5",
+        "sd3.5-large-turbo",
     }
 )
 

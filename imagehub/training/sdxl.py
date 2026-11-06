@@ -66,9 +66,13 @@ class StableDiffusionXLLoRAObjective(StableDiffusionLoRAObjective):
 class StableDiffusionXLFamily(TrainingFamily):
     """SDXL base and fine-tunes: LoRA on the U-Net attention projections."""
 
+    name = "Stable Diffusion XL"
     prefix = "unet"
     batch_keys = ("pixel_values", "input_ids", "input_ids_2", "time_ids")
     checkpoint_blocks = StableDiffusionFamily.checkpoint_blocks
+
+    def validate(self, args: TrainingArguments) -> None:
+        StableDiffusionFamily.validate(self, args)  # type: ignore[arg-type]
 
     def load(
         self,
