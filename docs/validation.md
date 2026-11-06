@@ -46,6 +46,28 @@ Like diffusers, the U-Net's resnet blocks make the shortcut input contiguous in 
 copy does not change outputs but does change the backward summation order, and with it the
 gradients are bit-identical.
 
+### Stable Diffusion 3 / 3.5
+
+Validated on CPU on November 7, 2026 against `examples/dreambooth/train_dreambooth_lora_sd3.py`
+(diffusers 0.40.0, peft 0.21.2), with the script's default LoRA targets (the eight
+joint-attention projections):
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Training timesteps and sigmas vs `FlowMatchEulerDiscreteScheduler`, shift 1 and 3 | — | identical | identical |
+| Timestep density (`logit_normal`, `mode`, `sigma_sqrt`, `cosmap`) and loss weighting vs `diffusers.training_utils`, same generator | — | identical | identical |
+| Image transform (resize, flip, center / random crop) vs the script, 4 image sizes | — | identical | identical |
+| CLIP-L, CLIP-G and T5 token ids vs the script's tokenization | tiny SD3 | identical | identical |
+| First-step draws (posterior noise, noise, timesteps): each weighting scheme with preconditioned outputs, and `logit_normal` without | tiny SD3 | identical | identical |
+| First-step loss and LoRA gradients, same five cases | tiny SD3 | 0 | 0 |
+| Saved adapter loaded by diffusers `load_lora_weights` vs imagehub, 3 steps, guidance 4 | tiny SD3 | 0 (pixels) | 0 |
+| Gradients with and without gradient checkpointing | tiny SD3 | identical | identical |
+
+The script tosses the flip coin with Python's `random`, and its `RandomHorizontalFlip(p=1.0)`
+draws one more torch number before the crop offsets; imagehub draws the coin from its generator.
+The comparison replays imagehub's coin on both sides. `sd3.5-large-turbo` is few-step distilled
+and stays `inference_only`.
+
 ### Training runtime (CPU)
 
 | Check | Result |
@@ -68,6 +90,10 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 - Random adapters were written in each supported layout for tiny random-weight Stable Diffusion
   1.x and SDXL snapshots, covering the U-Net attention, `proj_in` / `proj_out`, feed-forward and
   CLIP text-encoder layers. Both sides generated 3 steps at 32×32 from seed 42.
+- On November 7, 2026, diffusers / PEFT adapters for a tiny SD3 snapshot covered the
+  transformer's joint attention and feed-forward layers and both CLIP text encoders. Both sides
+  generated 3 steps at 32×32 from seed 42 with guidance 4. The guided prompt embeddings were
+  compared too, because text-encoder adapters barely move the tiny model's pixels.
 - One published adapter, `latent-consistency/lcm-lora-sdv1-5` at
   `cf2fced511dbe7e26c8d1d397e728fbab875db4b` (kohya layout, per-module alphas, 278 layers of
   which 96 are convolutions, 50 of them 3×3), was loaded on `sd-v1-5` and generated 2 steps at
@@ -78,13 +104,14 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 
 | Comparison | Family | Pixels max abs | Tolerance |
 | --- | --- | --- | --- |
-| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL | 0 | 0 |
-| diffusers / PEFT layout, no alpha | SD 1.x | 0 | 0 |
+| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL, SD3 | 0 | 0 |
+| diffusers / PEFT layout, no alpha | SD 1.x, SD3 | 0 | 0 |
+| Prompt embeddings with text-encoder adapters (CLIP-L, CLIP-G, pooled, negative prompt) | SD3 | 0 | 0 |
 | kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |
 | kohya layout, SDXL original block names | SDXL | 0 | 0 |
 | legacy diffusers layout | SD 1.x | 0 | 0 |
-| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL | 0 | 0 |
-| Two stacked adapters, fused | SD 1.x, SDXL | 0 | 0 |
+| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL, SD3 | 0 | 0 |
+| Two stacked adapters, fused | SD 1.x, SDXL, SD3 | 0 | 0 |
 | Published LCM-LoRA on `sd-v1-5` | SD 1.x | 0 | 0 |
 
 diffusers 0.40 rewrites kohya and legacy text-encoder keys to the transformers 4 module names

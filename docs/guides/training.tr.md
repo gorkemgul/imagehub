@@ -145,9 +145,12 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `mixed_precision` | `"no"` | `"fp16"` veya `"bf16"`; adaptör ve optimizer float32 kalır |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | görüntü dönüşümü |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | `4`, `4`, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`) |
-| `lora_target_modules` | `to_q`, `to_k`, `to_v`, `to_out.0` | adaptör takılan U-Net katmanları |
-| `gradient_checkpointing` | `False` | belleği azaltmak için U-Net bloklarını geri yayılımda yeniden hesaplar |
-| `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | hedef seçenekleri |
+| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde `to_q`, `to_k`, `to_v`, `to_out.0`; SD 3'te sekiz ortak dikkat izdüşümü |
+| `gradient_checkpointing` | `False` | belleği azaltmak için U-Net ya da transformer bloklarını geri yayılımda yeniden hesaplar |
+| `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | U-Net (DDPM) hedef seçenekleri |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | `"logit_normal"`, `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `precondition_outputs` | `True` | flow matching: `noise - latents` yerine ön koşullanmış çıktıyı latent'lerle karşılaştırır |
+| `max_sequence_length` | `77` | SD 3 için T5 prompt uzunluğu |
 | `logging_steps`, `save_steps` | `10`, `500` | kayıt ve checkpoint sıklığı |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` her `eval_steps` adımda değerlendirir |
 | `validation_prompts` | yok | her değerlendirme noktasında çizilen prompt'lar |
@@ -220,14 +223,37 @@ eğitilebildiğini listeler (bugün `lora`).
 
 Diğer bütün modeller şimdilik `inference_only`: birkaç adımlık damıtılmış checkpoint'ler
 (`sd-turbo`, `lcm-dreamshaper-v7`, `sdxs-512-0.9`, SDXL Lightning, Hyper-SD, DMD2, `sdxl-turbo`,
-KOALA Lightning), SDXL refiner (görüntüden görüntüye) ve Playground v2.5 (DDPM değil, EDM). Sırada
-transformer aileleri var (#202).
+KOALA Lightning), SDXL refiner (görüntüden görüntüye), Playground v2.5 (DDPM değil, EDM) ve
+`sd3.5-large-turbo` (birkaç adımlık damıtılmış). Diğer transformer aileleri sırada (#202).
 
 SDXL'de dönüşüm, diffusers'ın SDXL betiğindeki gibi önce yeniden boyutlandırır, sonra çevirir,
 sonra kırpar; her görüntünün özgün boyutunu ve kırpma köşesini U-Net'in boyut koşullaması olarak
 kaydeder. Karışık hassasiyette otomatik kodlayıcı float32 kalır. `gradient_checkpointing=True`,
 bellekten kazanmak için U-Net'in transformer ve resnet bloklarını geri yayılımda yeniden hesaplar;
 gradyanlar aynıdır.
+
+SD 3 / 3.5, diffusers'ın `train_dreambooth_lora_sd3.py` betiğindeki flow matching hedefiyle
+eğitilir: zaman adımları kaydırılmış plandan `weighting_scheme`'e göre çekilir, gürültülü latent
+`(1 - sigma) * latents + sigma * noise` olur ve ön koşullanmış çıktı latent'lerle karşılaştırılır.
+Prompt, çıkarımdaki gibi CLIP-L ve CLIP-G'nin sondan bir önceki katmanlarını T5 ile birleştirir.
+DDPM seçenekleri (`snr_gamma`, `prediction_type`, `noise_offset`) SD 3'te, flow matching
+seçenekleri de U-Net ailelerinde reddedilir.
+
+```python
+trainer = Trainer(
+    model="sd3.5-medium",
+    checkpoint="checkpoints/sd3.5-medium",
+    args=TrainingArguments(
+        output_dir="runs/my-dog-sd35",
+        max_steps=1000,
+        resolution=1024,
+        mixed_precision="bf16",
+        gradient_checkpointing=True,
+        weighting_scheme="logit_normal",
+    ),
+    train_dataset=ImageFolderDataset("my_images"),
+)
+```
 
 ## Neler doğrulandı
 
