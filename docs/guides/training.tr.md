@@ -66,8 +66,12 @@ Devam ettirilen eğitim, kesintisiz eğitimle birebir aynı adaptörü verir.
 ```python
 from imagehub import pipeline
 
-with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
-              lora="runs/my-dog/final/adapter.safetensors") as pipe:
+with pipeline(
+    "t2i",
+    backend="sd-v1-5",
+    model="checkpoints/sd-v1-5",
+    lora="runs/my-dog/final/adapter.safetensors",
+) as pipe:
     image = pipe("a photo of sks dog in a bucket", seed=0).images[0]
 ```
 
@@ -90,7 +94,7 @@ trainer = Trainer(
     eval_dataset=ImageFolderDataset("my_val_images"),
 )
 trainer.train()
-print(trainer.evaluate())   # {"eval_loss": 0.1234}
+print(trainer.evaluate())  # {"eval_loss": 0.1234}
 ```
 
 `eval_loss`, değerlendirme görüntüleri üzerinde gradyansız hesaplanan eğitim loss'udur. Difüzyon
@@ -144,13 +148,13 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `adam_beta1`, `adam_beta2`, `adam_weight_decay`, `adam_epsilon` | `0.9`, `0.999`, `1e-2`, `1e-8` | AdamW ayarları |
 | `mixed_precision` | `"no"` | `"fp16"` veya `"bf16"`; adaptör ve optimizer float32 kalır |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | görüntü dönüşümü |
-| `lora_rank`, `lora_alpha`, `lora_dropout` | `4`, `4`, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`) |
-| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde `to_q`, `to_k`, `to_v`, `to_out.0`; SD 3'te sekiz ortak dikkat izdüşümü; Sana'da `to_k`, `to_q`, `to_v` |
+| `lora_rank`, `lora_alpha`, `lora_dropout` | model betiğinin varsayılanı, model betiğinin varsayılanı, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`); Qwen-Image 2.1 (16 / 16) hariç 4 / 4 |
+| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde ve Qwen-Image'da `to_q`, `to_k`, `to_v`, `to_out.0`; SD 3'te sekiz ortak dikkat izdüşümü; Sana'da `to_k`, `to_q`, `to_v` |
 | `gradient_checkpointing` | `False` | belleği azaltmak için U-Net ya da transformer bloklarını geri yayılımda yeniden hesaplar |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | U-Net (DDPM) hedef seçenekleri |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1 ve Sana için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1, Sana ve Qwen-Image için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: `noise - latents` yerine ön koşullanmış çıktıyı latent'lerle karşılaştırır |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1), `300` (Sana) | metin prompt uzunluğu |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1 ve Qwen-Image), `300` (Sana) | metin prompt uzunluğu |
 | `complex_human_instruction` | `None` | Sana'nın isteğe bağlı prompt iyileştirme yönergesi; diğer aileler reddeder |
 | `guidance_scale` | `3.5` | FLUX.1: guidance embedding'i olan checkpoint'lerde eğitim sırasındaki değeri |
 | `logging_steps`, `save_steps` | `10`, `500` | kayıt ve checkpoint sıklığı |
@@ -184,7 +188,7 @@ alpha'yı rank'a eşit tutun; böylece ölçek ve uygun öğrenme hızı değiş
 from imagehub.training import get_training_spec
 
 spec = get_training_spec("sd-v1-5")
-print(spec.support.value, spec.methods)   # native ('lora',)
+print(spec.support.value, spec.methods)  # native ('lora',)
 ```
 
 `native`, modelin görüntü ve alt yazılarla, referans eğitim betiğine karşı doğrulanmış bir hedefle
@@ -194,6 +198,7 @@ eğitilebildiğini listeler (bugün `lora`).
 <!-- training-support:start -->
 | Model | Destek | Yöntemler |
 | --- | --- | --- |
+| `qwen-image` | native | lora |
 | `sd-v1-1` | native | lora |
 | `sd-v1-2` | native | lora |
 | `sd-v1-3` | native | lora |
@@ -213,6 +218,7 @@ eğitilebildiğini listeler (bugün `lora`).
 | `juggernaut-xl-v9` | native | lora |
 | `animagine-xl-4.0` | native | lora |
 | `dreamshaper-xl-1.0` | native | lora |
+| `qwen-image-2.1` | native | lora |
 | `sd3-medium` | native | lora |
 | `sd3.5-medium` | native | lora |
 | `sd3.5-large` | native | lora |
@@ -242,6 +248,15 @@ latentleri deterministiktir; bu nedenle rastgele akış önce gürültüyü, son
 attention maskesini ve 300 token varsayılanını kullanır; complex-human yönergesi isteğe bağlıdır
 ve betikteki gibi varsayılanı `None`'dır. Gradient checkpointing Sana transformer bloklarını geri
 yayılımda yeniden hesaplar.
+
+Qwen-Image ve Qwen-Image 2.1 yalnızca transformer LoRA adaptörlerini `to_k`, `to_q`, `to_v` ve
+`to_out.0` üzerinde eğitir. Her ikisi `noise - latents` flow hedefini, betiklerin `"none"`
+yoğunluk varsayılanını ve VAE posterior normalizasyonunu kullanır. Özgün Qwen-Image 512 tokenlık
+betimleyici sohbet prompt'unu, tek-kare latenti ve 2×2 uzamsal paketlemeyi kullanır; 2.1 sistem
+prompt tokenlarını çıkarır ve birleşik prompt/görüntü dizisini image-slot maskesiyle eğitir.
+`max_sequence_length=512` yalnızca özgün sürüm içindir. Rank ve alpha ayarlanmadığında Qwen-Image
+betiğinin 4 / 4, Qwen-Image 2.1 ise 16 / 16 varsayılanlarını kullanır. Her iki backend de transformer
+adaptörlerini `lora=`, `lora_scale=` ve `lora_fuse=` ile yükler.
 
 SDXL'de dönüşüm, diffusers'ın SDXL betiğindeki gibi önce yeniden boyutlandırır, sonra çevirir,
 sonra kırpar; her görüntünün özgün boyutunu ve kırpma köşesini U-Net'in boyut koşullaması olarak

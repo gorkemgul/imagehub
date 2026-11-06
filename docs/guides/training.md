@@ -65,8 +65,12 @@ A resumed run gives exactly the same adapter as an uninterrupted one.
 ```python
 from imagehub import pipeline
 
-with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
-              lora="runs/my-dog/final/adapter.safetensors") as pipe:
+with pipeline(
+    "t2i",
+    backend="sd-v1-5",
+    model="checkpoints/sd-v1-5",
+    lora="runs/my-dog/final/adapter.safetensors",
+) as pipe:
     image = pipe("a photo of sks dog in a bucket", seed=0).images[0]
 ```
 
@@ -89,7 +93,7 @@ trainer = Trainer(
     eval_dataset=ImageFolderDataset("my_val_images"),
 )
 trainer.train()
-print(trainer.evaluate())   # {"eval_loss": 0.1234}
+print(trainer.evaluate())  # {"eval_loss": 0.1234}
 ```
 
 `eval_loss` is the training loss without gradients over the evaluation images. Diffusion loss
@@ -141,13 +145,13 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `adam_beta1`, `adam_beta2`, `adam_weight_decay`, `adam_epsilon` | `0.9`, `0.999`, `1e-2`, `1e-8` | AdamW settings |
 | `mixed_precision` | `"no"` | `"fp16"` or `"bf16"`; the adapter and optimizer stay float32 |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | image transform |
-| `lora_rank`, `lora_alpha`, `lora_dropout` | `4`, `4`, `0.0` | adapter size and scale (`alpha / rank`) |
-| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, the eight joint-attention projections for SD 3, and `to_k`, `to_q`, `to_v` for Sana |
+| `lora_rank`, `lora_alpha`, `lora_dropout` | model's script default, model's script default, `0.0` | adapter size and scale (`alpha / rank`); 4 / 4 except Qwen-Image 2.1 (16 / 16) |
+| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets and Qwen-Image, the eight joint-attention projections for SD 3, and `to_k`, `to_q`, `to_v` for Sana |
 | `gradient_checkpointing` | `False` | recompute U-Net or transformer blocks in the backward pass to save memory |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | U-Net (DDPM) objective options |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1 and Sana), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, Sana and Qwen-Image), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: compare the preconditioned output with the latents instead of `noise - latents` |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1), `300` (Sana) | text prompt length |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1 and Qwen-Image), `300` (Sana) | text prompt length |
 | `complex_human_instruction` | `None` | Sana's optional prompt-enhancement instruction; other families reject it |
 | `guidance_scale` | `3.5` | FLUX.1: the guidance embedding's value in training, on checkpoints that have one |
 | `logging_steps`, `save_steps` | `10`, `500` | how often to log and to checkpoint |
@@ -181,7 +185,7 @@ every catalog model.
 from imagehub.training import get_training_spec
 
 spec = get_training_spec("sd-v1-5")
-print(spec.support.value, spec.methods)   # native ('lora',)
+print(spec.support.value, spec.methods)  # native ('lora',)
 ```
 
 `native` means the model trains from images and captions with an objective checked against the
@@ -191,6 +195,7 @@ what can be trained (`lora` today).
 <!-- training-support:start -->
 | Model | Support | Methods |
 | --- | --- | --- |
+| `qwen-image` | native | lora |
 | `sd-v1-1` | native | lora |
 | `sd-v1-2` | native | lora |
 | `sd-v1-3` | native | lora |
@@ -210,6 +215,7 @@ what can be trained (`lora` today).
 | `juggernaut-xl-v9` | native | lora |
 | `animagine-xl-4.0` | native | lora |
 | `dreamshaper-xl-1.0` | native | lora |
+| `qwen-image-2.1` | native | lora |
 | `sd3-medium` | native | lora |
 | `sd3.5-medium` | native | lora |
 | `sd3.5-large` | native | lora |
@@ -238,6 +244,15 @@ has deterministic latents, so the training random stream draws noise then the fl
 autoencoder stays float32 under mixed precision. Gemma 2 prompt conditioning uses Sana's attention
 mask and 300-token default; `complex_human_instruction` is optional and defaults to `None` as in
 the script. Gradient checkpointing recomputes the Sana transformer blocks.
+
+Qwen-Image and Qwen-Image 2.1 train transformer-only LoRA adapters on `to_k`, `to_q`, `to_v` and
+`to_out.0`. Both use the flow target `noise - latents`, their scripts' `"none"` density default
+and VAE posterior normalization. Original Qwen-Image uses its 512-token descriptive chat prompt,
+a one-frame latent and 2×2 spatial packing; 2.1 removes its system prompt tokens and trains the
+joint prompt/image sequence with its image-slot mask. `max_sequence_length=512` applies to the
+original release only. When rank and alpha are unset, Qwen-Image uses its script's 4 / 4 defaults
+and Qwen-Image 2.1 uses 16 / 16. Both backends load transformer adapters through `lora=`,
+`lora_scale=` and `lora_fuse=`.
 
 For SDXL the transform resizes, flips and then crops, as diffusers' SDXL script does, and records
 each image's original size and crop corner as the U-Net's size conditioning. The autoencoder stays

@@ -103,6 +103,20 @@ checkpoint is distilled.
 | Saved adapter loaded by diffusers `load_lora_weights` vs imagehub, 3 steps | tiny Sana | 0 (pixels) | 0 |
 | Random PEFT transformer adapters: `to_k`, `to_q`, `to_v`, `to_out.0`, `linear`, `linear_1`, `linear_2`, `proj_out`; single, stacked 0.8 / 0.5 and fused | tiny Sana | 0 (pixels) | 0 |
 
+### Qwen-Image training
+
+Validated on CPU float32 on November 7, 2026 against diffusers 0.40.0
+`train_dreambooth_lora_qwen_image.py` and PEFT 0.21.2 in
+`/Users/gorkem.gul/Personal/imagehub/.venv/bin/python`.
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Default arguments vs the script's argparse defaults: objective, collator, rank / alpha and transformer LoRA targets | tiny Qwen-Image | identical | identical |
+| Image transform; prompt token ids and attention mask after dropping the chat-template prefix | tiny Qwen-Image | identical | identical |
+| First-step posterior noise, noise, timestep, loss and every LoRA gradient, all weighting schemes | tiny Qwen-Image | 0 | 0 |
+| Random PEFT transformer adapters: single, stacked 0.8 / 0.5 and fused | tiny Qwen-Image | 0 (latents and pixels) | 0 |
+| Three-step trained adapter loaded by diffusers `load_lora_weights` | tiny Qwen-Image | 0 (latents and pixels) | 0 |
+
 ### Training runtime (CPU)
 
 | Check | Result |
