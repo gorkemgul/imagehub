@@ -229,7 +229,7 @@ def test_trainer_steps_match_the_reference_loop(tmp_path):
     )
     trainer = Trainer("sd-v1-5", root, args, dataset)
     trainer._setup()
-    reference = Reference(root, rank=args.lora_rank)
+    reference = Reference(root, rank=trainer.injection.config.rank)
     reference.copy_from(trainer.injection)
     trainer.objective = Recording(trainer.objective)
     trainer.train()

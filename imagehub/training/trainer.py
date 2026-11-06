@@ -121,11 +121,13 @@ class Trainer:
         for module in family.frozen(components):
             module.eval()
         self.target_modules = args.lora_target_modules or self.spec.target_modules
+        self.lora_rank = args.lora_rank if args.lora_rank is not None else self.spec.lora_rank
+        self.lora_alpha = args.lora_alpha if args.lora_alpha is not None else self.spec.lora_alpha
         injection = inject_lora(
             trained,
             LoRAConfig(
-                rank=args.lora_rank,
-                alpha=args.lora_alpha,
+                rank=self.lora_rank,
+                alpha=self.lora_alpha,
                 dropout=args.lora_dropout,
                 target_modules=self.target_modules,
                 seed=args.seed,
@@ -382,8 +384,8 @@ class Trainer:
         directory.mkdir(parents=True, exist_ok=True)
         prefix = self.family.prefix
         metadata = {
-            f"{prefix}.r": self.args.lora_rank,
-            f"{prefix}.lora_alpha": self.args.lora_alpha,
+            f"{prefix}.r": self.lora_rank,
+            f"{prefix}.lora_alpha": self.lora_alpha,
             f"{prefix}.target_modules": list(self.injection.module_names),
         }
         path = directory / ADAPTER_FILE
@@ -398,8 +400,8 @@ class Trainer:
         config = {
             "base_model": self.model_id,
             "format": "diffusers",
-            "rank": self.args.lora_rank,
-            "alpha": self.args.lora_alpha,
+            "rank": self.lora_rank,
+            "alpha": self.lora_alpha,
             "target_modules": list(self.target_modules),
             "global_step": self.global_step,
         }
