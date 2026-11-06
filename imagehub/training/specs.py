@@ -45,10 +45,26 @@ _JOINT_ATTENTION = (
     "attn.to_q",
     "attn.to_v",
 )
+_FLUX_TARGETS = (
+    "attn.to_k",
+    "attn.to_q",
+    "attn.to_v",
+    "attn.to_out.0",
+    "attn.add_k_proj",
+    "attn.add_q_proj",
+    "attn.add_v_proj",
+    "attn.to_add_out",
+    "ff.net.0.proj",
+    "ff.net.2",
+    "ff_context.net.0.proj",
+    "ff_context.net.2",
+)
+_KONTEXT_TARGETS = _FLUX_TARGETS + ("proj_mlp",)
 _TRAINABLE = {
     "stable-diffusion": _UNET_ATTENTION,
     "stable-diffusion-xl": _UNET_ATTENTION,
     "stable-diffusion-3": _JOINT_ATTENTION,
+    "flux": _FLUX_TARGETS,
 }
 # Few-step distilled checkpoints are not trained with the denoising objective; the tiny
 # autoencoder of SDXS has no posterior to sample training latents from; the SDXL refiner is an
@@ -71,6 +87,7 @@ _EXCLUDED = frozenset(
         "koala-lightning-1b",
         "playground-v2.5",
         "sd3.5-large-turbo",
+        "flux1-schnell",
     }
 )
 
@@ -78,6 +95,8 @@ _EXCLUDED = frozenset(
 def _spec(model_id: str) -> TrainingSpec:
     model = MODEL_CATALOG[model_id]
     targets = _TRAINABLE.get(model.family)
+    if model_id == "flux1-kontext-dev":
+        targets = _KONTEXT_TARGETS
     if targets is not None and model_id not in _EXCLUDED:
         return TrainingSpec(model_id, model.family, TrainingSupport.NATIVE, ("lora",), targets)
     return TrainingSpec(model_id, model.family, TrainingSupport.INFERENCE_ONLY)

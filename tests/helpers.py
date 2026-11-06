@@ -1723,6 +1723,107 @@ def write_tiny_sd3(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
     return root
 
 
+def write_tiny_flux1(
+    directory: str | os.PathLike[str], *, guidance_embeds: bool = True, seed: int = 0
+) -> Path:
+    """A random-weight FLUX.1 snapshot in the published diffusers layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl import AutoencoderKL
+    from imagehub.models.clip_text import CLIPTextModel
+    from imagehub.models.flux_transformer import FluxTransformer2DModel
+    from imagehub.models.t5 import T5EncoderModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+    write_tiny_tokenizer(root / "tokenizer")
+    tokenizer_2 = root / "tokenizer_2"
+    tokenizer_2.mkdir()
+    shutil.copy2(FIXTURES / "t5_tokenizer" / "tokenizer.json", tokenizer_2 / "tokenizer.json")
+    tokenizer_2_config = {
+        "tokenizer_class": "T5TokenizerFast",
+        "model_max_length": 512,
+        "pad_token": "<pad>",
+        "eos_token": "</s>",
+        "unk_token": "<unk>",
+        "extra_ids": 1,
+    }
+    (tokenizer_2 / "tokenizer_config.json").write_text(json.dumps(tokenizer_2_config))
+    (tokenizer_2 / "special_tokens_map.json").write_text(
+        json.dumps(
+            {key: tokenizer_2_config[key] for key in ("pad_token", "eos_token", "unk_token")}
+        )
+    )
+    scheduler = {
+        "_class_name": "FlowMatchEulerDiscreteScheduler",
+        "num_train_timesteps": 1000,
+        "shift": 1.0,
+        "use_dynamic_shifting": guidance_embeds,
+        "base_shift": 0.5,
+        "max_shift": 1.15,
+        "base_image_seq_len": 4,
+        "max_image_seq_len": 16,
+    }
+    (root / "scheduler").mkdir()
+    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(scheduler))
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "FluxPipeline",
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "CLIPTextModel"],
+                "text_encoder_2": ["transformers", "T5EncoderModel"],
+                "tokenizer": ["transformers", "CLIPTokenizer"],
+                "tokenizer_2": ["transformers", "T5TokenizerFast"],
+                "transformer": ["diffusers", "FluxTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKL"],
+            }
+        )
+    )
+    transformer_config = {
+        "_class_name": "FluxTransformer2DModel",
+        "patch_size": 1,
+        "in_channels": 16,
+        "out_channels": 16,
+        "num_layers": 1,
+        "num_single_layers": 1,
+        "attention_head_dim": 8,
+        "num_attention_heads": 2,
+        "joint_attention_dim": 32,
+        "pooled_projection_dim": 32,
+        "guidance_embeds": guidance_embeds,
+        "axes_dims_rope": [2, 2, 4],
+    }
+    vae_config = TINY_SD3_VAE | {
+        "scaling_factor": 0.3611,
+        "shift_factor": 0.1159,
+        "sample_size": 16,
+    }
+    for name, cls, config, weights in (
+        ("text_encoder", CLIPTextModel, TINY_TEXT_FILE_CONFIG, "model.safetensors"),
+        ("text_encoder_2", T5EncoderModel, TINY_SD3_T5, "model.safetensors"),
+        (
+            "transformer",
+            FluxTransformer2DModel,
+            transformer_config,
+            "diffusion_pytorch_model.safetensors",
+        ),
+        ("vae", AutoencoderKL, vae_config, "diffusion_pytorch_model.safetensors"),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        state = dict(model.state_dict())
+        if name == "text_encoder":
+            state["text_model.embeddings.position_ids"] = torch.arange(77)[None]
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(state, root / name / weights)
+    return root
+
+
 TINY_HIDREAM_LLAMA = {
     "architectures": ["LlamaForCausalLM"],
     "model_type": "llama",

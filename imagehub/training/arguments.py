@@ -87,6 +87,7 @@ class TrainingArguments:
     mode_scale: float | None = None
     precondition_outputs: bool | None = None
     max_sequence_length: int | None = None
+    guidance_scale: float = 3.5
     logging_steps: int = 10
     save_steps: int = 500
     eval_strategy: str = "no"
@@ -120,6 +121,7 @@ class TrainingArguments:
             "validation_guidance_scale",
             _number("validation_guidance_scale", self.validation_guidance_scale),
         )
+        object.__setattr__(self, "guidance_scale", _number("guidance_scale", self.guidance_scale))
         prompts = tuple(self.validation_prompts)
         if not all(isinstance(p, str) and p.strip() for p in prompts):
             raise ValueError("validation_prompts must be non-empty strings")

@@ -92,6 +92,7 @@ _FAMILIES = {
     "stable-diffusion": "imagehub.training.sd1:StableDiffusionFamily",
     "stable-diffusion-xl": "imagehub.training.sdxl:StableDiffusionXLFamily",
     "stable-diffusion-3": "imagehub.training.sd3:StableDiffusion3Family",
+    "flux": "imagehub.training.flux:Flux1Family",
 }
 
 FLOW_MATCHING_OPTIONS = (
@@ -106,7 +107,7 @@ DDPM_OPTIONS = ("prediction_type", "snr_gamma", "noise_offset")
 
 def reject_options(args: TrainingArguments, names: tuple[str, ...], family: str) -> None:
     """Raise when any of ``names`` differs from its default for a family that ignores it."""
-    defaults = {"noise_offset": 0.0}
+    defaults = {"noise_offset": 0.0, "guidance_scale": 3.5}
     used = [name for name in names if getattr(args, name) != defaults.get(name)]
     if used:
         raise ValueError(f"{', '.join(used)} do not apply to {family} training")

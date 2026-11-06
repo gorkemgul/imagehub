@@ -68,6 +68,25 @@ draws one more torch number before the crop offsets; imagehub draws the coin fro
 The comparison replays imagehub's coin on both sides. `sd3.5-large-turbo` is few-step distilled
 and stays `inference_only`.
 
+### FLUX.1
+
+Validated on CPU on November 7, 2026 against diffusers 0.40.0
+`train_dreambooth_lora_flux.py` and `train_dreambooth_lora_flux_kontext.py` (peft 0.21.2).
+Tiny random snapshots cover FLUX.1 with and without guidance embeddings and text-only Kontext.
+The Kontext script takes the same plain FLUX path when no conditioning-image column is supplied;
+image-conditioned training is out of scope.
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Image transform and CLIP / T5 token ids | tiny FLUX.1 | identical | identical |
+| First-step posterior noise, noise, timesteps, loss and every LoRA gradient, all weighting schemes | tiny FLUX.1 | 0 | 0 |
+| Guidance embedding on / off | tiny FLUX.1 | 0 | 0 |
+| Gradient checkpointing over double- and single-stream blocks | tiny FLUX.1 | identical | identical |
+| Saved adapter loaded by diffusers `load_lora_weights` vs imagehub, 3 steps | tiny FLUX.1 | 0 (pixels) | 0 |
+| Saved Kontext adapter (with `proj_mlp`) in `FluxKontextPipeline` vs imagehub, with a condition image | tiny Kontext | 0 (pixels) | 0 |
+| Random PEFT adapters (transformer + CLIP), single, stacked 0.8 / 0.5 and fused, FLUX.1 and Kontext with a condition image | tiny | 0 (pixels) | 0 |
+| CLIP pooled embedding with a CLIP adapter | tiny FLUX.1 | 0 | 0 |
+
 ### Training runtime (CPU)
 
 | Check | Result |
@@ -104,14 +123,14 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 
 | Comparison | Family | Pixels max abs | Tolerance |
 | --- | --- | --- | --- |
-| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL, SD3 | 0 | 0 |
+| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL, SD3, FLUX.1 | 0 | 0 |
 | diffusers / PEFT layout, no alpha | SD 1.x, SD3 | 0 | 0 |
 | Prompt embeddings with text-encoder adapters (CLIP-L, CLIP-G, pooled, negative prompt) | SD3 | 0 | 0 |
 | kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |
 | kohya layout, SDXL original block names | SDXL | 0 | 0 |
 | legacy diffusers layout | SD 1.x | 0 | 0 |
-| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL, SD3 | 0 | 0 |
-| Two stacked adapters, fused | SD 1.x, SDXL, SD3 | 0 | 0 |
+| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL, SD3, FLUX.1 | 0 | 0 |
+| Two stacked adapters, fused | SD 1.x, SDXL, SD3, FLUX.1 | 0 | 0 |
 | Published LCM-LoRA on `sd-v1-5` | SD 1.x | 0 | 0 |
 
 diffusers 0.40 rewrites kohya and legacy text-encoder keys to the transformers 4 module names

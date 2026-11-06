@@ -66,7 +66,7 @@ def test_training_profiles():
     assert spec.target_modules == ("to_q", "to_k", "to_v", "to_out.0")
     for distilled in ("sdxs-512-0.9", "sd-turbo", "lcm-dreamshaper-v7"):
         assert get_training_spec(distilled).support is TrainingSupport.INFERENCE_ONLY
-    assert get_training_spec("flux1-dev").support is TrainingSupport.INFERENCE_ONLY
+    assert get_training_spec("flux1-dev").support is TrainingSupport.NATIVE
     assert get_training_spec("sdxl-base-1.0").family == "stable-diffusion-xl"
     for excluded in ("sdxl-refiner-1.0", "sdxl-turbo", "dmd2-sdxl-1step", "playground-v2.5"):
         assert get_training_spec(excluded).support is TrainingSupport.INFERENCE_ONLY
@@ -75,6 +75,7 @@ def test_training_profiles():
         "stable-diffusion",
         "stable-diffusion-xl",
         "stable-diffusion-3",
+        "flux",
     }
     assert get_training_spec("sd3.5-large-turbo").support is TrainingSupport.INFERENCE_ONLY
     assert len(list_training_specs()) > len(trainable)
@@ -176,7 +177,7 @@ def test_lr_schedules():
 def test_trainer_refuses_inference_only_models(tmp_path):
     dataset = ImageFolderDataset(write_folder(tmp_path / "data"))
     with pytest.raises(ValueError, match="sd-v1-5"):
-        Trainer("flux1-dev", tmp_path, arguments(tmp_path), dataset)
+        Trainer("flux1-schnell", tmp_path, arguments(tmp_path), dataset)
 
 
 def test_training_changes_only_the_adapter_and_lowers_the_loss(tmp_path, tiny_sd, capsys):
@@ -516,5 +517,6 @@ def test_training_families_are_registered_per_catalog_family():
     assert isinstance(family, TrainingFamily)
     assert family.prefix == "unet"
     assert family.batch_keys == ("pixel_values", "input_ids")
-    with pytest.raises(KeyError, match="flux"):
-        get_family("flux")
+    flux = get_family("flux")
+    assert isinstance(flux, TrainingFamily)
+    assert flux.prefix == "transformer"
