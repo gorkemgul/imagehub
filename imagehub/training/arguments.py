@@ -87,6 +87,7 @@ class TrainingArguments:
     mode_scale: float | None = None
     precondition_outputs: bool | None = None
     max_sequence_length: int | None = None
+    complex_human_instruction: tuple[str, ...] | None = None
     guidance_scale: float = 3.5
     logging_steps: int = 10
     save_steps: int = 500
@@ -167,6 +168,11 @@ class TrainingArguments:
             raise ValueError("precondition_outputs must be a bool")
         if self.max_sequence_length is not None:
             _positive_int("max_sequence_length", self.max_sequence_length)
+        if self.complex_human_instruction is not None:
+            instruction = tuple(self.complex_human_instruction)
+            if not instruction or not all(isinstance(line, str) for line in instruction):
+                raise ValueError("complex_human_instruction must be non-empty strings or None")
+            object.__setattr__(self, "complex_human_instruction", instruction)
         for name in ("center_crop", "random_flip", "gradient_checkpointing"):
             if not isinstance(getattr(self, name), bool):
                 raise ValueError(f"{name} must be a bool")
@@ -192,4 +198,6 @@ class TrainingArguments:
         values["report_to"] = list(values["report_to"])
         if values["lora_target_modules"] is not None:
             values["lora_target_modules"] = list(values["lora_target_modules"])
+        if values["complex_human_instruction"] is not None:
+            values["complex_human_instruction"] = list(values["complex_human_instruction"])
         return values
