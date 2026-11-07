@@ -97,6 +97,7 @@ _FAMILIES = {
     "qwen-image": "imagehub.training.qwen_image:QwenImageFamily",
     "z-image": "imagehub.training.z_image:ZImageFamily",
     "lumina2": "imagehub.training.lumina2:Lumina2Family",
+    "hidream": "imagehub.training.hidream:HiDreamFamily",
 }
 
 FLOW_MATCHING_OPTIONS = (
