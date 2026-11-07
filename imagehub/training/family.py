@@ -93,6 +93,7 @@ _FAMILIES = {
     "stable-diffusion-xl": "imagehub.training.sdxl:StableDiffusionXLFamily",
     "stable-diffusion-3": "imagehub.training.sd3:StableDiffusion3Family",
     "flux": "imagehub.training.flux:Flux1Family",
+    "flux2": "imagehub.training.flux2:Flux2Family",
     "sana": "imagehub.training.sana:SanaFamily",
     "qwen-image": "imagehub.training.qwen_image:QwenImageFamily",
     "z-image": "imagehub.training.z_image:ZImageFamily",
