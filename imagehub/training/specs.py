@@ -67,6 +67,14 @@ _QWEN_IMAGE_TARGETS = ("to_k", "to_q", "to_v", "to_out.0")
 _Z_IMAGE_TARGETS = ("to_k", "to_q", "to_v", "to_out.0")
 _LUMINA2_TARGETS = ("to_k", "to_q", "to_v", "to_out.0")
 _HIDREAM_TARGETS = ("to_k", "to_q", "to_v", "to_out")
+_FLUX2_TARGETS = (
+    "to_k",
+    "to_q",
+    "to_v",
+    "to_out.0",
+    "to_qkv_mlp_proj",
+    *(f"single_transformer_blocks.{index}.attn.to_out" for index in range(24)),
+)
 _TRAINABLE = {
     "stable-diffusion": _UNET_ATTENTION,
     "stable-diffusion-xl": _UNET_ATTENTION,
@@ -77,6 +85,7 @@ _TRAINABLE = {
     "z-image": _Z_IMAGE_TARGETS,
     "lumina2": _LUMINA2_TARGETS,
     "hidream": _HIDREAM_TARGETS,
+    "flux2": _FLUX2_TARGETS,
 }
 # Few-step distilled checkpoints are not trained with the denoising objective; the tiny
 # autoencoder of SDXS has no posterior to sample training latents from; the SDXL refiner is an

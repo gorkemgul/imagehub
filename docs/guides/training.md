@@ -146,15 +146,15 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `mixed_precision` | `"no"` | `"fp16"` or `"bf16"`; the adapter and optimizer stay float32 |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | image transform |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | model's script default, model's script default, `0.0` | adapter size and scale (`alpha / rank`); 4 / 4 except Qwen-Image 2.1 (16 / 16) |
-| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, Qwen-Image, Z-Image and Lumina 2; `to_q`, `to_k`, `to_v`, `to_out` for HiDream-I1 image attention; the eight joint-attention projections for SD 3; and `to_k`, `to_q`, `to_v` for Sana |
+| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, Qwen-Image, Z-Image and Lumina 2; FLUX.2 klein also uses `to_qkv_mlp_proj` and its literal first-24 single-block `attn.to_out` paths; `to_q`, `to_k`, `to_v`, `to_out` for HiDream-I1 image attention; the eight joint-attention projections for SD 3; and `to_k`, `to_q`, `to_v` for Sana |
 | `gradient_checkpointing` | `False` | recompute U-Net or transformer blocks in the backward pass to save memory |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | U-Net (DDPM) objective options |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, Sana, Qwen-Image, Z-Image, Lumina 2 and HiDream-I1), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, FLUX.2 klein, Sana, Qwen-Image, Z-Image, Lumina 2 and HiDream-I1), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: compare the preconditioned output with the latents instead of `noise - latents` |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, Qwen-Image and Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | text prompt length |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, FLUX.2 klein, Qwen-Image and Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | text prompt length |
 | `system_prompt` | `None` | Lumina 2's optional Gemma system prompt; other families reject it |
 | `complex_human_instruction` | `None` | Sana's optional prompt-enhancement instruction; other families reject it |
-| `guidance_scale` | `3.5` | FLUX.1: the guidance embedding's value in training, on checkpoints that have one |
+| `guidance_scale` | `3.5` | FLUX.1 and FLUX.2 klein: the guidance embedding's value in training, on checkpoints that have one |
 | `logging_steps`, `save_steps` | `10`, `500` | how often to log and to checkpoint |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` evaluates every `eval_steps` |
 | `validation_prompts` | none | prompts rendered at each evaluation point |
@@ -220,6 +220,8 @@ what can be trained (`lora` today).
 | `sd3-medium` | native | lora |
 | `sd3.5-medium` | native | lora |
 | `sd3.5-large` | native | lora |
+| `flux2-klein-4b` | native | lora |
+| `flux2-klein-9b` | native | lora |
 | `flux1-dev` | native | lora |
 | `flux1-krea-dev` | native | lora |
 | `flux-1-lite-8b` | native | lora |
@@ -265,6 +267,17 @@ step. The model receives `(1000 - timestep) / 1000` and the negated prediction i
 `noise - latents`; gradient checkpointing recomputes every Z-Image transformer block. Its backend
 loads transformer adapters with `lora=`, `lora_scale=` and `lora_fuse=`. `z-image-turbo` is
 distilled and remains `inference_only`.
+
+FLUX.2 klein 4B and 9B train transformer-only LoRA adapters with the script's literal targets:
+`to_k`, `to_q`, `to_v`, `to_out.0`, `to_qkv_mlp_proj`, and
+`single_transformer_blocks.0` through `.23` `attn.to_out`. Their rank / alpha defaults are 4 / 4,
+weighting is `"none"`, and Qwen prompts use 512 tokens and layers 10, 20 and 30. These are the training script's layers; the klein pipeline
+encodes inference prompts from layers 9, 18 and 27, and imagehub's backend does the same. The deterministic
+VAE posterior is patchified and normalized with the VAE batch-normalization statistics before flow
+matching against `noise - latents`; gradient checkpointing covers both double- and single-stream
+blocks. A guidance value is passed only to checkpoints with a guidance embedding; the other klein
+checkpoints accept only the default training value. The backend loads transformer adapters with
+`lora=`, `lora_scale=` and `lora_fuse=`.
 
 Lumina-Image 2.0 trains transformer-only LoRA adapters on `to_k`, `to_q`, `to_v` and `to_out.0`,
 with the script's 4 / 4 rank and alpha, `"none"` weighting, a 256-token Gemma prompt and its

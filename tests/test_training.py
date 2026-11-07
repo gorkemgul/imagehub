@@ -81,6 +81,7 @@ def test_training_profiles():
         "stable-diffusion-xl",
         "stable-diffusion-3",
         "flux",
+        "flux2",
         "sana",
         "qwen-image",
         "z-image",
