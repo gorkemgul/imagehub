@@ -19,6 +19,7 @@ from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
+from imagehub.lora_formats import LoRAOption, apply_lora, parse_lora_option
 from imagehub.models.autoencoder_kl_flux2 import (
     AutoencoderKLFlux2,
     denormalize_latents,
@@ -255,8 +256,15 @@ class Flux2Backend(TextToImageBackend):
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
         model_id: str | None = None,
+        lora: LoRAOption = None,
+        lora_scale: float = 1.0,
+        lora_fuse: bool = False,
     ) -> None:
         super().__init__()
+        if not isinstance(lora_fuse, bool):
+            raise TypeError("lora_fuse must be a bool")
+        self.lora = parse_lora_option(lora, lora_scale)
+        self.lora_fuse = lora_fuse
         self.source = Path(model)
         self.model_id = model_id
         self.device = resolve_device(device)
@@ -338,6 +346,9 @@ class Flux2Backend(TextToImageBackend):
                 UserWarning,
                 stacklevel=2,
             )
+        if self.lora:
+            # Flux2KleinPipeline.load_lora_weights accepts transformer adapters only.
+            apply_lora({"transformer": self.components.transformer}, self.lora, fuse=self.lora_fuse)
 
     def _unload(self) -> None:
         self.components = None
