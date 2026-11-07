@@ -106,8 +106,10 @@ checkpoint is distilled.
 ### Qwen-Image training
 
 Validated on CPU float32 on November 7, 2026 against diffusers 0.40.0
-`train_dreambooth_lora_qwen_image.py` and PEFT 0.21.2 in
-`/Users/gorkem.gul/Personal/imagehub/.venv/bin/python`.
+`train_dreambooth_lora_qwen_image.py` with PEFT 0.21.2. Qwen-Image 2.1 is validated against
+`train_dreambooth_lora_qwenimage21.py` at diffusers commit `7997e4eab` (no release contains it
+yet), in a separate environment with that commit, PEFT 0.21.2 and PyTorch 2.14.1, as for its
+inference validation.
 
 | Comparison | Model | Largest observed difference | Tolerance |
 | --- | --- | --- | --- |
@@ -116,6 +118,11 @@ Validated on CPU float32 on November 7, 2026 against diffusers 0.40.0
 | First-step posterior noise, noise, timestep, loss and every LoRA gradient, all weighting schemes | tiny Qwen-Image | 0 | 0 |
 | Random PEFT transformer adapters: single, stacked 0.8 / 0.5 and fused | tiny Qwen-Image | 0 (latents and pixels) | 0 |
 | Three-step trained adapter loaded by diffusers `load_lora_weights` | tiny Qwen-Image | 0 (latents and pixels) | 0 |
+| Default arguments vs the script's argparse defaults: weighting, logit mean / std, mode scale, rank / alpha 16 / 16 and transformer LoRA targets | tiny Qwen-Image 2.1 | identical | identical |
+| Image transform; prompt token ids and attention mask after dropping the system-template prefix | tiny Qwen-Image 2.1 | identical | identical |
+| First-step posterior noise, noise, timestep, loss and every LoRA gradient, all weighting schemes; prompt/image-slot mask and flat packing | tiny Qwen-Image 2.1 | 0 | 0 |
+| Random PEFT transformer adapters: single, stacked 0.8 / 0.5 and fused | tiny Qwen-Image 2.1 | 0 (latents and pixels) | 0 |
+| Three-step trained adapter loaded by diffusers `load_lora_weights` | tiny Qwen-Image 2.1 | 0 (latents and pixels) | 0 |
 
 ### Training runtime (CPU)
 
