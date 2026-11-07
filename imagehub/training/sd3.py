@@ -137,7 +137,9 @@ class StableDiffusion3Family(TrainingFamily):
     checkpoint_blocks = (JointTransformerBlock,)
 
     def validate(self, args: TrainingArguments) -> None:
-        reject_options(args, DDPM_OPTIONS + ("guidance_scale",), self.name)
+        reject_options(
+            args, DDPM_OPTIONS + ("complex_human_instruction", "guidance_scale"), self.name
+        )
 
     def load(
         self,

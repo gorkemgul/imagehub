@@ -174,7 +174,10 @@ class StableDiffusionFamily(TrainingFamily):
 
     def validate(self, args: TrainingArguments) -> None:
         reject_options(
-            args, FLOW_MATCHING_OPTIONS + ("max_sequence_length", "guidance_scale"), self.name
+            args,
+            FLOW_MATCHING_OPTIONS
+            + ("max_sequence_length", "complex_human_instruction", "guidance_scale"),
+            self.name,
         )
 
     def load(

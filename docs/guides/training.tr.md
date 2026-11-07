@@ -145,12 +145,13 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `mixed_precision` | `"no"` | `"fp16"` veya `"bf16"`; adaptör ve optimizer float32 kalır |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | görüntü dönüşümü |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | `4`, `4`, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`) |
-| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde `to_q`, `to_k`, `to_v`, `to_out.0`; SD 3'te sekiz ortak dikkat izdüşümü |
+| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde `to_q`, `to_k`, `to_v`, `to_out.0`; SD 3'te sekiz ortak dikkat izdüşümü; Sana'da `to_k`, `to_q`, `to_v` |
 | `gradient_checkpointing` | `False` | belleği azaltmak için U-Net ya da transformer bloklarını geri yayılımda yeniden hesaplar |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | U-Net (DDPM) hedef seçenekleri |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1 için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1 ve Sana için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: `noise - latents` yerine ön koşullanmış çıktıyı latent'lerle karşılaştırır |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1) | T5 prompt uzunluğu |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1), `300` (Sana) | metin prompt uzunluğu |
+| `complex_human_instruction` | `None` | Sana'nın isteğe bağlı prompt iyileştirme yönergesi; diğer aileler reddeder |
 | `guidance_scale` | `3.5` | FLUX.1: guidance embedding'i olan checkpoint'lerde eğitim sırasındaki değeri |
 | `logging_steps`, `save_steps` | `10`, `500` | kayıt ve checkpoint sıklığı |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` her `eval_steps` adımda değerlendirir |
@@ -219,6 +220,9 @@ eğitilebildiğini listeler (bugün `lora`).
 | `flux1-krea-dev` | native | lora |
 | `flux-1-lite-8b` | native | lora |
 | `flux1-kontext-dev` | native | lora |
+| `sana-1600m-1024` | native | lora |
+| `sana-600m-1024` | native | lora |
+| `sana-1.5-4.8b-1024` | native | lora |
 | `ssd-1b` | native | lora |
 | `segmind-vega` | native | lora |
 | `koala-700m` | native | lora |
@@ -229,7 +233,15 @@ eğitilebildiğini listeler (bugün `lora`).
 Diğer bütün modeller şimdilik `inference_only`: birkaç adımlık damıtılmış checkpoint'ler
 (`sd-turbo`, `lcm-dreamshaper-v7`, `sdxs-512-0.9`, SDXL Lightning, Hyper-SD, DMD2, `sdxl-turbo`,
 KOALA Lightning), SDXL refiner (görüntüden görüntüye), Playground v2.5 (DDPM değil, EDM) ve
-`sd3.5-large-turbo` (birkaç adımlık damıtılmış). Diğer transformer aileleri sırada (#202).
+`sd3.5-large-turbo` (birkaç adımlık damıtılmış) ve `sana-sprint-1.6b-1024` (damıtılmış).
+Diğer transformer aileleri sırada (#202).
+
+Sana yalnızca transformer'ını, betikteki `to_k`, `to_q`, `to_v` hedefleriyle eğitir. DC-AE'nin
+latentleri deterministiktir; bu nedenle rastgele akış önce gürültüyü, sonra flow zaman adımını
+çeker ve karışık hassasiyette otomatik kodlayıcı float32 kalır. Gemma 2 koşullaması Sana'nın
+attention maskesini ve 300 token varsayılanını kullanır; complex-human yönergesi isteğe bağlıdır
+ve betikteki gibi varsayılanı `None`'dır. Gradient checkpointing Sana transformer bloklarını geri
+yayılımda yeniden hesaplar.
 
 SDXL'de dönüşüm, diffusers'ın SDXL betiğindeki gibi önce yeniden boyutlandırır, sonra çevirir,
 sonra kırpar; her görüntünün özgün boyutunu ve kırpma köşesini U-Net'in boyut koşullaması olarak

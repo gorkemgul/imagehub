@@ -87,6 +87,22 @@ image-conditioned training is out of scope.
 | Random PEFT adapters (transformer + CLIP), single, stacked 0.8 / 0.5 and fused, FLUX.1 and Kontext with a condition image | tiny | 0 (pixels) | 0 |
 | CLIP pooled embedding with a CLIP adapter | tiny FLUX.1 | 0 | 0 |
 
+### Sana
+
+Validated on CPU on November 7, 2026 against diffusers 0.40.0
+`train_dreambooth_lora_sana.py` and PEFT 0.21.2. Tiny random snapshots cover the standard Sana
+transformer and deterministic DC-AE path; Sana-Sprint remains inference-only because its
+checkpoint is distilled.
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Default arguments vs the script's argparse defaults (weighting scheme, logit mean / std, mode scale, sequence length 300, no complex-human instruction, rank / alpha, targets) | — | identical | identical |
+| Image transform; Gemma 2 token ids and attention mask without a complex-human instruction, as the script's default | tiny Sana | identical | identical |
+| First-step noise, timestep, loss and every LoRA gradient, all weighting schemes | tiny Sana | 0 | 0 |
+| Gradient checkpointing over transformer blocks | tiny Sana | identical | identical |
+| Saved adapter loaded by diffusers `load_lora_weights` vs imagehub, 3 steps | tiny Sana | 0 (pixels) | 0 |
+| Random PEFT transformer adapters: `to_k`, `to_q`, `to_v`, `to_out.0`, `linear`, `linear_1`, `linear_2`, `proj_out`; single, stacked 0.8 / 0.5 and fused | tiny Sana | 0 (pixels) | 0 |
+
 ### Training runtime (CPU)
 
 | Check | Result |
@@ -113,6 +129,11 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
   transformer's joint attention and feed-forward layers and both CLIP text encoders. Both sides
   generated 3 steps at 32×32 from seed 42 with guidance 4. The guided prompt embeddings were
   compared too, because text-encoder adapters barely move the tiny model's pixels.
+- On November 7, 2026, tiny Sana PEFT transformer adapters covered the training defaults
+  (`to_k`, `to_q`, `to_v`) plus `to_out.0`, `linear`, `linear_1`, `linear_2`, and `proj_out`.
+  Both sides generated 3 steps at 32×32 from seed 42 with guidance 4 and the same explicit
+  complex-human instruction. Single, stacked (0.8 / 0.5), fused, and 3-step trained adapters
+  were compared.
 - One published adapter, `latent-consistency/lcm-lora-sdv1-5` at
   `cf2fced511dbe7e26c8d1d397e728fbab875db4b` (kohya layout, per-module alphas, 278 layers of
   which 96 are convolutions, 50 of them 3×3), was loaded on `sd-v1-5` and generated 2 steps at
@@ -123,14 +144,16 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 
 | Comparison | Family | Pixels max abs | Tolerance |
 | --- | --- | --- | --- |
-| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL, SD3, FLUX.1 | 0 | 0 |
+| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL, SD3, FLUX.1, Sana | 0 | 0 |
+| Random PEFT transformer adapter: `to_k`, `to_q`, `to_v`, `to_out.0`, `linear`, `linear_1`, `linear_2`, `proj_out`; 3 steps at 32×32, seed 42, guidance 4, explicit complex-human instruction | Sana | 0 | 0 |
+| 3-step trained transformer adapter: 3 steps at 32×32, seed 42, guidance 4, explicit complex-human instruction | Sana | 0 | 0 |
 | diffusers / PEFT layout, no alpha | SD 1.x, SD3 | 0 | 0 |
 | Prompt embeddings with text-encoder adapters (CLIP-L, CLIP-G, pooled, negative prompt) | SD3 | 0 | 0 |
 | kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |
 | kohya layout, SDXL original block names | SDXL | 0 | 0 |
 | legacy diffusers layout | SD 1.x | 0 | 0 |
-| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL, SD3, FLUX.1 | 0 | 0 |
-| Two stacked adapters, fused | SD 1.x, SDXL, SD3, FLUX.1 | 0 | 0 |
+| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL, SD3, FLUX.1, Sana | 0 | 0 |
+| Two stacked adapters, fused | SD 1.x, SDXL, SD3, FLUX.1, Sana | 0 | 0 |
 | Published LCM-LoRA on `sd-v1-5` | SD 1.x | 0 | 0 |
 
 diffusers 0.40 rewrites kohya and legacy text-encoder keys to the transformers 4 module names
