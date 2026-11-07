@@ -4,8 +4,8 @@
 Diffusion 1.x and SDXL models, with outputs equal to diffusers `load_lora_weights` on CPU
 float32 (#193).
 
-**Architecture:** `imagehub/lora.py` holds torch-only LoRA wrappers modeled on voicehub's
-`LoRALinear` / `inject_lora`, extended with a convolution wrapper and several named adapters per
+**Architecture:** `imagehub/lora.py` holds torch-only LoRA wrappers (`LoRALinear`,
+`inject_lora`), extended with a convolution wrapper and several named adapters per
 layer. `imagehub/lora_formats.py` reads a safetensors file, detects its layout, converts keys to
 native module names and adds one adapter per file. The SD 1.x and SDXL backends take `lora=`,
 `lora_scale=` and `lora_fuse=` construction options and apply them at the end of `_load`.
@@ -156,7 +156,7 @@ class LoRAInjection:
 
 Behavior:
 
-- `LoRAConfig.__post_init__` validates like voicehub (positive int rank, finite positive alpha,
+- `LoRAConfig.__post_init__` validates its fields (positive int rank, finite positive alpha,
   dropout in `[0, 1)`, non-empty unique stripped patterns, bool `freeze_base`, int `seed`) and
   stores `alpha` / `dropout` as floats.
 - `add_adapter` with `down`/`up` tensors copies them (shape-checked against the base and
@@ -183,8 +183,8 @@ Behavior:
   with the available names when nothing matches, and adds one adapter per module with a
   generator seeded `config.seed + index`. It is atomic: on error, wrapped modules are restored.
 - `LoRAInjection.adapter_state_dict` keys are `"<module>.lora_A.weight"` and
-  `"<module>.lora_B.weight"` (detached clones); `load_adapter_state_dict` mirrors voicehub's
-  strict checks.
+  `"<module>.lora_B.weight"` (detached clones); `load_adapter_state_dict` checks keys
+  and shapes strictly.
 
 - [ ] Write failing tests in `tests/test_lora.py`:
 

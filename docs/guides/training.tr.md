@@ -170,7 +170,6 @@ civarı ölçek kullanır; dil ve konuşma eğiticileri genelde daha büyükleri
 | imagehub varsayılanı, diffusers eğitim betikleri (SD 1.5, SDXL, FLUX.1) | 4 | 4 | 1 |
 | kohya sd-scripts varsayılanı | 4 | 1 | 0.25 |
 | PEFT varsayılanı | 8 | 8 | 1 |
-| voicehub varsayılanı (konuşma) | 8 | 16 | 2 |
 
 Bir stil ya da basit bir konu için rank 4 yeter. Daha fazla ayrıntı için rank'ı 16-32'ye çıkarın ve
 alpha'yı rank'a eşit tutun; böylece ölçek ve uygun öğrenme hızı değişmez.

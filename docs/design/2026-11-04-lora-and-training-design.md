@@ -11,7 +11,7 @@ Add low-rank adapters (LoRA) to imagehub in two pieces:
    `pip install "imagehub[training]"`, that trains LoRA adapters for the Stable Diffusion 1.x
    U-Net and saves them in a file the loader above (and diffusers) reads back.
 
-Both pieces follow the approach of kadirnar's voicehub: its own LoRA layers and its own trainer,
+Both pieces use imagehub's own LoRA layers and its own trainer, with
 no PEFT or Accelerate dependency, a per-model training profile registry and an optional
 `training` extra. The core package stays torch-only. Model code stays in one place and is shared
 by inference and training.
@@ -20,22 +20,22 @@ Other families (FLUX.1, SD 3.5, Sana, PixArt, Lumina 2, Z-Image, Qwen-Image), SD
 distributed training, text-encoder training, DoRA and LyCORIS (LoHa, LoKr) adapters are later
 work and are listed at the end.
 
-## Reference: voicehub
+## Shape of the API
 
-- `voicehub/optimization/lora.py` defines `LoRAConfig` (rank, alpha, dropout, glob target
-  patterns, `freeze_base`, seed), `LoRALinear` (wraps an `nn.Linear` and adds
-  `scaling * B @ A @ x`, with `merge`/`unmerge`), `inject_lora` (atomically replaces matching
-  linears) and `LoRAInjection` (adapter state dict, strict loading, exact `restore`).
-- Model-specific files (`architectures/voxcpm2/lora.py`, `models/qwen3tts/lora.py`) choose the
-  target modules for one model and read or write its adapter files.
+- A small LoRA core: `LoRAConfig` (rank, alpha, dropout, glob target patterns, `freeze_base`,
+  seed), `LoRALinear` (wraps an `nn.Linear` and adds `scaling * B @ A @ x`, with
+  `merge`/`unmerge`), `inject_lora` (atomically replaces matching linears) and `LoRAInjection`
+  (adapter state dict, strict loading, exact `restore`).
+- Per-family code chooses the target modules for one model family and reads or writes its
+  adapter files.
 - Training is exposed through `get_training_spec(model)` / `list_training_specs()`, which
-  return a profile with a `support` level and a family, and an HF-style
+  return a profile with a `support` level and a family, and a Hugging Face-style
   `Trainer(model, args=TrainingArguments(...), train_dataset=...)` with `train()` and
   `save_model()`.
 
-imagehub keeps the same shapes. It differs where image models differ: published LoRA files
-exist in diffusers and kohya layouts and must be read, kohya adapters also patch 1x1
-convolutions, and several adapters are commonly stacked at inference.
+Image models add requirements of their own: published LoRA files exist in diffusers and kohya
+layouts and must be read, kohya adapters also patch 1x1 convolutions, and several adapters are
+commonly stacked at inference.
 
 ## Package layout
 
@@ -58,7 +58,7 @@ missing.
 
 ## LoRA core (`imagehub/lora.py`)
 
-`LoRAConfig` mirrors voicehub: `rank`, `alpha`, `dropout`, `target_modules` (glob patterns or
+`LoRAConfig` has `rank`, `alpha`, `dropout`, `target_modules` (glob patterns or
 leaf names), `freeze_base`, `seed`, with `scaling = alpha / rank`.
 
 `LoRALinear` and `LoRAConv2d` wrap a base `nn.Linear` / `nn.Conv2d`. Each wrapper holds one or
@@ -78,7 +78,7 @@ atomically and raises with the available names when nothing matches. `LoRAInject
 value)`, `merge()`, `unmerge()` and `restore()`, which puts the original modules and their
 `requires_grad` flags back.
 
-Differences from voicehub, all needed by published image adapters:
+Beyond a plain linear LoRA, published image adapters need:
 
 - a convolution wrapper, because kohya adapters patch the Stable Diffusion 1.x `proj_in` /
   `proj_out` 1x1 convolutions;
