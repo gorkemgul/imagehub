@@ -95,6 +95,7 @@ _FAMILIES = {
     "flux": "imagehub.training.flux:Flux1Family",
     "sana": "imagehub.training.sana:SanaFamily",
     "qwen-image": "imagehub.training.qwen_image:QwenImageFamily",
+    "z-image": "imagehub.training.z_image:ZImageFamily",
 }
 
 FLOW_MATCHING_OPTIONS = (

@@ -64,6 +64,7 @@ _FLUX_TARGETS = (
 _KONTEXT_TARGETS = _FLUX_TARGETS + ("proj_mlp",)
 _SANA_TARGETS = ("to_k", "to_q", "to_v")
 _QWEN_IMAGE_TARGETS = ("to_k", "to_q", "to_v", "to_out.0")
+_Z_IMAGE_TARGETS = ("to_k", "to_q", "to_v", "to_out.0")
 _TRAINABLE = {
     "stable-diffusion": _UNET_ATTENTION,
     "stable-diffusion-xl": _UNET_ATTENTION,
@@ -71,6 +72,7 @@ _TRAINABLE = {
     "flux": _FLUX_TARGETS,
     "sana": _SANA_TARGETS,
     "qwen-image": _QWEN_IMAGE_TARGETS,
+    "z-image": _Z_IMAGE_TARGETS,
 }
 # Few-step distilled checkpoints are not trained with the denoising objective; the tiny
 # autoencoder of SDXS has no posterior to sample training latents from; the SDXL refiner is an
@@ -95,6 +97,7 @@ _EXCLUDED = frozenset(
         "sd3.5-large-turbo",
         "flux1-schnell",
         "sana-sprint-1.6b-1024",
+        "z-image-turbo",
     }
 )
 
