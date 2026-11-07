@@ -30,7 +30,9 @@ LOGIT_STD = 1.0
 MODE_SCALE = 1.29
 GUIDANCE_SCALE = 3.5
 MAX_SEQUENCE_LENGTH = 512
-TEXT_ENCODER_OUT_LAYERS = (10, 20, 30)
+#: The official FLUX.2 code stacks these Qwen3 layers for klein, as ``Flux2KleinPipeline`` does.
+#: The script's ``--text_encoder_out_layers`` default, 10 / 20 / 30, is the FLUX.2 [dev] set.
+TEXT_ENCODER_OUT_LAYERS = (9, 18, 27)
 
 
 def _unpack_latents_with_ids(tokens: Tensor, ids: Tensor, height: int, width: int) -> Tensor:
