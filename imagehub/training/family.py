@@ -12,6 +12,7 @@ from torch import Tensor, nn
 
 if TYPE_CHECKING:
     from imagehub.training.arguments import TrainingArguments
+    from imagehub.training.specs import TrainingSpec
 
 Collator = Callable[[Sequence[Mapping[str, Any]]], Mapping[str, Tensor]]
 
@@ -45,6 +46,13 @@ class TrainingFamily:
     batch_keys: tuple[str, ...]
     #: Block classes recomputed in the backward pass with ``gradient_checkpointing``.
     checkpoint_blocks: tuple[type, ...] = ()
+
+    def check_checkpoint(self, checkpoint: os.PathLike[str], spec: TrainingSpec) -> None:
+        """Reject a checkpoint that cannot be used for this family's objective.
+
+        This is called before :meth:`load`, so it must inspect only metadata rather than model
+        weights.  Families without per-checkpoint training restrictions need no override.
+        """
 
     def validate(self, args: TrainingArguments) -> None:
         """Reject settings the family's objective does not use."""
@@ -94,6 +102,7 @@ _FAMILIES = {
     "stable-diffusion-3": "imagehub.training.sd3:StableDiffusion3Family",
     "flux": "imagehub.training.flux:Flux1Family",
     "flux2": "imagehub.training.flux2:Flux2Family",
+    "krea2": "imagehub.training.krea2:Krea2Family",
     "sana": "imagehub.training.sana:SanaFamily",
     "qwen-image": "imagehub.training.qwen_image:QwenImageFamily",
     "z-image": "imagehub.training.z_image:ZImageFamily",

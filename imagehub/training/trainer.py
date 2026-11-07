@@ -91,11 +91,12 @@ class Trainer:
             raise TypeError("data_collator must be callable")
         self.model_id = model
         self.checkpoint = Path(checkpoint)
+        self.family = get_family(self.spec.family)
+        self.family.check_checkpoint(self.checkpoint, self.spec)
         self.args = args
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator
-        self.family = get_family(self.spec.family)
         self.family.validate(args)
         self.global_step = 0
         self.log_history: list[dict[str, float]] = []

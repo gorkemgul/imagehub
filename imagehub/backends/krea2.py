@@ -8,7 +8,7 @@ import secrets
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import torch
 from torch import Tensor
@@ -19,6 +19,7 @@ from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import load_weights, read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
+from imagehub.lora_formats import LoRAOption, apply_lora, parse_lora_option
 from imagehub.models.autoencoder_kl_qwen_image import AutoencoderKLQwenImage
 from imagehub.models.krea2_transformer import Krea2Transformer2DModel
 from imagehub.models.qwen3_vl_text import Qwen3VLTextModel
@@ -249,7 +250,7 @@ def denoise(
     latents: Tensor,
     max_sequence_length: int,
 ) -> Tensor:
-    dtype = cast(torch.dtype, components.transformer.img_in.weight.dtype)
+    dtype = next(components.transformer.parameters()).dtype
     prompt_embeds, prompt_mask = encode_prompt(
         components, prompt, latents.device, max_sequence_length
     )
@@ -344,8 +345,15 @@ class Krea2Backend(TextToImageBackend):
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
         model_id: str | None = None,
+        lora: LoRAOption = None,
+        lora_scale: float = 1.0,
+        lora_fuse: bool = False,
     ) -> None:
         super().__init__()
+        if not isinstance(lora_fuse, bool):
+            raise TypeError("lora_fuse must be a bool")
+        self.lora = parse_lora_option(lora, lora_scale)
+        self.lora_fuse = lora_fuse
         self.source = Path(model)
         self.model_id = model_id
         self.device = resolve_device(device)
@@ -437,6 +445,9 @@ class Krea2Backend(TextToImageBackend):
                 UserWarning,
                 stacklevel=2,
             )
+        if self.lora:
+            # Krea2Pipeline.load_lora_weights accepts transformer adapters only.
+            apply_lora({"transformer": self.components.transformer}, self.lora, fuse=self.lora_fuse)
 
     def _unload(self) -> None:
         self.components = None

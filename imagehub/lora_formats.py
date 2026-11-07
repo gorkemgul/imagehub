@@ -20,6 +20,7 @@ from torch import Tensor, nn
 
 from imagehub.checkpoints import load_safetensors, read_safetensors_metadata
 from imagehub.lora import LoRALayer, merge_lora, wrap_module
+from imagehub.models.fp8 import Fp8Linear
 
 LoRASource = str | os.PathLike[str]
 LoRAOption = LoRASource | Sequence[LoRASource | tuple[LoRASource, float]] | None
@@ -92,6 +93,7 @@ class LoRAModuleWeights:
     down: Tensor
     up: Tensor
     alpha: float
+    output_rows: tuple[int, int] | None = None
 
 
 def _scale(value: object) -> float:
@@ -148,7 +150,7 @@ def _module_names(component: nn.Module) -> set[str]:
         for name, module in component.named_modules()
         if name
         and not name.startswith(wrapped)
-        and isinstance(module, nn.Linear | nn.Conv2d | LoRALayer)
+        and isinstance(module, nn.Linear | nn.Conv2d | Fp8Linear | LoRALayer)
     }
 
 
@@ -281,6 +283,41 @@ def _native_name(module: str, names: set[str]) -> str | None:
     return None
 
 
+def _resolve_native_module(
+    component: nn.Module,
+    module: str,
+    down: Tensor,
+    up: Tensor,
+    names: set[str],
+) -> tuple[str, Tensor, Tensor, tuple[int, int] | None] | None:
+    """Resolve a file path, expanding split Ideogram 4 attention updates if needed.
+
+    The native Ideogram 4 backbone intentionally retains the checkpoint's fused
+    ``attention.qkv`` weight.  diffusers exposes that weight as three projections,
+    so a file can carry an update for any subset of q, k and v.  Each update is
+    returned with the row block of the fused projection it adds to (and merges into).
+    """
+    native = _native_name(module, names)
+    if native is not None:
+        return native, down, up, None
+    if module.endswith(".attention.to_out.0"):
+        native = f"{module[: -len('.to_out.0')]}.o"
+        if native in names:
+            return native, down, up, None
+    match = re.fullmatch(r"(.+\.attention)\.to_([qkv])", module)
+    if match is None:
+        return None
+    fused = f"{match.group(1)}.qkv"
+    if fused not in names:
+        return None
+    target = component.get_submodule(fused)
+    out_features = getattr(target, "out_features", None)
+    if not isinstance(out_features, int) or out_features != up.shape[0] * 3:
+        return None
+    offset = {"q": 0, "k": 1, "v": 2}[match.group(2)] * up.shape[0]
+    return fused, down, up, (offset, offset + up.shape[0])
+
+
 def read_lora_file(
     path: LoRASource,
     components: Mapping[str, nn.Module | None],
@@ -324,6 +361,15 @@ def read_lora_file(
             if module is None and component != "unet":
                 module = tables[component].get(f"text_model_{name}")
             if module is None:
+                # The native Ideogram 4 q/k/v projections are one ``qkv`` module.
+                match_qkv = re.fullmatch(r"(.+_attention)_to_[qkv]", name)
+                if match_qkv is not None:
+                    fused = tables[component].get(f"{match_qkv.group(1)}_qkv")
+                    if fused is not None:
+                        # Keep the split spelling so _resolve_native_module can
+                        # expand B into the appropriate fused row block below.
+                        module = f"{fused.removesuffix('.qkv')}.to_{name[-1]}"
+            if module is None:
                 unresolved.append(key)
                 continue
             if match.group(2) == "alpha":
@@ -334,10 +380,25 @@ def read_lora_file(
         if unresolved:
             raise ValueError(f"{source}: LoRA keys that match no module: {_first(unresolved)}")
         pairs = _pairs(entries, str(source))
-        return [
-            LoRAModuleWeights(c, m, down, up, alphas.get((c, m), float(down.shape[0])))
-            for (c, m), (down, up) in sorted(pairs.items())
-        ]
+        result = []
+        for (component, module), (down, up) in sorted(pairs.items()):
+            target = components[component]
+            assert target is not None
+            resolved = _resolve_native_module(target, module, down, up, _module_names(target))
+            if resolved is None:
+                raise ValueError(f"{source}: LoRA keys that match no module: {component}.{module}")
+            native, native_down, native_up, output_rows = resolved
+            result.append(
+                LoRAModuleWeights(
+                    component,
+                    native,
+                    native_down,
+                    native_up,
+                    alphas.get((component, module), float(down.shape[0])),
+                    output_rows,
+                )
+            )
+        return result
 
     legacy = any(marker in k for k in keys for marker in _LEGACY_MARKERS) or any(
         ".lora_linear_layer." in k for k in keys
@@ -351,12 +412,19 @@ def read_lora_file(
         target = components.get(component)
         if target is not None and component not in names:
             names[component] = _module_names(target)
-        native = _native_name(module, names.get(component, set()))
-        if native is None:
+        resolved = (
+            _resolve_native_module(target, module, down, up, names.get(component, set()))
+            if target is not None
+            else None
+        )
+        if resolved is None:
             missing.append(f"{component}.{module}")
             continue
+        native, native_down, native_up, output_rows = resolved
         alpha = _alpha_from_metadata(metadata, component, module, int(down.shape[0]))
-        result.append(LoRAModuleWeights(component, native, down, up, alpha))
+        result.append(
+            LoRAModuleWeights(component, native, native_down, native_up, alpha, output_rows)
+        )
     if missing:
         raise ValueError(f"{source}: LoRA keys that match no module: {_first(missing)}")
     return result
@@ -371,26 +439,40 @@ def load_lora_file(
 ) -> list[str]:
     """Add the file as adapter ``adapter``; returns the qualified names of patched modules."""
     weights = read_lora_file(spec.path, components, unet_layers_per_block=unet_layers_per_block)
-    added: list[tuple[LoRALayer, str]] = []
+    duplicate_modules = {
+        (item.component, item.module)
+        for item in weights
+        if sum(
+            (other.component, other.module) == (item.component, item.module) for other in weights
+        )
+        > 1
+    }
+    added: list[tuple[LoRALayer, str, str]] = []
     try:
-        for item in weights:
+        for index, item in enumerate(weights):
             component = components[item.component]
             assert component is not None
             layer = wrap_module(component, item.module)
+            name = (
+                f"{adapter}:{index}"
+                if (item.component, item.module) in duplicate_modules
+                else adapter
+            )
             layer.add_adapter(
-                adapter,
+                name,
                 item.down,
                 item.up,
                 rank=int(item.down.shape[0]),
                 alpha=item.alpha,
                 scale=spec.scale,
+                output_rows=None if item.output_rows is None else slice(*item.output_rows),
             )
-            added.append((layer, f"{item.component}.{item.module}"))
+            added.append((layer, f"{item.component}.{item.module}", name))
     except BaseException:
-        for layer, _ in added:
-            layer.remove_adapter(adapter)
+        for layer, _, name in added:
+            layer.remove_adapter(name)
         raise
-    return [name for _, name in added]
+    return [name for _, name, _ in added]
 
 
 def apply_lora(

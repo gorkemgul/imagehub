@@ -148,13 +148,13 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `adam_beta1`, `adam_beta2`, `adam_weight_decay`, `adam_epsilon` | `0.9`, `0.999`, `1e-2`, `1e-8` | AdamW ayarları |
 | `mixed_precision` | `"no"` | `"fp16"` veya `"bf16"`; adaptör ve optimizer float32 kalır |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | görüntü dönüşümü |
-| `lora_rank`, `lora_alpha`, `lora_dropout` | model betiğinin varsayılanı, model betiğinin varsayılanı, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`); Qwen-Image 2.1 (16 / 16) hariç 4 / 4 |
+| `lora_rank`, `lora_alpha`, `lora_dropout` | model betiğinin varsayılanı, model betiğinin varsayılanı, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`); Qwen-Image 2.1 (16 / 16) ve Krea 2 (32 / 32) hariç 4 / 4 |
 | `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde, Qwen-Image, Z-Image ve Lumina 2'de `to_q`, `to_k`, `to_v`, `to_out.0`; FLUX.2 klein'de ayrıca `to_qkv_mlp_proj` ve ilk 24 tek blok için değişmez `attn.to_out` yolları; HiDream-I1 görüntü dikkatinde `to_q`, `to_k`, `to_v`, `to_out`; SD 3'te sekiz ortak dikkat izdüşümü; Sana'da `to_k`, `to_q`, `to_v` |
 | `gradient_checkpointing` | `False` | belleği azaltmak için U-Net ya da transformer bloklarını geri yayılımda yeniden hesaplar |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | U-Net (DDPM) hedef seçenekleri |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1, FLUX.2 klein, Sana, Qwen-Image, Z-Image, Lumina 2 ve HiDream-I1 için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1, FLUX.2 klein, Krea 2, Sana, Qwen-Image, Z-Image, Lumina 2 ve HiDream-I1 için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: `noise - latents` yerine ön koşullanmış çıktıyı latent'lerle karşılaştırır |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, FLUX.2 klein, Qwen-Image ve Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | metin prompt uzunluğu |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, FLUX.2 klein, Krea 2, Qwen-Image ve Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | metin prompt uzunluğu |
 | `system_prompt` | `None` | Lumina 2'nin isteğe bağlı Gemma sistem prompt'u; diğer aileler reddeder |
 | `complex_human_instruction` | `None` | Sana'nın isteğe bağlı prompt iyileştirme yönergesi; diğer aileler reddeder |
 | `guidance_scale` | `3.5` | FLUX.1 ve FLUX.2 klein: guidance embedding'i olan checkpoint'lerde eğitim sırasındaki değeri |
@@ -233,6 +233,7 @@ eğitilebildiğini listeler (bugün `lora`).
 | `sana-600m-1024` | native | lora |
 | `sana-1.5-4.8b-1024` | native | lora |
 | `lumina-image-2.0` | native | lora |
+| `krea2-turbo` | native | lora |
 | `ssd-1b` | native | lora |
 | `segmind-vega` | native | lora |
 | `koala-700m` | native | lora |
@@ -263,6 +264,20 @@ prompt tokenlarını çıkarır ve birleşik prompt/görüntü dizisini image-sl
 `max_sequence_length=512` yalnızca özgün sürüm içindir. Rank ve alpha ayarlanmadığında Qwen-Image
 betiğinin 4 / 4, Qwen-Image 2.1 ise 16 / 16 varsayılanlarını kullanır. Her iki backend de transformer
 adaptörlerini `lora=`, `lora_scale=` ve `lora_fuse=` ile yükler.
+
+Krea 2, rank / alpha 32 / 32, betiğin `"none"` ağırlıklandırması, 512 tokenlık prompt ve 5-B
+posterior latent paketleme ile yalnızca transformer adaptörlerini eğitir. Turbo, 8 adımlı
+damıtılmış bir checkpoint olduğundan eğitilmez. Krea 2 Community License'ı kabul edip
+`krea/Krea-2-Raw` eğitim checkpoint'ini `6b0ece7fffb640c5e3bcbe0a7f10f66b8e60a603` revizyonunda
+indirin; Raw ile eğitilen adaptörler bu lisansa bağlıdır ve Turbo üzerinde `lora=`,
+`lora_scale=` ve `lora_fuse=` ile çalışır. Doğrulama eğitim snapshot'ında 8 adım ve guidance 0 kullanır.
+
+Ideogram 4, tüm resmi checkpoint'leri nicemlenmiş olduğu için `inference_only` kalır. fp8 backend'i
+yine de transformer adaptörlerini `lora=`, `lora_scale=` ve `lora_fuse=` ile yükler.
+Diffusers düzenindeki transformer dosyaları `attention.to_q`, `to_k`, `to_v` ve `to_out.0` kullanır;
+backend üç ayrı dikkat güncellemesini birleşik `attention.qkv` ağırlığının ilgili satır bloklarına,
+`to_out.0` güncellemesini de `attention.o` katmanına eşler. Birleştirme, güncellemeleri uygulamadan
+önce fp8 ağırlığını hesaplama veri tipine nicemsizleştirir.
 
 Z-Image yalnızca transformer LoRA adaptörlerini `to_k`, `to_q`, `to_v` ve `to_out.0` üzerinde
 eğitir; betikteki rank / alpha varsayılanı 4 / 4, ağırlıklandırma `"none"`, sohbet şablonu prompt

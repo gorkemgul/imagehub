@@ -159,6 +159,22 @@ compare final latents and uint8 pixels exactly.
 | Random PEFT adapter: single, stacked 0.8 / 0.5 and fused; registered targets, changed output, final latents and uint8 pixels | tiny FLUX.2 klein | 0 / 0 | 0 / 0 |
 | Three-step trained adapter loaded in diffusers; registered targets, changed output, final latents and uint8 pixels | tiny FLUX.2 klein | 0 / 0 | 0 / 0 |
 
+### Krea 2 training (November 7, 2026)
+
+Krea 2 training has CPU float32 coverage against diffusers 0.40.0. The non-distilled Raw training snapshot uses rank / alpha 32 / 32,
+`"none"` weighting, logit mean / std 0 / 1, mode scale 1.29 and a 512-token prompt. Turbo is
+refused before weights load, and a unit test trains an adapter on Raw and loads it on the
+same-weight Turbo layout.
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Profile defaults, literal target-module registration, image transform, prompt token ids / mask, and diffusers prompt embeddings / mask | tiny Krea 2 | identical | exact |
+| First-step posterior noise, noise, timestep, sigma, loss and every LoRA gradient for all five weighting schemes | tiny Krea 2 | 0 | 0 |
+| Random PEFT adapter: single, stacked 0.8 / 0.5 and fused; registered targets, changed output, final latents and uint8 pixels | tiny Krea 2 | 0 / 0 | 0 / 0 |
+| Three-step trained adapter loaded in diffusers; registered targets, changed output, final latents and uint8 pixels | tiny Krea 2 | 0 / 0 | 0 / 0 |
+| Distilled-snapshot rejection before weight loading; one-step Raw training and Turbo adapter load | tiny Krea 2 | covered by unit test | — |
+| Gradient checkpointing; validation image vs `pipeline(..., lora=adapter)` | tiny Krea 2 | identical pixels / gradients | exact |
+
 ### Training runtime (CPU)
 
 | Check | Result |
@@ -230,6 +246,9 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 | 3-step trained transformer adapter: 3 steps from explicit latents, guidance 4, sequence length 8; final latents and uint8 pixels | HiDream-I1 | 0 / 0 | 0 / 0 |
 | Random PEFT transformer adapter: literal targets; single, stacked 0.8 / 0.5 and fused; final latents and uint8 pixels | FLUX.2 klein | 0 / 0 | 0 / 0 |
 | 3-step trained transformer adapter; final latents and uint8 pixels | FLUX.2 klein | 0 / 0 | 0 / 0 |
+| Random PEFT transformer adapter: literal targets; single, stacked 0.8 / 0.5 and fused; final latents and uint8 pixels | Krea 2 | 0 / 0 | 0 / 0 |
+| 3-step trained transformer adapter (trained on the raw layout); final latents and uint8 pixels | Krea 2 | 0 / 0 | 0 / 0 |
+| Random PEFT transformer adapters in diffusers layout on dequantized fp8 weights: split q/k/v onto fused `qkv`, `to_out.0` onto `o`, MLP `w1` / `w2` / `w3`; single, stacked 0.8 / 0.5, fused and q-only; conditional transformer output | Ideogram 4 | 0 | 0 |
 | diffusers / PEFT layout, no alpha | SD 1.x, SD3 | 0 | 0 |
 | Prompt embeddings with text-encoder adapters (CLIP-L, CLIP-G, pooled, negative prompt) | SD3 | 0 | 0 |
 | kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |
@@ -1993,6 +2012,13 @@ Random-weight parity covered fp8 linears and the transformer, and a tiny end-to-
 the complete pipeline against the official implementation. Every comparison was exact. The
 real-checkpoint end-to-end comparisons used the official `V4_TURBO_12` preset rather than the
 48-step `V4_QUALITY_48` default to shorten the CPU run.
+
+The adapter reference uses diffusers 0.40.0 on a tiny float32 transformer whose weights are made
+by dequantizing each fp8 row (`weight * weight_scale`), splitting fused `attention.qkv` into
+`to_q`, `to_k` and `to_v`, and renaming `attention.o` to `to_out.0`. It checks single, stacked
+0.8 / 0.5, fused, and q-only PEFT adapters against the native conditional transformer exactly.
+The test does not make an end-to-end diffusers pipeline comparison: the tiny reference fixture
+only constructs transformer inputs, not all pipeline components.
 
 The official pipeline peaks near 52 GB while loading in float32 and the native pipeline near 40 GB.
 The official reference therefore ran in a child process with the same thread count, saved its

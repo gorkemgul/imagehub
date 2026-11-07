@@ -33,6 +33,8 @@ class TrainingSpec:
     target_modules: tuple[str, ...] = ()
     lora_rank: int = 4
     lora_alpha: float = 4.0
+    training_repo: str | None = None
+    training_revision: str | None = None
 
 
 _UNET_ATTENTION = ("to_q", "to_k", "to_v", "to_out.0")
@@ -75,6 +77,23 @@ _FLUX2_TARGETS = (
     "to_qkv_mlp_proj",
     *(f"single_transformer_blocks.{index}.attn.to_out" for index in range(24)),
 )
+_KREA2_TARGETS = (
+    "img_in",
+    "final_layer.linear",
+    "to_q",
+    "to_k",
+    "to_v",
+    "to_out.0",
+    "to_gate",
+    "ff.up",
+    "ff.down",
+    "text_fusion.projector",
+    "txt_in.linear_1",
+    "txt_in.linear_2",
+    "time_embed.linear_1",
+    "time_embed.linear_2",
+    "time_mod_proj",
+)
 _TRAINABLE = {
     "stable-diffusion": _UNET_ATTENTION,
     "stable-diffusion-xl": _UNET_ATTENTION,
@@ -86,6 +105,7 @@ _TRAINABLE = {
     "lumina2": _LUMINA2_TARGETS,
     "hidream": _HIDREAM_TARGETS,
     "flux2": _FLUX2_TARGETS,
+    "krea2": _KREA2_TARGETS,
 }
 # Few-step distilled checkpoints are not trained with the denoising objective; the tiny
 # autoencoder of SDXS has no posterior to sample training latents from; the SDXL refiner is an
@@ -122,7 +142,7 @@ def _spec(model_id: str) -> TrainingSpec:
     if model_id == "flux1-kontext-dev":
         targets = _KONTEXT_TARGETS
     if targets is not None and model_id not in _EXCLUDED:
-        rank = 16 if model_id == "qwen-image-2.1" else 4
+        rank = 32 if model_id == "krea2-turbo" else 16 if model_id == "qwen-image-2.1" else 4
         return TrainingSpec(
             model_id,
             model.family,
@@ -131,6 +151,8 @@ def _spec(model_id: str) -> TrainingSpec:
             targets,
             rank,
             float(rank),
+            "krea/Krea-2-Raw" if model_id == "krea2-turbo" else None,
+            "6b0ece7fffb640c5e3bcbe0a7f10f66b8e60a603" if model_id == "krea2-turbo" else None,
         )
     return TrainingSpec(model_id, model.family, TrainingSupport.INFERENCE_ONLY)
 

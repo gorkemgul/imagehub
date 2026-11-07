@@ -16,6 +16,8 @@ import torch
 from torch import Tensor, nn
 from torch.nn import functional as F
 
+from imagehub.models.fp8 import Fp8Linear
+
 _INITS = ("uniform", "gaussian")
 
 
@@ -69,14 +71,15 @@ class LoRAConfig:
 
 
 _Kernel = nn.Linear | nn.Conv2d
+_Base = nn.Linear | nn.Conv2d | Fp8Linear
 
 
 class LoRALayer(nn.Module):
     """A base layer plus named low-rank adapters, each with its own scale."""
 
-    base: nn.Linear | nn.Conv2d
+    base: _Base
 
-    def __init__(self, base: nn.Linear | nn.Conv2d) -> None:
+    def __init__(self, base: _Base) -> None:
         super().__init__()
         self.base = base
         self.lora_A = nn.ModuleDict()
@@ -86,6 +89,7 @@ class LoRALayer(nn.Module):
         self.merged_adapters: list[str] = []
         self._rank: dict[str, int] = {}
         self._alpha: dict[str, float] = {}
+        self._output_rows: dict[str, slice] = {}
         self._base_requires_grad = {n: p.requires_grad for n, p in base.named_parameters()}
 
     @property
@@ -96,7 +100,7 @@ class LoRALayer(nn.Module):
     def out_features(self) -> int:
         raise NotImplementedError
 
-    def _make_pair(self, rank: int) -> tuple[_Kernel, _Kernel]:
+    def _make_pair(self, rank: int, out_features: int | None = None) -> tuple[_Kernel, _Kernel]:
         raise NotImplementedError
 
     def _fan_in(self) -> int:
@@ -125,6 +129,7 @@ class LoRALayer(nn.Module):
         dropout: float = 0.0,
         generator: torch.Generator | None = None,
         init: str = "uniform",
+        output_rows: slice | None = None,
     ) -> None:
         """Add adapter ``name``; with no tensors, ``A`` is seeded and ``B`` is zero.
 
@@ -146,10 +151,22 @@ class LoRALayer(nn.Module):
             )
         if (down is None) != (up is None):
             raise ValueError("LoRA down and up weights must be given together")
-        lora_a, lora_b = self._make_pair(rank)
+        if output_rows is not None and (
+            output_rows.step is not None
+            or output_rows.start is None
+            or output_rows.stop is None
+            or not 0 <= output_rows.start < output_rows.stop <= self.out_features
+        ):
+            raise ValueError("LoRA output rows must be a non-empty contiguous layer slice")
+        lora_a, lora_b = self._make_pair(
+            rank, None if output_rows is None else output_rows.stop - output_rows.start
+        )
         weight = self.base.weight
-        lora_a.to(device=weight.device, dtype=weight.dtype)
-        lora_b.to(device=weight.device, dtype=weight.dtype)
+        adapter_dtype = (
+            self.base.compute_dtype if isinstance(self.base, Fp8Linear) else weight.dtype
+        )
+        lora_a.to(device=weight.device, dtype=adapter_dtype)
+        lora_b.to(device=weight.device, dtype=adapter_dtype)
         with torch.no_grad():
             if down is None or up is None:
                 if init == "gaussian":
@@ -170,6 +187,8 @@ class LoRALayer(nn.Module):
         self._rank[name] = rank
         self._alpha[name] = float(alpha)
         self.scaling[name] = scale * float(alpha) / rank
+        if output_rows is not None:
+            self._output_rows[name] = output_rows
 
     def remove_adapter(self, name: str) -> None:
         if name in self.merged_adapters:
@@ -177,6 +196,7 @@ class LoRALayer(nn.Module):
         for store in (self.lora_A, self.lora_B, self.lora_dropout):
             del store[name]
         del self.scaling[name], self._rank[name], self._alpha[name]
+        self._output_rows.pop(name, None)
 
     def set_scale(self, name: str, scale: float) -> None:
         if name not in self.lora_A:
@@ -214,7 +234,13 @@ class LoRALayer(nn.Module):
                 continue
             lora_a, lora_b = self.lora_A[name], self.lora_B[name]
             h = x.to(self.weights(name)[0].dtype)
-            result = result + lora_b(lora_a(self.lora_dropout[name](h))) * self.scaling[name]
+            update = lora_b(lora_a(self.lora_dropout[name](h))) * self.scaling[name]
+            rows = self._output_rows.get(name)
+            if rows is None:
+                result = result + update
+            else:
+                result = result.clone()
+                result[..., rows] = result[..., rows] + update
         return result.to(result_dtype)
 
 
@@ -232,15 +258,77 @@ class LoRALinear(LoRALayer):
     def _fan_in(self) -> int:
         return self.base.in_features
 
-    def _make_pair(self, rank: int) -> tuple[_Kernel, _Kernel]:
+    def _make_pair(self, rank: int, out_features: int | None = None) -> tuple[_Kernel, _Kernel]:
         return (
             nn.Linear(self.base.in_features, rank, bias=False),
-            nn.Linear(rank, self.base.out_features, bias=False),
+            nn.Linear(rank, out_features or self.base.out_features, bias=False),
         )
 
     def delta_weight(self, name: str) -> Tensor:
         weight_a, weight_b = self.weights(name)
-        return (weight_b @ weight_a) * self.scaling[name]
+        delta = (weight_b @ weight_a) * self.scaling[name]
+        rows = self._output_rows.get(name)
+        if rows is None:
+            return delta
+        result = delta.new_zeros(self.base.weight.shape)
+        result[rows] = delta
+        return result
+
+
+class LoRAFp8Linear(LoRALayer):
+    """A LoRA layer over an fp8 weight-only linear."""
+
+    base: Fp8Linear | nn.Linear
+
+    @property
+    def in_features(self) -> int:
+        return self.base.in_features
+
+    @property
+    def out_features(self) -> int:
+        return self.base.out_features
+
+    def _fan_in(self) -> int:
+        return self.base.in_features
+
+    def _make_pair(self, rank: int, out_features: int | None = None) -> tuple[_Kernel, _Kernel]:
+        return (
+            nn.Linear(self.base.in_features, rank, bias=False),
+            nn.Linear(rank, out_features or self.base.out_features, bias=False),
+        )
+
+    def delta_weight(self, name: str) -> Tensor:
+        weight_a, weight_b = self.weights(name)
+        delta = (weight_b @ weight_a) * self.scaling[name]
+        rows = self._output_rows.get(name)
+        if rows is None:
+            return delta
+        result = delta.new_zeros(self.base.weight.shape)
+        result[rows] = delta
+        return result
+
+    def merge(self) -> None:
+        """Dequantize to the compute dtype, then merge as the reference loader does."""
+        if not isinstance(self.base, Fp8Linear):
+            super().merge()
+            return
+        base = self.base
+        linear = nn.Linear(
+            base.in_features,
+            base.out_features,
+            bias=base.bias is not None,
+            device=base.weight.device,
+            dtype=base.compute_dtype,
+        )
+        with torch.no_grad():
+            linear.weight.copy_(
+                base.weight.to(base.compute_dtype)
+                * base.weight_scale.to(base.compute_dtype).unsqueeze(1)
+            )
+            if base.bias is not None and linear.bias is not None:
+                linear.bias.copy_(base.bias.to(base.compute_dtype))
+        self.base = linear
+        super().merge()
 
 
 class LoRAConv2d(LoRALayer):
@@ -258,7 +346,9 @@ class LoRAConv2d(LoRALayer):
         kh, kw = self.base.kernel_size
         return self.base.in_channels * kh * kw
 
-    def _make_pair(self, rank: int) -> tuple[_Kernel, _Kernel]:
+    def _make_pair(self, rank: int, out_features: int | None = None) -> tuple[_Kernel, _Kernel]:
+        if out_features is not None:
+            raise ValueError("LoRA output rows are supported only for linear layers")
         base = self.base
         return (
             nn.Conv2d(
@@ -310,6 +400,8 @@ def wrap_module(model: nn.Module, name: str) -> LoRALayer:
     wrapper: LoRALayer
     if type(module) is nn.Linear:
         wrapper = LoRALinear(module)
+    elif isinstance(module, Fp8Linear):
+        wrapper = LoRAFp8Linear(module)
     elif type(module) is nn.Conv2d:
         wrapper = LoRAConv2d(module)
     else:
@@ -325,8 +417,12 @@ def lora_layers(model: nn.Module) -> dict[str, LoRALayer]:
 
 def set_lora_scale(model: nn.Module, adapter: str, scale: float) -> None:
     for layer in lora_layers(model).values():
-        if adapter in layer.lora_A:
-            layer.set_scale(adapter, scale)
+        for name in layer.adapters:
+            # A diffusers-layout Ideogram 4 file can address q, k and v separately,
+            # while the native model stores them in one qkv projection.  The loader
+            # keeps those independent updates under a common adapter-name prefix.
+            if name == adapter or name.startswith(f"{adapter}:"):
+                layer.set_scale(name, scale)
 
 
 def merge_lora(model: nn.Module) -> None:
@@ -371,7 +467,7 @@ def _targets(model: nn.Module, patterns: tuple[str, ...]) -> tuple[list[str], li
     for name, module in model.named_modules():
         if not name or name.startswith(wrapped):
             continue
-        if isinstance(module, nn.Linear | nn.Conv2d | LoRALayer):
+        if isinstance(module, nn.Linear | nn.Conv2d | Fp8Linear | LoRALayer):
             available.append(name)
             if _matches(name, patterns):
                 selected.append(name)

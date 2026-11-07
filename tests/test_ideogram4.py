@@ -4,6 +4,7 @@ from torch import nn
 
 from imagehub.backends.ideogram4 import Ideogram4Backend
 from imagehub.caption_verifier import CaptionVerifier
+from imagehub.lora import wrap_module
 from imagehub.models.fp8 import Fp8Linear, load_fp8_state_dict, swap_linears_to_fp8
 from imagehub.models.ideogram4_text import (
     IMAGE_POSITION_OFFSET,
@@ -70,6 +71,22 @@ def test_fp8_swap_and_load_preserve_checkpoint_dtypes() -> None:
     assert model.quantized.bias.dtype == torch.bfloat16
     assert model.regular.weight.dtype == torch.bfloat16
     assert model.regular.bias.dtype == torch.bfloat16
+
+
+def test_fp8_linear_lora_is_float32_and_fusion_preserves_the_exact_update() -> None:
+    model = nn.Sequential(Fp8Linear(4, 3, bias=False, compute_dtype=torch.float32))
+    model[0].weight.fill_(1)
+    model[0].weight_scale.fill_(0.01)
+    layer = wrap_module(model, "0")
+    layer.add_adapter("adapter", torch.ones(2, 4), torch.ones(3, 2), rank=2, alpha=2, scale=0.5)
+    inputs = torch.ones(1, 4)
+    base_weight = model[0].base.weight.float() * model[0].base.weight_scale[:, None]
+    expected_fused = torch.nn.functional.linear(
+        inputs, base_weight + torch.ones(3, 2) @ torch.ones(2, 4) * 0.5
+    )
+    assert layer.lora_A["adapter"].weight.dtype == torch.float32
+    layer.merge()
+    assert torch.equal(model(inputs), expected_fused)
 
 
 def test_ideogram4_published_config_and_layout() -> None:
