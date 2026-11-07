@@ -143,7 +143,7 @@ chat-template prompt encoding, deterministic KL posterior mean and published lat
 
 FLUX.2 klein LoRA training is checked on CPU float32 against diffusers 0.40.0 and PEFT 0.21.2.
 The tiny random snapshot compares rank / alpha 4 / 4, dropout 0, `"none"` weighting, logit mean /
-std 0 / 1, mode scale 1.29, 512-token prompts, Qwen layers 10 / 20 / 30, guidance 3.5 and the
+std 0 / 1, mode scale 1.29, 512-token prompts, Qwen layers 9 / 18 / 27 (the official FLUX.2 layers, passed to the script, whose default is the FLUX.2 [dev] set 10 / 20 / 30), guidance 3.5 and the
 literal target list. It also compares the fixed resize/crop/flip transform, chat-template token
 ids and attention mask. For every weighting scheme, first-step noise, timestep, sigma, loss and
 every LoRA gradient are exact. Random single, stacked (0.8 / 0.5) and fused PEFT adapters, plus a

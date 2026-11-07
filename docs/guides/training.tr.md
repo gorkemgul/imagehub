@@ -290,8 +290,10 @@ hesaplar. Backend, transformer adaptörlerini `lora=`, `lora_scale=` ve `lora_fu
 FLUX.2 klein 4B ve 9B yalnızca transformer LoRA adaptörlerini betikteki değişmez hedeflerle
 eğitir: `to_k`, `to_q`, `to_v`, `to_out.0`, `to_qkv_mlp_proj` ve
 `single_transformer_blocks.0` ile `.23` arasındaki `attn.to_out`. Rank / alpha varsayılanı 4 / 4,
-ağırlıklandırma `"none"`, Qwen prompt'u 512 token ve 10, 20, 30. katmanları kullanır. Bunlar eğitim betiğinin katmanlarıdır;
-klein pipeline'ı çıkarımda prompt'u 9, 18 ve 27. katmanlardan kodlar, imagehub backend'i de öyle yapar. Deterministik
+ağırlıklandırma `"none"`, Qwen prompt'u 512 token ve resmi FLUX.2 kodu ile klein pipeline'ının
+çıkarımda kullandığı 9, 18 ve 27. katmanları kullanır. Eğitim betiğinin `--text_encoder_out_layers`
+varsayılanı olan 10, 20 ve 30, FLUX.2 [dev]'in Mistral katmanlarıdır; referans testi betiği 9, 18 ve 27
+ile çalıştırır. Deterministik
 VAE posteriörü patchify edilir, VAE batch-normalization istatistikleriyle normalize edilir ve
 `noise - latents` hedefiyle flow matching yapılır; gradient checkpointing çift ve tek akış
 bloklarını kapsar. Guidance değeri yalnızca guidance embedding'i olan checkpoint'lere verilir;
