@@ -921,7 +921,7 @@ TINY_FLUX2_TEXT = TINY_Z_IMAGE_TEXT | {
     "vocab_size": 36,
     "hidden_size": 8,
     "intermediate_size": 16,
-    "num_hidden_layers": 27,
+    "num_hidden_layers": 30,
     "num_attention_heads": 1,
     "num_key_value_heads": 1,
     "head_dim": 8,
