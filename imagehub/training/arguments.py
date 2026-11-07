@@ -73,8 +73,8 @@ class TrainingArguments:
     resolution: int = 512
     center_crop: bool = False
     random_flip: bool = False
-    lora_rank: int = 4
-    lora_alpha: float = 4.0
+    lora_rank: int | None = None
+    lora_alpha: float | None = None
     lora_dropout: float = 0.0
     lora_target_modules: tuple[str, ...] | None = None
     gradient_checkpointing: bool = False
@@ -109,12 +109,13 @@ class TrainingArguments:
             "per_device_eval_batch_size",
             "gradient_accumulation_steps",
             "resolution",
-            "lora_rank",
             "logging_steps",
             "save_steps",
             "validation_num_inference_steps",
         ):
             _positive_int(name, getattr(self, name))
+        if self.lora_rank is not None:
+            _positive_int("lora_rank", self.lora_rank)
         if self.eval_steps is not None:
             _positive_int("eval_steps", self.eval_steps)
         object.__setattr__(
@@ -130,8 +131,12 @@ class TrainingArguments:
         _non_negative_int("lr_warmup_steps", self.lr_warmup_steps)
         if isinstance(self.seed, bool) or not isinstance(self.seed, int):
             raise ValueError("seed must be an int")
-        for name in ("learning_rate", "adam_epsilon", "lora_alpha"):
+        for name in ("learning_rate", "adam_epsilon"):
             object.__setattr__(self, name, _number(name, getattr(self, name), positive=True))
+        if self.lora_alpha is not None:
+            object.__setattr__(
+                self, "lora_alpha", _number("lora_alpha", self.lora_alpha, positive=True)
+            )
         for name in ("max_grad_norm", "adam_weight_decay", "noise_offset", "lora_dropout"):
             object.__setattr__(self, name, _number(name, getattr(self, name)))
         for name in ("adam_beta1", "adam_beta2"):

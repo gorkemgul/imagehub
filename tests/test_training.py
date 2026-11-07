@@ -64,6 +64,11 @@ def test_training_profiles():
     assert spec.methods == ("lora",)
     assert spec.family == "stable-diffusion"
     assert spec.target_modules == ("to_q", "to_k", "to_v", "to_out.0")
+    assert (spec.lora_rank, spec.lora_alpha) == (4, 4)
+    assert (
+        get_training_spec("qwen-image-2.1").lora_rank,
+        get_training_spec("qwen-image-2.1").lora_alpha,
+    ) == (16, 16)
     for distilled in ("sdxs-512-0.9", "sd-turbo", "lcm-dreamshaper-v7"):
         assert get_training_spec(distilled).support is TrainingSupport.INFERENCE_ONLY
     assert get_training_spec("flux1-dev").support is TrainingSupport.NATIVE
@@ -77,6 +82,7 @@ def test_training_profiles():
         "stable-diffusion-3",
         "flux",
         "sana",
+        "qwen-image",
     }
     assert get_training_spec("sd3.5-large-turbo").support is TrainingSupport.INFERENCE_ONLY
     assert len(list_training_specs()) > len(trainable)

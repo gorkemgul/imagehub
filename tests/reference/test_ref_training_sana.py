@@ -83,7 +83,9 @@ def test_sana_default_arguments_give_the_script_defaults(tmp_path):
     ) == ("none", 0.0, 1.0, 1.29, False)
     assert objective.max_sequence_length == collator.max_sequence_length == 300
     assert args.complex_human_instruction is None
-    assert (args.lora_rank, args.lora_alpha) == (4, 4)
+    spec = get_training_spec("sana-600m-1024")
+    assert (args.lora_rank, args.lora_alpha) == (None, None)
+    assert (spec.lora_rank, spec.lora_alpha) == (4, 4)
     assert set(get_training_spec("sana-600m-1024").target_modules) == {"to_k", "to_q", "to_v"}
     assert (WEIGHTING_SCHEME, LOGIT_MEAN, LOGIT_STD, MODE_SCALE, MAX_SEQUENCE_LENGTH) == (
         "none",

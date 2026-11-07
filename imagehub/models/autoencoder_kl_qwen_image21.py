@@ -632,10 +632,13 @@ class AutoencoderKLQwenImage21(NativeModel):
 
     def encode(self, image: Tensor) -> Tensor:
         """Return the posterior mean for a batch of single images in ``[-1, 1]``."""
+        return self.encode_moments(image).chunk(2, dim=1)[0][:, :, 0]
+
+    def encode_moments(self, image: Tensor) -> Tensor:
+        """Return posterior mean and log-variance before the single-frame squeeze."""
         feat_cache: FeatureCache = [None] * self._encoder_conv_count
         moments = self.encoder(image.unsqueeze(2), feat_cache=feat_cache, feat_idx=[0])
-        moments = self.quant_conv(moments)
-        return moments.chunk(2, dim=1)[0][:, :, 0]
+        return self.quant_conv(moments)[:, :, :1]
 
     def decode(self, latents: Tensor) -> Tensor:
         """Decode a batch of single-image latents and clamp the result to ``[-1, 1]``."""

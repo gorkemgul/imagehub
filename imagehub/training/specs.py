@@ -31,6 +31,8 @@ class TrainingSpec:
     support: TrainingSupport
     methods: tuple[str, ...] = ()
     target_modules: tuple[str, ...] = ()
+    lora_rank: int = 4
+    lora_alpha: float = 4.0
 
 
 _UNET_ATTENTION = ("to_q", "to_k", "to_v", "to_out.0")
@@ -61,12 +63,14 @@ _FLUX_TARGETS = (
 )
 _KONTEXT_TARGETS = _FLUX_TARGETS + ("proj_mlp",)
 _SANA_TARGETS = ("to_k", "to_q", "to_v")
+_QWEN_IMAGE_TARGETS = ("to_k", "to_q", "to_v", "to_out.0")
 _TRAINABLE = {
     "stable-diffusion": _UNET_ATTENTION,
     "stable-diffusion-xl": _UNET_ATTENTION,
     "stable-diffusion-3": _JOINT_ATTENTION,
     "flux": _FLUX_TARGETS,
     "sana": _SANA_TARGETS,
+    "qwen-image": _QWEN_IMAGE_TARGETS,
 }
 # Few-step distilled checkpoints are not trained with the denoising objective; the tiny
 # autoencoder of SDXS has no posterior to sample training latents from; the SDXL refiner is an
@@ -101,7 +105,16 @@ def _spec(model_id: str) -> TrainingSpec:
     if model_id == "flux1-kontext-dev":
         targets = _KONTEXT_TARGETS
     if targets is not None and model_id not in _EXCLUDED:
-        return TrainingSpec(model_id, model.family, TrainingSupport.NATIVE, ("lora",), targets)
+        rank = 16 if model_id == "qwen-image-2.1" else 4
+        return TrainingSpec(
+            model_id,
+            model.family,
+            TrainingSupport.NATIVE,
+            ("lora",),
+            targets,
+            rank,
+            float(rank),
+        )
     return TrainingSpec(model_id, model.family, TrainingSupport.INFERENCE_ONLY)
 
 

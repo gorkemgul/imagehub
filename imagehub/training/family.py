@@ -94,6 +94,7 @@ _FAMILIES = {
     "stable-diffusion-3": "imagehub.training.sd3:StableDiffusion3Family",
     "flux": "imagehub.training.flux:Flux1Family",
     "sana": "imagehub.training.sana:SanaFamily",
+    "qwen-image": "imagehub.training.qwen_image:QwenImageFamily",
 }
 
 FLOW_MATCHING_OPTIONS = (

@@ -19,6 +19,7 @@ from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import load_weights, read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
+from imagehub.lora_formats import LoRAOption, apply_lora, parse_lora_option
 from imagehub.models.autoencoder_kl_qwen_image import AutoencoderKLQwenImage
 from imagehub.models.autoencoder_kl_qwen_image21 import AutoencoderKLQwenImage21
 from imagehub.models.qwen2_5_vl_text import Qwen25VLTextModel
@@ -431,8 +432,15 @@ class QwenImageBackend(TextToImageBackend):
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
         model_id: str | None = None,
+        lora: LoRAOption = None,
+        lora_scale: float = 1.0,
+        lora_fuse: bool = False,
     ) -> None:
         super().__init__()
+        if not isinstance(lora_fuse, bool):
+            raise TypeError("lora_fuse must be a bool")
+        self.lora = parse_lora_option(lora, lora_scale)
+        self.lora_fuse = lora_fuse
         self.source = Path(model)
         self.model_id = model_id
         self.device = resolve_device(device)
@@ -521,6 +529,9 @@ class QwenImageBackend(TextToImageBackend):
                 UserWarning,
                 stacklevel=2,
             )
+        if self.lora:
+            # Both diffusers Qwen-Image pipelines expose only transformer adapters.
+            apply_lora({"transformer": self.components.transformer}, self.lora, fuse=self.lora_fuse)
 
     def _unload(self) -> None:
         self.components = None
