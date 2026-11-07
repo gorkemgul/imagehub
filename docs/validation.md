@@ -124,6 +124,21 @@ inference validation.
 | Random PEFT transformer adapters: single, stacked 0.8 / 0.5 and fused | tiny Qwen-Image 2.1 | 0 (latents and pixels) | 0 |
 | Three-step trained adapter loaded by diffusers `load_lora_weights` | tiny Qwen-Image 2.1 | 0 (latents and pixels) | 0 |
 
+### Z-Image training
+
+Validated on CPU float32 on November 7, 2026 against diffusers 0.40.0
+`train_dreambooth_lora_z_image.py` with PEFT 0.21.2. The tiny random snapshot covers Z-Image's
+chat-template prompt encoding, deterministic KL posterior mean and published latent shift / scale.
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Default arguments vs the script's argparse defaults: weighting, logit mean / std, mode scale, sequence length 512, rank / alpha and transformer targets | tiny Z-Image | identical | identical |
+| Image transform; chat-template token ids and attention mask | tiny Z-Image | identical | identical |
+| First-step noise, timestep, loss and every LoRA gradient, all weighting schemes | tiny Z-Image | 0 | 0 |
+| Gradient checkpointing over transformer blocks | tiny Z-Image | identical | identical |
+| Random PEFT transformer adapters: single, stacked 0.8 / 0.5 and fused | tiny Z-Image | 0 (latents and pixels) | 0 |
+| Three-step trained adapter loaded by diffusers `load_lora_weights` | tiny Z-Image | 0 (latents and pixels) | 0 |
+
 ### Training runtime (CPU)
 
 | Check | Result |
@@ -155,6 +170,10 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
   Both sides generated 3 steps at 32×32 from seed 42 with guidance 4 and the same explicit
   complex-human instruction. Single, stacked (0.8 / 0.5), fused, and 3-step trained adapters
   were compared.
+- On November 7, 2026, tiny Z-Image PEFT transformer adapters covered `to_k`, `to_q`, `to_v`
+  and `to_out.0`. Both sides generated 3 steps at 32x32 from seed 42 with guidance 4. Single,
+  stacked (0.8 / 0.5), fused and 3-step trained adapters were compared, including final latents
+  when uint8 pixels did not move.
 - One published adapter, `latent-consistency/lcm-lora-sdv1-5` at
   `cf2fced511dbe7e26c8d1d397e728fbab875db4b` (kohya layout, per-module alphas, 278 layers of
   which 96 are convolutions, 50 of them 3×3), was loaded on `sd-v1-5` and generated 2 steps at
@@ -165,16 +184,18 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 
 | Comparison | Family | Pixels max abs | Tolerance |
 | --- | --- | --- | --- |
-| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL, SD3, FLUX.1, Sana | 0 | 0 |
+| diffusers / PEFT layout, alpha in the header | SD 1.x, SDXL, SD3, FLUX.1, Sana, Z-Image | 0 | 0 |
 | Random PEFT transformer adapter: `to_k`, `to_q`, `to_v`, `to_out.0`, `linear`, `linear_1`, `linear_2`, `proj_out`; 3 steps at 32×32, seed 42, guidance 4, explicit complex-human instruction | Sana | 0 | 0 |
 | 3-step trained transformer adapter: 3 steps at 32×32, seed 42, guidance 4, explicit complex-human instruction | Sana | 0 | 0 |
+| Random PEFT transformer adapter: `to_k`, `to_q`, `to_v`, `to_out.0`; single, stacked 0.8 / 0.5 and fused | Z-Image | 0 | 0 |
+| 3-step trained transformer adapter: 3 steps at 32×32, seed 42, guidance 4 | Z-Image | 0 | 0 |
 | diffusers / PEFT layout, no alpha | SD 1.x, SD3 | 0 | 0 |
 | Prompt embeddings with text-encoder adapters (CLIP-L, CLIP-G, pooled, negative prompt) | SD3 | 0 | 0 |
 | kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |
 | kohya layout, SDXL original block names | SDXL | 0 | 0 |
 | legacy diffusers layout | SD 1.x | 0 | 0 |
-| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL, SD3, FLUX.1, Sana | 0 | 0 |
-| Two stacked adapters, fused | SD 1.x, SDXL, SD3, FLUX.1, Sana | 0 | 0 |
+| Two stacked adapters, scales 0.8 / 0.5 | SD 1.x, SDXL, SD3, FLUX.1, Sana, Z-Image | 0 | 0 |
+| Two stacked adapters, fused | SD 1.x, SDXL, SD3, FLUX.1, Sana, Z-Image | 0 | 0 |
 | Published LCM-LoRA on `sd-v1-5` | SD 1.x | 0 | 0 |
 
 diffusers 0.40 rewrites kohya and legacy text-encoder keys to the transformers 4 module names

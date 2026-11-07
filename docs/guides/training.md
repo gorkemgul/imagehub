@@ -146,12 +146,12 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `mixed_precision` | `"no"` | `"fp16"` or `"bf16"`; the adapter and optimizer stay float32 |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | image transform |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | model's script default, model's script default, `0.0` | adapter size and scale (`alpha / rank`); 4 / 4 except Qwen-Image 2.1 (16 / 16) |
-| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets and Qwen-Image, the eight joint-attention projections for SD 3, and `to_k`, `to_q`, `to_v` for Sana |
+| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, Qwen-Image and Z-Image, the eight joint-attention projections for SD 3, and `to_k`, `to_q`, `to_v` for Sana |
 | `gradient_checkpointing` | `False` | recompute U-Net or transformer blocks in the backward pass to save memory |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | U-Net (DDPM) objective options |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, Sana and Qwen-Image), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, Sana, Qwen-Image and Z-Image), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: compare the preconditioned output with the latents instead of `noise - latents` |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1 and Qwen-Image), `300` (Sana) | text prompt length |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, Qwen-Image and Z-Image), `300` (Sana) | text prompt length |
 | `complex_human_instruction` | `None` | Sana's optional prompt-enhancement instruction; other families reject it |
 | `guidance_scale` | `3.5` | FLUX.1: the guidance embedding's value in training, on checkpoints that have one |
 | `logging_steps`, `save_steps` | `10`, `500` | how often to log and to checkpoint |
@@ -214,6 +214,7 @@ what can be trained (`lora` today).
 | `juggernaut-xl-v9` | native | lora |
 | `animagine-xl-4.0` | native | lora |
 | `dreamshaper-xl-1.0` | native | lora |
+| `z-image` | native | lora |
 | `qwen-image-2.1` | native | lora |
 | `sd3-medium` | native | lora |
 | `sd3.5-medium` | native | lora |
@@ -252,6 +253,14 @@ joint prompt/image sequence with its image-slot mask. `max_sequence_length=512` 
 original release only. When rank and alpha are unset, Qwen-Image uses its script's 4 / 4 defaults
 and Qwen-Image 2.1 uses 16 / 16. Both backends load transformer adapters through `lora=`,
 `lora_scale=` and `lora_fuse=`.
+
+Z-Image trains transformer-only LoRA adapters on `to_k`, `to_q`, `to_v` and `to_out.0`, with the
+script's 4 / 4 rank and alpha, `"none"` weighting and 512-token chat-template prompts. Its KL VAE
+uses the deterministic posterior mean, then applies the published shift and scale before the flow
+step. The model receives `(1000 - timestep) / 1000` and the negated prediction is compared with
+`noise - latents`; gradient checkpointing recomputes every Z-Image transformer block. Its backend
+loads transformer adapters with `lora=`, `lora_scale=` and `lora_fuse=`. `z-image-turbo` is
+distilled and remains `inference_only`.
 
 For SDXL the transform resizes, flips and then crops, as diffusers' SDXL script does, and records
 each image's original size and crop corner as the U-Net's size conditioning. The autoencoder stays
