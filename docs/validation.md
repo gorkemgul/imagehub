@@ -139,6 +139,26 @@ chat-template prompt encoding, deterministic KL posterior mean and published lat
 | Random PEFT transformer adapters: single, stacked 0.8 / 0.5 and fused | tiny Z-Image | 0 (latents and pixels) | 0 |
 | Three-step trained adapter loaded by diffusers `load_lora_weights` | tiny Z-Image | 0 (latents and pixels) | 0 |
 
+### FLUX.2 klein training (November 7, 2026)
+
+FLUX.2 klein LoRA training is checked on CPU float32 against diffusers 0.40.0 and PEFT 0.21.2.
+The tiny random snapshot compares rank / alpha 4 / 4, dropout 0, `"none"` weighting, logit mean /
+std 0 / 1, mode scale 1.29, 512-token prompts, Qwen layers 10 / 20 / 30, guidance 3.5 and the
+literal target list. It also compares the fixed resize/crop/flip transform, chat-template token
+ids and attention mask. For every weighting scheme, first-step noise, timestep, sigma, loss and
+every LoRA gradient are exact. Random single, stacked (0.8 / 0.5) and fused PEFT adapters, plus a
+three-step trained adapter, first prove their registered targets and changed diffusers output, then
+compare final latents and uint8 pixels exactly.
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Defaults, literal target-module selection, image transform, token ids and mask | tiny FLUX.2 klein | identical | exact |
+| First-step noise, timestep, sigma, loss and every LoRA gradient, all weighting schemes | tiny FLUX.2 klein | 0 | 0 |
+| Gradient checkpointing over double- and single-stream blocks | tiny FLUX.2 klein | identical | exact |
+| Validation image vs `pipeline(..., lora=adapter)` | tiny FLUX.2 klein | exact pixels | exact |
+| Random PEFT adapter: single, stacked 0.8 / 0.5 and fused; registered targets, changed output, final latents and uint8 pixels | tiny FLUX.2 klein | 0 / 0 | 0 / 0 |
+| Three-step trained adapter loaded in diffusers; registered targets, changed output, final latents and uint8 pixels | tiny FLUX.2 klein | 0 / 0 | 0 / 0 |
+
 ### Training runtime (CPU)
 
 | Check | Result |
@@ -184,6 +204,11 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
   latents with guidance 4 and sequence length 8. Single, stacked (0.8 / 0.5), fused and 3-step
   trained adapters were compared; each diffusers-loaded adapter registered only those image-stream
   targets, changed the diffusers output, then matched final latents and uint8 pixels exactly.
+- On November 7, 2026, tiny FLUX.2 klein PEFT transformer adapters covered the literal training
+  targets: `to_k`, `to_q`, `to_v`, `to_out.0`, `to_qkv_mlp_proj`, and matching first-24
+  single-block `attn.to_out` paths. Single, stacked (0.8 / 0.5), fused and 3-step trained adapters
+  registered the intended targets, changed the diffusers output, then matched final latents and
+  uint8 pixels exactly.
 - One published adapter, `latent-consistency/lcm-lora-sdv1-5` at
   `cf2fced511dbe7e26c8d1d397e728fbab875db4b` (kohya layout, per-module alphas, 278 layers of
   which 96 are convolutions, 50 of them 3×3), was loaded on `sd-v1-5` and generated 2 steps at
@@ -203,6 +228,8 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 | 3-step trained transformer adapter: 3 steps at 32×32 from explicit latents, guidance 4, default system prompt; final latents and uint8 pixels | Lumina 2 | 0 | 0 |
 | Random PEFT transformer adapter: `to_k`, `to_q`, `to_v`, `to_out`; single, stacked 0.8 / 0.5 and fused; final latents and uint8 pixels | HiDream-I1 | 0 / 0 | 0 / 0 |
 | 3-step trained transformer adapter: 3 steps from explicit latents, guidance 4, sequence length 8; final latents and uint8 pixels | HiDream-I1 | 0 / 0 | 0 / 0 |
+| Random PEFT transformer adapter: literal targets; single, stacked 0.8 / 0.5 and fused; final latents and uint8 pixels | FLUX.2 klein | 0 / 0 | 0 / 0 |
+| 3-step trained transformer adapter; final latents and uint8 pixels | FLUX.2 klein | 0 / 0 | 0 / 0 |
 | diffusers / PEFT layout, no alpha | SD 1.x, SD3 | 0 | 0 |
 | Prompt embeddings with text-encoder adapters (CLIP-L, CLIP-G, pooled, negative prompt) | SD3 | 0 | 0 |
 | kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |

@@ -149,15 +149,15 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `mixed_precision` | `"no"` | `"fp16"` veya `"bf16"`; adaptör ve optimizer float32 kalır |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | görüntü dönüşümü |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | model betiğinin varsayılanı, model betiğinin varsayılanı, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`); Qwen-Image 2.1 (16 / 16) hariç 4 / 4 |
-| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde, Qwen-Image, Z-Image ve Lumina 2'de `to_q`, `to_k`, `to_v`, `to_out.0`; HiDream-I1 görüntü dikkatinde `to_q`, `to_k`, `to_v`, `to_out`; SD 3'te sekiz ortak dikkat izdüşümü; Sana'da `to_k`, `to_q`, `to_v` |
+| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde, Qwen-Image, Z-Image ve Lumina 2'de `to_q`, `to_k`, `to_v`, `to_out.0`; FLUX.2 klein'de ayrıca `to_qkv_mlp_proj` ve ilk 24 tek blok için değişmez `attn.to_out` yolları; HiDream-I1 görüntü dikkatinde `to_q`, `to_k`, `to_v`, `to_out`; SD 3'te sekiz ortak dikkat izdüşümü; Sana'da `to_k`, `to_q`, `to_v` |
 | `gradient_checkpointing` | `False` | belleği azaltmak için U-Net ya da transformer bloklarını geri yayılımda yeniden hesaplar |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | U-Net (DDPM) hedef seçenekleri |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1, Sana, Qwen-Image, Z-Image, Lumina 2 ve HiDream-I1 için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1, FLUX.2 klein, Sana, Qwen-Image, Z-Image, Lumina 2 ve HiDream-I1 için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: `noise - latents` yerine ön koşullanmış çıktıyı latent'lerle karşılaştırır |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, Qwen-Image ve Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | metin prompt uzunluğu |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, FLUX.2 klein, Qwen-Image ve Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | metin prompt uzunluğu |
 | `system_prompt` | `None` | Lumina 2'nin isteğe bağlı Gemma sistem prompt'u; diğer aileler reddeder |
 | `complex_human_instruction` | `None` | Sana'nın isteğe bağlı prompt iyileştirme yönergesi; diğer aileler reddeder |
-| `guidance_scale` | `3.5` | FLUX.1: guidance embedding'i olan checkpoint'lerde eğitim sırasındaki değeri |
+| `guidance_scale` | `3.5` | FLUX.1 ve FLUX.2 klein: guidance embedding'i olan checkpoint'lerde eğitim sırasındaki değeri |
 | `logging_steps`, `save_steps` | `10`, `500` | kayıt ve checkpoint sıklığı |
 | `eval_strategy`, `eval_steps` | `"no"`, `logging_steps` | `"steps"` her `eval_steps` adımda değerlendirir |
 | `validation_prompts` | yok | her değerlendirme noktasında çizilen prompt'lar |
@@ -223,6 +223,8 @@ eğitilebildiğini listeler (bugün `lora`).
 | `sd3-medium` | native | lora |
 | `sd3.5-medium` | native | lora |
 | `sd3.5-large` | native | lora |
+| `flux2-klein-4b` | native | lora |
+| `flux2-klein-9b` | native | lora |
 | `flux1-dev` | native | lora |
 | `flux1-krea-dev` | native | lora |
 | `flux-1-lite-8b` | native | lora |
@@ -269,6 +271,17 @@ normalleştirilir; modele `(1000 - timestep) / 1000` verilir ve ters işaretli t
 latents` ile karşılaştırılır. Gradient checkpointing her Z-Image transformer bloğunu yeniden
 hesaplar. Backend, transformer adaptörlerini `lora=`, `lora_scale=` ve `lora_fuse=` ile yükler.
 `z-image-turbo` damıtılmıştır ve `inference_only` kalır.
+
+FLUX.2 klein 4B ve 9B yalnızca transformer LoRA adaptörlerini betikteki değişmez hedeflerle
+eğitir: `to_k`, `to_q`, `to_v`, `to_out.0`, `to_qkv_mlp_proj` ve
+`single_transformer_blocks.0` ile `.23` arasındaki `attn.to_out`. Rank / alpha varsayılanı 4 / 4,
+ağırlıklandırma `"none"`, Qwen prompt'u 512 token ve 10, 20, 30. katmanları kullanır. Bunlar eğitim betiğinin katmanlarıdır;
+klein pipeline'ı çıkarımda prompt'u 9, 18 ve 27. katmanlardan kodlar, imagehub backend'i de öyle yapar. Deterministik
+VAE posteriörü patchify edilir, VAE batch-normalization istatistikleriyle normalize edilir ve
+`noise - latents` hedefiyle flow matching yapılır; gradient checkpointing çift ve tek akış
+bloklarını kapsar. Guidance değeri yalnızca guidance embedding'i olan checkpoint'lere verilir;
+diğer klein checkpoint'leri yalnızca varsayılan eğitim değerini kabul eder. Backend transformer
+adaptörlerini `lora=`, `lora_scale=` ve `lora_fuse=` ile yükler.
 
 Lumina-Image 2.0 yalnızca transformer LoRA adaptörlerini `to_k`, `to_q`, `to_v` ve `to_out.0`
 üzerinde eğitir; betikteki rank / alpha varsayılanı 4 / 4, ağırlıklandırma `"none"`, Gemma prompt
