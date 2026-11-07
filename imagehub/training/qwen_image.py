@@ -95,7 +95,14 @@ class QwenImageCollator:
             token_rows.append(ids)
         width = max(map(len, token_rows))
         pad_id = self.components.tokenizer.pad_id
-        input_ids = torch.tensor([ids + [pad_id] * (width - len(ids)) for ids in token_rows])
+        input_ids = torch.tensor(
+            [
+                ids + [pad_id] * (width - len(ids))
+                if self.original
+                else [pad_id] * (width - len(ids)) + ids
+                for ids in token_rows
+            ]
+        )
         attention_mask = input_ids != pad_id
         return {
             "pixel_values": torch.stack(pixels),
@@ -145,7 +152,7 @@ class QwenImageLoRAObjective(FlowMatchingObjective):
             )
         moments = vae.encode_moments(pixels.to(dtype))
         mean, logvar = moments.chunk(2, dim=1)
-        latents = mean + torch.exp(0.5 * logvar) * posterior_noise.to(mean)
+        latents = mean + torch.exp(0.5 * logvar.clamp(-30.0, 20.0)) * posterior_noise.to(mean)
         channels = mean.shape[1]
         means = vae.latents_mean or [0.0] * channels
         stds = vae.latents_std or [1.0] * channels
@@ -171,7 +178,25 @@ class QwenImageLoRAObjective(FlowMatchingObjective):
             ]
         else:
             drop = len(self.components.tokenizer.tokenize(_SYSTEM_TEMPLATE))
-            hidden, mask = hidden[:, drop:], mask[:, drop:]
+            rows = [row[row_mask][drop:] for row, row_mask in zip(hidden, mask, strict=True)]
+            width = max(row.shape[0] for row in rows)
+            hidden = torch.stack(
+                [
+                    torch.cat([row, row.new_zeros(width - row.shape[0], row.shape[1])])
+                    for row in rows
+                ]
+            )
+            mask = torch.stack(
+                [
+                    torch.cat(
+                        [
+                            row.new_ones(row.shape[0]),
+                            row.new_zeros(width - row.shape[0]),
+                        ]
+                    )
+                    for row in rows
+                ]
+            ).bool()
         return {
             "prompt_embeds": hidden.to(next(self.components.transformer.parameters()).dtype),
             "prompt_mask": None if mask.all() else mask,
