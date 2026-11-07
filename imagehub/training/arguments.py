@@ -88,6 +88,7 @@ class TrainingArguments:
     precondition_outputs: bool | None = None
     max_sequence_length: int | None = None
     complex_human_instruction: tuple[str, ...] | None = None
+    system_prompt: str | None = None
     guidance_scale: float = 3.5
     logging_steps: int = 10
     save_steps: int = 500
@@ -178,6 +179,8 @@ class TrainingArguments:
             if not instruction or not all(isinstance(line, str) for line in instruction):
                 raise ValueError("complex_human_instruction must be non-empty strings or None")
             object.__setattr__(self, "complex_human_instruction", instruction)
+        if self.system_prompt is not None and not isinstance(self.system_prompt, str):
+            raise ValueError("system_prompt must be a string or None")
         for name in ("center_crop", "random_flip", "gradient_checkpointing"):
             if not isinstance(getattr(self, name), bool):
                 raise ValueError(f"{name} must be a bool")

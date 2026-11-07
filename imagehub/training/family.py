@@ -96,6 +96,7 @@ _FAMILIES = {
     "sana": "imagehub.training.sana:SanaFamily",
     "qwen-image": "imagehub.training.qwen_image:QwenImageFamily",
     "z-image": "imagehub.training.z_image:ZImageFamily",
+    "lumina2": "imagehub.training.lumina2:Lumina2Family",
 }
 
 FLOW_MATCHING_OPTIONS = (
@@ -110,7 +111,12 @@ DDPM_OPTIONS = ("prediction_type", "snr_gamma", "noise_offset")
 
 def reject_options(args: TrainingArguments, names: tuple[str, ...], family: str) -> None:
     """Raise when any of ``names`` differs from its default for a family that ignores it."""
-    defaults = {"noise_offset": 0.0, "guidance_scale": 3.5, "complex_human_instruction": None}
+    defaults = {
+        "noise_offset": 0.0,
+        "guidance_scale": 3.5,
+        "complex_human_instruction": None,
+        "system_prompt": None,
+    }
     used = [name for name in names if getattr(args, name) != defaults.get(name)]
     if used:
         raise ValueError(f"{', '.join(used)} do not apply to {family} training")

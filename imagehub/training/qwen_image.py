@@ -256,7 +256,13 @@ class QwenImageFamily(TrainingFamily):
     def validate(self, args: TrainingArguments) -> None:
         reject_options(
             args,
-            DDPM_OPTIONS + ("precondition_outputs", "guidance_scale", "complex_human_instruction"),
+            DDPM_OPTIONS
+            + (
+                "precondition_outputs",
+                "guidance_scale",
+                "complex_human_instruction",
+                "system_prompt",
+            ),
             self.name,
         )
 

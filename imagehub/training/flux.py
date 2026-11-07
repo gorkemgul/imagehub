@@ -157,7 +157,9 @@ class Flux1Family(TrainingFamily):
 
     def validate(self, args: TrainingArguments) -> None:
         reject_options(
-            args, DDPM_OPTIONS + ("precondition_outputs", "complex_human_instruction"), self.name
+            args,
+            DDPM_OPTIONS + ("precondition_outputs", "complex_human_instruction", "system_prompt"),
+            self.name,
         )
 
     def load(

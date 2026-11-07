@@ -168,7 +168,11 @@ class SanaFamily(TrainingFamily):
     checkpoint_blocks = (SanaTransformerBlock,)
 
     def validate(self, args: TrainingArguments) -> None:
-        reject_options(args, DDPM_OPTIONS + ("precondition_outputs", "guidance_scale"), self.name)
+        reject_options(
+            args,
+            DDPM_OPTIONS + ("precondition_outputs", "guidance_scale", "system_prompt"),
+            self.name,
+        )
 
     def load(
         self,
