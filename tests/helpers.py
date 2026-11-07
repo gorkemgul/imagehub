@@ -1483,7 +1483,9 @@ TINY_KREA2_SCHEDULER = {
 }
 
 
-def write_tiny_krea2(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+def write_tiny_krea2(
+    directory: str | os.PathLike[str], *, seed: int = 0, distilled: bool = True
+) -> Path:
     """Write a random tiny Krea 2 snapshot in the published layout."""
     import shutil
 
@@ -1578,7 +1580,7 @@ def write_tiny_krea2(directory: str | os.PathLike[str], *, seed: int = 0) -> Pat
         json.dumps(
             {
                 "_class_name": "Krea2Pipeline",
-                "is_distilled": True,
+                "is_distilled": distilled,
                 "patch_size": 2,
                 "text_encoder_select_layers": list(range(1, 13)),
                 "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
