@@ -2,10 +2,10 @@
 
 ## Scope
 
-Extend `imagehub.training` (#194) with the runtime concepts of the voicehub trainer that a
+Extend `imagehub.training` (#194) with the runtime concepts that a
 fine-tuning user expects (#200): support levels, per-device batch sizes, a data collator,
 evaluation and validation images, and distributed data-parallel training. Names follow the
-Hugging Face / voicehub trainer where a concept exists there. The objective, the LoRA layers and
+Hugging Face trainer where a concept exists there. The objective, the LoRA layers and
 the parity results of #194 do not change.
 
 Not included: a `preprocessed` support level (training from cached latents and text embeddings)
@@ -82,7 +82,7 @@ MPS does not support process groups; distributed runs use CUDA or the CPU.
 
 Defaults stay at rank 4, alpha 4 (scale 1), the diffusers training scripts' choice and the basis of
 the parity tests. Diffusion tools use small ranks and scales near 1 (kohya sd-scripts: rank 4,
-alpha 1), while language and speech trainers use larger ones (PEFT: 8 / 8; voicehub: 8 / 16). The
+alpha 1), while language and speech trainers use larger ones (PEFT: 8 / 8). The
 guide lists these and suggests raising the rank to 16-32 for more detail, keeping alpha equal to
 the rank.
 

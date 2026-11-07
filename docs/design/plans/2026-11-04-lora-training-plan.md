@@ -1,7 +1,7 @@
 # LoRA training implementation plan
 
 **Goal:** An optional `imagehub.training` subpackage that trains LoRA adapters for the Stable
-Diffusion 1.x U-Net, with the voicehub-style API (`get_training_spec`, `Trainer`,
+Diffusion 1.x U-Net, with a Hugging Face-style API (`get_training_spec`, `Trainer`,
 `TrainingArguments`) and a first step equal to the diffusers `train_text_to_image_lora.py` step
 on CPU float32 (#194).
 

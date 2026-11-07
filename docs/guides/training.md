@@ -167,7 +167,6 @@ scales near 1, while language and speech trainers tend to use larger ones:
 | imagehub default, diffusers training scripts (SD 1.5, SDXL, FLUX.1) | 4 | 4 | 1 |
 | kohya sd-scripts default | 4 | 1 | 0.25 |
 | PEFT default | 8 | 8 | 1 |
-| voicehub default (speech) | 8 | 16 | 2 |
 
 Rank 4 is enough for a style or a simple subject. For more detail, raise the rank to 16-32 and keep
 alpha equal to the rank, so the scale and a good learning rate stay the same.
