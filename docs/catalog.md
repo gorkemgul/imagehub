@@ -205,9 +205,16 @@ downloading with `python -m imagehub.pretrained`. The weights use the Krea 2 Com
 commercial use is conditional below USD 1 million annual revenue and requires an enterprise license
 at or above that threshold.
 
+`krea2-turbo` is the distilled inference checkpoint. Krea 2 LoRA training uses the separate,
+gated `krea/Krea-2-Raw` checkpoint at `6b0ece7fffb640c5e3bcbe0a7f10f66b8e60a603`; accept the
+same license before downloading it. Raw-trained adapters run on Turbo and remain bound by the Krea
+2 Community License.
+
 The `ideogram4-fp8` repository is gated. Accept its terms on Hugging Face, then set `HF_TOKEN` when
 downloading with `python -m imagehub.pretrained`. The weights use the Ideogram 4 Non-Commercial
 License; see the license.
+
+Every official Ideogram 4 checkpoint is quantized, so `ideogram4-fp8` remains inference-only.
 
 Kandinsky 5 publishes bfloat16 transformer and text-encoder weights; the catalog lists them as
 released and the native loaders upcast them to float32 for parity testing.

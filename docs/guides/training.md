@@ -145,13 +145,13 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `adam_beta1`, `adam_beta2`, `adam_weight_decay`, `adam_epsilon` | `0.9`, `0.999`, `1e-2`, `1e-8` | AdamW settings |
 | `mixed_precision` | `"no"` | `"fp16"` or `"bf16"`; the adapter and optimizer stay float32 |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | image transform |
-| `lora_rank`, `lora_alpha`, `lora_dropout` | model's script default, model's script default, `0.0` | adapter size and scale (`alpha / rank`); 4 / 4 except Qwen-Image 2.1 (16 / 16) |
+| `lora_rank`, `lora_alpha`, `lora_dropout` | model's script default, model's script default, `0.0` | adapter size and scale (`alpha / rank`); 4 / 4 except Qwen-Image 2.1 (16 / 16) and Krea 2 (32 / 32) |
 | `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, Qwen-Image, Z-Image and Lumina 2; FLUX.2 klein also uses `to_qkv_mlp_proj` and its literal first-24 single-block `attn.to_out` paths; `to_q`, `to_k`, `to_v`, `to_out` for HiDream-I1 image attention; the eight joint-attention projections for SD 3; and `to_k`, `to_q`, `to_v` for Sana |
 | `gradient_checkpointing` | `False` | recompute U-Net or transformer blocks in the backward pass to save memory |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | U-Net (DDPM) objective options |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, FLUX.2 klein, Sana, Qwen-Image, Z-Image, Lumina 2 and HiDream-I1), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, FLUX.2 klein, Krea 2, Sana, Qwen-Image, Z-Image, Lumina 2 and HiDream-I1), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: compare the preconditioned output with the latents instead of `noise - latents` |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, FLUX.2 klein, Qwen-Image and Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | text prompt length |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, FLUX.2 klein, Krea 2, Qwen-Image and Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | text prompt length |
 | `system_prompt` | `None` | Lumina 2's optional Gemma system prompt; other families reject it |
 | `complex_human_instruction` | `None` | Sana's optional prompt-enhancement instruction; other families reject it |
 | `guidance_scale` | `3.5` | FLUX.1 and FLUX.2 klein: the guidance embedding's value in training, on checkpoints that have one |
@@ -230,6 +230,7 @@ what can be trained (`lora` today).
 | `sana-600m-1024` | native | lora |
 | `sana-1.5-4.8b-1024` | native | lora |
 | `lumina-image-2.0` | native | lora |
+| `krea2-turbo` | native | lora |
 | `ssd-1b` | native | lora |
 | `segmind-vega` | native | lora |
 | `koala-700m` | native | lora |
@@ -259,6 +260,20 @@ joint prompt/image sequence with its image-slot mask. `max_sequence_length=512` 
 original release only. When rank and alpha are unset, Qwen-Image uses its script's 4 / 4 defaults
 and Qwen-Image 2.1 uses 16 / 16. Both backends load transformer adapters through `lora=`,
 `lora_scale=` and `lora_fuse=`.
+
+Krea 2 trains transformer-only adapters with rank / alpha 32 / 32 and the script's `"none"`
+weighting, 512-token prompt and 5-D posterior-latent packing. Turbo itself is an 8-step distilled
+checkpoint and is never trained. Accept the Krea 2 Community License, then download the gated
+`krea/Krea-2-Raw` training checkpoint at revision `6b0ece7fffb640c5e3bcbe0a7f10f66b8e60a603`;
+adapters trained on Raw are bound by that license and load on Turbo through `lora=`,
+`lora_scale=` and `lora_fuse=`. Validation uses the training snapshot with 8 steps and guidance 0.
+
+Ideogram 4 remains `inference_only` because every official checkpoint is quantized. Its fp8
+backend nevertheless loads transformer adapters with `lora=`, `lora_scale=` and `lora_fuse=`.
+Diffusers-layout transformer files use `attention.to_q`, `to_k`, `to_v` and `to_out.0`; the
+backend maps the three split attention updates onto the corresponding row blocks of its fused
+`attention.qkv` weight and maps `to_out.0` to `attention.o`. Fusion first dequantizes the fp8
+weight to the compute dtype, then applies the same updates.
 
 Z-Image trains transformer-only LoRA adapters on `to_k`, `to_q`, `to_v` and `to_out.0`, with the
 script's 4 / 4 rank and alpha, `"none"` weighting and 512-token chat-template prompts. Its KL VAE
