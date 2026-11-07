@@ -138,7 +138,9 @@ class StableDiffusion3Family(TrainingFamily):
 
     def validate(self, args: TrainingArguments) -> None:
         reject_options(
-            args, DDPM_OPTIONS + ("complex_human_instruction", "guidance_scale"), self.name
+            args,
+            DDPM_OPTIONS + ("complex_human_instruction", "guidance_scale", "system_prompt"),
+            self.name,
         )
 
     def load(
