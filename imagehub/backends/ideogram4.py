@@ -21,6 +21,7 @@ from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import load_weights, read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
+from imagehub.lora_formats import LoRAOption, apply_lora, parse_lora_option
 from imagehub.models.autoencoder_ideogram4 import AutoencoderIdeogram4, get_latent_norm
 from imagehub.models.fp8 import load_fp8_state_dict, swap_linears_to_fp8
 from imagehub.models.ideogram4_text import build_text_inputs, encode_text
@@ -269,8 +270,15 @@ class Ideogram4Backend(TextToImageBackend):
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
         model_id: str | None = None,
+        lora: LoRAOption = None,
+        lora_scale: float = 1.0,
+        lora_fuse: bool = False,
     ) -> None:
         super().__init__()
+        if not isinstance(lora_fuse, bool):
+            raise TypeError("lora_fuse must be a bool")
+        self.lora = parse_lora_option(lora, lora_scale)
+        self.lora_fuse = lora_fuse
         self.source = Path(model)
         self.model_id = model_id
         self.device = resolve_device(device)
@@ -356,6 +364,13 @@ class Ideogram4Backend(TextToImageBackend):
                 "both share the Ideogram 4 architecture, so it was loaded",
                 UserWarning,
                 stacklevel=2,
+            )
+        if self.lora:
+            # Ideogram4Pipeline.load_lora_weights accepts the conditional transformer only.
+            apply_lora(
+                {"transformer": self.components.conditional_transformer},
+                self.lora,
+                fuse=self.lora_fuse,
             )
 
     def _unload(self) -> None:
