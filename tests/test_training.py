@@ -85,6 +85,7 @@ def test_training_profiles():
         "qwen-image",
         "z-image",
         "lumina2",
+        "hidream",
     }
     assert get_training_spec("sd3.5-large-turbo").support is TrainingSupport.INFERENCE_ONLY
     assert len(list_training_specs()) > len(trainable)

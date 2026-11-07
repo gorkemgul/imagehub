@@ -146,12 +146,12 @@ Only `output_dir` and `max_steps` are required. The defaults follow diffusers'
 | `mixed_precision` | `"no"` | `"fp16"` or `"bf16"`; the adapter and optimizer stay float32 |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | image transform |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | model's script default, model's script default, `0.0` | adapter size and scale (`alpha / rank`); 4 / 4 except Qwen-Image 2.1 (16 / 16) |
-| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, Qwen-Image, Z-Image and Lumina 2, the eight joint-attention projections for SD 3, and `to_k`, `to_q`, `to_v` for Sana |
+| `lora_target_modules` | the family's | layers that get an adapter: `to_q`, `to_k`, `to_v`, `to_out.0` for U-Nets, Qwen-Image, Z-Image and Lumina 2; `to_q`, `to_k`, `to_v`, `to_out` for HiDream-I1 image attention; the eight joint-attention projections for SD 3; and `to_k`, `to_q`, `to_v` for Sana |
 | `gradient_checkpointing` | `False` | recompute U-Net or transformer blocks in the backward pass to save memory |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, the scheduler's | U-Net (DDPM) objective options |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, Sana, Qwen-Image, Z-Image and Lumina 2), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | the family's (`"logit_normal"` for SD 3, `"none"` for FLUX.1, Sana, Qwen-Image, Z-Image, Lumina 2 and HiDream-I1), `0.0`, `1.0`, `1.29` | flow-matching timestep sampling: also `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: compare the preconditioned output with the latents instead of `noise - latents` |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, Qwen-Image and Z-Image), `300` (Sana), `256` (Lumina 2) | text prompt length |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, Qwen-Image and Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | text prompt length |
 | `system_prompt` | `None` | Lumina 2's optional Gemma system prompt; other families reject it |
 | `complex_human_instruction` | `None` | Sana's optional prompt-enhancement instruction; other families reject it |
 | `guidance_scale` | `3.5` | FLUX.1: the guidance embedding's value in training, on checkpoints that have one |
@@ -233,6 +233,8 @@ what can be trained (`lora` today).
 | `koala-700m` | native | lora |
 | `koala-1b` | native | lora |
 | `playground-v2` | native | lora |
+| `hidream-i1-dev` | native | lora |
+| `hidream-i1-full` | native | lora |
 <!-- training-support:end -->
 
 Every other model is `inference_only` for now: the few-step distilled checkpoints (`sd-turbo`,
@@ -273,6 +275,18 @@ checkpointing recomputes Lumina 2 transformer blocks. Its backend loads transfor
 Reference tests exactly compare the script defaults, image transform, default-system-prompt token
 ids and attention mask, per-weighting step draws/loss/gradients, and random or three-step-trained
 adapter final latents and uint8 pixels after diffusers loading.
+
+HiDream-I1 Dev and Full train transformer-only LoRA adapters on the image-stream `to_k`, `to_q`,
+`to_v` and `to_out` projections, with rank / alpha 4 / 4, `"none"` weighting and a 128-token
+prompt for both T5 and Llama. All four text encoders and the VAE use the training weight dtype.
+The sampled, shifted and scaled VAE latent is mixed as `(1 - sigma) * latents + sigma * noise`;
+the raw timestep is passed to the inference-MoE transformer and its negated prediction is compared
+with `noise - latents`. Gradient checkpointing covers both double- and single-stream blocks. The
+backend loads transformer adapters through `lora=`, `lora_scale=` and `lora_fuse=`.
+Reference tests load random single, stacked (0.8 / 0.5) and fused adapters, plus a 3-step trained
+adapter, in diffusers and compare registered targets, changed outputs, final latents and uint8
+pixels from the same explicit starting latents.
+`hidream-i1-fast` is distilled and remains `inference_only`.
 
 For SDXL the transform resizes, flips and then crops, as diffusers' SDXL script does, and records
 each image's original size and crop corner as the U-Net's size conditioning. The autoencoder stays

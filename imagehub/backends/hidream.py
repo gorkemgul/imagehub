@@ -27,6 +27,7 @@ from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
 from imagehub.image import Image
+from imagehub.lora_formats import LoRAOption, LoRASpec, apply_lora, parse_lora_option
 from imagehub.models.autoencoder_kl import AutoencoderKL
 from imagehub.models.clip_text import CLIPTextModelWithProjection
 from imagehub.models.hidream_transformer import HiDreamImageTransformer2DModel
@@ -202,6 +203,9 @@ def denoise(
     latents: Tensor,
     max_sequence_length: int,
     noise_generator: torch.Generator | None = None,
+    lora: tuple[LoRASpec, ...] = (),
+    lora_fuse: bool = False,
+    transformer: HiDreamImageTransformer2DModel | None = None,
 ) -> Tensor:
     use_cfg = guidance > 1.0
     prompts = [prompt, negative_prompt or ""] if use_cfg else [prompt]
@@ -228,7 +232,12 @@ def denoise(
         raise ValueError(f"Unsupported HiDream scheduler {scheduler_class}")
     # The pipeline passes a resolution-dependent ``mu``; the configured static shift ignores it.
     scheduler.set_timesteps(steps)
-    transformer = components._from_pretrained(HiDreamImageTransformer2DModel, "transformer")
+    owns_transformer = transformer is None
+    if transformer is None:
+        transformer = components._from_pretrained(HiDreamImageTransformer2DModel, "transformer")
+    if lora:
+        # HiDreamImagePipeline.load_lora_weights accepts transformer adapters only.
+        apply_lora({"transformer": transformer}, lora, fuse=lora_fuse)
     latents = latents.to(transformer.x_embedder.proj.weight.dtype)
     for timestep in scheduler.timesteps:
         model_input = torch.cat([latents] * 2) if use_cfg else latents
@@ -246,8 +255,9 @@ def denoise(
             latents = scheduler.step(noise, timestep, latents, generator=noise_generator)
         else:
             latents = scheduler.step(noise, timestep, latents)
-    del transformer
-    _release()
+    if owns_transformer:
+        del transformer
+        _release()
     return latents
 
 
@@ -273,8 +283,15 @@ class HiDreamBackend(TextToImageBackend):
         device: str | torch.device = "cpu",
         dtype: torch.dtype | None = None,
         model_id: str | None = None,
+        lora: LoRAOption = None,
+        lora_scale: float = 1.0,
+        lora_fuse: bool = False,
     ) -> None:
         super().__init__()
+        if not isinstance(lora_fuse, bool):
+            raise TypeError("lora_fuse must be a bool")
+        self.lora = parse_lora_option(lora, lora_scale)
+        self.lora_fuse = lora_fuse
         self.source = Path(model)
         self.model_id = model_id
         self.device = resolve_device(device)
@@ -385,6 +402,8 @@ class HiDreamBackend(TextToImageBackend):
             latents=latents.to(torch.float32).to(self.device),
             max_sequence_length=o["max_sequence_length"],
             noise_generator=torch.Generator("cpu").manual_seed(noise_seed),
+            lora=self.lora,
+            lora_fuse=self.lora_fuse,
         )
         pixels = decode_latents(self.components.vae, final)
         snapshot = self.snapshot or {}

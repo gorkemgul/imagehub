@@ -149,12 +149,12 @@ Yalnızca `output_dir` ve `max_steps` zorunludur. Varsayılanlar diffusers'ın
 | `mixed_precision` | `"no"` | `"fp16"` veya `"bf16"`; adaptör ve optimizer float32 kalır |
 | `resolution`, `center_crop`, `random_flip` | `512`, `False`, `False` | görüntü dönüşümü |
 | `lora_rank`, `lora_alpha`, `lora_dropout` | model betiğinin varsayılanı, model betiğinin varsayılanı, `0.0` | adaptör boyutu ve ölçeği (`alpha / rank`); Qwen-Image 2.1 (16 / 16) hariç 4 / 4 |
-| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde, Qwen-Image, Z-Image ve Lumina 2'de `to_q`, `to_k`, `to_v`, `to_out.0`; SD 3'te sekiz ortak dikkat izdüşümü; Sana'da `to_k`, `to_q`, `to_v` |
+| `lora_target_modules` | ailenin varsayılanı | adaptör takılan katmanlar: U-Net'lerde, Qwen-Image, Z-Image ve Lumina 2'de `to_q`, `to_k`, `to_v`, `to_out.0`; HiDream-I1 görüntü dikkatinde `to_q`, `to_k`, `to_v`, `to_out`; SD 3'te sekiz ortak dikkat izdüşümü; Sana'da `to_k`, `to_q`, `to_v` |
 | `gradient_checkpointing` | `False` | belleği azaltmak için U-Net ya da transformer bloklarını geri yayılımda yeniden hesaplar |
 | `noise_offset`, `snr_gamma`, `prediction_type` | `0.0`, `None`, zamanlayıcınınki | U-Net (DDPM) hedef seçenekleri |
-| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1, Sana, Qwen-Image, Z-Image ve Lumina 2 için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
+| `weighting_scheme`, `logit_mean`, `logit_std`, `mode_scale` | ailenin varsayılanı (SD 3 için `"logit_normal"`, FLUX.1, Sana, Qwen-Image, Z-Image, Lumina 2 ve HiDream-I1 için `"none"`), `0.0`, `1.0`, `1.29` | flow matching zaman adımı örneklemesi: ayrıca `mode`, `sigma_sqrt`, `cosmap`, `none` |
 | `precondition_outputs` | `True` | flow matching: `noise - latents` yerine ön koşullanmış çıktıyı latent'lerle karşılaştırır |
-| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, Qwen-Image ve Z-Image), `300` (Sana), `256` (Lumina 2) | metin prompt uzunluğu |
+| `max_sequence_length` | `77` (SD 3), `512` (FLUX.1, Qwen-Image ve Z-Image), `300` (Sana), `256` (Lumina 2), `128` (HiDream-I1) | metin prompt uzunluğu |
 | `system_prompt` | `None` | Lumina 2'nin isteğe bağlı Gemma sistem prompt'u; diğer aileler reddeder |
 | `complex_human_instruction` | `None` | Sana'nın isteğe bağlı prompt iyileştirme yönergesi; diğer aileler reddeder |
 | `guidance_scale` | `3.5` | FLUX.1: guidance embedding'i olan checkpoint'lerde eğitim sırasındaki değeri |
@@ -236,6 +236,8 @@ eğitilebildiğini listeler (bugün `lora`).
 | `koala-700m` | native | lora |
 | `koala-1b` | native | lora |
 | `playground-v2` | native | lora |
+| `hidream-i1-dev` | native | lora |
+| `hidream-i1-full` | native | lora |
 <!-- training-support:end -->
 
 Diğer bütün modeller şimdilik `inference_only`: birkaç adımlık damıtılmış checkpoint'ler
@@ -279,6 +281,18 @@ Referans testleri betik varsayılanlarını, görüntü dönüşümünü, varsay
 kimlikleri ve dikkat maskesini, her ağırlıklandırmadaki adım çekilişlerini/kayıp/gradientleri ve
 diffusers yüklemesinden sonra rastgele veya üç adımda eğitilmiş adaptörlerin son latentleri ile
 uint8 piksellerini tam olarak karşılaştırır.
+
+HiDream-I1 Dev ve Full yalnızca transformer LoRA adaptörlerini görüntü akışının `to_k`, `to_q`,
+`to_v` ve `to_out` izdüşümlerinde eğitir; rank / alpha 4 / 4, ağırlıklandırma `"none"`, T5 ve
+Llama için prompt uzunluğu 128'dir. Dört metin kodlayıcısı ve VAE eğitim ağırlık dtype'ını kullanır.
+Örneklenen, kaydırılan ve ölçeklenen VAE latenti `(1 - sigma) * latents + sigma * noise` ile
+karıştırılır; ham zaman adımı inference-MoE transformer'a verilir ve ters işaretli tahmin `noise -
+latents` ile karşılaştırılır. Gradient checkpointing çift ve tek akış bloklarını kapsar. Backend
+transformer adaptörlerini `lora=`, `lora_scale=` ve `lora_fuse=` ile yükler. Referans testleri,
+diffusers içinde rastgele tekli, yığılı (0.8 / 0.5) ve birleştirilmiş adaptörlerle üç adımda
+eğitilmiş bir adaptörü yükler; kayıtlı hedefleri, değişen çıktıları ve aynı açık başlangıç
+latentlerinden elde edilen son latentleri ile uint8 pikselleri karşılaştırır. `hidream-i1-fast`
+damıtılmıştır ve `inference_only` kalır.
 
 SDXL'de dönüşüm, diffusers'ın SDXL betiğindeki gibi önce yeniden boyutlandırır, sonra çevirir,
 sonra kırpar; her görüntünün özgün boyutunu ve kırpma köşesini U-Net'in boyut koşullaması olarak

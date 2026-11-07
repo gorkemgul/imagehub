@@ -179,6 +179,11 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
   guidance 4 and the pipeline's default system prompt. Single, stacked (0.8 / 0.5), fused and
   3-step trained adapters were compared; each loaded adapter registered those targets and changed
   the diffusers output before final latents and uint8 pixels were checked.
+- On November 7, 2026, tiny HiDream-I1 PEFT transformer adapters covered the image-stream
+  `to_k`, `to_q`, `to_v` and `to_out` targets. Both sides generated 3 steps from the same explicit
+  latents with guidance 4 and sequence length 8. Single, stacked (0.8 / 0.5), fused and 3-step
+  trained adapters were compared; each diffusers-loaded adapter registered only those image-stream
+  targets, changed the diffusers output, then matched final latents and uint8 pixels exactly.
 - One published adapter, `latent-consistency/lcm-lora-sdv1-5` at
   `cf2fced511dbe7e26c8d1d397e728fbab875db4b` (kohya layout, per-module alphas, 278 layers of
   which 96 are convolutions, 50 of them 3×3), was loaded on `sd-v1-5` and generated 2 steps at
@@ -196,6 +201,8 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 | 3-step trained transformer adapter: 3 steps at 32×32, seed 42, guidance 4 | Z-Image | 0 | 0 |
 | Random PEFT transformer adapter: `to_k`, `to_q`, `to_v`, `to_out.0`; single, stacked 0.8 / 0.5 and fused; final latents and uint8 pixels | Lumina 2 | 0 | 0 |
 | 3-step trained transformer adapter: 3 steps at 32×32 from explicit latents, guidance 4, default system prompt; final latents and uint8 pixels | Lumina 2 | 0 | 0 |
+| Random PEFT transformer adapter: `to_k`, `to_q`, `to_v`, `to_out`; single, stacked 0.8 / 0.5 and fused; final latents and uint8 pixels | HiDream-I1 | 0 / 0 | 0 / 0 |
+| 3-step trained transformer adapter: 3 steps from explicit latents, guidance 4, sequence length 8; final latents and uint8 pixels | HiDream-I1 | 0 / 0 | 0 / 0 |
 | diffusers / PEFT layout, no alpha | SD 1.x, SD3 | 0 | 0 |
 | Prompt embeddings with text-encoder adapters (CLIP-L, CLIP-G, pooled, negative prompt) | SD3 | 0 | 0 |
 | kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |
@@ -2218,6 +2225,33 @@ transformer matches the reference in random-weight parity tests. The checked-in 
 for both models recorded 0 missing, extra or shape-mismatched tensors as well
 (`fixture_header_sana-sprint-1.6b-1024`, `fixture_header_sana-1.5-4.8b-1024`,
 [validation-measurements.json](validation-measurements.json)).
+
+## HiDream-I1
+
+### Training (November 7, 2026)
+
+HiDream-I1 Dev and Full LoRA training is checked on CPU float32 against diffusers 0.40.0 and
+PEFT 0.21.2. The tiny random snapshot compares the script defaults, resize/crop/normalize image
+transform, four tokenizer id streams and T5/Llama sequence masks. For every weighting scheme it
+compares posterior noise, noise, timestep and sigma draws, the loss and every LoRA gradient with
+exact equality. The reference transformer is loaded with `force_inference_output=True`, then put
+in training mode, so the test covers the inference MoE and unpatchify route used by the script.
+Random single, stacked (0.8 / 0.5) and fused PEFT adapters, plus a 3-step trained adapter, are
+loaded into diffusers from the same explicit starting latents; their final latents and uint8 pixels
+match the native backend exactly.
+
+| Comparison | Model | Largest observed difference | Tolerance |
+| --- | --- | --- | --- |
+| Default arguments: weighting, logit mean / std, mode scale, sequence length 128, rank / alpha and image-stream targets | tiny HiDream-I1 | identical | identical |
+| Image transform; CLIP, T5 and Llama tokenizer ids and masks | tiny HiDream-I1 | identical | identical |
+| First-step posterior noise, noise, timestep, sigma, loss and every LoRA gradient, all weighting schemes | tiny HiDream-I1 | 0 | 0 |
+| Gradient checkpointing over double- and single-stream transformer blocks | tiny HiDream-I1 | identical | identical |
+| Validation image vs `pipeline(..., lora=adapter)` | tiny HiDream-I1 | exact pixels | exact |
+| Random PEFT adapter: single, stacked 0.8 / 0.5 and fused; registered image-stream targets, changed diffusers output, final latents and uint8 pixels | tiny HiDream-I1 | 0 / 0 | 0 / 0 |
+| 3-step trained adapter loaded in diffusers; registered image-stream targets, changed diffusers output, final latents and uint8 pixels | tiny HiDream-I1 | 0 / 0 | 0 / 0 |
+
+`hidream-i1-fast` is distilled and is intentionally `inference_only`; `hidream-o1-image` has a
+different architecture and is unchanged.
 
 ## Lumina-Image 2.0
 
