@@ -174,6 +174,11 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
   and `to_out.0`. Both sides generated 3 steps at 32x32 from seed 42 with guidance 4. Single,
   stacked (0.8 / 0.5), fused and 3-step trained adapters were compared, including final latents
   when uint8 pixels did not move.
+- On November 7, 2026, tiny Lumina 2 PEFT transformer adapters covered `to_k`, `to_q`, `to_v`
+  and `to_out.0`. Both sides generated 3 steps at 32x32 from the same explicit latents with
+  guidance 4 and the pipeline's default system prompt. Single, stacked (0.8 / 0.5), fused and
+  3-step trained adapters were compared; each loaded adapter registered those targets and changed
+  the diffusers output before final latents and uint8 pixels were checked.
 - One published adapter, `latent-consistency/lcm-lora-sdv1-5` at
   `cf2fced511dbe7e26c8d1d397e728fbab875db4b` (kohya layout, per-module alphas, 278 layers of
   which 96 are convolutions, 50 of them 3×3), was loaded on `sd-v1-5` and generated 2 steps at
@@ -189,6 +194,8 @@ peft 0.21.2 (transformers 5.18.0, PyTorch 2.15.0).
 | 3-step trained transformer adapter: 3 steps at 32×32, seed 42, guidance 4, explicit complex-human instruction | Sana | 0 | 0 |
 | Random PEFT transformer adapter: `to_k`, `to_q`, `to_v`, `to_out.0`; single, stacked 0.8 / 0.5 and fused | Z-Image | 0 | 0 |
 | 3-step trained transformer adapter: 3 steps at 32×32, seed 42, guidance 4 | Z-Image | 0 | 0 |
+| Random PEFT transformer adapter: `to_k`, `to_q`, `to_v`, `to_out.0`; single, stacked 0.8 / 0.5 and fused; final latents and uint8 pixels | Lumina 2 | 0 | 0 |
+| 3-step trained transformer adapter: 3 steps at 32×32 from explicit latents, guidance 4, default system prompt; final latents and uint8 pixels | Lumina 2 | 0 | 0 |
 | diffusers / PEFT layout, no alpha | SD 1.x, SD3 | 0 | 0 |
 | Prompt embeddings with text-encoder adapters (CLIP-L, CLIP-G, pooled, negative prompt) | SD3 | 0 | 0 |
 | kohya layout with `.alpha` | SD 1.x, SDXL | 0 | 0 |
@@ -2213,6 +2220,18 @@ for both models recorded 0 missing, extra or shape-mismatched tensors as well
 [validation-measurements.json](validation-measurements.json)).
 
 ## Lumina-Image 2.0
+
+### Training (November 7, 2026)
+
+Lumina 2 LoRA training is checked on CPU float32 against diffusers 0.40.0. The reference tests
+compare the script defaults for the objective, collator and adapter; the resize/crop/normalize
+transform; and Gemma token ids and attention masks with the pipeline's default system prompt.
+For every weighting scheme, they compare posterior, noise, timestep and sigma draws, loss and every
+adapter gradient. Random transformer adapters (`to_k`, `to_q`, `to_v`, `to_out.0`) are tested
+single, stacked at 0.8 / 0.5 and fused; each first proves that diffusers registered the intended
+targets and changed its output, then compares final latents and uint8 pixels. A three-step trained
+adapter is loaded through `load_lora_weights` and checked the same way. Every tensor comparison uses
+exact equality.
 
 `lumina-image-2.0` is loaded strictly from `Alpha-VLLM/Lumina-Image-2.0` at revision `53504ab` and
 compared with diffusers 0.40.0 `Lumina2Pipeline` on CPU in float32. Every comparison below measured
