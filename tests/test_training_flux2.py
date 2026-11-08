@@ -121,3 +121,20 @@ def test_flux2_training_save_load_and_checkpointing(tmp_path, tiny_flux2):
         current.objective(current._next_batch(), torch.Generator().manual_seed(2)).backward()
         gradients.append([parameter.grad.clone() for parameter in current.parameters])
     assert all(torch.equal(left, right) for left, right in zip(*gradients, strict=True))
+
+
+def test_flux2_training_prompts_match_the_inference_encoder(tmp_path, tiny_flux2):
+    from imagehub.backends.flux2 import encode_prompt
+    from imagehub.training.flux2 import Flux2Family
+
+    family = Flux2Family()
+    cpu = torch.device("cpu")
+    components = family.load(tiny_flux2, device=cpu, dtype=torch.float32, model_id="flux2-klein-4b")
+    args = _args(tmp_path)
+    batch = family.collator(
+        components, args, generator=torch.Generator().manual_seed(0), train=False
+    )([{"image": PIL.new("RGB", (32, 32)), "text": "a tiny cat"}])
+    condition = family.objective(components, args).encode_condition(batch)
+    expected, text_ids = encode_prompt(components, "a tiny cat", cpu, 1, args.max_sequence_length)
+    assert torch.equal(condition["prompt_embeds"], expected)
+    assert torch.equal(condition["text_ids"], text_ids)

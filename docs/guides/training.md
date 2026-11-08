@@ -286,8 +286,10 @@ distilled and remains `inference_only`.
 FLUX.2 klein 4B and 9B train transformer-only LoRA adapters with the script's literal targets:
 `to_k`, `to_q`, `to_v`, `to_out.0`, `to_qkv_mlp_proj`, and
 `single_transformer_blocks.0` through `.23` `attn.to_out`. Their rank / alpha defaults are 4 / 4,
-weighting is `"none"`, and Qwen prompts use 512 tokens and layers 10, 20 and 30. These are the training script's layers; the klein pipeline
-encodes inference prompts from layers 9, 18 and 27, and imagehub's backend does the same. The deterministic
+weighting is `"none"`, and Qwen prompts use 512 tokens and layers 9, 18 and 27, the layers the
+official FLUX.2 code and the klein pipeline use at inference. The training script's
+`--text_encoder_out_layers` default, 10, 20 and 30, is the FLUX.2 [dev] Mistral set; the reference
+test runs the script with 9, 18 and 27. The deterministic
 VAE posterior is patchified and normalized with the VAE batch-normalization statistics before flow
 matching against `noise - latents`; gradient checkpointing covers both double- and single-stream
 blocks. A guidance value is passed only to checkpoints with a guidance embedding; the other klein

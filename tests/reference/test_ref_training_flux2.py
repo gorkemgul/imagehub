@@ -1,5 +1,6 @@
 """FLUX.2 klein LoRA-step and adapter parity against diffusers, CPU float32."""
 
+import inspect
 import math
 
 import pytest
@@ -40,6 +41,9 @@ TARGETS = (
     *(f"single_transformer_blocks.{index}.attn.to_out" for index in range(24)),
 )
 SCHEMES = ("logit_normal", "mode", "sigma_sqrt", "cosmap", "none")
+# The script is run with --text_encoder_out_layers 9 18 27: the official FLUX.2 Qwen3 layers and
+# the Flux2KleinPipeline default. The script's own default (10, 20, 30) is the FLUX.2 [dev] set.
+SCRIPT_TEXT_ENCODER_OUT_LAYERS = (9, 18, 27)
 
 
 def image(seed=12, *, height=40, width=48):
@@ -113,7 +117,9 @@ def test_flux2_defaults_targets_transform_and_tokens_match_the_script(tmp_path):
         1.29,
         3.5,
     )
-    assert TEXT_ENCODER_OUT_LAYERS == (10, 20, 30)
+    assert TEXT_ENCODER_OUT_LAYERS == SCRIPT_TEXT_ENCODER_OUT_LAYERS
+    encode_prompt = inspect.signature(diffusers.Flux2KleinPipeline.encode_prompt)
+    assert encode_prompt.parameters["text_encoder_out_layers"].default == (9, 18, 27)
 
     source = image(3, height=97, width=64)
     expected = functional.resize(source, 32, interpolation=transforms.InterpolationMode.BILINEAR)
@@ -237,7 +243,7 @@ def test_first_flux2_step_matches_diffusers(tmp_path, scheme):
             use_cache=False,
         ).hidden_states
         prompt = (
-            torch.stack([encoded[index] for index in TEXT_ENCODER_OUT_LAYERS], dim=1)
+            torch.stack([encoded[index] for index in SCRIPT_TEXT_ENCODER_OUT_LAYERS], dim=1)
             .permute(0, 2, 1, 3)
             .flatten(2)
         )
