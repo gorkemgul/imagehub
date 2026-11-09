@@ -169,7 +169,6 @@ license; see the [model catalog](docs/catalog.md), [NOTICE](NOTICE), and
 
 Planned work after the first release:
 
-- [ ] Opt-in fast attention backends (FlashAttention, SageAttention, xFormers) — #192
 - [x] LoRA adapter loading for inference — #193
 - [x] Training support: LoRA fine-tuning as `imagehub[training]` — #194
 - [ ] GPU and half-precision validation — #195
