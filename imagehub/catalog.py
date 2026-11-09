@@ -1666,6 +1666,57 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="visualcloze-384",
+        task=Task.T2I,
+        family="visualcloze",
+        source="https://huggingface.co/VisualCloze/VisualClozePipeline-384",
+        repo_id="VisualCloze/VisualClozePipeline-384",
+        revision="59c469d2772d927ffe55f3543c4d3bd556fd46a4",
+        provenance="author",
+        catalog_id="visualcloze",
+        format="diffusers",
+        license="Apache-2.0",
+        gated=False,
+        image_input="required",
+        config={
+            "resolution": 384,
+            "defaults": {
+                "steps": 30,
+                "guidance": 30.0,
+                "max_sequence_length": 512,
+                "upsampling_strength": 0.3,
+            },
+        },
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors.index.json",
+            "text_encoder_2/model-00001-of-00002.safetensors",
+            "text_encoder_2/model-00002-of-00002.safetensors",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/spiece.model",
+            "tokenizer_2/tokenizer.json",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="chroma1-hd",
         task=Task.T2I,
         family="chroma",

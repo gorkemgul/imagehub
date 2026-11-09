@@ -157,6 +157,7 @@ def test_catalog_entry():
         "joyai-image-edit-plus",
         "sdxl-refiner-1.0",
         "omnigen-v1",
+        "visualcloze-384",
     }
 
 

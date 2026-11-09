@@ -1726,7 +1726,14 @@ def write_tiny_sd3(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
 
 
 def write_tiny_flux1(
-    directory: str | os.PathLike[str], *, guidance_embeds: bool = True, seed: int = 0
+    directory: str | os.PathLike[str],
+    *,
+    guidance_embeds: bool = True,
+    seed: int = 0,
+    in_channels: int = 16,
+    out_channels: int = 16,
+    latent_channels: int = 4,
+    scheduler_config: dict[str, Any] | None = None,
 ) -> Path:
     """A random-weight FLUX.1 snapshot in the published diffusers layout."""
     import shutil
@@ -1769,7 +1776,9 @@ def write_tiny_flux1(
         "max_image_seq_len": 16,
     }
     (root / "scheduler").mkdir()
-    (root / "scheduler" / "scheduler_config.json").write_text(json.dumps(scheduler))
+    (root / "scheduler" / "scheduler_config.json").write_text(
+        json.dumps(scheduler | (scheduler_config or {}))
+    )
     (root / "model_index.json").write_text(
         json.dumps(
             {
@@ -1787,8 +1796,8 @@ def write_tiny_flux1(
     transformer_config = {
         "_class_name": "FluxTransformer2DModel",
         "patch_size": 1,
-        "in_channels": 16,
-        "out_channels": 16,
+        "in_channels": in_channels,
+        "out_channels": out_channels,
         "num_layers": 1,
         "num_single_layers": 1,
         "attention_head_dim": 8,
@@ -1799,6 +1808,7 @@ def write_tiny_flux1(
         "axes_dims_rope": [2, 2, 4],
     }
     vae_config = TINY_SD3_VAE | {
+        "latent_channels": latent_channels,
         "scaling_factor": 0.3611,
         "shift_factor": 0.1159,
         "sample_size": 16,

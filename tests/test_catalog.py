@@ -124,6 +124,7 @@ def test_catalog_contents():
             "ssd-1b",
             "stable-cascade",
             "stable-cascade-lite",
+            "visualcloze-384",
             "wuerstchen-v2",
             "z-image",
             "z-image-turbo",
@@ -1548,6 +1549,7 @@ def test_image_input_field():
         "joyai-image-edit-plus": "required",
         "sdxl-refiner-1.0": "required",
         "omnigen-v1": "optional",
+        "visualcloze-384": "required",
     }
     for value in (None, "optional", "required"):
         assert ModelSpec(**{**base.__dict__, "id": "x", "image_input": value}).image_input == value
