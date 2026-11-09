@@ -4410,6 +4410,77 @@
       }
     },
     {
+      "model_id": "visualcloze-384",
+      "repo_id": "VisualCloze/VisualClozePipeline-384",
+      "revision": "59c469d2772d927ffe55f3543c4d3bd556fd46a4",
+      "provenance": "author",
+      "catalog_id": "visualcloze",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "5a86736ff8e2c8039455c2af729f1877ff7c24f839cecb27e920f86694327b9e",
+        "scheduler/scheduler_config.json": "da8f173c174166377002f72645823ff674705801652272aa38d29c2323cc47db",
+        "text_encoder/config.json": "f6391da2056e6a47801513eef900402e2cf23ed5607eef5098deb6db323c668e",
+        "text_encoder/model.safetensors": "893d67a23f4693ed42cdab4cbad7fe3e727cf59609c40da28a46b5470f9ed082",
+        "text_encoder_2/config.json": "177655de6da7f1ed10887994419d418041310d1248b83b31d280578ac379bc99",
+        "text_encoder_2/model.safetensors.index.json": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a",
+        "text_encoder_2/model-00001-of-00002.safetensors": "ec87bffd1923e8b2774a6d240c922a41f6143081d52cf83b8fe39e9d838c893e",
+        "text_encoder_2/model-00002-of-00002.safetensors": "a5640855b301fcdbceddfa90ae8066cd9414aff020552a201a255ecf2059da00",
+        "tokenizer/merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+        "tokenizer/special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+        "tokenizer/tokenizer_config.json": "42f7827770491fb6c61962b9be49cb0552a93c17140d74098631861d90d5fd0c",
+        "tokenizer/vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+        "tokenizer_2/special_tokens_map.json": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2",
+        "tokenizer_2/spiece.model": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86",
+        "tokenizer_2/tokenizer.json": "f5dfec163765e18e270537fe896c49f5fad74db1525641d9b255a3008b999596",
+        "tokenizer_2/tokenizer_config.json": "00ded71621afa8f055c4dccf1805d6f2cab12eebe5fd61a95491a009c8c13878",
+        "transformer/config.json": "cafa4954b83893aef9863565410543c47d195e7f4135b910ad0b7b4436e33ca3",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "9717b32f6bc87a97e4c68fd5dd0c9e5088e4c33cad4ac90414ae9f9e8b7a89b3",
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors": "e8c76e3b2046d09f69b1a0fae89420a6b2f38907dd238c8604bbbbe63b7b8a43",
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors": "256d0533f090cbc42d1f36c1856ace548e242a7368ada52962ac8249862e622a",
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors": "bfee1486ddcc0b3d05698e7ff2390f3aef31f7c55d20ca6344044e3a34ae896d",
+        "vae/config.json": "0f6053a015c8427c66bdd86281ebb5b1e85099850ad362477a29ee04513771aa",
+        "vae/diffusion_pytorch_model.safetensors": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "text_encoder": 196,
+          "text_encoder_2": 219,
+          "transformer": 1160,
+          "vae": 244
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 8,
+        "guidance": 30,
+        "upsampling_strength": 0.3,
+        "upsampling_size": [
+          512,
+          512
+        ]
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 7,
+        "steps": 4
+      }
+    },
+    {
       "model_id": "chroma1-hd",
       "repo_id": "lodestones/Chroma1-HD",
       "revision": "0e0c60ece1e82b17cb7f77342d765ba5024c40c0",
@@ -16268,5 +16339,59 @@
   ],
   "tests": {
     "reference_summary": "8 passed (infinity-2b)"
+  },
+  "components_visualcloze": {
+    "visualcloze_real_clip": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_clip_tokens": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_generation_latents": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_generation_pixels": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_seed": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_t5": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_t5_tokens": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_transformer_0.25": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_transformer_0.5": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_transformer_0.75": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_upsampling_pixels": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_vae_decode": {
+      "exact": true,
+      "tolerance": "exact"
+    },
+    "visualcloze_real_vae_encode": {
+      "exact": true,
+      "tolerance": "exact"
+    }
   }
 }

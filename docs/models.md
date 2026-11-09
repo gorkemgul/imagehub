@@ -7,6 +7,7 @@ image input, and passing `image` to one raises an error.
 | Model | Image input | Use | Options |
 | --- | --- | --- | --- |
 | `flux1-kontext-dev` | optional | instruction editing | `image` |
+| `visualcloze-384` | required | grid visual in-context generation | `image` |
 | `joyai-image-edit` | optional | instruction editing | `image` |
 | `joyai-image-edit-plus` | required | multi-image instruction editing | `image` |
 | `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
@@ -935,6 +936,47 @@ with pipeline(
   images, IP-Adapter and fp16/bf16 parity are not supported.
 - **Seed compatibility.** On CPU, the same seed, image and settings give the same image as
   diffusers 0.40.0 `FluxKontextPipeline` ([validation](validation.md)).
+
+# VisualCloze
+
+Models: `visualcloze-384` · Task: `t2i`
+
+VisualCloze generates the missing images in the final row of a visual in-context grid. Earlier
+rows are complete examples; the final row supplies one or more condition images and uses `None`
+for every target to generate. Results are returned left to right for those `None` entries.
+
+```python
+from imagehub import pipeline
+
+grid = [
+    [example_input, example_output],
+    [query_input, None],
+]
+
+with pipeline("t2i", backend="visualcloze-384", model="checkpoints/visualcloze-384") as pipe:
+    result = pipe(
+        "Each row shows a process ...",
+        image=grid,
+        content_prompt=None,
+        seed=0,
+    )
+```
+
+- **Input.** `image` is required. Every row has the same number of images, no earlier row may
+  contain `None`, and the final row must have at least one. `content_prompt` optionally captions
+  the target. The default settings are 30 steps, guidance 30.0, 512 text tokens and upsampling
+  strength 0.3. `height`, `width`, negative prompts and batching options are unsupported.
+- **Resolution.** The grid-generation stage resizes each row around 384 pixels. Its targets are
+  then passed as uint8 images to a FLUX Fill upsampling stage. Set both `upsampling_height` and
+  `upsampling_width`, or neither; the default uses the first supplied image in the final row,
+  caps it at 1024² pixels and rounds down to multiples of 16. Set `upsampling_strength=0` to
+  return the generation-stage targets directly.
+- **Deliberate compatibility differences.** imagehub uses the authors' plain layout instruction
+  rather than the tuple representation emitted by diffusers, and keeps each target's native
+  aspect during multi-target preprocessing rather than applying diffusers' swapped resize
+  arguments.
+- **License.** The published weights are Apache-2.0, but they are built on FLUX.1-Fill-dev,
+  whose own license is non-commercial. Check the applicable terms before use.
 
 
 # Chroma

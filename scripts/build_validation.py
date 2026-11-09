@@ -26,7 +26,8 @@ measurements are grouped in flat
 ``components_longcat_image``,
 ``components_cogview3_plus``,
 ``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
-``components_hidream_o1``, ``components_cosmos2`` and ``components_omnigen`` mappings: the base
+``components_hidream_o1``, ``components_cosmos2``, ``components_omnigen`` and
+``components_visualcloze`` mappings: the base
 model keeps its historical unsuffixed keys, while other models use ``<key>_<model-id>``. Each model
 entry may also contain its
 own ``seed_end_to_end`` measurement. When a model directory is missing, its existing entry in the
@@ -496,6 +497,9 @@ def main() -> None:
         },
         "components_omnigen": {
             key: value for key, value in measured.items() if key.startswith("omnigen_")
+        },
+        "components_visualcloze": {
+            key: value for key, value in measured.items() if key.startswith("visualcloze_")
         },
         "components_chroma": {
             key: value for key, value in measured.items() if key in CHROMA_COMPONENT_KEYS
