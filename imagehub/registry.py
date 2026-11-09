@@ -123,6 +123,7 @@ for _task, _name, _path in (
     (Task.T2I, "emu3", "imagehub.backends.emu3:Emu3Backend"),
     (Task.T2I, "pixeldit", "imagehub.backends.pixeldit:PixelDiTBackend"),
     (Task.T2I, "auraflow", "imagehub.backends.auraflow:AuraFlowBackend"),
+    (Task.T2I, "hunyuanimage", "imagehub.backends.hunyuanimage:HunyuanImageBackend"),
     (Task.T2I, "krea2", "imagehub.backends.krea2:Krea2Backend"),
     (Task.T2I, "ernie-image", "imagehub.backends.ernie_image:ErnieImageBackend"),
     (Task.T2I, "hidream", "imagehub.backends.hidream:HiDreamBackend"),
