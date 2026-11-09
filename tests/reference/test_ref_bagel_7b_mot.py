@@ -247,7 +247,7 @@ def _reference_components(snapshot, out_path):
 def test_real_components(record, tmp_path):
     root = snapshot_dir("bagel-7b-mot")
     expected = reference_in_subprocess(
-        "test_ref_bagel_7b_mot._reference_components",
+        "reference.test_ref_bagel_7b_mot._reference_components",
         {"snapshot": str(root)},
         tmp_path / "reference-components.pt",
     )
@@ -341,7 +341,7 @@ def _reference_e2e(snapshot, seed, out_path):
 def test_real_e2e(seed, tmp_path, record):
     root = snapshot_dir("bagel-7b-mot")
     expected = reference_in_subprocess(
-        "test_ref_bagel_7b_mot._reference_e2e",
+        "reference.test_ref_bagel_7b_mot._reference_e2e",
         {"snapshot": str(root), "seed": seed},
         tmp_path / f"reference-{seed}.pt",
     )
