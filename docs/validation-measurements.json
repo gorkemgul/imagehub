@@ -2509,6 +2509,18 @@
     "pixels_max_abs": 0,
     "seed": 0
   },
+  "e2e_visualcloze-384": {
+    "guidance": 30,
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 8,
+    "upsampling_size": [
+      512,
+      512
+    ],
+    "upsampling_strength": 0.3
+  },
   "e2e_watershed_lumina-next": {
     "guidance": 4.0,
     "latents": {
@@ -5602,6 +5614,32 @@
       "mismatch": [],
       "missing": [],
       "tensors": 122
+    }
+  },
+  "header_visualcloze-384": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 196
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 219
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1160
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 244
     }
   },
   "header_wuerstchen-v2": {
@@ -10863,6 +10901,12 @@
     "passed": true,
     "seed": 1234
   },
+  "seed_e2e_visualcloze-384": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 7,
+    "steps": 4
+  },
   "seed_e2e_wuerstchen-v2": {
     "passed": true,
     "seed": 1234
@@ -11168,6 +11212,58 @@
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
+  },
+  "visualcloze_real_clip": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_clip_tokens": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_generation_latents": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_generation_pixels": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_seed": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_t5": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_t5_tokens": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_transformer_0.25": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_transformer_0.5": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_transformer_0.75": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_upsampling_pixels": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_vae_decode": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "visualcloze_real_vae_encode": {
+    "exact": true,
+    "tolerance": "exact"
   },
   "wuerstchen-v2_decoder_latents": {
     "max_abs": 0.0,

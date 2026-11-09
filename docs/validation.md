@@ -1273,6 +1273,58 @@ The reference and native transformers were never held in one process (the transf
 saves the reference output first, then runs the native model). The real-checkpoint run took about
 2 hours 7 minutes on an Apple M2 Max CPU.
 
+## VisualCloze
+
+Validated on CPU on November 9, 2026 (Python 3.13, PyTorch 2.15.0) against diffusers 0.40.0
+`VisualClozePipeline`, transformers 5.18.0. `visualcloze-384` was loaded strictly from
+`VisualCloze/VisualClozePipeline-384` at revision `59c469d`. The observed difference in every
+comparison is **exactly 0**.
+
+imagehub follows the authors' official code in two places where the diffusers code has a defect:
+
+- **Layout prompt.** diffusers' `get_layout_prompt` returns a one-element tuple, so the encoders
+  receive the literal text `('A grid layout ...',)`. imagehub uses the official plain sentence.
+  The reference tests replace that function on the reference processor with the plain sentence, and
+  also assert that the unpatched function still returns a tuple.
+- **Several targets.** diffusers' "consistent width" pass swaps width and height on non-square
+  images. The official code has no such pass, and imagehub omits it. The pass does nothing on square
+  images, so several-target references use square images. Non-square several-target input has a
+  shape test only.
+
+Default settings (30 steps, guidance 30, upsampling strength 0.3) come from the authors' published
+example, and the default upsampling size follows the official code. The tests pass every setting
+explicitly to the reference.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Transformer with 384 input channels, tiny random weights | 0 | 0 |
+| Grid preprocessing, target positions and image sizes over awkward sizes | 0 | 0 |
+| Prompt embeddings, with and without `content_prompt`, tiny | 0 | 0 |
+| Generation stage, tiny: one and several targets, two example rows, non-square single target, last row of only `None`, with and without `content_prompt`: final latents / pixels | 0 / 0 | 0 / 0 |
+| Both stages, tiny: strengths 0.3, 1.0 and 0, upsampling to the same and to other sizes, non-square, several targets, `content_prompt` (pixels) | 0 | 0 |
+| CLIP and T5 token ids and embeddings, real checkpoint | 0 | 0 |
+| Transformer on a 2 × 2 grid-sized input, three timesteps, real checkpoint | 0 | 0 |
+| VAE encode and decode, real checkpoint | 0 | 0 |
+| End to end, 2 rows × 2 columns, 8 steps, guidance 30, seed 0: generation latents / generation pixels | 0 / 0 | 0 / 0 |
+| Same run, upsampling strength 0.3 to 512 × 512 (pixels) | 0 | 0 |
+| Seed test, seed 7, 4 steps, no upsampling (pixels) | 0 | 0 |
+
+The real-checkpoint end-to-end run is shortened to 8 steps, and the seed test to 4, to bound the CPU
+run; the default is 30 steps. Real-checkpoint input images are fixed synthetic images.
+
+The header-only tensor check covered `text_encoder`, `text_encoder_2`, `transformer` and `vae`:
+tensor counts 196 / 219 / 1160 / 244, with missing, extra and shape-mismatched tensors all **0**.
+Record: `tensor_header_check`, [validation.json](validation.json).
+
+The reference and native transformers were never held in memory at the same time. The
+real-checkpoint run took about 20 minutes on an Apple M2 Max CPU.
+
+The published weights carry an Apache-2.0 tag and are built on FLUX.1-Fill-dev. Not covered: MPS
+and CUDA, float16 and bfloat16, LoRA options, and the official code's own sampler, whose upsampling
+schedule and random draws differ from diffusers'.
+
 ## Chroma
 
 Validated on CPU in the same environment as above, against diffusers 0.40.0 `ChromaPipeline`.

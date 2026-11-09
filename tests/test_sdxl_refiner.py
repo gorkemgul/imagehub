@@ -53,6 +53,7 @@ def test_catalog_entry():
     assert [m for m, s in MODEL_CATALOG.items() if s.image_input == "required"] == [
         "joyai-image-edit-plus",
         REFINER,
+        "visualcloze-384",
     ]
 
 

@@ -91,6 +91,7 @@ Creating a pipeline for a checkpoint without commercial-use rights emits an `Ima
 | Cosmos-Predict2 | `cosmos-predict2-2b-t2i` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | FLUX.1 | `flux1-schnell`, `flux1-dev`, `flux1-krea-dev`, `flux-1-lite-8b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | FLUX.1 Kontext | `flux1-kontext-dev` | `t2i` | T, I | CPU fp32 parity |
+| VisualCloze | `visualcloze-384` | `t2i` | T, I | CPU fp32 parity |
 | FLUX.2 | `flux2-klein-4b`, `flux2-klein-9b` | `t2i` | T | CPU fp32 parity |
 | HunyuanDiT | `hunyuan-dit-v1.1-distilled`, `hunyuan-dit-v1.2`, `hunyuan-dit-v1.2-distilled` | `t2i` | T | CPU fp32 parity |
 | DeepFloyd IF | `deepfloyd-if-i-xl` | `t2i` | T | CPU fp32 parity |
