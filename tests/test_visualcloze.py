@@ -30,6 +30,7 @@ def snapshot(tmp_path_factory):
         in_channels=384,
         out_channels=64,
         latent_channels=16,
+        scheduler_config={"base_image_seq_len": 256, "max_image_seq_len": 4096},
     )
 
 
