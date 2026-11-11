@@ -1,10 +1,11 @@
 import shutil
+from pathlib import Path
 
 from imagehub.tokenization_byt5 import ByT5Tokenizer
 
 
 def test_byt5_existing_tokenize_interface_is_unchanged(tmp_path):
-    source = "tests/fixtures/glm_image_configs/tokenizer_tokenizer_config.json"
+    source = Path(__file__).parent / "fixtures/glm_image_configs/tokenizer_tokenizer_config.json"
     shutil.copyfile(source, tmp_path / "tokenizer_config.json")
     tokenizer = ByT5Tokenizer(tmp_path)
 
