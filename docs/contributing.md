@@ -43,7 +43,8 @@ files are verified against `tests/fixtures/RESTRICTED.json` and remain in the ig
    `IMAGEHUB_REFERENCE_SOURCES` (default `checkpoints/ref-src`).
 7. **Record the result** in `docs/validation.json` (with `scripts/build_validation.py`) and
    `docs/validation.md`, add the model to `docs/models.md` and `docs/catalog.md`, and to the table in
-   the README.
+   the README. A changed page that has a Turkish version is updated in both languages; see
+   [Translations](translations.md).
 8. **Open a pull request** against `main`, one model per PR, closing its issue.
 
 ??? tip "What a models.md section needs"

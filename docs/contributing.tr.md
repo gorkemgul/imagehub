@@ -45,7 +45,8 @@ dosyalar `tests/fixtures/RESTRICTED.json` ile doğrulanır ve yok sayılan
    `checkpoints/ref-src`).
 7. Sonucu `docs/validation.json` içine (`scripts/build_validation.py` ile) ve
    `docs/validation.md` dosyasına **kaydedin**; modeli `docs/models.md`, `docs/catalog.md` ve README
-   tablosuna ekleyin.
+   tablosuna ekleyin. Türkçe sürümü olan bir sayfa değişirse iki dilde de güncellenir; bkz.
+   [Çeviriler](translations.md).
 8. `main` dalına karşı, issue'yu kapatan ve yalnızca bir model içeren **pull request açın**.
 
 ??? tip "Bir models.md bölümünde bulunması gerekenler"

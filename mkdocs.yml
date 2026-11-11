@@ -93,6 +93,7 @@ plugins:
             API: API
             Model catalog: Model kataloğu
             Contributing: Katkıda bulunma
+            Translations: Çeviriler
 
 markdown_extensions:
   - abbr
@@ -139,4 +140,6 @@ nav:
   - Reference:
       - API: api.md
       - Model catalog: catalog.md
-  - Contributing: contributing.md
+  - Contributing:
+      - contributing.md
+      - Translations: translations.md
