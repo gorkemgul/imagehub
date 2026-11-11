@@ -243,8 +243,9 @@ what can be trained (`lora` today).
 Every other model is `inference_only` for now: the few-step distilled checkpoints (`sd-turbo`,
 `lcm-dreamshaper-v7`, `sdxs-512-0.9`, SDXL Lightning, Hyper-SD, DMD2, `sdxl-turbo`, KOALA
 Lightning), the SDXL refiner (image to image), Playground v2.5 (EDM, not DDPM) and
-`sd3.5-large-turbo` (few-step distilled), and `sana-sprint-1.6b-1024` (distilled). More
-transformer families follow (#202).
+`sd3.5-large-turbo` (few-step distilled), `sana-sprint-1.6b-1024` (distilled), and the
+Qwen-Image-Edit checkpoints, which are conditioned on an input image and have no diffusers training
+script. More transformer families follow (#202).
 
 Sana trains its transformer only, using the script's `to_k`, `to_q`, `to_v` targets. Its DC-AE
 has deterministic latents, so the training random stream draws noise then the flow timestep; the

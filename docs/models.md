@@ -2004,7 +2004,7 @@ not distribute weights.
 # Qwen-Image
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `qwen-image`, `qwen-image-2.1` · Task: `t2i`
+Models: `qwen-image`, `qwen-image-2.1`, `qwen-image-edit`, `qwen-image-edit-2509` · Task: `t2i`
 
 **Architecture.** The original release uses Qwen2.5-VL, a 60-layer patch-2 dual-stream transformer
 and a 16-channel causal Qwen VAE. Qwen-Image 2.1 uses Qwen3-VL-8B, a single-stream transformer with
@@ -2037,8 +2037,23 @@ diffusers reference with `generator=torch.Generator("cpu").manual_seed(seed)`
 ([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is no claim of exact
 equality on these devices.
 
-**Out of scope.** Image editing, condition images, the Qwen3-VL vision encoder and fp16/bf16 parity
-are not supported.
+For instruction editing, download `qwen-image-edit` (one input image) or
+`qwen-image-edit-2509` (one or more input images), then pass an `imagehub.Image` or Pillow image:
+
+```python
+with pipeline("t2i", backend="qwen-image-edit", model="checkpoints/qwen-image-edit") as pipe:
+    result = pipe("replace the sky with a sunset", image=source, seed=42)
+```
+
+The edit releases use the Qwen2.5-VL vision tower to condition the instruction and append VAE
+latents from each source image to the denoiser input. Their defaults are 50 steps and `true_cfg=4`;
+dimensions must be multiples of 16. The real-checkpoint reference tests intentionally use two
+steps at 32×32 because the published transformer and conditioner are large.
+
+Transformer LoRA adapters (`lora=`, `lora_scale=`, `lora_fuse=`) load on the edit releases as on
+the other Qwen-Image releases and match diffusers' LoRA loader in the tiny tests.
+
+**Out of scope.** Video inputs and fp16/bf16 parity are not supported.
 
 The original release's published bfloat16 weights are upcast for CPU float32 validation. Its
 real-checkpoint run took 30 minutes on an M2 Max (CPU) and every recorded comparison is exactly 0
