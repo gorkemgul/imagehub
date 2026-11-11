@@ -161,6 +161,13 @@ fetcher to include gated repositories; tests for unavailable fixtures skip with 
 
 Reference comparisons are optional; install `.[dev,image,reference]` and run `IMAGEHUB_REFERENCE_TESTS=1 .venv/bin/python -m pytest tests/reference` with local checkpoint paths configured.
 
+The documentation site builds with the pinned versions in the `docs` extra:
+
+```bash
+uv pip install --python .venv -e ".[docs]"
+.venv/bin/mkdocs build --strict
+```
+
 ## License
 
 The project is Apache-2.0 overall. Clearly marked third-party derivatives retain their own license;
