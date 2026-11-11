@@ -95,6 +95,8 @@ def test_catalog_contents():
             "prx-512-t2i-sft",
             "qwen-image",
             "qwen-image-2.1",
+            "qwen-image-edit",
+            "qwen-image-edit-2509",
             "sana-1.5-4.8b-1024",
             "sana-1600m-1024",
             "sana-600m-1024",
@@ -1549,6 +1551,8 @@ def test_image_input_field():
         "joyai-image-edit-plus": "required",
         "sdxl-refiner-1.0": "required",
         "omnigen-v1": "optional",
+        "qwen-image-edit": "required",
+        "qwen-image-edit-2509": "required",
         "visualcloze-384": "required",
     }
     for value in (None, "optional", "required"):

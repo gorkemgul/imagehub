@@ -5,7 +5,11 @@ from typing import Any
 import pytest
 import torch
 
-from imagehub.models.qwen2_5_vl_text import Qwen25VLTextModel
+from imagehub.models.qwen2_5_vl_text import (
+    Qwen25VLForConditionalGeneration,
+    Qwen25VLTextModel,
+    Qwen25VLVisionModel,
+)
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
@@ -69,6 +73,84 @@ GENERATION_CONFIG = {
     "eos_token_id": [2, 3],
     "pad_token_id": 0,
 }
+
+
+VISION = {
+    "depth": 2,
+    "hidden_act": "silu",
+    "hidden_size": 16,
+    "intermediate_size": 24,
+    "num_heads": 4,
+    "in_channels": 3,
+    "out_hidden_size": 16,
+    "patch_size": 2,
+    "spatial_merge_size": 2,
+    "temporal_patch_size": 2,
+    "window_size": 8,
+    "fullatt_block_indexes": [1],
+}
+
+
+def test_qwen25_vl_vision_random_weights_exact() -> None:
+    config = transformers.Qwen2_5_VLVisionConfig(**VISION)
+    config._attn_implementation = "sdpa"
+    torch.manual_seed(4)
+    reference = transformers.Qwen2_5_VisionTransformerPretrainedModel(config).eval()
+    actual = Qwen25VLVisionModel(VISION).eval()
+    actual.load_state_dict(reference.state_dict())
+    grid = torch.tensor([[1, 4, 4], [1, 4, 8]])
+    pixels = torch.randn(48, 24)
+    with torch.inference_mode():
+        expected = reference(pixels, grid_thw=grid).pooler_output
+        output = actual(pixels, grid)
+    torch.testing.assert_close(output, expected, atol=0, rtol=0)
+
+
+def test_qwen25_vl_image_conditioning_random_weights_exact() -> None:
+    config_dict = {
+        **TINY,
+        "text_config": {
+            **TINY["text_config"],
+            "hidden_size": 16,
+            "num_attention_heads": 4,
+            "rope_scaling": {"type": "default", "mrope_section": [1, 1, 0]},
+        },
+        "vision_config": VISION,
+    }
+    config = transformers.Qwen2_5_VLConfig(**config_dict)
+    config._attn_implementation = "sdpa"
+    config.text_config._attn_implementation = "sdpa"
+    config.vision_config._attn_implementation = "sdpa"
+    torch.manual_seed(5)
+    reference = transformers.Qwen2_5_VLForConditionalGeneration(config).eval()
+    actual = Qwen25VLForConditionalGeneration(config_dict).eval()
+    state = {}
+    for name, value in reference.state_dict().items():
+        name = name.removeprefix("model.") if name.startswith("model.visual.") else name
+        name = name.replace("model.language_model.", "model.")
+        state[name] = value
+    actual.load_checkpoint(state)
+    ids = torch.tensor([[1, 60, 60, 60, 60, 4, 5]])
+    mask = torch.ones_like(ids)
+    grid = torch.tensor([[1, 4, 4]])
+    pixels = torch.randn(16, 24)
+    token_types = ids.eq(config.image_token_id).long()
+    with torch.inference_mode():
+        expected = reference(
+            ids,
+            attention_mask=mask,
+            pixel_values=pixels,
+            image_grid_thw=grid,
+            mm_token_type_ids=token_types,
+            output_hidden_states=True,
+        ).hidden_states[-1]
+        output = actual(
+            ids,
+            mask,
+            pixel_values=pixels,
+            image_grid_thw=grid,
+        )[-1]
+    torch.testing.assert_close(output, expected, atol=0, rtol=0)
 
 
 def _reference(model_config: dict[str, Any] = TINY) -> Any:

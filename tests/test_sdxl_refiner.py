@@ -52,6 +52,8 @@ def test_catalog_entry():
     assert not any("fp16" in name or name.startswith("vae_1_0/") for name in spec.files)
     assert [m for m, s in MODEL_CATALOG.items() if s.image_input == "required"] == [
         "joyai-image-edit-plus",
+        "qwen-image-edit",
+        "qwen-image-edit-2509",
         REFINER,
         "visualcloze-384",
     ]

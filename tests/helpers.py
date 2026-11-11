@@ -1411,6 +1411,78 @@ def write_tiny_qwen_image(directory: str | os.PathLike[str], *, seed: int = 0) -
     return root
 
 
+def write_tiny_qwen_image_edit(
+    directory: str | os.PathLike[str], *, seed: int = 0, plus: bool = False
+) -> Path:
+    """Write a random tiny Qwen-Image-Edit snapshot in the published layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.qwen2_5_vl_text import Qwen25VLForConditionalGeneration
+
+    root = write_tiny_qwen_image(directory, seed=seed)
+    shutil.copytree(root / "tokenizer", root / "processor")
+    (root / "processor/preprocessor_config.json").write_text(
+        json.dumps(
+            {
+                "image_processor_type": "Qwen2VLImageProcessorFast",
+                "processor_class": "Qwen2VLProcessor",
+                "image_mean": [0.48145466, 0.4578275, 0.40821073],
+                "image_std": [0.26862954, 0.26130258, 0.27577711],
+                "min_pixels": 64,
+                "max_pixels": 64,
+                "merge_size": 2,
+                "patch_size": 2,
+                "temporal_patch_size": 2,
+            }
+        )
+    )
+    (root / "processor/video_preprocessor_config.json").write_text(
+        json.dumps(
+            {
+                "video_processor_type": "Qwen2VLVideoProcessor",
+                "processor_class": "Qwen2VLProcessor",
+                "patch_size": 2,
+                "temporal_patch_size": 2,
+                "merge_size": 2,
+            }
+        )
+    )
+    config = json.loads((root / "text_encoder/config.json").read_text())
+    config["vision_config"].update(
+        {
+            "in_channels": 3,
+            "spatial_merge_size": 2,
+            "window_size": 8,
+            "fullatt_block_indexes": [0],
+        }
+    )
+    # Match the final special token in the tiny tokenizer.
+    config["image_token_id"] = (
+        len(json.loads((root / "processor/tokenizer.json").read_text())["model"]["vocab"]) - 1
+    )
+    model = Qwen25VLForConditionalGeneration(config)
+    torch.manual_seed(seed)
+    for parameter in model.parameters():
+        parameter.data.normal_(0, 0.05)
+    (root / "text_encoder/config.json").write_text(json.dumps(config))
+    save_safetensors(model.state_dict(), root / "text_encoder/model.safetensors")
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "QwenImageEditPlusPipeline" if plus else "QwenImageEditPipeline",
+                "processor": ["transformers", "Qwen2VLProcessor"],
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen2_5_VLForConditionalGeneration"],
+                "tokenizer": ["transformers", "Qwen2Tokenizer"],
+                "transformer": ["diffusers", "QwenImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKLQwenImage"],
+            }
+        )
+    )
+    return root
+
+
 TINY_KREA2_TEXT = {
     "vocab_size": 262,
     "hidden_size": 16,
