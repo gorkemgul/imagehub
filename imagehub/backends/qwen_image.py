@@ -466,13 +466,12 @@ def decode_original_latents(
     )
     dtype = vae.post_quant_conv.weight.dtype
     latents = latents.to(dtype)
-    mean = torch.tensor(vae.latents_mean, device=latents.device, dtype=dtype).view(
-        1, channels // 4, 1, 1, 1
-    )
-    std = torch.tensor(vae.latents_std, device=latents.device, dtype=dtype).view(
-        1, channels // 4, 1, 1, 1
-    )
-    image = vae.decode(latents * std + mean)[:, :, 0]
+    # Same operations as the published pipeline: float32 statistics cast to the VAE dtype, and a
+    # division by the reciprocal of `std`. Multiplying by `std` differs in the last bit and can
+    # move a pixel that sits on a rounding boundary.
+    mean = torch.tensor(vae.latents_mean).view(1, channels // 4, 1, 1, 1).to(latents.device, dtype)
+    std = torch.tensor(vae.latents_std).view(1, channels // 4, 1, 1, 1).to(latents.device, dtype)
+    image = vae.decode(latents / (1.0 / std) + mean)[:, :, 0]
     image = (image / 2 + 0.5).clamp(0, 1).permute(0, 2, 3, 1).float().cpu()
     return (image * 255).round().to(torch.uint8)
 
