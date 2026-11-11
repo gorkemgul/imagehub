@@ -1724,6 +1724,22 @@ parity is against `clean_caption=False`, which diffusers uses when those package
 weights.
 
 
+# Nucleus-Image
+
+Catalog: `nucleus-image` · Models: `nucleus-image` · Task: `t2i`
+
+**Architecture.** Nucleus-Image combines a Qwen3-VL text encoder, a 32-block single-stream
+diffusion transformer, expert-choice SwiGLU mixture-of-experts layers, grouped-query attention,
+three-axis RoPE, and the Qwen-Image VAE. Published weights are bfloat16.
+
+**Settings.** The backend supports `steps`, `guidance`, `negative_prompt`, `width`, `height`,
+`seed`, `latents`, and `max_sequence_length`. Dimensions must be multiples of 16.
+
+**Validation.** On CPU in float32, the same seed and settings give the same 1024×1024 image as
+diffusers' `NucleusMoEImagePipeline` with `generator=torch.Generator().manual_seed(seed)`
+([validation](validation.md)). The expert layers follow the published `use_grouped_mm` setting on
+CPU and CUDA. MPS and CUDA are not validated.
+
 # Krea 2
 
 Catalog: [`krea-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) · Models:

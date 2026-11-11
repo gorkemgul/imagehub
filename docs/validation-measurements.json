@@ -1792,6 +1792,12 @@
     "tolerance": "exact",
     "width": 64
   },
+  "e2e_nucleus-image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 0,
+    "steps": 2
+  },
   "e2e_omnigen-v1": {
     "guidance": 2.5,
     "latents": {
@@ -4682,6 +4688,20 @@
       "tensors": 277
     }
   },
+  "header_nucleus-image": {
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 610
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 194
+    }
+  },
   "header_omnigen-v1": {
     "transformer": {
       "extra": [],
@@ -6635,6 +6655,14 @@
     "tolerance": "exact"
   },
   "nextstep_qwen_random": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "nucleus-image_text_encoder": {
+    "passed": true,
+    "tolerance": "exact"
+  },
+  "nucleus-image_vae_decode": {
     "passed": true,
     "tolerance": "exact"
   },
@@ -10542,6 +10570,12 @@
     "steps": 1,
     "tolerance": "exact",
     "width": 64
+  },
+  "seed_e2e_nucleus-image": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "seed": 42,
+    "steps": 2
   },
   "seed_e2e_omnigen-v1": {
     "max_pixel_diff": 0,

@@ -6216,6 +6216,69 @@
       }
     },
     {
+      "model_id": "nucleus-image",
+      "repo_id": "NucleusAI/Nucleus-Image",
+      "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+      "provenance": "author",
+      "catalog_id": "nucleus-image",
+      "license": "Apache-2.0",
+      "reference": {
+        "diffusers": {
+          "version": "0.40.0"
+        },
+        "transformers": {
+          "version": "5.18.0"
+        }
+      },
+      "status": "full",
+      "files": {
+        "model_index.json": "a208848da0ad1aea122f059626534009edc0249ac14a40817201df0cbaff1a4e",
+        "scheduler/scheduler_config.json": "918a64ec1d4e8e89f07163c63c8b81de9c340fc90ec5d6262dd1ab19af699b70",
+        "processor/tokenizer.json": "a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7",
+        "processor/tokenizer_config.json": "c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399",
+        "processor/vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+        "processor/merges.txt": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+        "text_encoder/config.json": "5cd452860dc1e9c29dd71cc3cef7f39b338b7a40793f7a260655c2d3568f3661",
+        "text_encoder/model.safetensors.index.json": "520b2e05079402e9468a8701d03d1154d14b2599593afb6effa7fb60c1bff070",
+        "text_encoder/model-00001-of-00004.safetensors": "d5d0aef0eb170fc7453a296c43c0849a56f510555d3588e4fd662bb35490aefa",
+        "text_encoder/model-00002-of-00004.safetensors": "8be88fb5501e4d5719a6d4cc212e6a13480330e74f3e8c77daa1a68f199106b5",
+        "text_encoder/model-00003-of-00004.safetensors": "83de00eafe6e0d57ccd009dbcf71c9974d74df2f016c27afb7e95aafd16b2192",
+        "text_encoder/model-00004-of-00004.safetensors": "0a88b98e9f96270973f567e6a2c103ede6ccdf915ca3075e21c755604d0377a5",
+        "transformer/config.json": "4a47e26e79ee0d9549d4e3f34ff4ef5f45bc1da730b316417cf56778f15bc42d",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "bb425015d6df1223011d9e634c0fa594aafcf91dbfb2f3078bbd5cb3ebee5acb",
+        "transformer/diffusion_pytorch_model-00001-of-00007.safetensors": "ad0a79d47a0ea15e1f746cf64ed9b85b210b577e6769f1196075d80e6d5b46d7",
+        "transformer/diffusion_pytorch_model-00002-of-00007.safetensors": "1d1c04d5ae3e81c7c699dcbb9e2d9ccd2a086f50bad889d0617ca2bdf11da3fd",
+        "transformer/diffusion_pytorch_model-00003-of-00007.safetensors": "ba2dc218dee2032e2e9bbd89548b7962901f28f2f92d63f23ecd6c138e04d612",
+        "transformer/diffusion_pytorch_model-00004-of-00007.safetensors": "d00f85e512a49b881513f0ca0123d70dc9963c3d5531a6986aa2fe929b62d2bf",
+        "transformer/diffusion_pytorch_model-00005-of-00007.safetensors": "1ef5a35ddd6f01a8fe26a475dc8e2ffc56585cd8797e8a0525578ddea109b681",
+        "transformer/diffusion_pytorch_model-00006-of-00007.safetensors": "ceb86f9bb8b934dae6ff9bc562482f6a493c97df50a1b8897a3b9e7d64cedf8d",
+        "transformer/diffusion_pytorch_model-00007-of-00007.safetensors": "f5a767727147f0686615eb3424b5200d2313548b0c1931ab90b88e90c56de197",
+        "vae/config.json": "c448160dba5ce79c965cb075ee02e18d1c42eb6424f787e5869790d577b56a65",
+        "vae/diffusion_pytorch_model.safetensors": "0c8bc8b758c649abef9ea407b95408389a3b2f610d0d10fcb054fe171d0a8344"
+      },
+      "tensor_header_check": {
+        "missing": [],
+        "extra": [],
+        "mismatch": [],
+        "tensors": {
+          "transformer": 610,
+          "vae": 194
+        }
+      },
+      "end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 0,
+        "steps": 2
+      },
+      "seed_end_to_end": {
+        "max_pixel_diff": 0,
+        "passed": true,
+        "seed": 42,
+        "steps": 2
+      }
+    },
+    {
       "model_id": "longcat-image",
       "repo_id": "meituan-longcat/LongCat-Image",
       "revision": "d2ea50b79a930074c37b9b97ce45e3b2ea8cf4d8",

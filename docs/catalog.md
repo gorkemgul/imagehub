@@ -135,6 +135,7 @@ use` govern this repository's implementation for that row; they default to Apach
 | `glm-image` | `glm-image` | [zai-org/GLM-Image](https://huggingface.co/zai-org/GLM-Image) | `2c433cc` | author | full | no | MIT | Apache-2.0 | yes | `glm-image` |
 | `cosmos-predict2-2b-t2i` | `cosmos2` | [nvidia/Cosmos-Predict2-2B-Text2Image](https://huggingface.co/nvidia/Cosmos-Predict2-2B-Text2Image) | `acdb5fd` | author | full | yes | NVIDIA Open Model License | Apache-2.0 | yes | `cosmos-predict2-2b-t2i` |
 | `nextstep-1-large` | `nextstep` | [stepfun-ai/NextStep-1-Large](https://huggingface.co/stepfun-ai/NextStep-1-Large) | `97dd0b9` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `nextstep-1` |
+| `nucleus-image` | `nucleus-image` | [NucleusAI/Nucleus-Image](https://huggingface.co/NucleusAI/Nucleus-Image) | `5e963db` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `nucleus-image` |
 
 The original repository of `sd-v1-5` (`runwayml/stable-diffusion-v1-5`) has been removed; the
 repository used is a community mirror. The v1.1–v1.3 fp32 weights are published only as `.bin`

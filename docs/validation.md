@@ -1816,6 +1816,42 @@ Caption cleaning requires `bs4` and `ftfy` and is not implemented. Parity was me
 reference and native components were loaded together; T5-XXL used about 19 GB in float32. The
 real-checkpoint run for both models (19 tests) took 45 minutes.
 
+## Nucleus-Image
+
+Validated on CPU in the same environment as above. `nucleus-image` was loaded strictly from
+`NucleusAI/Nucleus-Image` at revision `5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa` and compared with
+diffusers 0.40.0 `NucleusMoEImagePipeline` and transformers 5.18.0. The published bfloat16 weights
+were upcast to float32. All 4 real-checkpoint tests passed, and the observed difference in every
+comparison is **exactly 0**.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Transformer / VAE tensor names and shapes (610 / 194 tensors, strict meta-device load) | identical | exact |
+| Qwen3-VL text states (layer -8, valid positions) and attention mask | 0 / identical | exact |
+| VAE decode (1024×1024) | 0 | 0 |
+| End to end, seed 0 (1024×1024, 2 steps, guidance 4.0; pixels) | 0 | 0 |
+| End to end, seed 42 (1024×1024, 2 steps, guidance 4.0; pixels) | 0 | 0 |
+
+The end-to-end prompt was "a photograph of an astronaut riding a horse". The two steps only bound
+the CPU run; the default is 50 steps. The reference pipeline runs in its own process, because the
+float32 reference and native pipelines do not fit in memory together. The run took 29 minutes on
+an M2 Max (CPU) with 12 threads.
+
+The published transformer config sets `use_grouped_mm`, so the expert layers use grouped matrix
+products on CPU and CUDA, as diffusers does. With several CPU threads, one product per expert
+differs from them in the last bit at some token counts. At 1024×1024 the first two expert blocks
+take 256 tokens per expert, and the difference changed the image. A random-weight test at the
+published widths and 4,096 image tokens covers this case. On MPS, where grouped products fail for
+small shapes, the backend computes one product per expert.
+
+Random-weight parity covers the transformer with and without text masks, and tiny-snapshot
+pipelines compare guidance on and off, non-square output, token dropping and two seeds.
+Records: `header_nucleus-image`, `nucleus-image_text_encoder`, `nucleus-image_vae_decode`,
+`e2e_nucleus-image` and `seed_e2e_nucleus-image`,
+[validation-measurements.json](validation-measurements.json).
+
 ## Krea 2
 
 Validated on CPU in the same environment as above. `krea2-turbo` was loaded strictly from
