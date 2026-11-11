@@ -1449,6 +1449,12 @@
     ],
     "steps": 10
   },
+  "e2e_hunyuanimage_2_1": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "size": 512,
+    "steps": 8
+  },
   "e2e_hyper-sdxl-1step": {
     "guidance": 0.0,
     "latents": {
@@ -4120,6 +4126,32 @@
     "missing": [],
     "tensors": 1545
   },
+  "header_hunyuanimage_2_1": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 729
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 111
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1264
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 324
+    }
+  },
   "header_hyper-sdxl-1step": {
     "extra": [],
     "mismatch": [],
@@ -5856,6 +5888,55 @@
     "tolerance": 0.0
   },
   "hunyuan_dit_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_e2e_text": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_glyph_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_scheduler": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "hunyuanimage_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_tokenizers": {
+    "exact": true,
+    "prompts": 4,
+    "tolerance": "exact"
+  },
+  "hunyuanimage_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -10300,6 +10381,12 @@
     "passed": true,
     "seed": 42,
     "steps": 10
+  },
+  "seed_e2e_hunyuanimage_2_1": {
+    "passed": true,
+    "seed": 42,
+    "size": 256,
+    "steps": 3
   },
   "seed_e2e_hyper-sdxl-1step": {
     "guidance": 0.0,

@@ -124,6 +124,7 @@ Creating a pipeline for a checkpoint without commercial-use rights emits an `Ima
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
+| HunyuanImage 2.1 | `hunyuanimage-2-1` | `t2i` | T | CPU fp32 parity |
 | CogView3-Plus | `cogview3-plus-3b` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 transformer and VAE |
 | CogView4 | `cogview4-6b` | `t2i` | T | CPU fp32 parity |
 | GLM-Image | `glm-image` | `t2i` | T | CPU fp32 parity |

@@ -1909,6 +1909,47 @@ upcasting. In float32 the text encoder needs about 19 GB and the transformer abo
 **License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
 
 
+# HunyuanImage 2.1
+
+Catalog: [`hunyuanimage-2-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `hunyuanimage-2-1` · Task: `t2i`
+
+**Architecture.** A Qwen2.5-VL text model and a ByT5 encoder for quoted text feed a diffusion
+transformer with dual-stream, single-stream and token-refiner blocks. A 64-channel VAE with 32×
+compression decodes the latents. The flow-match Euler scheduler uses the two guider configurations
+from the snapshot, selecting the OCR guider for prompts with quoted text.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained hunyuanimage-2-1 checkpoints/hunyuanimage-2-1
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="hunyuanimage", model="checkpoints/hunyuanimage-2-1") as pipe:
+    result = pipe('a red beret with the word "Tencent" on it', seed=42)
+    result.images[0].save("beret.png")
+```
+
+**Settings.** `steps` defaults to 50; `width` and `height` default to 2048 and must be multiples
+of 32. `guidance` defaults to the selected guider's scale. The other options are `seed`, `latents`
+and `negative_prompt`.
+
+**Memory.** The backend loads and releases the text encoders, transformer and VAE in sequence. The
+ByT5 encoder loads only when the prompt contains quoted text.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)).
+
+**Out of scope.** The refiner, distilled variants, LoRA adapters and fp16/bf16 parity are not
+supported.
+
+**License.** The weights use the Tencent Hunyuan Community License. imagehub does not distribute
+weights.
+
+
 # CogView4
 
 Catalog: [`cogview4`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
