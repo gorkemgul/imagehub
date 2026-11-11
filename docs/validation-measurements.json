@@ -1449,6 +1449,12 @@
     ],
     "steps": 10
   },
+  "e2e_hunyuanimage_2_1": {
+    "max_pixel_diff": 0,
+    "passed": true,
+    "size": 512,
+    "steps": 8
+  },
   "e2e_hyper-sdxl-1step": {
     "guidance": 0.0,
     "latents": {
@@ -2031,6 +2037,16 @@
     ],
     "steps": 8,
     "true_cfg": 1.0
+  },
+  "e2e_qwen-image-edit": {
+    "passed": true,
+    "pixel_max_abs": 0,
+    "tolerance": 0
+  },
+  "e2e_qwen-image-edit-2509": {
+    "passed": true,
+    "pixel_max_abs": 0,
+    "tolerance": 0
   },
   "e2e_sana-1.5-4.8b-1024": {
     "guidance": 4.5,
@@ -4126,6 +4142,32 @@
     "missing": [],
     "tensors": 1545
   },
+  "header_hunyuanimage_2_1": {
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 729
+    },
+    "text_encoder_2": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 111
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1264
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 324
+    }
+  },
   "header_hyper-sdxl-1step": {
     "extra": [],
     "mismatch": [],
@@ -5020,6 +5062,48 @@
       "tensors": 238
     }
   },
+  "header_qwen-image-edit": {
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 729
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1933
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 194
+    }
+  },
+  "header_qwen-image-edit-2509": {
+    "revision": "d3968ef930e841f4c73640fb8afa3b306a78167e",
+    "text_encoder": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 729
+    },
+    "transformer": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 1933
+    },
+    "vae": {
+      "extra": [],
+      "mismatch": [],
+      "missing": [],
+      "tensors": 194
+    }
+  },
   "header_sana-1.5-4.8b-1024": {
     "text_encoder": {
       "extra": [],
@@ -5876,6 +5960,55 @@
     "tolerance": 0.0
   },
   "hunyuan_dit_vae_encode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_e2e_latents": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_e2e_text": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_glyph_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_scheduler": {
+    "exact": true,
+    "tolerance": "exact"
+  },
+  "hunyuanimage_text_encoder": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_text_encoder_negative": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_tokenizers": {
+    "exact": true,
+    "prompts": 4,
+    "tolerance": "exact"
+  },
+  "hunyuanimage_transformer": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_vae_decode": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "hunyuanimage_vae_encode": {
     "max_abs": 0.0,
     "max_rel": 0.0,
     "tolerance": 0.0
@@ -8264,6 +8397,86 @@
     "max_abs": 0.0,
     "tolerance": "exact"
   },
+  "qwen_image_edit_conditioner_qwen-image-edit": {
+    "ids_match": true,
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "pixels_match": true,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_conditioner_qwen-image-edit-2509": {
+    "ids_match": true,
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "pixels_match": true,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_image_stages_qwen-image-edit": {
+    "output_pixel_max_abs": 0,
+    "pixels_max_abs": 0.0,
+    "seed_42_noise_max_abs": 0.0,
+    "source_latents_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_image_stages_qwen-image-edit-2509": {
+    "output_pixel_max_abs": 0,
+    "pixels_max_abs": 0.0,
+    "seed_42_noise_max_abs": 0.0,
+    "source_latents_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_long_transformer_first_block_qwen-image-edit": {
+    "context_max_abs": 0.0,
+    "hidden_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_long_transformer_first_block_qwen-image-edit-2509": {
+    "context_max_abs": 0.0,
+    "hidden_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_real_conditioning_qwen-image-edit": {
+    "hidden_max_abs": 0.0,
+    "ids_match": true,
+    "pixels_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_real_conditioning_qwen-image-edit-2509": {
+    "hidden_max_abs": 0.0,
+    "ids_match": true,
+    "pixels_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_scheduler_qwen-image-edit": {
+    "sigmas_max_abs": 0.0,
+    "timesteps_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_scheduler_qwen-image-edit-2509": {
+    "sigmas_max_abs": 0.0,
+    "timesteps_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_transformer_qwen-image-edit": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_transformer_qwen-image-edit-2509": {
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_vae_qwen-image-edit": {
+    "decode_max_abs": 0.0,
+    "encode_max_abs": 0.0,
+    "tolerance": 0.0
+  },
+  "qwen_image_edit_vae_qwen-image-edit-2509": {
+    "decode_max_abs": 0.0,
+    "encode_max_abs": 0.0,
+    "tolerance": 0.0
+  },
   "qwen_image_prompt_ids": {
     "ids_match": true,
     "prompts": 2,
@@ -10329,6 +10542,12 @@
     "seed": 42,
     "steps": 10
   },
+  "seed_e2e_hunyuanimage_2_1": {
+    "passed": true,
+    "seed": 42,
+    "size": 256,
+    "steps": 3
+  },
   "seed_e2e_hyper-sdxl-1step": {
     "guidance": 0.0,
     "passed": true,
@@ -10690,6 +10909,16 @@
     ],
     "steps": 8,
     "true_cfg": 1.0
+  },
+  "seed_e2e_qwen-image-edit": {
+    "passed": true,
+    "pixel_max_abs": 0,
+    "tolerance": 0
+  },
+  "seed_e2e_qwen-image-edit-2509": {
+    "passed": true,
+    "pixel_max_abs": 0,
+    "tolerance": 0
   },
   "seed_e2e_sana-1.5-4.8b-1024": {
     "max_pixel_diff": 0,

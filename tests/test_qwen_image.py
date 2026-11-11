@@ -2,13 +2,19 @@ import json
 
 import pytest
 import torch
-from helpers import write_tiny_qwen_image, write_tiny_qwen_image21
+from helpers import write_tiny_qwen_image, write_tiny_qwen_image21, write_tiny_qwen_image_edit
 
 from imagehub import pipeline
-from imagehub.backends.qwen_image import QwenImageBackend, QwenImageComponents, encode_prompt
+from imagehub.backends.qwen_image import (
+    QwenImageBackend,
+    QwenImageComponents,
+    _vision_pixels,
+    encode_prompt,
+)
 from imagehub.catalog import model_info
 from imagehub.checkpoints import SNAPSHOT_FILE, load_weights, save_safetensors
 from imagehub.exceptions import CheckpointError
+from imagehub.image import Image
 from imagehub.types import T2IRequest
 
 
@@ -22,6 +28,56 @@ def tiny_qwen_image(tmp_path_factory):
 def tiny_original_qwen_image(tmp_path_factory):
     pytest.importorskip("transformers")
     return write_tiny_qwen_image(tmp_path_factory.mktemp("tiny-original-qwen-image"))
+
+
+@pytest.fixture(scope="module")
+def tiny_qwen_image_edit(tmp_path_factory):
+    pytest.importorskip("transformers")
+    return write_tiny_qwen_image_edit(tmp_path_factory.mktemp("tiny-qwen-image-edit"))
+
+
+def test_edit_release_generates_from_an_image(tiny_qwen_image_edit):
+    source = Image(torch.arange(32 * 48 * 3, dtype=torch.int64).reshape(32, 48, 3).to(torch.uint8))
+    pipe = pipeline("t2i", backend="qwen-image-edit", model=tiny_qwen_image_edit)
+    first = pipe("turn it blue", image=source, seed=7, steps=1, width=32, height=32)
+    second = pipe("turn it blue", image=source, seed=7, steps=1, width=32, height=32)
+    assert torch.equal(first.images[0].tensor, second.images[0].tensor)
+    assert first.metadata["image_input"] is True
+
+
+def test_edit_vision_pixels_match_fused_uint8_preprocessing():
+    source = Image(torch.arange(64 * 96 * 3, dtype=torch.int64).reshape(64, 96, 3).to(torch.uint8))
+    config = {
+        "patch_size": 14,
+        "merge_size": 2,
+        "temporal_patch_size": 2,
+        "min_pixels": 3136,
+        "max_pixels": 12_845_056,
+        "rescale_factor": 1 / 255,
+        "image_mean": [0.48145466, 0.4578275, 0.40821073],
+        "image_std": [0.26862954, 0.26130258, 0.27577711],
+    }
+    actual, grid = _vision_pixels(source, config)
+
+    pixels = source.tensor.permute(2, 0, 1).unsqueeze(0).contiguous()
+    pixels = torch.nn.functional.interpolate(
+        pixels, size=(56, 84), mode="bicubic", align_corners=False, antialias=True
+    )[0]
+    mean = torch.tensor(config["image_mean"])[:, None, None] * 255
+    std = torch.tensor(config["image_std"])[:, None, None] * 255
+    pixels = (pixels.float() - mean) / std
+    expected = pixels.reshape(3, 2, 2, 14, 3, 2, 14).permute(1, 4, 2, 5, 0, 3, 6)
+    expected = expected.unsqueeze(5).expand(-1, -1, -1, -1, -1, 2, -1, -1)
+
+    assert torch.equal(grid, torch.tensor([[1, 4, 6]]))
+    assert torch.equal(actual, expected.reshape(24, 1176))
+
+
+def test_edit_release_requires_an_image_before_loading(tmp_path):
+    backend = QwenImageBackend(tmp_path, model_id="qwen-image-edit")
+    with pytest.raises(ValueError, match="image is required"):
+        pipeline("t2i", backend=backend)("turn it blue", steps=1, width=32, height=32)
+    assert not backend.is_loaded
 
 
 def test_original_release_generates_repeatably(tiny_original_qwen_image):
@@ -98,6 +154,16 @@ def test_catalog_entry_and_snapshot_hint(tmp_path):
     assert spec.license == "Qwen Research License"
     assert spec.reference["diffusers"] == {"git_commit": "7997e4eabb1f880fa5697e2b24de09a892fffad5"}
     assert len(spec.files) == 25
+    edit = model_info("qwen-image-edit")
+    assert edit.family == "qwen-image" and edit.catalog_id == "qwen-image-edit"
+    assert edit.repo_id == "Qwen/Qwen-Image-Edit"
+    assert edit.revision == "ac7f9318f633fc4b5778c59367c8128225f1e3de"
+    assert edit.image_input == "required" and edit.license == "Apache-2.0"
+    assert edit.reference["diffusers"]["pipeline"] == "QwenImageEditPipeline"
+    plus = model_info("qwen-image-edit-2509")
+    assert plus.repo_id == "Qwen/Qwen-Image-Edit-2509"
+    assert plus.revision == "d3968ef930e841f4c73640fb8afa3b306a78167e"
+    assert plus.reference["diffusers"]["pipeline"] == "QwenImageEditPlusPipeline"
     pipe = pipeline("t2i", backend="qwen-image-2.1", model=tmp_path / "nowhere")
     with pytest.raises(CheckpointError, match=r"imagehub\.pretrained qwen-image-2\.1 "):
         pipe("a cat")

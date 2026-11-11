@@ -1926,6 +1926,48 @@ slow on CPU. The transformer alone needs about 32 GB in float32 and the text enc
 so every comparison runs the reference first, saves its outputs, frees it, then runs the native
 model.
 
+## HunyuanImage 2.1
+
+Validated on CPU in the same environment as above. `hunyuanimage-2-1` was loaded strictly from
+`hunyuanvideo-community/HunyuanImage-2.1-Diffusers` at revision
+`7e7b7a177de58591aeaffca0929f4765003d7ced` and compared with diffusers 0.40.0
+`HunyuanImagePipeline` and transformers 5.18.0. The published bfloat16 transformer, VAE and Qwen
+text encoder were upcast to float32; the ByT5 encoder is published in float32. All 8
+real-checkpoint tests passed, and the observed difference in every comparison is **exactly 0**.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Qwen and ByT5 tokenizers (4 prompts, with and without quoted text) | identical | exact |
+| Qwen2.5-VL text embeddings (prompt / negative prompt) | 0 / 0 | 0 |
+| ByT5 glyph encoder | 0 | 0 |
+| Transformer single step | 0 | 0 |
+| VAE decode / encode (1024×1024) | 0 / 0 | 0 |
+| Flow-match Euler schedule | exact | exact |
+| End to end with fixed noise: text embeddings / final latent / pixels (512×512, 8 steps) | 0 / 0 / 0 | 0 |
+| End to end, seed 42 (256×256, 3 steps; pixels) | 0 | 0 |
+
+The end-to-end runs used the prompt "A cute cartoon penguin plush toy standing in a painting
+studio, photorealistic" and the guider configuration from the snapshot. The shortened step counts
+and sizes only bound the CPU run; the defaults are 50 steps at 2048×2048. Each reference stage runs
+in a subprocess that exits before the native stage, so the two 68 GB float32 transformers are never
+resident together. The run took 25 minutes on an M2 Max (CPU).
+
+The header-only tensor check covered `text_encoder`, `text_encoder_2`, `transformer` and `vae`:
+tensor counts 729 / 111 / 1264 / 324, with missing, extra and shape-mismatched tensors all **0**.
+
+The catalog uses the community diffusers conversion. `scripts/check_hunyuanimage_conversion.py`
+converts Tencent's official checkpoint (`tencent/HunyuanImage-2.1` at revision
+`e435da11d9e8795a25e224c5ba27b099ed45c55b`) with diffusers' conversion functions and compares every
+tensor: the transformer is an exact copy of the official bfloat16 weights, while the community VAE
+is the official float32 VAE rounded to bfloat16.
+
+Random-weight parity covers the transformer, VAE, text encoder, tokenizer wrapper, guider,
+scheduler and a tiny end-to-end snapshot with exact PyTorch equality. Records:
+`header_hunyuanimage_2_1`, the `hunyuanimage_*` component comparisons, `e2e_hunyuanimage_2_1` and
+`seed_e2e_hunyuanimage_2_1`, [validation-measurements.json](validation-measurements.json).
+
 ## LongCat-Image
 
 Validated on CPU in the same environment as above. `longcat-image` was loaded strictly from
@@ -2139,6 +2181,56 @@ The end-to-end prompt was "a photograph of an astronaut riding a horse" with the
 "blurry, low quality". Two steps at 32×32 only shorten the CPU run; the backend defaults are 50
 steps at 1024×1024. Records: `header_qwen-image`, `qwen_image_tokenizer`, `qwen_image_text_encoder`,
 `qwen_image_transformer`, `qwen_image_vae`, `e2e_qwen-image` and `seed_e2e_qwen-image`,
+[validation-measurements.json](validation-measurements.json).
+
+## Qwen-Image-Edit
+
+`qwen-image-edit` was loaded strictly from `Qwen/Qwen-Image-Edit` at revision
+`ac7f9318f633fc4b5778c59367c8128225f1e3de`, and `qwen-image-edit-2509` from
+`Qwen/Qwen-Image-Edit-2509` at revision `d3968ef930e841f4c73640fb8afa3b306a78167e`. They were
+compared with diffusers 0.40.0 `QwenImageEditPipeline` and `QwenImageEditPlusPipeline` and
+transformers 5.18.0 on CPU in float32, on the float32 upcast of the published bfloat16 weights.
+All 20 real-checkpoint tests passed for both releases, and the observed difference in every
+recorded comparison is **exactly 0** (0 means exact).
+
+The suite checks every published tensor header, image preprocessing and Qwen2.5-VL conditioning
+(including a long vision sequence through the first transformer block), a transformer step, VAE
+encode/decode, the source-image latent stages, the scheduler, and separate public-pipeline
+end-to-end runs for seeds 0 and 42. 2509 runs with two source images. The end-to-end cases use two
+steps at 32×32 to keep the CPU run bounded; production defaults remain 50 steps at 1024×1024.
+Reference components are loaded directly, and prompt embeddings are computed before the diffusion
+components are loaded, because the transformers CPU result is allocation-sensitive for this long
+vision sequence when Accelerate is unavailable.
+
+The seed-42 run of `qwen-image-edit` found that the latents handed to the VAE decoder must be
+rescaled the way the pipeline does it, `latents / (1 / std) + mean`: `latents * std + mean`
+differs in the last bit and moved one pixel that sits on a rounding boundary. A tiny test with the
+published latent statistics now compares the decoder input bit for bit for `qwen-image` and both
+edit releases.
+
+### Comparisons (CPU, float32)
+
+Each row was measured for both `qwen-image-edit` and `qwen-image-edit-2509`; the values are the same
+for both.
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Published tensor headers (`text_encoder` / `transformer` / `vae`: 729 / 1933 / 194 tensors; missing, extra, mismatched) | 0 | exact |
+| Image preprocessing and Qwen2.5-VL conditioning (token ids, pixel values, prompt embeddings) | identical / 0 / 0 | exact / 0 / 0 |
+| Conditioning at the published condition resolution (token ids, pixel values, hidden states) | identical / 0 / 0 | exact / 0 / 0 |
+| First transformer block on the long vision sequence (image / text stream) | 0 / 0 | 0 |
+| Transformer step with source latents | 0 | 0 |
+| VAE encode / decode | 0 / 0 | 0 |
+| Source-image stages (preprocessed pixels, source latents, seed-42 noise, decoded pixels) | 0 / 0 / 0 / 0 | 0 |
+| Flow-match Euler scheduler with dynamic shifting (sigmas / timesteps) | 0 / 0 | 0 |
+| End to end, seed 0 (32×32, 2 steps, `true_cfg` 4.0; pixels) | 0 | 0 |
+| End to end, seed 42 (32×32, 2 steps, `true_cfg` 4.0; pixels) | 0 | 0 |
+
+Records: `header_<id>`, `qwen_image_edit_conditioner_<id>`,
+`qwen_image_edit_real_conditioning_<id>`, `qwen_image_edit_transformer_<id>`,
+`qwen_image_edit_long_transformer_first_block_<id>`, `qwen_image_edit_vae_<id>`,
+`qwen_image_edit_image_stages_<id>`, `qwen_image_edit_scheduler_<id>`, `e2e_<id>` and
+`seed_e2e_<id>` for `<id>` in `qwen-image-edit` and `qwen-image-edit-2509`,
 [validation-measurements.json](validation-measurements.json).
 
 ## Qwen-Image 2.1

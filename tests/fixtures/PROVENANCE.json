@@ -4403,6 +4403,202 @@
     "source": "Qwen/Qwen-Image"
   },
   {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/text_encoder_model-00001-of-00004.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/text_encoder_model-00002-of-00004.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/text_encoder_model-00003-of-00004.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/text_encoder_model-00004-of-00004.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00001-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00002-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00003-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00004-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00005-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00006-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00007-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00008-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/transformer_diffusion_pytorch_model-00009-of-00009.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/headers/vae_diffusion_pytorch_model.safetensors.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/model_index.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/model_index_2509.json",
+    "revision": "d3968ef930e841f4c73640fb8afa3b306a78167e",
+    "source": "Qwen/Qwen-Image-Edit-2509"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/processor_preprocessor_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/processor_tokenizer_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/processor_video_preprocessor_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/scheduler_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/text_encoder_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/text_encoder_generation_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/text_encoder_model.safetensors.index.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/tokenizer_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/transformer_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/transformer_diffusion_pytorch_model.safetensors.index.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/transformer_diffusion_pytorch_model_2509.safetensors.index.json",
+    "revision": "d3968ef930e841f4c73640fb8afa3b306a78167e",
+    "source": "Qwen/Qwen-Image-Edit-2509"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/qwen_image_edit_configs/published/vae_config.json",
+    "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+    "source": "Qwen/Qwen-Image-Edit"
+  },
+  {
     "form": "synthetic",
     "license": "Apache-2.0",
     "path": "tests/fixtures/qwen_tokenizer/merges.txt",

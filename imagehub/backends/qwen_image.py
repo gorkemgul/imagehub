@@ -18,11 +18,11 @@ from imagehub.backends.stable_diffusion import resolve_device
 from imagehub.catalog import MODEL_CATALOG
 from imagehub.checkpoints import load_weights, read_json, read_snapshot
 from imagehub.exceptions import CheckpointError
-from imagehub.image import Image
+from imagehub.image import Image, as_pil
 from imagehub.lora_formats import LoRAOption, apply_lora, parse_lora_option
 from imagehub.models.autoencoder_kl_qwen_image import AutoencoderKLQwenImage
 from imagehub.models.autoencoder_kl_qwen_image21 import AutoencoderKLQwenImage21
-from imagehub.models.qwen2_5_vl_text import Qwen25VLTextModel
+from imagehub.models.qwen2_5_vl_text import Qwen25VLForConditionalGeneration, Qwen25VLTextModel
 from imagehub.models.qwen3_vl_text import Qwen3VLTextModel
 from imagehub.models.qwen_image21_transformer import (
     QwenImage21KVCache,
@@ -43,6 +43,7 @@ OPTION_DEFAULTS: dict[str, Any] = {
     "num_images": 1,
     "seed": None,
     "latents": None,
+    "image": None,
 }
 _DTYPES = (torch.float32, torch.float16, torch.bfloat16)
 _VAE_SCALE_FACTOR = 16
@@ -58,6 +59,16 @@ _ORIGINAL_DROP_INDEX = 34
 _TEXT_PREFIX = "model.language_model."
 _VISION_PREFIX = "model.visual."
 _EXPECTED_UNUSED_TEXT_TENSORS = frozenset({"lm_head.weight"})
+_EDIT_TEMPLATE = (
+    "<|im_start|>system\nDescribe the key features of the input image (color, shape, size, "
+    "texture, objects, background), then explain how the user's text instruction should alter "
+    "or modify the image. Generate a new image that meets the user's requirements while "
+    "maintaining consistency with the original input where appropriate.<|im_end|>\n"
+    "<|im_start|>user\n{}<|im_end|>\n<|im_start|>assistant\n"
+)
+_EDIT_DROP_INDEX = 64
+_CLIP_MEAN = (0.48145466, 0.4578275, 0.40821073)
+_CLIP_STD = (0.26862954, 0.26130258, 0.27577711)
 
 
 def _hint(root: Path, model_id: str | None) -> str:
@@ -182,6 +193,53 @@ class OriginalQwenImageComponents:
                     root / "vae", device=device, dtype=dtype
                 ),
                 scheduler_config=read_json(root / "scheduler" / "scheduler_config.json"),
+            )
+        except FileNotFoundError as error:
+            raise CheckpointError(
+                f"{error.filename or error} is missing. " + _hint(root, model_id)
+            ) from error
+
+
+@dataclass
+class QwenImageEditComponents:
+    tokenizer: Qwen2Tokenizer
+    text_encoder: Qwen25VLForConditionalGeneration
+    transformer: QwenImageTransformer2DModel
+    vae: AutoencoderKLQwenImage
+    scheduler_config: dict[str, Any]
+    processor_config: dict[str, Any]
+
+    @classmethod
+    def load(
+        cls,
+        directory: str | os.PathLike[str],
+        *,
+        device: torch.device,
+        dtype: torch.dtype,
+        model_id: str | None = None,
+    ) -> QwenImageEditComponents:
+        root = Path(directory)
+        names = ("processor", "text_encoder", "transformer", "vae", "scheduler")
+        missing = [name for name in names if not (root / name).is_dir()]
+        if missing:
+            raise CheckpointError(
+                f"{root} is not a Qwen-Image-Edit snapshot (missing {', '.join(missing)}). "
+                + _hint(root, model_id)
+            )
+        try:
+            return cls(
+                tokenizer=Qwen2Tokenizer(root / "processor"),
+                text_encoder=Qwen25VLForConditionalGeneration.from_pretrained(
+                    root / "text_encoder", device=device, dtype=dtype
+                ),
+                transformer=QwenImageTransformer2DModel.from_pretrained(
+                    root / "transformer", device=device, dtype=dtype
+                ),
+                vae=AutoencoderKLQwenImage.from_pretrained(
+                    root / "vae", device=device, dtype=dtype
+                ),
+                scheduler_config=read_json(root / "scheduler" / "scheduler_config.json"),
+                processor_config=read_json(root / "processor" / "preprocessor_config.json"),
             )
         except FileNotFoundError as error:
             raise CheckpointError(
@@ -408,15 +466,203 @@ def decode_original_latents(
     )
     dtype = vae.post_quant_conv.weight.dtype
     latents = latents.to(dtype)
-    mean = torch.tensor(vae.latents_mean, device=latents.device, dtype=dtype).view(
-        1, channels // 4, 1, 1, 1
-    )
-    std = torch.tensor(vae.latents_std, device=latents.device, dtype=dtype).view(
-        1, channels // 4, 1, 1, 1
-    )
-    image = vae.decode(latents * std + mean)[:, :, 0]
+    # Same operations as the published pipeline: float32 statistics cast to the VAE dtype, and a
+    # division by the reciprocal of `std`. Multiplying by `std` differs in the last bit and can
+    # move a pixel that sits on a rounding boundary.
+    mean = torch.tensor(vae.latents_mean).view(1, channels // 4, 1, 1, 1).to(latents.device, dtype)
+    std = torch.tensor(vae.latents_std).view(1, channels // 4, 1, 1, 1).to(latents.device, dtype)
+    image = vae.decode(latents / (1.0 / std) + mean)[:, :, 0]
     image = (image / 2 + 0.5).clamp(0, 1).permute(0, 2, 3, 1).float().cpu()
     return (image * 255).round().to(torch.uint8)
+
+
+def _edit_dimensions(area: int, width: int, height: int) -> tuple[int, int]:
+    ratio = width / height
+    target_width = round(math.sqrt(area * ratio) / 32) * 32
+    target_height = round((target_width / ratio) / 32) * 32
+    return target_width, target_height
+
+
+def _resize_image(image: Any, width: int, height: int, *, bicubic: bool = False) -> Any:
+    from PIL import Image as PILImage
+
+    resample = PILImage.Resampling.BICUBIC if bicubic else PILImage.Resampling.LANCZOS
+    return as_pil(image).resize((width, height), resample=resample)
+
+
+def _vision_pixels(image: Any, config: dict[str, Any]) -> tuple[Tensor, Tensor]:
+    """Apply the published Qwen2-VL resize, CLIP normalization, and patch ordering."""
+    patch = int(config.get("patch_size", 14))
+    merge = int(config.get("merge_size", 2))
+    temporal = int(config.get("temporal_patch_size", 2))
+    factor = patch * merge
+    pil = as_pil(image)
+    height = round(pil.height / factor) * factor
+    width = round(pil.width / factor) * factor
+    pixels = pil.height * pil.width
+    min_pixels = int(config.get("min_pixels", 3136))
+    max_pixels = int(config.get("max_pixels", 12_845_056))
+    if height * width < min_pixels:
+        scale = math.sqrt(min_pixels / pixels)
+        height = math.ceil(pil.height * scale / factor) * factor
+        width = math.ceil(pil.width * scale / factor) * factor
+    elif height * width > max_pixels:
+        scale = math.sqrt(pixels / max_pixels)
+        height = max(factor, math.floor(pil.height / scale / factor) * factor)
+        width = max(factor, math.floor(pil.width / scale / factor) * factor)
+    tensor = (
+        torch.frombuffer(bytearray(pil.tobytes()), dtype=torch.uint8)
+        .reshape(pil.height, pil.width, 3)
+        .permute(2, 0, 1)
+        .unsqueeze(0)
+        .contiguous()
+    )
+    if (pil.height, pil.width) != (height, width):
+        tensor = torch.nn.functional.interpolate(
+            tensor,
+            size=(height, width),
+            mode="bicubic",
+            align_corners=False,
+            antialias=True,
+        )
+    tensor = tensor[0].float()
+    inverse_scale = 1.0 / float(config.get("rescale_factor", 1 / 255))
+    mean = torch.tensor(config.get("image_mean", _CLIP_MEAN))[:, None, None] * inverse_scale
+    std = torch.tensor(config.get("image_std", _CLIP_STD))[:, None, None] * inverse_scale
+    tensor = (tensor - mean) / std
+    gh, gw = height // patch, width // patch
+    blocks = tensor.reshape(3, gh // merge, merge, patch, gw // merge, merge, patch)
+    blocks = blocks.permute(1, 4, 2, 5, 0, 3, 6)
+    blocks = blocks.unsqueeze(5).expand(-1, -1, -1, -1, -1, temporal, -1, -1)
+    return blocks.reshape(gh * gw, 3 * temporal * patch * patch), torch.tensor([[1, gh, gw]])
+
+
+def _vae_pixels(image: Any, width: int, height: int) -> Tensor:
+    pil = _resize_image(image, width, height)
+    return (
+        torch.frombuffer(bytearray(pil.tobytes()), dtype=torch.uint8)
+        .reshape(1, height, width, 3)
+        .permute(0, 3, 1, 2)
+        .float()
+        .div(127.5)
+        .sub(1)
+        .unsqueeze(2)
+    )
+
+
+def _pack_original_latents(latents: Tensor) -> Tensor:
+    batch, channels, _, height, width = latents.shape
+    return (
+        latents.view(batch, channels, height // 2, 2, width // 2, 2)
+        .permute(0, 2, 4, 1, 3, 5)
+        .reshape(batch, (height // 2) * (width // 2), channels * 4)
+    )
+
+
+@torch.inference_mode()
+def encode_edit_prompt(
+    components: QwenImageEditComponents,
+    prompt: str,
+    condition_images: list[Any],
+    device: torch.device,
+    *,
+    plus: bool,
+) -> tuple[Tensor, Tensor]:
+    pixels, grids, placeholders = [], [], []
+    for index, image in enumerate(condition_images, 1):
+        image_pixels, grid = _vision_pixels(image, components.processor_config)
+        pixels.append(image_pixels)
+        grids.append(grid)
+        token_count = int(grid.prod() // 4)
+        prefix = f"Picture {index}: " if plus else ""
+        placeholders.append(
+            prefix + "<|vision_start|>" + "<|image_pad|>" * token_count + "<|vision_end|>"
+        )
+    content = "".join(placeholders) + prompt
+    ids = torch.tensor(
+        [components.tokenizer.tokenize(_EDIT_TEMPLATE.format(content))],
+        dtype=torch.long,
+        device=device,
+    )
+    mask = torch.ones_like(ids)
+    hidden = components.text_encoder(
+        ids,
+        mask,
+        pixel_values=torch.cat(pixels).to(
+            device=device, dtype=components.transformer.img_in.weight.dtype
+        ),
+        image_grid_thw=torch.cat(grids).to(device),
+    )[-1][:, _EDIT_DROP_INDEX:]
+    return hidden.to(components.transformer.img_in.weight.dtype), mask[:, _EDIT_DROP_INDEX:]
+
+
+@torch.inference_mode()
+def denoise_edit(
+    components: QwenImageEditComponents,
+    *,
+    prompt: str,
+    negative_prompt: str | None,
+    condition_images: list[Any],
+    source_latents: Tensor,
+    source_shapes: list[tuple[int, int, int]],
+    plus: bool,
+    steps: int,
+    true_cfg: float,
+    width: int,
+    height: int,
+    latents: Tensor,
+) -> Tensor:
+    prompt_embeds, prompt_mask = encode_edit_prompt(
+        components, prompt, condition_images, latents.device, plus=plus
+    )
+    prompt_embeds = prompt_embeds.repeat(latents.shape[0], 1, 1)
+    prompt_mask = prompt_mask.repeat(latents.shape[0], 1)
+    source_latents = source_latents.repeat(latents.shape[0], 1, 1)
+    use_cfg = true_cfg > 1 and negative_prompt is not None
+    negative_embeds = negative_mask = None
+    if use_cfg:
+        assert negative_prompt is not None
+        negative_embeds, negative_mask = encode_edit_prompt(
+            components, negative_prompt, condition_images, latents.device, plus=plus
+        )
+        negative_embeds = negative_embeds.repeat(latents.shape[0], 1, 1)
+        negative_mask = negative_mask.repeat(latents.shape[0], 1)
+    scheduler = FlowMatchEulerDiscreteScheduler(components.scheduler_config)
+    sigmas = torch.linspace(1.0, 1 / steps, steps, dtype=torch.float64).tolist()
+    scheduler.set_timesteps(
+        steps,
+        sigmas=sigmas,
+        mu=qwen_image_mu(height, width, components.scheduler_config),
+    )
+    scheduler.set_begin_index(0)
+    target_shape = (1, height // 16, width // 16)
+    img_shapes = [[target_shape, *source_shapes]] * latents.shape[0]
+    for timestep in scheduler.timesteps:
+        model_input = torch.cat((latents, source_latents), 1)
+        model_timestep = timestep.expand(latents.shape[0]).to(latents.dtype) / 1000
+        prediction = components.transformer(
+            hidden_states=model_input,
+            timestep=model_timestep,
+            encoder_hidden_states=prompt_embeds,
+            encoder_hidden_states_mask=prompt_mask,
+            img_shapes=img_shapes,
+        )[:, : latents.shape[1]]
+        if use_cfg:
+            assert negative_embeds is not None and negative_mask is not None
+            negative = components.transformer(
+                hidden_states=model_input,
+                timestep=model_timestep,
+                encoder_hidden_states=negative_embeds,
+                encoder_hidden_states_mask=negative_mask,
+                img_shapes=img_shapes,
+            )[:, : latents.shape[1]]
+            combined = negative + true_cfg * (prediction - negative)
+            prediction = combined * (
+                torch.norm(prediction, dim=-1, keepdim=True)
+                / torch.norm(combined, dim=-1, keepdim=True)
+            )
+        latents = scheduler.step(prediction, timestep, latents)
+    return latents
 
 
 def _positive_int(options: dict[str, Any], name: str) -> None:
@@ -447,20 +693,30 @@ class QwenImageBackend(TextToImageBackend):
         self.dtype = dtype or torch.float32
         if self.dtype not in _DTYPES:
             raise ValueError("dtype must be torch.float32, torch.float16 or torch.bfloat16")
-        self.components: QwenImageComponents | OriginalQwenImageComponents | None = None
+        self.components: (
+            QwenImageComponents | OriginalQwenImageComponents | QwenImageEditComponents | None
+        ) = None
         self.original_release = model_id == "qwen-image"
+        self.editing_release = model_id in {"qwen-image-edit", "qwen-image-edit-2509"}
+        self.edit_plus = model_id == "qwen-image-edit-2509"
         model_index_path = self.source / "model_index.json"
         if model_index_path.is_file():
-            self.original_release = (
-                read_json(model_index_path).get("_class_name") == "QwenImagePipeline"
-            )
+            class_name = read_json(model_index_path).get("_class_name")
+            self.original_release = class_name == "QwenImagePipeline"
+            self.editing_release = class_name in {
+                "QwenImageEditPipeline",
+                "QwenImageEditPlusPipeline",
+            }
+            self.edit_plus = class_name == "QwenImageEditPlusPipeline"
         self.snapshot: dict[str, Any] | None = None
         defaults = (
             dict(MODEL_CATALOG[model_id].config.get("defaults", {}))
             if model_id is not None and model_id in MODEL_CATALOG
             else {}
         )
-        release_defaults = {"steps": 50, "true_cfg": 4.0} if self.original_release else {}
+        release_defaults = (
+            {"steps": 50, "true_cfg": 4.0} if self.original_release or self.editing_release else {}
+        )
         self.option_defaults = OPTION_DEFAULTS | release_defaults | defaults
 
     def validate_options(self, inputs: T2IRequest, options: dict[str, Any]) -> dict[str, Any]:
@@ -469,6 +725,19 @@ class QwenImageBackend(TextToImageBackend):
         if unknown:
             raise TypeError(f"Unknown Qwen-Image options: {', '.join(unknown)}")
         selected = self.option_defaults | merged
+        image = selected["image"]
+        if self.editing_release:
+            if image is None:
+                raise ValueError("image is required for Qwen-Image-Edit")
+            images = image if isinstance(image, list | tuple) else [image]
+            if not images:
+                raise ValueError("image must not be empty")
+            if not self.edit_plus and len(images) != 1:
+                raise ValueError("qwen-image-edit accepts exactly one image")
+            for item in images:
+                as_pil(item)
+        elif image is not None:
+            raise ValueError("image is only supported by Qwen-Image-Edit checkpoints")
         if selected["negative_prompt"] is not None and not isinstance(
             selected["negative_prompt"], str
         ):
@@ -477,7 +746,7 @@ class QwenImageBackend(TextToImageBackend):
             _positive_int(selected, name)
         if selected["steps"] > 1000:
             raise ValueError("steps must be at most 1000")
-        size_multiple = 16 if self.original_release else 32
+        size_multiple = 16 if self.original_release or self.editing_release else 32
         for name in ("width", "height"):
             if selected[name] % size_multiple:
                 raise ValueError(f"{name} must be a multiple of {size_multiple}")
@@ -511,11 +780,19 @@ class QwenImageBackend(TextToImageBackend):
     def _load(self) -> None:
         model_index_path = self.source / "model_index.json"
         if model_index_path.is_file():
-            self.original_release = (
-                read_json(model_index_path).get("_class_name") == "QwenImagePipeline"
-            )
+            class_name = read_json(model_index_path).get("_class_name")
+            self.original_release = class_name == "QwenImagePipeline"
+            self.editing_release = class_name in {
+                "QwenImageEditPipeline",
+                "QwenImageEditPlusPipeline",
+            }
+            self.edit_plus = class_name == "QwenImageEditPlusPipeline"
         component_type = (
-            OriginalQwenImageComponents if self.original_release else QwenImageComponents
+            QwenImageEditComponents
+            if self.editing_release
+            else OriginalQwenImageComponents
+            if self.original_release
+            else QwenImageComponents
         )
         self.components = component_type.load(
             self.source, device=self.device, dtype=self.dtype, model_id=self.model_id
@@ -547,7 +824,7 @@ class QwenImageBackend(TextToImageBackend):
             if seed is None:
                 seed = secrets.randbits(63)
             generator = torch.Generator("cpu").manual_seed(seed)
-            if self.original_release:
+            if self.original_release or self.editing_release:
                 latent_channels //= 4
                 raw_height = latent_height * 2
                 raw_width = latent_width * 2
@@ -599,7 +876,47 @@ class QwenImageBackend(TextToImageBackend):
             "height": options["height"],
             "latents": latents.to(self.dtype).to(self.device),
         }
-        if self.original_release:
+        if self.editing_release:
+            edit = cast(QwenImageEditComponents, self.components)
+            raw_images = options["image"]
+            images = list(raw_images) if isinstance(raw_images, list | tuple) else [raw_images]
+            condition_images, source_tensors, source_shapes = [], [], []
+            for image in images:
+                pil = as_pil(image)
+                condition_area = 384 * 384 if self.edit_plus else 1024 * 1024
+                condition_width, condition_height = _edit_dimensions(
+                    condition_area, pil.width, pil.height
+                )
+                source_width, source_height = _edit_dimensions(1024 * 1024, pil.width, pil.height)
+                condition_images.append(_resize_image(pil, condition_width, condition_height))
+                encoded = edit.vae.encode(
+                    _vae_pixels(pil, source_width, source_height).to(self.device, self.dtype)
+                )
+                mean = torch.tensor(
+                    edit.vae.latents_mean, device=self.device, dtype=self.dtype
+                ).view(1, -1, 1, 1, 1)
+                std = torch.tensor(edit.vae.latents_std, device=self.device, dtype=self.dtype).view(
+                    1, -1, 1, 1, 1
+                )
+                normalized = (encoded - mean) / std
+                source_tensors.append(_pack_original_latents(normalized))
+                source_shapes.append((1, encoded.shape[-2] // 2, encoded.shape[-1] // 2))
+            final = denoise_edit(
+                edit,
+                prompt=inputs.prompt,
+                negative_prompt=options["negative_prompt"],
+                condition_images=condition_images,
+                source_latents=torch.cat(source_tensors, 1),
+                source_shapes=source_shapes,
+                plus=self.edit_plus,
+                steps=options["steps"],
+                true_cfg=float(options["true_cfg"]),
+                width=options["width"],
+                height=options["height"],
+                latents=latents.to(self.dtype).to(self.device),
+            )
+            pixels = decode_original_latents(edit.vae, final, options["height"], options["width"])
+        elif self.original_release:
             original = cast(OriginalQwenImageComponents, self.components)
             final = denoise_original(original, **common)
             pixels = decode_original_latents(
@@ -619,6 +936,7 @@ class QwenImageBackend(TextToImageBackend):
             "width": options["width"],
             "height": options["height"],
             "negative_prompt": options["negative_prompt"],
+            "image_input": options["image"] is not None,
             "scheduler": "flow_match_euler",
             "device": str(self.device),
             "dtype": str(self.dtype).removeprefix("torch."),

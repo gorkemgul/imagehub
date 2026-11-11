@@ -114,11 +114,14 @@ use` govern this repository's implementation for that row; they default to Apach
 | `krea2-turbo` | `krea2` | [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) | `98e0fe1` | author | full | yes | Krea 2 Community License | Apache-2.0 | yes | `krea-2` |
 | `ernie-image` | `ernie-image` | [baidu/ERNIE-Image](https://huggingface.co/baidu/ERNIE-Image) | `5346b31` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `ernie-image` |
 | `longcat-image` | `longcat-image` | [meituan-longcat/LongCat-Image](https://huggingface.co/meituan-longcat/LongCat-Image) | `d2ea50b` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `longcat-image` |
+| `hunyuanimage-2-1` | `hunyuanimage` | [hunyuanvideo-community/HunyuanImage-2.1-Diffusers](https://huggingface.co/hunyuanvideo-community/HunyuanImage-2.1-Diffusers) | `7e7b7a1` | community-conversion | full | no | Tencent Hunyuan Community License | Apache-2.0 | yes | `hunyuanimage-2-1` |
 | `cogview3-plus-3b` | `cogview3` | [zai-org/CogView3-Plus-3B](https://huggingface.co/zai-org/CogView3-Plus-3B) | `5d70e40` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `cogview3-plus` |
 | `cogview4-6b` | `cogview4` | [zai-org/CogView4-6B](https://huggingface.co/zai-org/CogView4-6B) | `63a52b7` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `cogview4` |
 | `ideogram4-fp8` | `ideogram4` | [ideogram-ai/ideogram-4-fp8](https://huggingface.co/ideogram-ai/ideogram-4-fp8) | `ee79a72` | author | full | yes | Ideogram 4 Non-Commercial License | Apache-2.0 | yes | `ideogram-4` |
 | `qwen-image` | `qwen-image` | [Qwen/Qwen-Image](https://huggingface.co/Qwen/Qwen-Image) | `75e0b4b` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `qwen-image` |
 | `qwen-image-2.1` | `qwen-image` | [Qwen/Qwen-Image-2.1](https://huggingface.co/Qwen/Qwen-Image-2.1) | `d26bb61` | author | full | no | Qwen Research License | Apache-2.0 | yes | `qwen-image-2` |
+| `qwen-image-edit` | `qwen-image` | [Qwen/Qwen-Image-Edit](https://huggingface.co/Qwen/Qwen-Image-Edit) | `ac7f931` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `qwen-image-edit` |
+| `qwen-image-edit-2509` | `qwen-image` | [Qwen/Qwen-Image-Edit-2509](https://huggingface.co/Qwen/Qwen-Image-Edit-2509) | `d3968ef` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `qwen-image-edit` |
 | `ovis-image-7b` | `ovis-image` | [ATH-MaaS/Ovis-Image-7B](https://huggingface.co/ATH-MaaS/Ovis-Image-7B) | `41be1c5` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `ovis-image` |
 | `z-image` | `z-image` | [Tongyi-MAI/Z-Image](https://huggingface.co/Tongyi-MAI/Z-Image) | `04cc4ab` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `z-image` |
 | `z-image-turbo` | `z-image` | [Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) | `f332072` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `z-image` |

@@ -289,6 +289,86 @@ _entries.append(
     )
 )
 
+_QWEN_IMAGE_EDIT_COMMON_FILES = (
+    "model_index.json",
+    "processor/added_tokens.json",
+    "processor/chat_template.jinja",
+    "processor/merges.txt",
+    "processor/preprocessor_config.json",
+    "processor/special_tokens_map.json",
+    "processor/tokenizer.json",
+    "processor/tokenizer_config.json",
+    "processor/video_preprocessor_config.json",
+    "processor/vocab.json",
+    "scheduler/scheduler_config.json",
+    "text_encoder/config.json",
+    "text_encoder/generation_config.json",
+    "text_encoder/model.safetensors.index.json",
+    "text_encoder/model-00001-of-00004.safetensors",
+    "text_encoder/model-00002-of-00004.safetensors",
+    "text_encoder/model-00003-of-00004.safetensors",
+    "text_encoder/model-00004-of-00004.safetensors",
+    "tokenizer/added_tokens.json",
+    "tokenizer/chat_template.jinja",
+    "tokenizer/merges.txt",
+    "tokenizer/special_tokens_map.json",
+    "tokenizer/tokenizer_config.json",
+    "tokenizer/vocab.json",
+    "transformer/config.json",
+    "transformer/diffusion_pytorch_model.safetensors.index.json",
+    "vae/config.json",
+    "vae/diffusion_pytorch_model.safetensors",
+)
+
+for _id, _repo, _revision, _pipeline, _transformer_shards in (
+    (
+        "qwen-image-edit",
+        "Qwen/Qwen-Image-Edit",
+        "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+        "QwenImageEditPipeline",
+        9,
+    ),
+    (
+        "qwen-image-edit-2509",
+        "Qwen/Qwen-Image-Edit-2509",
+        "d3968ef930e841f4c73640fb8afa3b306a78167e",
+        "QwenImageEditPlusPipeline",
+        5,
+    ),
+):
+    _entries.append(
+        ModelSpec(
+            id=_id,
+            task=Task.T2I,
+            family="qwen-image",
+            source=f"https://huggingface.co/{_repo}",
+            repo_id=_repo,
+            revision=_revision,
+            provenance="author",
+            catalog_id="qwen-image-edit",
+            format="diffusers",
+            license="Apache-2.0",
+            image_input="required",
+            reference={
+                "diffusers": {"version": "0.40.0", "pipeline": _pipeline},
+                "transformers": {"version": "5.18.0"},
+            },
+            config={
+                "defaults": {
+                    "steps": 50,
+                    "true_cfg": 4.0,
+                    "width": 1024,
+                    "height": 1024,
+                }
+            },
+            files=_QWEN_IMAGE_EDIT_COMMON_FILES
+            + tuple(
+                f"transformer/diffusion_pytorch_model-{index:05d}-of-{_transformer_shards:05d}.safetensors"
+                for index in range(1, _transformer_shards + 1)
+            ),
+        )
+    )
+
 _entries.append(
     ModelSpec(
         id="deepfloyd-if-i-xl",
@@ -3942,6 +4022,53 @@ _entries.append(
             "vae/checkpoint.pt",
             "vae/config.json",
             "vocab.json",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
+        id="hunyuanimage-2-1",
+        task=Task.T2I,
+        family="hunyuanimage",
+        source="https://huggingface.co/hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+        repo_id="hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+        revision="7e7b7a177de58591aeaffca0929f4765003d7ced",
+        provenance="community-conversion",
+        catalog_id="hunyuanimage-2-1",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 50, "width": 2048, "height": 2048}},
+        files=(
+            "model_index.json",
+            "guider/guider_config.json",
+            "ocr_guider/guider_config.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/added_tokens.json",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00004.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00004.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00004.safetensors",
+            "transformer/diffusion_pytorch_model-00004-of-00004.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
         ),
     )
 )

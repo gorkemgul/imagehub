@@ -1925,6 +1925,47 @@ upcasting. In float32 the text encoder needs about 19 GB and the transformer abo
 **License.** The weights use the Apache-2.0 license. imagehub does not distribute weights.
 
 
+# HunyuanImage 2.1
+
+Catalog: [`hunyuanimage-2-1`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
+Models: `hunyuanimage-2-1` · Task: `t2i`
+
+**Architecture.** A Qwen2.5-VL text model and a ByT5 encoder for quoted text feed a diffusion
+transformer with dual-stream, single-stream and token-refiner blocks. A 64-channel VAE with 32×
+compression decodes the latents. The flow-match Euler scheduler uses the two guider configurations
+from the snapshot, selecting the OCR guider for prompts with quoted text.
+
+**Usage.**
+
+```bash
+python -m imagehub.pretrained hunyuanimage-2-1 checkpoints/hunyuanimage-2-1
+```
+
+```python
+from imagehub import pipeline
+
+with pipeline("t2i", backend="hunyuanimage", model="checkpoints/hunyuanimage-2-1") as pipe:
+    result = pipe('a red beret with the word "Tencent" on it', seed=42)
+    result.images[0].save("beret.png")
+```
+
+**Settings.** `steps` defaults to 50; `width` and `height` default to 2048 and must be multiples
+of 32. `guidance` defaults to the selected guider's scale. The other options are `seed`, `latents`
+and `negative_prompt`.
+
+**Memory.** The backend loads and releases the text encoders, transformer and VAE in sequence. The
+ByT5 encoder loads only when the prompt contains quoted text.
+
+**Seed compatibility.** On CPU, the same seed and settings give the same image as diffusers with
+`generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)).
+
+**Out of scope.** The refiner, distilled variants, LoRA adapters and fp16/bf16 parity are not
+supported.
+
+**License.** The weights use the Tencent Hunyuan Community License. imagehub does not distribute
+weights.
+
+
 # CogView4
 
 Catalog: [`cogview4`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
@@ -2020,7 +2061,7 @@ not distribute weights.
 # Qwen-Image
 
 Catalog: [`qwen-image-2`](https://github.com/gorkemgul/awesome-text-to-image-architectures) ·
-Models: `qwen-image`, `qwen-image-2.1` · Task: `t2i`
+Models: `qwen-image`, `qwen-image-2.1`, `qwen-image-edit`, `qwen-image-edit-2509` · Task: `t2i`
 
 **Architecture.** The original release uses Qwen2.5-VL, a 60-layer patch-2 dual-stream transformer
 and a 16-channel causal Qwen VAE. Qwen-Image 2.1 uses Qwen3-VL-8B, a single-stream transformer with
@@ -2053,8 +2094,23 @@ diffusers reference with `generator=torch.Generator("cpu").manual_seed(seed)`
 ([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is no claim of exact
 equality on these devices.
 
-**Out of scope.** Image editing, condition images, the Qwen3-VL vision encoder and fp16/bf16 parity
-are not supported.
+For instruction editing, download `qwen-image-edit` (one input image) or
+`qwen-image-edit-2509` (one or more input images), then pass an `imagehub.Image` or Pillow image:
+
+```python
+with pipeline("t2i", backend="qwen-image-edit", model="checkpoints/qwen-image-edit") as pipe:
+    result = pipe("replace the sky with a sunset", image=source, seed=42)
+```
+
+The edit releases use the Qwen2.5-VL vision tower to condition the instruction and append VAE
+latents from each source image to the denoiser input. Their defaults are 50 steps and `true_cfg=4`;
+dimensions must be multiples of 16. The real-checkpoint reference tests intentionally use two
+steps at 32×32 because the published transformer and conditioner are large.
+
+Transformer LoRA adapters (`lora=`, `lora_scale=`, `lora_fuse=`) load on the edit releases as on
+the other Qwen-Image releases and match diffusers' LoRA loader in the tiny tests.
+
+**Out of scope.** Video inputs and fp16/bf16 parity are not supported.
 
 The original release's published bfloat16 weights are upcast for CPU float32 validation. Its
 real-checkpoint run took 30 minutes on an M2 Max (CPU) and every recorded comparison is exactly 0

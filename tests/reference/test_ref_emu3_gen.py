@@ -326,7 +326,7 @@ def _reference_components(snapshot: str, out_path: str) -> None:
 def test_real_checkpoint_components(record, tmp_path):
     root = snapshot_dir("emu3-gen")
     expected = reference_in_subprocess(
-        "test_ref_emu3_gen._reference_components",
+        "reference.test_ref_emu3_gen._reference_components",
         {"snapshot": str(root)},
         tmp_path / "reference-components.pt",
     )
@@ -414,7 +414,7 @@ def _reference_e2e(snapshot: str, seed: int, out_path: str) -> None:
 def test_real_end_to_end(seed, key, record, tmp_path):
     root = snapshot_dir("emu3-gen")
     expected = reference_in_subprocess(
-        "test_ref_emu3_gen._reference_e2e",
+        "reference.test_ref_emu3_gen._reference_e2e",
         {"snapshot": str(root), "seed": seed},
         tmp_path / f"reference-{seed}.pt",
     )

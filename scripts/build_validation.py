@@ -6,7 +6,8 @@ Kandinsky 2.2, Kandinsky 3,
 Kandinsky 5, Stable Cascade, PixArt, Sana, Lumina-Image 2.0, Lumina-Next, Lumina-DiMOO, aMUSEd,
 Meissonic, AuraFlow,
 LlamaGen, Show-o,
-Wuerstchen v2, LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen
+Wuerstchen v2, LongCat-Image, HunyuanImage 2.1, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1
+and OmniGen
 measurements are grouped in flat
 ``components_dreamshaper``,
 ``components_sdxs``, ``components_segmind_sd``, ``components_bk_sdm``, ``components_bk_sdm_v2``,
@@ -23,7 +24,7 @@ measurements are grouped in flat
 ``components_meissonic``, ``components_auraflow``,
 ``components_llamagen``, ``components_show_o``, ``components_emu3``,
 ``components_wuerstchen``, ``components_glm_image``,
-``components_longcat_image``,
+``components_longcat_image``, ``components_hunyuanimage``,
 ``components_cogview3_plus``,
 ``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
 ``components_hidream_o1``, ``components_cosmos2``, ``components_omnigen`` and
@@ -134,6 +135,17 @@ QWEN_IMAGE_COMPONENT_KEYS = (
     "qwen_image_vae_encode",
     "qwen_image_scheduler",
 )
+# Recorded per edit release as ``<key>_<model-id>``.
+QWEN_IMAGE_EDIT_COMPONENT_KEYS = (
+    "qwen_image_edit_conditioner",
+    "qwen_image_edit_real_conditioning",
+    "qwen_image_edit_transformer",
+    "qwen_image_edit_long_transformer_first_block",
+    "qwen_image_edit_vae",
+    "qwen_image_edit_image_stages",
+    "qwen_image_edit_scheduler",
+)
+QWEN_IMAGE_EDIT_IDS = ("qwen-image-edit", "qwen-image-edit-2509")
 CHROMA_COMPONENT_KEYS = (
     "chroma_tokenizer",
     "chroma_text_encoder",
@@ -173,6 +185,8 @@ def header_check(header: dict | None) -> dict | None:
         return header
     merged: dict = {"missing": [], "extra": [], "mismatch": [], "tensors": {}}
     for component, entry in header.items():
+        if not isinstance(entry, dict):  # for example the checkpoint revision
+            continue
         for key in ("missing", "extra", "mismatch"):
             merged[key] += [f"{component}.{item}" for item in entry[key]]
         merged["tensors"][component] = entry["tensors"]
@@ -211,6 +225,7 @@ def main() -> None:
             "krea2-turbo": "krea2_turbo",
             "ernie-image": "ernie_image",
             "longcat-image": "longcat_image",
+            "hunyuanimage-2-1": "hunyuanimage_2_1",
             "flux1-kontext-dev": "flux1_kontext_dev",
             "hidream-i1-fast": "hidream_i1_fast",
             "hidream-i1-dev": "hidream_i1_dev",
@@ -343,7 +358,14 @@ def main() -> None:
             )
         },
         "components_qwen_image": {
-            key: value for key, value in measured.items() if key in QWEN_IMAGE_COMPONENT_KEYS
+            key: value
+            for key, value in measured.items()
+            if key in QWEN_IMAGE_COMPONENT_KEYS
+            or any(
+                key == f"{component}_{model_id}"
+                for component in QWEN_IMAGE_EDIT_COMPONENT_KEYS
+                for model_id in QWEN_IMAGE_EDIT_IDS
+            )
         },
         "components_janus": {
             key: value
@@ -474,6 +496,9 @@ def main() -> None:
         },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")
+        },
+        "components_hunyuanimage": {
+            key: value for key, value in measured.items() if key.startswith("hunyuanimage_")
         },
         "components_cogview3_plus": {
             key: value for key, value in measured.items() if key.startswith("cogview3_plus_")

@@ -145,7 +145,7 @@ def test_restricted_fixture_manifest_is_complete_and_pinned():
     fixture_root = ROOT / "tests" / "fixtures"
     manifest = json.loads((fixture_root / "RESTRICTED.json").read_text(encoding="utf-8"))
     removed = {entry["target"] for entry in manifest}
-    assert len(removed) == len(manifest) == 298
+    assert len(removed) == len(manifest) == 319
     assert all(len(entry["revision"]) == 40 for entry in manifest)
     assert all(len(entry["sha256"]) == 64 and entry["size"] > 0 for entry in manifest)
     assert all(entry["repo"] and entry["upstream_path"] and entry["license"] for entry in manifest)

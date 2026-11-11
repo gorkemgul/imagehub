@@ -1411,6 +1411,78 @@ def write_tiny_qwen_image(directory: str | os.PathLike[str], *, seed: int = 0) -
     return root
 
 
+def write_tiny_qwen_image_edit(
+    directory: str | os.PathLike[str], *, seed: int = 0, plus: bool = False
+) -> Path:
+    """Write a random tiny Qwen-Image-Edit snapshot in the published layout."""
+    import shutil
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.qwen2_5_vl_text import Qwen25VLForConditionalGeneration
+
+    root = write_tiny_qwen_image(directory, seed=seed)
+    shutil.copytree(root / "tokenizer", root / "processor")
+    (root / "processor/preprocessor_config.json").write_text(
+        json.dumps(
+            {
+                "image_processor_type": "Qwen2VLImageProcessorFast",
+                "processor_class": "Qwen2VLProcessor",
+                "image_mean": [0.48145466, 0.4578275, 0.40821073],
+                "image_std": [0.26862954, 0.26130258, 0.27577711],
+                "min_pixels": 64,
+                "max_pixels": 64,
+                "merge_size": 2,
+                "patch_size": 2,
+                "temporal_patch_size": 2,
+            }
+        )
+    )
+    (root / "processor/video_preprocessor_config.json").write_text(
+        json.dumps(
+            {
+                "video_processor_type": "Qwen2VLVideoProcessor",
+                "processor_class": "Qwen2VLProcessor",
+                "patch_size": 2,
+                "temporal_patch_size": 2,
+                "merge_size": 2,
+            }
+        )
+    )
+    config = json.loads((root / "text_encoder/config.json").read_text())
+    config["vision_config"].update(
+        {
+            "in_channels": 3,
+            "spatial_merge_size": 2,
+            "window_size": 8,
+            "fullatt_block_indexes": [0],
+        }
+    )
+    # Match the final special token in the tiny tokenizer.
+    config["image_token_id"] = (
+        len(json.loads((root / "processor/tokenizer.json").read_text())["model"]["vocab"]) - 1
+    )
+    model = Qwen25VLForConditionalGeneration(config)
+    torch.manual_seed(seed)
+    for parameter in model.parameters():
+        parameter.data.normal_(0, 0.05)
+    (root / "text_encoder/config.json").write_text(json.dumps(config))
+    save_safetensors(model.state_dict(), root / "text_encoder/model.safetensors")
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "QwenImageEditPlusPipeline" if plus else "QwenImageEditPipeline",
+                "processor": ["transformers", "Qwen2VLProcessor"],
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen2_5_VLForConditionalGeneration"],
+                "tokenizer": ["transformers", "Qwen2Tokenizer"],
+                "transformer": ["diffusers", "QwenImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKLQwenImage"],
+            }
+        )
+    )
+    return root
+
+
 TINY_KREA2_TEXT = {
     "vocab_size": 262,
     "hidden_size": 16,
@@ -4039,6 +4111,194 @@ def write_tiny_kandinsky5(directory: str | os.PathLike[str], *, seed: int = 0) -
         (root / name).mkdir()
         (root / name / "config.json").write_text(json.dumps(config))
         save_safetensors(model.state_dict(), root / name / weights)
+    return root
+
+
+HUNYUANIMAGE_FIXTURES = fixture_path("hunyuanimage_configs")
+TINY_HUNYUANIMAGE_TEXT = {
+    "architectures": ["Qwen2_5_VLForConditionalGeneration"],
+    "model_type": "qwen2_5_vl",
+    "text_config": {
+        "model_type": "qwen2_5_vl_text",
+        "vocab_size": 270,
+        "hidden_size": 32,
+        "intermediate_size": 64,
+        "num_hidden_layers": 4,
+        "num_attention_heads": 4,
+        "num_key_value_heads": 2,
+        "max_position_embeddings": 2048,
+        "rms_norm_eps": 1e-6,
+        "rope_theta": 10_000.0,
+        "rope_scaling": {"type": "default", "rope_type": "default", "mrope_section": [2, 1, 1]},
+        "attention_dropout": 0.0,
+        "hidden_act": "silu",
+        "use_sliding_window": False,
+        "tie_word_embeddings": False,
+    },
+    "vision_config": {
+        "depth": 1,
+        "embed_dim": 32,
+        "hidden_size": 32,
+        "intermediate_size": 64,
+        "num_heads": 4,
+        "patch_size": 2,
+        "temporal_patch_size": 2,
+        "spatial_merge_size": 2,
+        "in_channels": 3,
+    },
+    "image_token_id": 266,
+    "video_token_id": 267,
+    "tie_word_embeddings": False,
+}
+TINY_HUNYUANIMAGE_BYT5 = {
+    "architectures": ["T5EncoderModel"],
+    "model_type": "t5",
+    "vocab_size": 384,
+    "d_model": 16,
+    "d_kv": 8,
+    "d_ff": 32,
+    "num_layers": 2,
+    "num_heads": 2,
+    "relative_attention_num_buckets": 8,
+    "relative_attention_max_distance": 16,
+    "dropout_rate": 0.0,
+    "layer_norm_epsilon": 1e-6,
+    "feed_forward_proj": "gated-gelu",
+    "dense_act_fn": "gelu_new",
+    "is_gated_act": True,
+    "is_encoder_decoder": False,
+    "use_cache": False,
+    "tie_word_embeddings": False,
+}
+TINY_HUNYUANIMAGE_TRANSFORMER = {
+    "_class_name": "HunyuanImageTransformer2DModel",
+    "in_channels": 8,
+    "out_channels": 8,
+    "num_attention_heads": 2,
+    "attention_head_dim": 16,
+    "num_layers": 1,
+    "num_single_layers": 1,
+    "num_refiner_layers": 1,
+    "patch_size": [1, 1],
+    "qk_norm": "rms_norm",
+    "guidance_embeds": False,
+    "mlp_ratio": 4.0,
+    "text_embed_dim": 32,
+    "text_embed_2_dim": 16,
+    "rope_axes_dim": [8, 8],
+    "rope_theta": 256.0,
+}
+TINY_HUNYUANIMAGE_VAE = {
+    "_class_name": "AutoencoderKLHunyuanImage",
+    "in_channels": 3,
+    "out_channels": 3,
+    "latent_channels": 8,
+    "block_out_channels": [32, 32, 64],
+    "layers_per_block": 1,
+    "spatial_compression_ratio": 4,
+    "sample_size": 64,
+    "scaling_factor": 0.75289,
+    "downsample_match_channel": True,
+    "upsample_match_channel": True,
+}
+
+
+def write_tiny_hunyuanimage(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """A random-weight HunyuanImage 2.1 snapshot in the published diffusers layout."""
+    import shutil
+
+    import transformers
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl_hunyuanimage import AutoencoderKLHunyuanImage
+    from imagehub.models.hunyuanimage_transformer import HunyuanImageTransformer2DModel
+
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(seed)
+
+    tokenizer = root / "tokenizer"
+    tokenizer.mkdir()
+    vocab = {c: i for i, c in enumerate(bytes_to_unicode().values())}
+    merges = (FIXTURES / "qwen_tokenizer/merges.txt").read_text().splitlines()[1:]
+    for merge in merges:
+        vocab.setdefault("".join(merge.split()), len(vocab))
+    specials = ("<|endoftext|>", "<|im_start|>", "<|im_end|>")
+    for token in specials:
+        vocab[token] = len(vocab)
+    (tokenizer / "vocab.json").write_text(json.dumps(vocab))
+    shutil.copyfile(FIXTURES / "qwen_tokenizer/merges.txt", tokenizer / "merges.txt")
+    decoder = {
+        str(vocab[token]): {
+            "content": token,
+            "lstrip": False,
+            "normalized": False,
+            "rstrip": False,
+            "single_word": False,
+            "special": True,
+        }
+        for token in specials
+    }
+    (tokenizer / "tokenizer_config.json").write_text(
+        json.dumps(
+            {
+                "added_tokens_decoder": decoder,
+                "additional_special_tokens": list(specials[1:]),
+                "eos_token": "<|im_end|>",
+                "pad_token": "<|endoftext|>",
+                "tokenizer_class": "Qwen2Tokenizer",
+                "model_max_length": 4096,
+                "split_special_tokens": False,
+            }
+        )
+    )
+    tokenizer_2 = root / "tokenizer_2"
+    tokenizer_2.mkdir()
+    for name in ("added_tokens", "special_tokens_map", "tokenizer_config"):
+        shutil.copyfile(
+            HUNYUANIMAGE_FIXTURES / f"tokenizer_2_{name}.json", tokenizer_2 / f"{name}.json"
+        )
+
+    (root / "text_encoder").mkdir()
+    text_model = transformers.Qwen2_5_VLForConditionalGeneration(
+        transformers.Qwen2_5_VLConfig(**TINY_HUNYUANIMAGE_TEXT)
+    )
+    (root / "text_encoder/config.json").write_text(json.dumps(TINY_HUNYUANIMAGE_TEXT))
+    save_safetensors(text_model.state_dict(), root / "text_encoder/model.safetensors")
+
+    (root / "text_encoder_2").mkdir()
+    byt5 = transformers.T5EncoderModel(transformers.T5Config(**TINY_HUNYUANIMAGE_BYT5))
+    (root / "text_encoder_2/config.json").write_text(json.dumps(TINY_HUNYUANIMAGE_BYT5))
+    save_safetensors(
+        {k: v for k, v in byt5.state_dict().items() if k != "encoder.embed_tokens.weight"},
+        root / "text_encoder_2/model.safetensors",
+    )
+
+    for name, cls, config in (
+        ("transformer", HunyuanImageTransformer2DModel, TINY_HUNYUANIMAGE_TRANSFORMER),
+        ("vae", AutoencoderKLHunyuanImage, TINY_HUNYUANIMAGE_VAE),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        (root / name).mkdir()
+        (root / name / "config.json").write_text(json.dumps(config))
+        save_safetensors(model.state_dict(), root / name / "diffusion_pytorch_model.safetensors")
+
+    (root / "scheduler").mkdir()
+    shutil.copyfile(
+        HUNYUANIMAGE_FIXTURES / "scheduler_scheduler_config.json",
+        root / "scheduler/scheduler_config.json",
+    )
+    for folder, fixture, start in (
+        ("guider", "guider_guider", 2),
+        ("ocr_guider", "ocr_guider_guider", 3),
+    ):
+        (root / folder).mkdir()
+        config = json.loads((HUNYUANIMAGE_FIXTURES / f"{fixture}_config.json").read_text())
+        config["adaptive_projected_guidance_start_step"] = start
+        (root / folder / "guider_config.json").write_text(json.dumps(config))
+    shutil.copyfile(HUNYUANIMAGE_FIXTURES / "model_index.json", root / "model_index.json")
     return root
 
 
