@@ -51,6 +51,7 @@ def test_catalog_contents():
             "hunyuan-dit-v1.1-distilled",
             "hunyuan-dit-v1.2",
             "hunyuan-dit-v1.2-distilled",
+            "hunyuanimage-2-1",
             "hyper-sdxl-1step",
             "ideogram4-fp8",
             "infinity-2b",

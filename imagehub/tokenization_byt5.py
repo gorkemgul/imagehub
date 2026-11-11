@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 from typing import Any
 
+import torch
+
 
 class ByT5Tokenizer:
     """Byte-level tokenizer reading ``tokenizer_config.json`` from a snapshot directory."""
@@ -77,3 +79,12 @@ class ByT5Tokenizer:
         if not ids or ids[-1] != self.eos_token_id:
             ids.append(self.eos_token_id)
         return ids
+
+    def __call__(self, text: str, max_length: int = 128) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return fixed-length ids and an attention mask for HunyuanImage's ByT5 encoder."""
+        ids = self.tokenize(text, max_length)
+        padding = max_length - len(ids)
+        return (
+            torch.tensor([ids + [self.pad_token_id] * padding], dtype=torch.long),
+            torch.tensor([[1] * len(ids) + [0] * padding], dtype=torch.long),
+        )

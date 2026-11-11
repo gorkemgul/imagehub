@@ -3986,6 +3986,53 @@ _entries.append(
     )
 )
 
+_entries.append(
+    ModelSpec(
+        id="hunyuanimage-2-1",
+        task=Task.T2I,
+        family="hunyuanimage",
+        source="https://huggingface.co/hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+        repo_id="hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+        revision="7e7b7a177de58591aeaffca0929f4765003d7ced",
+        provenance="community-conversion",
+        catalog_id="hunyuanimage-2-1",
+        format="diffusers",
+        license="Tencent Hunyuan Community License",
+        gated=False,
+        config={"defaults": {"steps": 50, "width": 2048, "height": 2048}},
+        files=(
+            "model_index.json",
+            "guider/guider_config.json",
+            "ocr_guider/guider_config.json",
+            "scheduler/scheduler_config.json",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "text_encoder_2/config.json",
+            "text_encoder_2/model.safetensors",
+            "tokenizer/added_tokens.json",
+            "tokenizer/merges.txt",
+            "tokenizer/special_tokens_map.json",
+            "tokenizer/tokenizer_config.json",
+            "tokenizer/vocab.json",
+            "tokenizer_2/added_tokens.json",
+            "tokenizer_2/special_tokens_map.json",
+            "tokenizer_2/tokenizer_config.json",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00004.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00004.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00004.safetensors",
+            "transformer/diffusion_pytorch_model-00004-of-00004.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
 MODEL_CATALOG: Mapping[str, ModelSpec] = MappingProxyType({entry.id: entry for entry in _entries})
 if len(MODEL_CATALOG) != len(_entries):
     raise RuntimeError("Duplicate model IDs")

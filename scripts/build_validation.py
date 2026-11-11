@@ -6,7 +6,8 @@ Kandinsky 2.2, Kandinsky 3,
 Kandinsky 5, Stable Cascade, PixArt, Sana, Lumina-Image 2.0, Lumina-Next, Lumina-DiMOO, aMUSEd,
 Meissonic, AuraFlow,
 LlamaGen, Show-o,
-Wuerstchen v2, LongCat-Image, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1 and OmniGen
+Wuerstchen v2, LongCat-Image, HunyuanImage 2.1, CogView3-Plus, CogView4, Ideogram 4, HiDream-I1
+and OmniGen
 measurements are grouped in flat
 ``components_dreamshaper``,
 ``components_sdxs``, ``components_segmind_sd``, ``components_bk_sdm``, ``components_bk_sdm_v2``,
@@ -23,7 +24,7 @@ measurements are grouped in flat
 ``components_meissonic``, ``components_auraflow``,
 ``components_llamagen``, ``components_show_o``, ``components_emu3``,
 ``components_wuerstchen``, ``components_glm_image``,
-``components_longcat_image``,
+``components_longcat_image``, ``components_hunyuanimage``,
 ``components_cogview3_plus``,
 ``components_cogview4``, ``components_ideogram4``, ``components_hidream``,
 ``components_hidream_o1``, ``components_cosmos2``, ``components_omnigen`` and
@@ -224,6 +225,7 @@ def main() -> None:
             "krea2-turbo": "krea2_turbo",
             "ernie-image": "ernie_image",
             "longcat-image": "longcat_image",
+            "hunyuanimage-2-1": "hunyuanimage_2_1",
             "flux1-kontext-dev": "flux1_kontext_dev",
             "hidream-i1-fast": "hidream_i1_fast",
             "hidream-i1-dev": "hidream_i1_dev",
@@ -494,6 +496,9 @@ def main() -> None:
         },
         "components_longcat_image": {
             key: value for key, value in measured.items() if key.startswith("longcat_image_")
+        },
+        "components_hunyuanimage": {
+            key: value for key, value in measured.items() if key.startswith("hunyuanimage_")
         },
         "components_cogview3_plus": {
             key: value for key, value in measured.items() if key.startswith("cogview3_plus_")

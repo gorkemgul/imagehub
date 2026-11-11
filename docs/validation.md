@@ -1890,6 +1890,48 @@ slow on CPU. The transformer alone needs about 32 GB in float32 and the text enc
 so every comparison runs the reference first, saves its outputs, frees it, then runs the native
 model.
 
+## HunyuanImage 2.1
+
+Validated on CPU in the same environment as above. `hunyuanimage-2-1` was loaded strictly from
+`hunyuanvideo-community/HunyuanImage-2.1-Diffusers` at revision
+`7e7b7a177de58591aeaffca0929f4765003d7ced` and compared with diffusers 0.40.0
+`HunyuanImagePipeline` and transformers 5.18.0. The published bfloat16 transformer, VAE and Qwen
+text encoder were upcast to float32; the ByT5 encoder is published in float32. All 8
+real-checkpoint tests passed, and the observed difference in every comparison is **exactly 0**.
+
+### Comparisons (CPU, float32)
+
+| Comparison | Largest observed difference | Tolerance |
+| --- | --- | --- |
+| Qwen and ByT5 tokenizers (4 prompts, with and without quoted text) | identical | exact |
+| Qwen2.5-VL text embeddings (prompt / negative prompt) | 0 / 0 | 0 |
+| ByT5 glyph encoder | 0 | 0 |
+| Transformer single step | 0 | 0 |
+| VAE decode / encode (1024×1024) | 0 / 0 | 0 |
+| Flow-match Euler schedule | exact | exact |
+| End to end with fixed noise: text embeddings / final latent / pixels (512×512, 8 steps) | 0 / 0 / 0 | 0 |
+| End to end, seed 42 (256×256, 3 steps; pixels) | 0 | 0 |
+
+The end-to-end runs used the prompt "A cute cartoon penguin plush toy standing in a painting
+studio, photorealistic" and the guider configuration from the snapshot. The shortened step counts
+and sizes only bound the CPU run; the defaults are 50 steps at 2048×2048. Each reference stage runs
+in a subprocess that exits before the native stage, so the two 68 GB float32 transformers are never
+resident together. The run took 25 minutes on an M2 Max (CPU).
+
+The header-only tensor check covered `text_encoder`, `text_encoder_2`, `transformer` and `vae`:
+tensor counts 729 / 111 / 1264 / 324, with missing, extra and shape-mismatched tensors all **0**.
+
+The catalog uses the community diffusers conversion. `scripts/check_hunyuanimage_conversion.py`
+converts Tencent's official checkpoint (`tencent/HunyuanImage-2.1` at revision
+`e435da11d9e8795a25e224c5ba27b099ed45c55b`) with diffusers' conversion functions and compares every
+tensor: the transformer is an exact copy of the official bfloat16 weights, while the community VAE
+is the official float32 VAE rounded to bfloat16.
+
+Random-weight parity covers the transformer, VAE, text encoder, tokenizer wrapper, guider,
+scheduler and a tiny end-to-end snapshot with exact PyTorch equality. Records:
+`header_hunyuanimage_2_1`, the `hunyuanimage_*` component comparisons, `e2e_hunyuanimage_2_1` and
+`seed_e2e_hunyuanimage_2_1`, [validation-measurements.json](validation-measurements.json).
+
 ## LongCat-Image
 
 Validated on CPU in the same environment as above. `longcat-image` was loaded strictly from

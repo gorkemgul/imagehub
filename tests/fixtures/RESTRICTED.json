@@ -1775,6 +1775,246 @@
   },
   {
     "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "780a12312ccdd2de16401182d8463d7beffcd4add889358692ea736b390fa396",
+    "size": 431,
+    "target": "hunyuanimage_configs/guider_guider_config.json",
+    "upstream_path": "guider/guider_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "9688b07bf495e74d9890b65b7047beb53be7cf47e0384966326d0dd4770b61cd",
+    "size": 730,
+    "target": "hunyuanimage_configs/model_index.json",
+    "upstream_path": "model_index.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "3d12f9fb84d149fa0871601b5092ab0074a9481293dcc475d34755e65e74c3a8",
+    "size": 432,
+    "target": "hunyuanimage_configs/ocr_guider_guider_config.json",
+    "upstream_path": "ocr_guider/guider_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "d116e24fb2de6b9a3e3e78fe16d19cb89e5b0bdca6a70e4cd56cc142bdb14970",
+    "size": 487,
+    "target": "hunyuanimage_configs/scheduler_scheduler_config.json",
+    "upstream_path": "scheduler/scheduler_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "fdce7adb168aec2ccd3a2f4917eda2e2aff723fcd05460bb129b93693e975f84",
+    "size": 782,
+    "target": "hunyuanimage_configs/text_encoder_2_config.json",
+    "upstream_path": "text_encoder_2/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Tencent Hunyuan Community License",
+    "newline": false,
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "95de84fa27cb495cd107d498052b09b045d346038651a8876273a176b1ba361a",
+    "size": 7117,
+    "target": "hunyuanimage_configs/text_encoder_2_tensors.json",
+    "upstream_path": "text_encoder_2/model.safetensors",
+    "upstream_paths": [
+      "text_encoder_2/model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "2155c03c889163c78545800d255e822c753440529af3df8b2522af49d0e2cf38",
+    "size": 3201,
+    "target": "hunyuanimage_configs/text_encoder_config.json",
+    "upstream_path": "text_encoder/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "c66f52825ebe915cc804e4ad94eaceac1c03b21c6cb0317b842abe97644cbcf5",
+    "size": 244,
+    "target": "hunyuanimage_configs/text_encoder_generation_config.json",
+    "upstream_path": "text_encoder/generation_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "4be35310ddc165e46e88de4c3fec8c1210014b0b8717f4544d82cc740814ae0c",
+    "size": 57655,
+    "target": "hunyuanimage_configs/text_encoder_model.safetensors.index.json",
+    "upstream_path": "text_encoder/model.safetensors.index.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Tencent Hunyuan Community License",
+    "newline": false,
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "f9453ca2173a9ba05287026974e46baf06723f4bf9565518855f076c971651df",
+    "size": 37825,
+    "target": "hunyuanimage_configs/text_encoder_tensors.json",
+    "upstream_path": "text_encoder/model-00001-of-00004.safetensors",
+    "upstream_paths": [
+      "text_encoder/model-00001-of-00004.safetensors",
+      "text_encoder/model-00002-of-00004.safetensors",
+      "text_encoder/model-00003-of-00004.safetensors",
+      "text_encoder/model-00004-of-00004.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "0004781309423057d33b9edf50d2669253d4347873ea33d4e7755cb866f23883",
+    "size": 3018,
+    "target": "hunyuanimage_configs/tokenizer_2_added_tokens.json",
+    "upstream_path": "tokenizer_2/added_tokens.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "0e27e9eb707dae4988375eaea1128b0b05a87e51210a4fdcd325ba62182bde11",
+    "size": 3084,
+    "target": "hunyuanimage_configs/tokenizer_2_special_tokens_map.json",
+    "upstream_path": "tokenizer_2/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "dc6e535c06f3fa20ca6dc0d73ca9f369b471b0f988111f8a940cb68e434cf7a0",
+    "size": 25596,
+    "target": "hunyuanimage_configs/tokenizer_2_tokenizer_config.json",
+    "upstream_path": "tokenizer_2/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "58b54bbe36fc752f79a24a271ef66a0a0830054b4dfad94bde757d851968060b",
+    "size": 605,
+    "target": "hunyuanimage_configs/tokenizer_added_tokens.json",
+    "upstream_path": "tokenizer/added_tokens.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+    "size": 613,
+    "target": "hunyuanimage_configs/tokenizer_special_tokens_map.json",
+    "upstream_path": "tokenizer/special_tokens_map.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "0a04a9d7d4a62b28482bdfe726c122756de85714fb64166ace92ae75b8f57614",
+    "size": 4686,
+    "target": "hunyuanimage_configs/tokenizer_tokenizer_config.json",
+    "upstream_path": "tokenizer/tokenizer_config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "f7ba6ee1c42a14ab32facd4a42def52fb398723f4ae3466e11c132e4457dcc04",
+    "size": 495,
+    "target": "hunyuanimage_configs/transformer_config.json",
+    "upstream_path": "transformer/config.json"
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "c4468b7f876efbece0255a918bc33d48711042c95594c2f77f7adb6b41b6478a",
+    "size": 133012,
+    "target": "hunyuanimage_configs/transformer_diffusion_pytorch_model.safetensors.index.json",
+    "upstream_path": "transformer/diffusion_pytorch_model.safetensors.index.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Tencent Hunyuan Community License",
+    "newline": false,
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "6ce49a0443399aea10449423722dce46c0c79cd3b19403a9579cfed4d3d414a3",
+    "size": 75792,
+    "target": "hunyuanimage_configs/transformer_tensors.json",
+    "upstream_path": "transformer/diffusion_pytorch_model-00001-of-00004.safetensors",
+    "upstream_paths": [
+      "transformer/diffusion_pytorch_model-00001-of-00004.safetensors",
+      "transformer/diffusion_pytorch_model-00002-of-00004.safetensors",
+      "transformer/diffusion_pytorch_model-00003-of-00004.safetensors",
+      "transformer/diffusion_pytorch_model-00004-of-00004.safetensors"
+    ]
+  },
+  {
+    "gated": false,
+    "license": "Tencent Hunyuan Community License",
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "33e41754d6bc8115331c95e24817d3f60fa5ec6ad34dc9644672b1cef85fd598",
+    "size": 421,
+    "target": "hunyuanimage_configs/vae_config.json",
+    "upstream_path": "vae/config.json"
+  },
+  {
+    "gated": false,
+    "indent": 0,
+    "kind": "safetensors-header",
+    "license": "Tencent Hunyuan Community License",
+    "newline": false,
+    "repo": "hunyuanvideo-community/HunyuanImage-2.1-Diffusers",
+    "revision": "7e7b7a177de58591aeaffca0929f4765003d7ced",
+    "sha256": "37a7a4857757abc527107d830d96218c9af67421160391baaa70717ab1c52875",
+    "size": 16089,
+    "target": "hunyuanimage_configs/vae_tensors.json",
+    "upstream_path": "vae/diffusion_pytorch_model.safetensors",
+    "upstream_paths": [
+      "vae/diffusion_pytorch_model.safetensors"
+    ]
+  },
+  {
+    "gated": false,
     "kind": "janus-text-config",
     "license": "DeepSeek Model License",
     "repo": "deepseek-community/Janus-Pro-1B",
