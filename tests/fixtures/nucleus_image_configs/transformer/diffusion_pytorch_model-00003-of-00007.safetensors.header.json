@@ -1,0 +1,368 @@
+{
+"transformer_blocks.19.attn.to_q.weight": [
+2048,
+2048
+],
+"transformer_blocks.19.attn.to_v.weight": [
+512,
+2048
+],
+"transformer_blocks.19.encoder_proj.bias": [
+2048
+],
+"transformer_blocks.19.encoder_proj.weight": [
+2048,
+4096
+],
+"transformer_blocks.19.img_mlp.experts.down_proj": [
+64,
+1344,
+2048
+],
+"transformer_blocks.19.img_mlp.experts.gate_up_proj": [
+64,
+2048,
+2688
+],
+"transformer_blocks.19.img_mlp.gate.weight": [
+64,
+4096
+],
+"transformer_blocks.19.img_mlp.shared_expert.net.0.proj.weight": [
+2688,
+2048
+],
+"transformer_blocks.19.img_mlp.shared_expert.net.2.weight": [
+2048,
+1344
+],
+"transformer_blocks.19.img_mod.1.bias": [
+8192
+],
+"transformer_blocks.19.img_mod.1.weight": [
+8192,
+2048
+],
+"transformer_blocks.2.attn.add_k_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.2.attn.add_v_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.2.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.2.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.2.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.2.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.2.attn.to_k.weight": [
+512,
+2048
+],
+"transformer_blocks.2.attn.to_out.0.weight": [
+2048,
+2048
+],
+"transformer_blocks.2.attn.to_q.weight": [
+2048,
+2048
+],
+"transformer_blocks.2.attn.to_v.weight": [
+512,
+2048
+],
+"transformer_blocks.2.encoder_proj.bias": [
+2048
+],
+"transformer_blocks.2.encoder_proj.weight": [
+2048,
+4096
+],
+"transformer_blocks.2.img_mlp.net.0.proj.weight": [
+10752,
+2048
+],
+"transformer_blocks.2.img_mlp.net.2.weight": [
+2048,
+5376
+],
+"transformer_blocks.2.img_mod.1.bias": [
+8192
+],
+"transformer_blocks.2.img_mod.1.weight": [
+8192,
+2048
+],
+"transformer_blocks.20.attn.add_k_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.20.attn.add_v_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.20.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.20.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.20.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.20.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.20.attn.to_k.weight": [
+512,
+2048
+],
+"transformer_blocks.20.attn.to_out.0.weight": [
+2048,
+2048
+],
+"transformer_blocks.20.attn.to_q.weight": [
+2048,
+2048
+],
+"transformer_blocks.20.attn.to_v.weight": [
+512,
+2048
+],
+"transformer_blocks.20.encoder_proj.bias": [
+2048
+],
+"transformer_blocks.20.encoder_proj.weight": [
+2048,
+4096
+],
+"transformer_blocks.20.img_mlp.experts.down_proj": [
+64,
+1344,
+2048
+],
+"transformer_blocks.20.img_mlp.experts.gate_up_proj": [
+64,
+2048,
+2688
+],
+"transformer_blocks.20.img_mlp.gate.weight": [
+64,
+4096
+],
+"transformer_blocks.20.img_mlp.shared_expert.net.0.proj.weight": [
+2688,
+2048
+],
+"transformer_blocks.20.img_mlp.shared_expert.net.2.weight": [
+2048,
+1344
+],
+"transformer_blocks.20.img_mod.1.bias": [
+8192
+],
+"transformer_blocks.20.img_mod.1.weight": [
+8192,
+2048
+],
+"transformer_blocks.21.attn.add_k_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.21.attn.add_v_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.21.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.21.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.21.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.21.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.21.attn.to_k.weight": [
+512,
+2048
+],
+"transformer_blocks.21.attn.to_out.0.weight": [
+2048,
+2048
+],
+"transformer_blocks.21.attn.to_q.weight": [
+2048,
+2048
+],
+"transformer_blocks.21.attn.to_v.weight": [
+512,
+2048
+],
+"transformer_blocks.21.encoder_proj.bias": [
+2048
+],
+"transformer_blocks.21.encoder_proj.weight": [
+2048,
+4096
+],
+"transformer_blocks.21.img_mlp.experts.down_proj": [
+64,
+1344,
+2048
+],
+"transformer_blocks.21.img_mlp.experts.gate_up_proj": [
+64,
+2048,
+2688
+],
+"transformer_blocks.21.img_mlp.gate.weight": [
+64,
+4096
+],
+"transformer_blocks.21.img_mlp.shared_expert.net.0.proj.weight": [
+2688,
+2048
+],
+"transformer_blocks.21.img_mlp.shared_expert.net.2.weight": [
+2048,
+1344
+],
+"transformer_blocks.21.img_mod.1.bias": [
+8192
+],
+"transformer_blocks.21.img_mod.1.weight": [
+8192,
+2048
+],
+"transformer_blocks.22.attn.add_k_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.22.attn.add_v_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.22.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.22.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.22.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.22.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.22.attn.to_k.weight": [
+512,
+2048
+],
+"transformer_blocks.22.attn.to_out.0.weight": [
+2048,
+2048
+],
+"transformer_blocks.22.attn.to_q.weight": [
+2048,
+2048
+],
+"transformer_blocks.22.attn.to_v.weight": [
+512,
+2048
+],
+"transformer_blocks.22.encoder_proj.bias": [
+2048
+],
+"transformer_blocks.22.encoder_proj.weight": [
+2048,
+4096
+],
+"transformer_blocks.22.img_mlp.experts.down_proj": [
+64,
+1344,
+2048
+],
+"transformer_blocks.22.img_mlp.experts.gate_up_proj": [
+64,
+2048,
+2688
+],
+"transformer_blocks.22.img_mlp.gate.weight": [
+64,
+4096
+],
+"transformer_blocks.22.img_mlp.shared_expert.net.0.proj.weight": [
+2688,
+2048
+],
+"transformer_blocks.22.img_mlp.shared_expert.net.2.weight": [
+2048,
+1344
+],
+"transformer_blocks.22.img_mod.1.bias": [
+8192
+],
+"transformer_blocks.22.img_mod.1.weight": [
+8192,
+2048
+],
+"transformer_blocks.23.attn.add_k_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.23.attn.add_v_proj.weight": [
+512,
+2048
+],
+"transformer_blocks.23.attn.norm_added_k.weight": [
+128
+],
+"transformer_blocks.23.attn.norm_added_q.weight": [
+128
+],
+"transformer_blocks.23.attn.norm_k.weight": [
+128
+],
+"transformer_blocks.23.attn.norm_q.weight": [
+128
+],
+"transformer_blocks.23.attn.to_k.weight": [
+512,
+2048
+],
+"transformer_blocks.23.attn.to_out.0.weight": [
+2048,
+2048
+],
+"transformer_blocks.23.attn.to_q.weight": [
+2048,
+2048
+],
+"transformer_blocks.23.attn.to_v.weight": [
+512,
+2048
+],
+"transformer_blocks.23.encoder_proj.bias": [
+2048
+],
+"transformer_blocks.23.encoder_proj.weight": [
+2048,
+4096
+],
+"transformer_blocks.23.img_mlp.experts.down_proj": [
+64,
+1344,
+2048
+]
+}

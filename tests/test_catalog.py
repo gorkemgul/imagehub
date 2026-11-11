@@ -79,6 +79,7 @@ def test_catalog_contents():
             "lumina-next",
             "meissonic",
             "nextstep-1-large",
+            "nucleus-image",
             "omnigen-v1",
             "ovis-image-7b",
             "pixart-alpha-xl-1024",

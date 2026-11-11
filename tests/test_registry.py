@@ -34,6 +34,7 @@ def test_family_and_model_aliases_are_registered():
         names
     )
     assert {"krea2", "krea2-turbo"} <= set(names)
+    assert {"nucleus-image"} <= set(names)
     assert "ernie-image" in names
     assert "longcat-image" in names
     assert {"cogview3", "cogview3-plus-3b"} <= set(names)

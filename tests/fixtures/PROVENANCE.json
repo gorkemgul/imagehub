@@ -3389,6 +3389,153 @@
   },
   {
     "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/model_index.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/processor/config.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/scheduler/scheduler_config.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/text_encoder/config.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/text_encoder/model-00001-of-00004.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/text_encoder/model-00002-of-00004.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/text_encoder/model-00003-of-00004.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/text_encoder/model-00004-of-00004.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/text_encoder/model.safetensors.index.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/text_encoder/tokenizer_config.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/config.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/diffusion_pytorch_model-00001-of-00007.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/diffusion_pytorch_model-00002-of-00007.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/diffusion_pytorch_model-00003-of-00007.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/diffusion_pytorch_model-00004-of-00007.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/diffusion_pytorch_model-00005-of-00007.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/diffusion_pytorch_model-00006-of-00007.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/diffusion_pytorch_model-00007-of-00007.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/transformer/diffusion_pytorch_model.safetensors.index.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/vae/config.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
+    "license": "Apache-2.0",
+    "path": "tests/fixtures/nucleus_image_configs/vae/diffusion_pytorch_model.safetensors.header.json",
+    "revision": "5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+    "source": "NucleusAI/Nucleus-Image"
+  },
+  {
+    "form": "published-or-derived",
     "license": "MIT",
     "path": "tests/fixtures/omnigen_configs/model_index.json",
     "revision": "016e2f61d12a98303f6bbdf122687694d7984268",
