@@ -2377,6 +2377,46 @@ _entries.append(
 
 _entries.append(
     ModelSpec(
+        id="nucleus-image",
+        task=Task.T2I,
+        family="nucleus-image",
+        source="https://huggingface.co/NucleusAI/Nucleus-Image",
+        repo_id="NucleusAI/Nucleus-Image",
+        revision="5e963db4fd0a65c7e4faf53ca2d4eca567c4dcfa",
+        provenance="author",
+        catalog_id="nucleus-image",
+        format="diffusers",
+        license="Apache-2.0",
+        files=(
+            "model_index.json",
+            "scheduler/scheduler_config.json",
+            "processor/tokenizer.json",
+            "processor/tokenizer_config.json",
+            "processor/vocab.json",
+            "processor/merges.txt",
+            "text_encoder/config.json",
+            "text_encoder/model.safetensors.index.json",
+            "text_encoder/model-00001-of-00004.safetensors",
+            "text_encoder/model-00002-of-00004.safetensors",
+            "text_encoder/model-00003-of-00004.safetensors",
+            "text_encoder/model-00004-of-00004.safetensors",
+            "transformer/config.json",
+            "transformer/diffusion_pytorch_model.safetensors.index.json",
+            "transformer/diffusion_pytorch_model-00001-of-00007.safetensors",
+            "transformer/diffusion_pytorch_model-00002-of-00007.safetensors",
+            "transformer/diffusion_pytorch_model-00003-of-00007.safetensors",
+            "transformer/diffusion_pytorch_model-00004-of-00007.safetensors",
+            "transformer/diffusion_pytorch_model-00005-of-00007.safetensors",
+            "transformer/diffusion_pytorch_model-00006-of-00007.safetensors",
+            "transformer/diffusion_pytorch_model-00007-of-00007.safetensors",
+            "vae/config.json",
+            "vae/diffusion_pytorch_model.safetensors",
+        ),
+    )
+)
+
+_entries.append(
+    ModelSpec(
         id="longcat-image",
         task=Task.T2I,
         family="longcat-image",
