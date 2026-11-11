@@ -160,6 +160,8 @@ are fetched into the ignored `tests/fixtures/_restricted` cache. Set `HF_TOKEN` 
 fetcher to include gated repositories; tests for unavailable fixtures skip with the same command.
 
 Reference comparisons are optional; install `.[dev,image,reference]` and run `IMAGEHUB_REFERENCE_TESTS=1 .venv/bin/python -m pytest tests/reference` with local checkpoint paths configured.
+A few of them import the authors' original code; point `IMAGEHUB_REFERENCE_SOURCES` at a folder of
+those checkouts (default `checkpoints/ref-src`), and the tests skip when a checkout is missing.
 
 ## License
 

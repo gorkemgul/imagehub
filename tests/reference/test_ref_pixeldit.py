@@ -5,12 +5,12 @@
 import gc
 import json
 import sys
-from pathlib import Path
 
 import pytest
 import torch
 from fixture_files import fixture_path
 from helpers import max_diff, snapshot_dir
+from reference_sources import reference_source
 
 from imagehub import pipeline
 from imagehub.backends.pixeldit import sample_flow_dpm
@@ -23,7 +23,7 @@ pytestmark = pytest.mark.reference
 np = pytest.importorskip("numpy")
 transformers = pytest.importorskip("transformers")
 
-REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/pixeldit")
+REFERENCE_ROOT = reference_source("pixeldit")
 FIXTURES = fixture_path("pixeldit_configs")
 PROMPT = "a blue ceramic cat on a wooden table"
 TINY_CONFIG = {

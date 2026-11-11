@@ -38,7 +38,9 @@ files are verified against `tests/fixtures/RESTRICTED.json` and remain in the ig
    [awesome-text-to-image-architectures](https://github.com/gorkemgul/awesome-text-to-image-architectures).
 6. **Prove parity** with reference tests under `tests/reference/`: strict load, each component, then
    an end-to-end generation from the same noise on CPU in float32. They are skipped unless
-   `IMAGEHUB_REFERENCE_TESTS=1` and never download anything.
+   `IMAGEHUB_REFERENCE_TESTS=1` and never download anything. Tests that import the authors' code
+   find its checkout with `reference_source("<name>")` from `tests/reference_sources.py`, which reads
+   `IMAGEHUB_REFERENCE_SOURCES` (default `checkpoints/ref-src`).
 7. **Record the result** in `docs/validation.json` (with `scripts/build_validation.py`) and
    `docs/validation.md`, add the model to `docs/models.md` and `docs/catalog.md`, and to the table in
    the README.

@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 import torch
 from helpers import max_diff, snapshot_dir
+from reference_sources import reference_source
 
 from imagehub import pipeline
 from imagehub.checkpoints import read_json
@@ -22,7 +23,7 @@ diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 np = pytest.importorskip("numpy")
 
-REFERENCE = "/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/meissonic"
+REFERENCE = str(reference_source("meissonic"))
 PROMPT = "a photograph of an astronaut riding a horse"
 CPU = torch.device("cpu")
 HEIGHT, WIDTH, STEPS, GUIDANCE = 1024, 32, 2, 9.0

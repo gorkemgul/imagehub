@@ -3,11 +3,11 @@
 import importlib.util
 import sys
 import types
-from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 import torch
+from reference_sources import reference_source
 
 from imagehub.backends.show_o import generate_tokens
 from imagehub.models.magvit_v2 import MAGVITv2
@@ -15,7 +15,7 @@ from imagehub.models.show_o import ShowOModel
 
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
-REFERENCE = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/Show-o")
+REFERENCE = reference_source("Show-o")
 
 
 def _official_phi():

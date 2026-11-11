@@ -8,11 +8,11 @@ import sys
 import types
 from contextlib import nullcontext
 from importlib.machinery import ModuleSpec
-from pathlib import Path
 
 import pytest
 import torch
 from helpers import max_diff, reference_in_subprocess, snapshot_dir
+from reference_sources import reference_source
 
 from imagehub import pipeline
 from imagehub.backends.hidream_o1 import build_text_sample
@@ -25,7 +25,7 @@ numpy = pytest.importorskip("numpy")
 transformers = pytest.importorskip("transformers")
 
 MODEL_ID = "hidream-o1-image"
-REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/HiDream-O1-Image")
+REFERENCE_ROOT = reference_source("HiDream-O1-Image")
 REFERENCE_COMMIT = "2c2d29ff729e48f33e41f49edfdbd81d5ac103b4"
 REVISION = "0b0901d99f200389e138c61946af1185f5f49a13"
 PROMPT = "A small red sailboat on a calm lake at sunrise."
