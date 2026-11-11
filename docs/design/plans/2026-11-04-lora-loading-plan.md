@@ -24,7 +24,7 @@ Design: `docs/design/2026-11-04-lora-and-training-design.md`.
 - Repository text is English. Commit messages are English, without tool or assistant names.
 - Pre-push checks are chained with `&&`:
   `.venv/bin/ruff check . && .venv/bin/ruff format --check . && .venv/bin/mypy imagehub && .venv/bin/pytest -q`.
-- Branch `feat/lora-loading`, worktree `/Users/gorkem.gul/Personal/imagehub-wt/lora`; one PR to
+- Branch `feat/lora-loading`, worktree `../imagehub-wt/lora`; one PR to
   `main` with `Closes #193`.
 
 ## Numerical contract with PEFT
