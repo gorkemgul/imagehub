@@ -166,6 +166,13 @@ Reference comparisons are optional; install `.[dev,image,reference]` and run `IM
 A few of them import the authors' original code; point `IMAGEHUB_REFERENCE_SOURCES` at a folder of
 those checkouts (default `checkpoints/ref-src`), and the tests skip when a checkout is missing.
 
+The documentation site builds with the pinned versions in the `docs` extra:
+
+```bash
+uv pip install --python .venv -e ".[docs]"
+.venv/bin/mkdocs build --strict
+```
+
 ## License
 
 The project is Apache-2.0 overall. Clearly marked third-party derivatives retain their own license;
