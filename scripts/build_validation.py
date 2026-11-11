@@ -134,6 +134,17 @@ QWEN_IMAGE_COMPONENT_KEYS = (
     "qwen_image_vae_encode",
     "qwen_image_scheduler",
 )
+# Recorded per edit release as ``<key>_<model-id>``.
+QWEN_IMAGE_EDIT_COMPONENT_KEYS = (
+    "qwen_image_edit_conditioner",
+    "qwen_image_edit_real_conditioning",
+    "qwen_image_edit_transformer",
+    "qwen_image_edit_long_transformer_first_block",
+    "qwen_image_edit_vae",
+    "qwen_image_edit_image_stages",
+    "qwen_image_edit_scheduler",
+)
+QWEN_IMAGE_EDIT_IDS = ("qwen-image-edit", "qwen-image-edit-2509")
 CHROMA_COMPONENT_KEYS = (
     "chroma_tokenizer",
     "chroma_text_encoder",
@@ -173,6 +184,8 @@ def header_check(header: dict | None) -> dict | None:
         return header
     merged: dict = {"missing": [], "extra": [], "mismatch": [], "tensors": {}}
     for component, entry in header.items():
+        if not isinstance(entry, dict):  # for example the checkpoint revision
+            continue
         for key in ("missing", "extra", "mismatch"):
             merged[key] += [f"{component}.{item}" for item in entry[key]]
         merged["tensors"][component] = entry["tensors"]
@@ -343,7 +356,14 @@ def main() -> None:
             )
         },
         "components_qwen_image": {
-            key: value for key, value in measured.items() if key in QWEN_IMAGE_COMPONENT_KEYS
+            key: value
+            for key, value in measured.items()
+            if key in QWEN_IMAGE_COMPONENT_KEYS
+            or any(
+                key == f"{component}_{model_id}"
+                for component in QWEN_IMAGE_EDIT_COMPONENT_KEYS
+                for model_id in QWEN_IMAGE_EDIT_IDS
+            )
         },
         "components_janus": {
             key: value

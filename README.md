@@ -129,6 +129,7 @@ Creating a pipeline for a checkpoint without commercial-use rights emits an `Ima
 | GLM-Image | `glm-image` | `t2i` | T | CPU fp32 parity |
 | Ideogram 4 | `ideogram4-fp8` | `t2i` | T | CPU fp32 parity with the official implementation |
 | Qwen-Image | `qwen-image`, `qwen-image-2.1` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
+| Qwen-Image-Edit | `qwen-image-edit`, `qwen-image-edit-2509` | `t2i` | T+I | CPU fp32 parity on the upcast bfloat16 weights, shortened 32×32 end-to-end runs |
 | Z-Image | `z-image`, `z-image-turbo` | `t2i` | T | CPU fp32 parity |
 | Janus-Pro | `janus-pro-1b`, `janus-pro-7b` | `t2i` | T | CPU fp32 parity |
 | BAGEL | `bagel-7b-mot` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |

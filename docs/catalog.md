@@ -119,6 +119,8 @@ use` govern this repository's implementation for that row; they default to Apach
 | `ideogram4-fp8` | `ideogram4` | [ideogram-ai/ideogram-4-fp8](https://huggingface.co/ideogram-ai/ideogram-4-fp8) | `ee79a72` | author | full | yes | Ideogram 4 Non-Commercial License | Apache-2.0 | yes | `ideogram-4` |
 | `qwen-image` | `qwen-image` | [Qwen/Qwen-Image](https://huggingface.co/Qwen/Qwen-Image) | `75e0b4b` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `qwen-image` |
 | `qwen-image-2.1` | `qwen-image` | [Qwen/Qwen-Image-2.1](https://huggingface.co/Qwen/Qwen-Image-2.1) | `d26bb61` | author | full | no | Qwen Research License | Apache-2.0 | yes | `qwen-image-2` |
+| `qwen-image-edit` | `qwen-image` | [Qwen/Qwen-Image-Edit](https://huggingface.co/Qwen/Qwen-Image-Edit) | `ac7f931` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `qwen-image-edit` |
+| `qwen-image-edit-2509` | `qwen-image` | [Qwen/Qwen-Image-Edit-2509](https://huggingface.co/Qwen/Qwen-Image-Edit-2509) | `d3968ef` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `qwen-image-edit` |
 | `ovis-image-7b` | `ovis-image` | [ATH-MaaS/Ovis-Image-7B](https://huggingface.co/ATH-MaaS/Ovis-Image-7B) | `41be1c5` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `ovis-image` |
 | `z-image` | `z-image` | [Tongyi-MAI/Z-Image](https://huggingface.co/Tongyi-MAI/Z-Image) | `04cc4ab` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `z-image` |
 | `z-image-turbo` | `z-image` | [Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) | `f332072` | author | full | no | Apache-2.0 | Apache-2.0 | yes | `z-image` |
