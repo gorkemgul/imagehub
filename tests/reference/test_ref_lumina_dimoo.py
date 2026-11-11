@@ -333,7 +333,7 @@ def _official_real_image(snapshot: str, prompt: str, seed: int, out_path: str) -
 def test_real_short_e2e(record, tmp_path, seed, record_name):
     root = snapshot_dir(MODEL_ID)
     expected = reference_in_subprocess(
-        "test_ref_lumina_dimoo._official_real_image",
+        "reference.test_ref_lumina_dimoo._official_real_image",
         {"snapshot": str(root), "prompt": PROMPT, "seed": seed},
         tmp_path / f"reference-{seed}.pt",
     )

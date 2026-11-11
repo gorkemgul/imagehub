@@ -122,7 +122,7 @@ def _reference_e2e(snapshot, seed, out_path):
 def test_real_e2e(seed, tmp_path, record):
     root = snapshot_dir("nextstep-1")
     expected = reference_in_subprocess(
-        "test_ref_nextstep_1._reference_e2e",
+        "reference.test_ref_nextstep_1._reference_e2e",
         {"snapshot": str(root), "seed": seed},
         tmp_path / f"reference-{seed}.pt",
     )

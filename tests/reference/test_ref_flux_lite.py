@@ -237,7 +237,7 @@ def _reference_end_to_end(root: str, seed: int, out_path: str):
 def test_real_end_to_end(seed, record, tmp_path):
     root = snapshot_dir(MODEL_ID)
     expected = reference_in_subprocess(
-        "test_ref_flux_lite._reference_end_to_end",
+        "reference.test_ref_flux_lite._reference_end_to_end",
         {"root": str(root), "seed": seed},
         tmp_path / f"expected-{seed}.pt",
     )

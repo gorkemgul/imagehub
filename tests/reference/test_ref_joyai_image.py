@@ -667,7 +667,7 @@ def test_real_end_to_end(model_id, seed, record, tmp_path):
     root = snapshot_dir(model_id)
     image = _image().resize((512, 512))
     expected = reference_in_subprocess(
-        "test_ref_joyai_image._reference_end_to_end",
+        "reference.test_ref_joyai_image._reference_end_to_end",
         {"model_id": model_id, "root": str(root), "seed": seed},
         tmp_path / "expected.pt",
     )
