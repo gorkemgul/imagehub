@@ -1,0 +1,24 @@
+{
+    "_class_name": "NucleusMoEImagePipeline",
+    "_diffusers_version": "0.36.0",
+    "scheduler": [
+      "diffusers",
+      "FlowMatchEulerDiscreteScheduler"
+    ],
+    "text_encoder": [
+      "transformers",
+      "Qwen3VLForConditionalGeneration"
+    ],
+    "processor": [
+      "transformers",
+      "Qwen3VLProcessor"
+    ],
+    "transformer": [
+      "diffusers",
+      "NucleusMoEImageTransformer2DModel"
+    ],
+    "vae": [
+      "diffusers",
+      "AutoencoderKLQwenImage"
+    ]
+  }

@@ -4300,3 +4300,67 @@ def write_tiny_hunyuanimage(directory: str | os.PathLike[str], *, seed: int = 0)
         (root / folder / "guider_config.json").write_text(json.dumps(config))
     shutil.copyfile(HUNYUANIMAGE_FIXTURES / "model_index.json", root / "model_index.json")
     return root
+
+
+TINY_NUCLEUS_IMAGE_TRANSFORMER = {
+    "_class_name": "NucleusMoEImageTransformer2DModel",
+    "patch_size": 2,
+    "in_channels": 16,
+    "out_channels": 4,
+    "num_layers": 5,
+    "attention_head_dim": 8,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "joint_attention_dim": 16,
+    "axes_dims_rope": [2, 2, 4],
+    "mlp_ratio": 3.0,
+    "moe_enabled": True,
+    "dense_moe_strategy": "leave_first_three_blocks_dense",
+    "num_experts": 4,
+    "moe_intermediate_dim": 16,
+    "capacity_factors": [0.0, 0.0, 0.0, 0.5, 0.5],
+    "use_sigmoid": False,
+    "route_scale": 2.5,
+    "use_grouped_mm": False,
+}
+
+
+def write_tiny_nucleus_image(directory: str | os.PathLike[str], *, seed: int = 0) -> Path:
+    """Write a random tiny Nucleus-Image snapshot in the published layout."""
+    import transformers
+
+    from imagehub.checkpoints import save_safetensors
+    from imagehub.models.autoencoder_kl_qwen_image import AutoencoderKLQwenImage
+    from imagehub.models.nucleus_image_transformer import NucleusImageTransformer2DModel
+
+    root = write_tiny_qwen_image21(directory, seed=seed)
+    torch.manual_seed(seed)
+    text_config = json.loads((root / "text_encoder/config.json").read_text())
+    text_config["text_config"]["num_hidden_layers"] = 8
+    text = transformers.Qwen3VLForConditionalGeneration(transformers.Qwen3VLConfig(**text_config))
+    (root / "text_encoder/config.json").write_text(json.dumps(text_config))
+    save_safetensors(text.state_dict(), root / "text_encoder/model.safetensors")
+    vae_config = TINY_KREA2_VAE
+    for name, cls, config in (
+        ("transformer", NucleusImageTransformer2DModel, TINY_NUCLEUS_IMAGE_TRANSFORMER),
+        ("vae", AutoencoderKLQwenImage, vae_config),
+    ):
+        model = cls(config)
+        for parameter in model.parameters():
+            parameter.data.normal_(0, 0.05)
+        component = root / name
+        (component / "config.json").write_text(json.dumps(config))
+        save_safetensors(model.state_dict(), component / "diffusion_pytorch_model.safetensors")
+    (root / "model_index.json").write_text(
+        json.dumps(
+            {
+                "_class_name": "NucleusMoEImagePipeline",
+                "processor": ["transformers", "Qwen3VLProcessor"],
+                "scheduler": ["diffusers", "FlowMatchEulerDiscreteScheduler"],
+                "text_encoder": ["transformers", "Qwen3VLForConditionalGeneration"],
+                "transformer": ["diffusers", "NucleusMoEImageTransformer2DModel"],
+                "vae": ["diffusers", "AutoencoderKLQwenImage"],
+            }
+        )
+    )
+    return root

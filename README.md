@@ -122,6 +122,7 @@ Creating a pipeline for a checkpoint without commercial-use rights emits an `Ima
 | NextStep-1 | `nextstep-1-large` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | PixelDiT | `pixeldit` | `t2i` | T | CPU fp32 parity; code is NSCLv1, non-commercial |
 | Krea 2 | `krea2-turbo` | `t2i` | T | CPU fp32 parity |
+| Nucleus-Image | `nucleus-image` | `t2i` | T | CPU fp32 parity on the upcast bfloat16 weights |
 | ERNIE-Image | `ernie-image` | `t2i` | T | CPU fp32 parity without the prompt enhancer |
 | LongCat-Image | `longcat-image` | `t2i` | T | CPU fp32 parity |
 | HunyuanImage 2.1 | `hunyuanimage-2-1` | `t2i` | T | CPU fp32 parity |
