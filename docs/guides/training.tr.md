@@ -248,7 +248,6 @@ Diğer bütün modeller şimdilik `inference_only`: birkaç adımlık damıtılm
 KOALA Lightning), SDXL refiner (görüntüden görüntüye), Playground v2.5 (DDPM değil, EDM) ve
 `sd3.5-large-turbo` (birkaç adımlık damıtılmış), `sana-sprint-1.6b-1024` (damıtılmış) ve girdi
 görüntüsüne koşullu olan, diffusers'ta eğitim betiği bulunmayan Qwen-Image-Edit checkpoint'leri.
-Diğer transformer aileleri sırada (#202).
 
 Sana yalnızca transformer'ını, betikteki `to_k`, `to_q`, `to_v` hedefleriyle eğitir. DC-AE'nin
 latentleri deterministiktir; bu nedenle rastgele akış önce gürültüyü, sonra flow zaman adımını

@@ -4,10 +4,10 @@ import importlib.util
 import sys
 import types
 from contextlib import nullcontext
-from pathlib import Path
 
 import pytest
 import torch
+from reference_sources import reference_source
 
 from imagehub.backends.hidream_o1 import HiDreamO1Components, decode_patches, denoise
 from imagehub.models.hidream_o1 import HiDreamO1Model
@@ -17,10 +17,7 @@ from tests.test_hidream_o1 import TINY_CONFIG
 pytestmark = pytest.mark.reference
 pytest.importorskip("transformers")
 
-REFERENCE = Path(
-    "/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/HiDream-O1-Image/models/"
-    "qwen3_vl_transformers.py"
-)
+REFERENCE = reference_source("HiDream-O1-Image") / "models" / "qwen3_vl_transformers.py"
 
 
 def _load_reference_module():

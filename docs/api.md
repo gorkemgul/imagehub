@@ -27,7 +27,7 @@ Create a pipeline. Construction never touches the network and never loads weight
 | `model` | *(backend option)* folder with the downloaded snapshot |
 | `device` | *(backend option)* `"cpu"` (default), `"mps"`, `"cuda"` |
 | `dtype` | *(backend option)* `torch.float32` (default), `torch.float16`, `torch.bfloat16` |
-| `lora`, `lora_scale`, `lora_fuse` | *(backend option, Stable Diffusion 1.x and SDXL)* LoRA adapter files ([details](models/index.md#lora-adapters)) |
+| `lora`, `lora_scale`, `lora_fuse` | *(backend option, the backends listed under LoRA adapters)* LoRA adapter files ([details](models/index.md#lora-adapters)) |
 
 ## `Pipeline`
 

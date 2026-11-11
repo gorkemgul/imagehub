@@ -2,7 +2,7 @@
 
 - Tarih: 2026-10-04
 - Durum: onaylandı, uygulama planı bekliyor
-- Bağlam: [kickoff notları](../../research/2026-10-04-kickoff.md)
+- Bağlam: kickoff notları
 
 ## 1. Amaç ve kapsam
 

@@ -39,10 +39,14 @@ dosyalar `tests/fixtures/RESTRICTED.json` ile doğrulanır ve yok sayılan
    bağlantısını kuran `catalog_id`.
 6. `tests/reference/` altındaki referans testleriyle **parity'yi kanıtlayın**: sıkı yükleme, her
    bileşen, ardından CPU'da float32 ve aynı gürültüyle uçtan uca üretim. Bu testler yalnızca
-   `IMAGEHUB_REFERENCE_TESTS=1` ayarlandığında çalışır ve hiçbir şey indirmez.
+   `IMAGEHUB_REFERENCE_TESTS=1` ayarlandığında çalışır ve hiçbir şey indirmez. Yazarların özgün kodunu
+   içe aktaran testler, checkout'u `tests/reference_sources.py` içindeki `reference_source("<ad>")`
+   ile bulur; bu fonksiyon `IMAGEHUB_REFERENCE_SOURCES` değişkenini okur (varsayılan
+   `checkpoints/ref-src`).
 7. Sonucu `docs/validation.json` içine (`scripts/build_validation.py` ile) ve
    `docs/validation.md` dosyasına **kaydedin**; modeli `docs/models.md`, `docs/catalog.md` ve README
-   tablosuna ekleyin.
+   tablosuna ekleyin. Türkçe sürümü olan bir sayfa değişirse iki dilde de güncellenir; bkz.
+   [Çeviriler](translations.md).
 8. `main` dalına karşı, issue'yu kapatan ve yalnızca bir model içeren **pull request açın**.
 
 ??? tip "Bir models.md bölümünde bulunması gerekenler"

@@ -10,14 +10,17 @@ image input, and passing `image` to one raises an error.
 | `visualcloze-384` | required | grid visual in-context generation | `image` |
 | `joyai-image-edit` | optional | instruction editing | `image` |
 | `joyai-image-edit-plus` | required | multi-image instruction editing | `image` |
+| `qwen-image-edit` | required | instruction editing | `image` |
+| `qwen-image-edit-2509` | required | multi-image instruction editing | `image` |
 | `sdxl-refiner-1.0` | required | refinement (img2img) | `image`, `strength` |
 | `omnigen-v1` | optional | editing and subject-driven generation, referenced from the prompt | `image`, `image_guidance`, `max_input_image_size`, `use_input_image_size_as_output` |
 
 # LoRA adapters
 
-The Stable Diffusion 1.x and SDXL backends load LoRA adapter files on top of a checkpoint. This
-covers every model served by the `stable-diffusion` and `stable-diffusion-xl` backends, including
-their fine-tunes.
+LoRA adapter files load on top of a checkpoint in the Stable Diffusion 1.x and
+2.x, SDXL, SD3, FLUX.1, FLUX.2 klein, Sana, Qwen-Image, Z-Image, Lumina 2, HiDream-I1, Krea 2 and
+Ideogram 4 backends, including the fine-tunes they serve. The U-Net backends patch the U-Net and the CLIP text
+encoders; the transformer backends patch the transformer.
 
 ```python
 from imagehub import pipeline
@@ -41,7 +44,8 @@ weights after loading.
 | `lora_scale` | the scale of a single path (default 1.0); use pairs for a list |
 | `lora_fuse` | merge the adapters into the base weights after loading (default `False`) |
 
-**Layouts.** Three published layouts are read, for the U-Net and the CLIP text encoders:
+**Layouts.** The diffusers / PEFT layout is read on every backend above. The U-Net backends also read
+the legacy diffusers and kohya layouts:
 
 | Layout | Example key |
 | --- | --- |
@@ -838,8 +842,8 @@ and `width`/`height` must be multiples of 16. The other supported options are `n
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** Fill, Redux, Depth and Canny variants, ControlNet, LoRA and fp16/bf16 parity are
-not supported. `flux1-schnell`, `flux1-dev`, `flux1-krea-dev` and `flux-1-lite-8b` take no image
+**Out of scope.** Fill, Redux, Depth and Canny variants, ControlNet and fp16/bf16 parity are not
+supported. `flux1-schnell`, `flux1-dev`, `flux1-krea-dev` and `flux-1-lite-8b` take no image
 input; for Kontext, see below.
 
 **License.** The schnell weights use the Apache-2.0 license. The dev, Krea [dev] and Kontext weights use the
@@ -1775,8 +1779,8 @@ be multiples of 16. The other supported options are `negative_prompt`, `seed`, `
 runs are smoke tests only; there is no claim of exact equality on these devices. The published
 bfloat16 weights are upcast for float32 parity.
 
-**Out of scope.** Krea 2 Raw, the single-file `turbo.safetensors` in the official codebase layout,
-LoRA and fp16/bf16 parity are not supported.
+**Out of scope.** Krea 2 Raw, the single-file `turbo.safetensors` in the official codebase layout
+and fp16/bf16 parity are not supported.
 
 **License.** The weights use the Krea 2 Community License; see the license. imagehub does not
 distribute weights.
@@ -2051,8 +2055,8 @@ official `ideogram-oss/ideogram4` implementation at commit `990fe1c`; this valid
 against diffusers ([validation](validation.md)). MPS and CUDA runs are smoke tests only; there is
 no claim of exact equality on these devices.
 
-**Out of scope.** The CUDA-only nf4 releases, magic prompt, safety moderation, LoRA and fp16/bf16
-parity are not supported. Magic prompt and safety moderation call external paid APIs.
+**Out of scope.** The CUDA-only nf4 releases, magic prompt, safety moderation and fp16/bf16 parity
+are not supported. Magic prompt and safety moderation call external paid APIs.
 
 **License.** The weights use the Ideogram 4 Non-Commercial License; see the license. imagehub does
 not distribute weights.
@@ -2327,7 +2331,7 @@ error.
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
 **Out of scope.** There is no safety checker or invisible watermark. Omni, edit, controlnet, inpaint,
-img2img, LoRA and fp16/bf16 parity are not in this release.
+img2img and fp16/bf16 parity are not in this release.
 
 **License.** The weights are licensed under Apache-2.0. imagehub does not distribute weights.
 
@@ -2501,7 +2505,7 @@ the autoencoder about 0.3 GB.
 `generator=torch.Generator("cpu").manual_seed(seed)` ([validation](validation.md)). MPS and CUDA
 runs are smoke tests only; there is no claim of exact equality on these devices.
 
-**Out of scope.** LoRA, fp16/bf16 parity, batches of several prompts or images per call, and
+**Out of scope.** fp16/bf16 parity, batches of several prompts or images per call, and
 caller-supplied latents or embeddings are not supported.
 
 **License.** The repository declares the Apache-2.0 license. The text encoder is a Gemma-2
@@ -3020,7 +3024,7 @@ generator and global seed described above ([validation](validation.md)). MPS and
 tests only; there is no claim of exact equality on these devices.
 
 **Schedulers.** Fast and Dev use flow-match LCM (Dev uses its published shift of 6.0); Full uses its published UniPC flow-prediction scheduler. Separate prompts for the individual encoders,
-precomputed prompt embeddings, LoRA and fp16/bf16 parity are not supported.
+precomputed prompt embeddings and fp16/bf16 parity are not supported.
 
 **License.** The HiDream repository declares the MIT license. The text encoders carry their own
 terms: Llama 3.1 Community License and Apache-2.0 for T5; the VAE comes from FLUX.1 [schnell].

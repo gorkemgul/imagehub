@@ -5,6 +5,7 @@ import sys
 import pytest
 import torch
 from helpers import write_tiny_meissonic
+from reference_sources import reference_source
 
 from imagehub import pipeline
 from imagehub.backends.meissonic import MeissonicComponents, decode_tokens, denoise
@@ -14,7 +15,7 @@ diffusers = pytest.importorskip("diffusers")
 transformers = pytest.importorskip("transformers")
 np = pytest.importorskip("numpy")
 
-REFERENCE = "/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/meissonic"
+REFERENCE = str(reference_source("meissonic"))
 PROMPT = "A photo of a cat, sitting on the mat in the sun."
 
 

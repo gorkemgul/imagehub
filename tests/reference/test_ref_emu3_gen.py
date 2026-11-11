@@ -11,6 +11,7 @@ from types import SimpleNamespace
 import pytest
 import torch
 from helpers import reference_in_subprocess, snapshot_dir
+from reference_sources import reference_source
 
 from imagehub import pipeline
 from imagehub.backends.emu3 import Emu3Components, _sample, generate_tokens
@@ -21,7 +22,7 @@ from imagehub.tokenization_emu3 import Emu3Tokenizer
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
 
-REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/Emu3")
+REFERENCE_ROOT = reference_source("Emu3")
 FIXTURES = Path(__file__).parents[1] / "fixtures/emu3_gen_configs"
 
 

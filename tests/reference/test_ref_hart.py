@@ -11,6 +11,7 @@ from typing import Any, cast
 import pytest
 import torch
 from helpers import snapshot_dir
+from reference_sources import reference_source
 
 from imagehub import pipeline
 from imagehub.backends.hart import SYSTEM_PROMPT, HARTComponents, _diffusion_sample, encode_prompt
@@ -22,7 +23,7 @@ from imagehub.tokenization_qwen import Qwen2Tokenizer
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
 
-REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/hart")
+REFERENCE_ROOT = reference_source("hart")
 PROMPT = "A blue Porsche 356 parked in front of a yellow brick wall."
 
 

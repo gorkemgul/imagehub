@@ -2,11 +2,11 @@
 
 import importlib.util
 import sys
-from pathlib import Path
 
 import pytest
 import torch
 from helpers import TINY_MEISSONIC_TRANSFORMER
+from reference_sources import reference_source
 
 from imagehub.models.meissonic_transformer import MeissonicTransformer2DModel
 from imagehub.schedulers.amused import AmusedScheduler
@@ -15,7 +15,7 @@ pytestmark = pytest.mark.reference
 pytest.importorskip("diffusers")
 pytest.importorskip("transformers")
 
-REFERENCE = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/meissonic/src")
+REFERENCE = reference_source("meissonic") / "src"
 
 
 def _load(name):

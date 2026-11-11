@@ -10,9 +10,10 @@ import types
 from pathlib import Path
 
 import torch
+from reference_sources import reference_source
 from torch.nn import functional as F
 
-REFERENCE = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/Infinity")
+REFERENCE = reference_source("Infinity")
 
 
 def _drop_path(value, drop_prob=0.0, training=False, scale_by_keep=True):

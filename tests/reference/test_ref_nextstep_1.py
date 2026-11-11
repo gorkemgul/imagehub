@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 import torch
 from helpers import reference_in_subprocess, snapshot_dir
+from reference_sources import reference_source
 
 from imagehub import pipeline
 from imagehub.models.nextstep import FlowNetwork, NextStepModel
@@ -13,7 +14,7 @@ from imagehub.models.nextstep import FlowNetwork, NextStepModel
 pytestmark = pytest.mark.reference
 transformers = pytest.importorskip("transformers")
 
-REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/NextStep-1")
+REFERENCE_ROOT = reference_source("NextStep-1")
 PROMPT = "A small red boat on a calm blue lake."
 
 

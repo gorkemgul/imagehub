@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 import torch
+from reference_sources import reference_source
 
 _MEASUREMENTS: dict[str, dict] = {}
 
@@ -47,7 +48,7 @@ def pytest_sessionfinish(session, exitstatus):
     target.write_text(json.dumps(existing, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/LlamaGen")
+REFERENCE_ROOT = reference_source("LlamaGen")
 _LLAMAGEN_PACKAGES = ("autoregressive", "tokenizer", "utils")
 
 

@@ -40,8 +40,9 @@ with pipeline("t2i", backend="flux1-kontext-dev", model="checkpoints/flux1-konte
 result.images[0].save("edited.png")
 ```
 
-The Stable Diffusion 1.x and SDXL backends also load LoRA adapters in the diffusers and kohya
-layouts ([details](docs/models.md#lora-adapters)):
+LoRA adapters load on the Stable Diffusion 1.x and 2.x, SDXL, SD3, FLUX.1, FLUX.2 klein, Sana,
+Qwen-Image, Z-Image, Lumina 2, HiDream-I1, Krea 2 and Ideogram 4 backends
+([details](docs/models.md#lora-adapters)):
 
 ```python
 with pipeline("t2i", backend="sd-v1-5", model="checkpoints/sd-v1-5",
@@ -68,8 +69,9 @@ trainer.train()
 trainer.save_model("runs/my-dog/final")  # load it back with lora=".../adapter.safetensors"
 ```
 
-LoRA training covers the Stable Diffusion 1.x and 2.x checkpoints for now; see the
-[training guide](docs/guides/training.md).
+LoRA training covers Stable Diffusion 1.x and 2.x, SDXL and its fine-tunes, SD3 and 3.5, FLUX.1,
+FLUX.2 klein, Sana, Qwen-Image, Z-Image, Lumina 2, HiDream-I1 and Krea 2. The
+[training guide](docs/guides/training.md) lists every trainable checkpoint.
 
 ## Models
 
@@ -161,6 +163,8 @@ are fetched into the ignored `tests/fixtures/_restricted` cache. Set `HF_TOKEN` 
 fetcher to include gated repositories; tests for unavailable fixtures skip with the same command.
 
 Reference comparisons are optional; install `.[dev,image,reference]` and run `IMAGEHUB_REFERENCE_TESTS=1 .venv/bin/python -m pytest tests/reference` with local checkpoint paths configured.
+A few of them import the authors' original code; point `IMAGEHUB_REFERENCE_SOURCES` at a folder of
+those checkouts (default `checkpoints/ref-src`), and the tests skip when a checkout is missing.
 
 ## License
 

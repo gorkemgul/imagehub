@@ -24,7 +24,7 @@ Design: `docs/design/2026-11-04-lora-and-training-design.md`. Depends on #193 (b
   install hint (`pip install "imagehub[training]"`) without it.
 - Parity on CPU float32; tolerance 0 unless a measured difference forces the next power of ten.
 - English repository text; commits without tool or assistant names; checks chained with `&&`.
-- Branch `feat/lora-training`, worktree `/Users/gorkem.gul/Personal/imagehub-wt/lora-training`;
+- Branch `feat/lora-training`, worktree `../imagehub-wt/lora-training`;
   PR to `main` with `Closes #194` after #193 merges.
 
 ## Reference behavior (diffusers 0.40.0 `train_text_to_image_lora.py`)

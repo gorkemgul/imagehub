@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 import torch
 from helpers import max_diff, reference_in_subprocess, snapshot_dir
+from reference_sources import reference_source
 
 from imagehub import pipeline
 from imagehub.backends.lumina_dimoo import (
@@ -31,7 +32,7 @@ transformers = pytest.importorskip("transformers")
 diffusers = pytest.importorskip("diffusers")
 
 MODEL_ID = "lumina-dimoo"
-REFERENCE_ROOT = Path("/Users/gorkem.gul/Personal/imagehub/checkpoints/ref-src/Lumina-DiMOO")
+REFERENCE_ROOT = reference_source("Lumina-DiMOO")
 PROMPT = "a red cube on a white table"
 TINY_CONFIG = {
     "d_model": 32,
