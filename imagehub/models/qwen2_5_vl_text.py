@@ -217,12 +217,19 @@ class Qwen25VLLanguageModel(nn.Module):
 
     def forward(
         self,
-        input_ids: Tensor,
+        input_ids: Tensor | None,
         attention_mask: Tensor | None,
         position_ids: Tensor | None = None,
         key_value_cache: KeyValueCache | None = None,
+        *,
+        inputs_embeds: Tensor | None = None,
     ) -> tuple[Tensor, ...]:
-        hidden_states = self.embed_tokens(input_ids)
+        if inputs_embeds is None:
+            if input_ids is None:
+                raise ValueError("input_ids or inputs_embeds is required")
+            hidden_states = self.embed_tokens(input_ids)
+        else:
+            hidden_states = inputs_embeds
         sequence_length = hidden_states.shape[1]
         past_length = 0
         if key_value_cache is not None and key_value_cache[0] is not None:
@@ -254,6 +261,283 @@ class Qwen25VLModel(nn.Module):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__()
         self.language_model = Qwen25VLLanguageModel(config)
+
+
+class Qwen25VLVisionPatchEmbed(nn.Module):
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__()
+        self.config = dict(config)
+        kernel = (
+            config["temporal_patch_size"],
+            config["patch_size"],
+            config["patch_size"],
+        )
+        self.proj = nn.Conv3d(
+            config.get("in_channels", config.get("in_chans", 3)),
+            config["hidden_size"],
+            kernel,
+            stride=kernel,
+            bias=False,
+        )
+
+    def forward(self, pixels: Tensor) -> Tensor:
+        c = self.config
+        pixels = pixels.reshape(
+            -1,
+            c.get("in_channels", c.get("in_chans", 3)),
+            c["temporal_patch_size"],
+            c["patch_size"],
+            c["patch_size"],
+        )
+        return self.proj(pixels.to(self.proj.weight.dtype)).reshape(-1, c["hidden_size"])
+
+
+class Qwen25VLVisionAttention(nn.Module):
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__()
+        self.num_heads = config["num_heads"]
+        self.head_dim = config["hidden_size"] // self.num_heads
+        self.qkv = nn.Linear(config["hidden_size"], config["hidden_size"] * 3)
+        self.proj = nn.Linear(config["hidden_size"], config["hidden_size"])
+
+    def forward(
+        self, hidden_states: Tensor, cos: Tensor, sin: Tensor, lengths: list[int]
+    ) -> Tensor:
+        sequence_length = hidden_states.shape[0]
+        query, key, value = (
+            self.qkv(hidden_states)
+            .reshape(sequence_length, 3, self.num_heads, self.head_dim)
+            .unbind(1)
+        )
+        query_dtype, key_dtype = query.dtype, key.dtype
+        query, key = query.float(), key.float()
+        cos, sin = cos[:, None].float(), sin[:, None].float()
+        query = (query * cos + rotate_half(query) * sin).to(query_dtype)
+        key = (key * cos + rotate_half(key) * sin).to(key_dtype)
+        output = []
+        for q, k, v in zip(
+            torch.split(query, lengths),
+            torch.split(key, lengths),
+            torch.split(value, lengths),
+            strict=True,
+        ):
+            attended = F.scaled_dot_product_attention(
+                q.transpose(0, 1)[None],
+                k.transpose(0, 1)[None],
+                v.transpose(0, 1)[None],
+                scale=self.head_dim**-0.5,
+            )
+            output.append(attended.squeeze(0).transpose(0, 1))
+        return self.proj(torch.cat(output).reshape(sequence_length, -1))
+
+
+class Qwen25VLVisionBlock(nn.Module):
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__()
+        hidden_size = config["hidden_size"]
+        self.norm1 = Qwen25VLRMSNorm(hidden_size, 1e-6)
+        self.norm2 = Qwen25VLRMSNorm(hidden_size, 1e-6)
+        self.attn = Qwen25VLVisionAttention(config)
+        self.mlp = Qwen25VLMLP(
+            {
+                "hidden_size": hidden_size,
+                "intermediate_size": config["intermediate_size"],
+            }
+        )
+        # Vision MLP projections have biases; the language projections do not.
+        self.mlp.gate_proj = nn.Linear(hidden_size, config["intermediate_size"], bias=True)
+        self.mlp.up_proj = nn.Linear(hidden_size, config["intermediate_size"], bias=True)
+        self.mlp.down_proj = nn.Linear(config["intermediate_size"], hidden_size, bias=True)
+
+    def forward(self, x: Tensor, cos: Tensor, sin: Tensor, lengths: list[int]) -> Tensor:
+        x = x + self.attn(self.norm1(x), cos, sin, lengths)
+        return x + self.mlp(self.norm2(x))
+
+
+class Qwen25VLPatchMerger(nn.Module):
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__()
+        hidden_size = config["hidden_size"]
+        merged_size = hidden_size * config["spatial_merge_size"] ** 2
+        self.ln_q = Qwen25VLRMSNorm(hidden_size, 1e-6)
+        self.mlp = nn.Sequential(
+            nn.Linear(merged_size, merged_size),
+            nn.GELU(),
+            nn.Linear(merged_size, config["out_hidden_size"]),
+        )
+        self.merged_size = merged_size
+
+    def forward(self, x: Tensor) -> Tensor:
+        return self.mlp(self.ln_q(x).reshape(-1, self.merged_size))
+
+
+class Qwen25VLVisionModel(nn.Module):
+    """Qwen2.5-VL vision tower with its published window-attention ordering."""
+
+    inv_freq: Tensor
+
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__()
+        self.config = dict(config)
+        self.patch_embed = Qwen25VLVisionPatchEmbed(config)
+        self.blocks = nn.ModuleList(Qwen25VLVisionBlock(config) for _ in range(config["depth"]))
+        self.merger = Qwen25VLPatchMerger(config)
+        head_dim = config["hidden_size"] // config["num_heads"]
+        self.register_buffer(
+            "inv_freq",
+            1 / (10_000 ** (torch.arange(0, head_dim // 2, 2).float() / (head_dim // 2))),
+            persistent=False,
+        )
+
+    @staticmethod
+    def _position_ids(grid: Tensor, merge: int) -> Tensor:
+        result = []
+        for time, height, width in grid.tolist():
+            rows, columns = torch.meshgrid(
+                torch.arange(height, device=grid.device),
+                torch.arange(width, device=grid.device),
+                indexing="ij",
+            )
+            shape = (height // merge, merge, width // merge, merge)
+            rows = rows.reshape(shape).transpose(1, 2).flatten()
+            columns = columns.reshape(shape).transpose(1, 2).flatten()
+            result.append(torch.stack((rows, columns), -1).repeat(time, 1))
+        return torch.cat(result)
+
+    def _window_indices(self, grid: Tensor) -> tuple[Tensor, list[int]]:
+        c = self.config
+        merge = c["spatial_merge_size"]
+        window = c["window_size"] // merge // c["patch_size"]
+        indices, lengths = [], []
+        offset = 0
+        for time, height, width in grid.tolist():
+            gh, gw = height // merge, width // merge
+            index = torch.arange(time * gh * gw).reshape(time, gh, gw)
+            pad_h = window - gh % window
+            pad_w = window - gw % window
+            padded = F.pad(index, (0, pad_w, 0, pad_h), value=-100)
+            padded = padded.reshape(time, (gh + pad_h) // window, window, -1, window)
+            padded = padded.permute(0, 1, 3, 2, 4).reshape(-1, window, window)
+            lengths.extend(((padded != -100).sum((1, 2)) * merge**2).tolist())
+            flat = padded.flatten()
+            indices.append(flat[flat != -100] + offset)
+            offset += time * gh * gw
+        return torch.cat(indices).to(grid.device), lengths
+
+    def forward(self, pixels: Tensor, grid: Tensor) -> Tensor:
+        c = self.config
+        merge = c["spatial_merge_size"]
+        positions = self._position_ids(grid, merge)
+        window_indices, window_lengths = self._window_indices(grid)
+        full_lengths = (grid[:, 1] * grid[:, 2]).repeat_interleave(grid[:, 0]).tolist()
+        x = self.patch_embed(pixels)
+        sequence_length = x.shape[0]
+        x = x.reshape(sequence_length // merge**2, merge**2, -1)[window_indices].reshape(
+            sequence_length, -1
+        )
+        positions = positions.reshape(sequence_length // merge**2, merge**2, -1)[
+            window_indices
+        ].reshape(sequence_length, -1)
+        angles = positions[..., None].float() * self.inv_freq.float()
+        frequencies = torch.cat((angles[:, 0], angles[:, 1]), -1)
+        cos = torch.cat((frequencies, frequencies), -1).cos()
+        sin = torch.cat((frequencies, frequencies), -1).sin()
+        full_blocks = set(c["fullatt_block_indexes"])
+        for index, block in enumerate(self.blocks):
+            x = block(x, cos, sin, full_lengths if index in full_blocks else window_lengths)
+        reverse = torch.argsort(window_indices)
+        return self.merger(x)[reverse]
+
+
+class Qwen25VLForConditionalGeneration(NativeModel):
+    """Full Qwen2.5-VL conditioner used by image-editing pipelines."""
+
+    def __init__(self, config: Mapping[str, Any]) -> None:
+        super().__init__(dict(config))
+        text_config = QWEN25_VL_TEXT_DEFAULTS | dict(config.get("text_config", config))
+        self.text_config = text_config
+        self.visual = Qwen25VLVisionModel(config["vision_config"])
+        self.model = Qwen25VLLanguageModel(text_config)
+        self.lm_head = nn.Linear(text_config["hidden_size"], text_config["vocab_size"], bias=False)
+
+    def init_non_persistent_buffers(self) -> None:
+        head_dim = self.text_config["hidden_size"] // self.text_config["num_attention_heads"]
+        self.model.rotary_emb.inv_freq = 1.0 / (
+            self.text_config["rope_theta"]
+            ** (torch.arange(0, head_dim, 2, dtype=torch.float32) / head_dim)
+        )
+        vision = self.config["vision_config"]
+        vision_head_dim = vision["hidden_size"] // vision["num_heads"]
+        self.visual.inv_freq = 1 / (
+            10_000
+            ** (
+                torch.arange(0, vision_head_dim // 2, 2, dtype=torch.float32)
+                / (vision_head_dim // 2)
+            )
+        )
+
+    @staticmethod
+    def _rope_positions(ids: Tensor, types: Tensor, grid: Tensor, merge: int) -> Tensor:
+        positions = torch.zeros(3, *ids.shape, dtype=torch.long, device=ids.device)
+        image_index = 0
+        for batch, row in enumerate(types.tolist()):
+            current = start = 0
+            for end in range(1, len(row) + 1):
+                if end < len(row) and row[end] == row[start]:
+                    continue
+                if row[start] == 0:
+                    positions[:, batch, start:end] = (
+                        torch.arange(end - start, device=ids.device) + current
+                    )
+                    current += end - start
+                else:
+                    time, height, width = grid[image_index].tolist()
+                    image_index += 1
+                    rows, columns = torch.meshgrid(
+                        torch.arange(height // merge, device=ids.device),
+                        torch.arange(width // merge, device=ids.device),
+                        indexing="ij",
+                    )
+                    temporal = torch.arange(time, device=ids.device)[:, None].expand(
+                        -1, rows.numel()
+                    )
+                    spatial = torch.stack((rows, columns)).reshape(2, 1, -1).expand(-1, time, -1)
+                    block = torch.cat((temporal[None], spatial), 0).reshape(3, -1) + current
+                    positions[:, batch, start:end] = block
+                    current += max(time, height // merge, width // merge)
+                start = end
+        return positions
+
+    def forward(
+        self,
+        input_ids: Tensor,
+        attention_mask: Tensor,
+        *,
+        pixel_values: Tensor | None = None,
+        image_grid_thw: Tensor | None = None,
+    ) -> tuple[Tensor, ...]:
+        embeddings = self.model.embed_tokens(input_ids)
+        position_ids = None
+        if pixel_values is not None:
+            if image_grid_thw is None:
+                raise ValueError("image_grid_thw is required with pixel_values")
+            visual = self.visual(pixel_values, image_grid_thw).to(embeddings.dtype)
+            mask = input_ids.eq(self.config["image_token_id"])
+            if int(mask.sum()) != visual.shape[0]:
+                raise ValueError("image token count does not match vision features")
+            embeddings = embeddings.masked_scatter(mask[..., None], visual)
+            position_ids = self._rope_positions(
+                input_ids,
+                mask.long(),
+                image_grid_thw,
+                int(self.config["vision_config"]["spatial_merge_size"]),
+            )
+        return self.model(
+            None,
+            attention_mask,
+            position_ids=position_ids,
+            inputs_embeds=embeddings,
+        )
 
 
 class Qwen25VLTextModel(NativeModel):

@@ -110,9 +110,12 @@ _TRAINABLE = {
 # Few-step distilled checkpoints are not trained with the denoising objective; the tiny
 # autoencoder of SDXS has no posterior to sample training latents from; the SDXL refiner is an
 # image-to-image model; Playground v2.5 uses the EDM formulation, not DDPM.
-# sd3.5-large-turbo is distilled as well.
+# sd3.5-large-turbo is distilled as well. The Qwen-Image-Edit checkpoints are conditioned on an
+# input image, and diffusers has no training script for them.
 _EXCLUDED = frozenset(
     {
+        "qwen-image-edit",
+        "qwen-image-edit-2509",
         "sd-turbo",
         "lcm-dreamshaper-v7",
         "sdxs-512-0.9",
