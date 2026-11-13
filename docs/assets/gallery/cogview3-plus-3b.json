@@ -1,0 +1,1 @@
+{"model_id": "cogview3-plus-3b", "family": "CogView3-Plus", "name": "CogView3-Plus", "repo": "zai-org/CogView3-Plus-3B", "revision": "5d70e40732ac0efac98524c51a7fa9c82707f1e5", "model_license": "Apache-2.0", "settings": "50 steps · guidance 5 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-12"}

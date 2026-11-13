@@ -1,0 +1,1 @@
+{"model_id": "sdxl-base-1.0", "family": "Stable Diffusion XL", "name": "Stable Diffusion XL (sdxl-base-1.0)", "repo": "stabilityai/stable-diffusion-xl-base-1.0", "revision": "462165984030d82259a11f4367a4eed129e94a7b", "model_license": "CreativeML-OpenRAIL++-M", "settings": "50 steps · guidance 5 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-12"}

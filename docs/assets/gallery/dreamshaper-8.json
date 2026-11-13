@@ -1,0 +1,1 @@
+{"model_id": "dreamshaper-8", "family": "Stable Diffusion", "name": "Stable Diffusion 1.x (dreamshaper-8)", "repo": "Lykon/dreamshaper-8", "revision": "a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917", "model_license": "CreativeML-OpenRAIL-M", "settings": "50 steps · guidance 7.5 · 512×512", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}

@@ -1,0 +1,1 @@
+{"model_id": "koala-700m", "family": "Stable Diffusion XL", "name": "KOALA (koala-700m)", "repo": "etri-vilab/koala-700m", "revision": "5e73a318a1ee1b97cc31fd50f09ac13e018c0b63", "model_license": "Unspecified", "settings": "50 steps · guidance 5 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-12"}

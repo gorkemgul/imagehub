@@ -1,0 +1,1 @@
+{"model_id": "ldm-text2im-large-256", "family": "Latent Diffusion Model", "name": "Latent Diffusion Model", "repo": "CompVis/ldm-text2im-large-256", "revision": "30de525ca11a880baea4962827fb6cb0bb268955", "model_license": "Apache-2.0", "settings": "50 steps · guidance 1 · 256×256", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}

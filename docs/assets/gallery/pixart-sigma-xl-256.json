@@ -1,0 +1,1 @@
+{"model_id": "pixart-sigma-xl-256", "family": "PixArt", "name": "PixArt (pixart-sigma-xl-256)", "repo": "PixArt-alpha/PixArt-Sigma-XL-2-256x256", "revision": "495cb1bafac48d71ca96761409c5fd7e48354df2", "model_license": "OpenRAIL (exact terms unspecified)", "settings": "20 steps · guidance 4.5 · 256×256", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}
