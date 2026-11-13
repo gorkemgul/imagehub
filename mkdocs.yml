@@ -1,5 +1,6 @@
 site_name: imagehub
 site_description: Open-weight text-to-image models in pure PyTorch, with exact parity against each model's recorded reference implementation, behind one API.
+site_url: https://gorkemgul.github.io/imagehub/
 repo_url: https://github.com/gorkemgul/imagehub
 repo_name: gorkemgul/imagehub
 edit_uri: edit/main/docs/
