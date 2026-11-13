@@ -1,0 +1,1 @@
+{"model_id": "segmind-vega", "family": "Stable Diffusion XL", "name": "SSD-1B and Segmind-Vega (segmind-vega)", "repo": "segmind/Segmind-Vega", "revision": "7714c4363e5856ff974a4f4b068e8691f26d0b40", "model_license": "Apache-2.0", "settings": "50 steps · guidance 5 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-12"}

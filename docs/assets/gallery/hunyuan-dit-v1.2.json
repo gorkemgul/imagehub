@@ -1,0 +1,1 @@
+{"model_id": "hunyuan-dit-v1.2", "family": "HunyuanDiT", "name": "HunyuanDiT (hunyuan-dit-v1.2)", "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers", "revision": "5e96094e0ad19e7f475de8711f03634ca0ccc40c", "model_license": "Tencent Hunyuan Community License", "settings": "50 steps · guidance 5 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-12"}

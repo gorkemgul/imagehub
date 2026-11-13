@@ -1,0 +1,1 @@
+{"model_id": "playground-v2", "family": "Stable Diffusion XL", "name": "Playground v2", "repo": "playgroundai/playground-v2-1024px-aesthetic", "revision": "737a24ebe3ae4e5421110879168be188853d86c8", "model_license": "playground-v2-community", "settings": "50 steps · guidance 3 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-12"}

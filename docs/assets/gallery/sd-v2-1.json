@@ -1,0 +1,1 @@
+{"model_id": "sd-v2-1", "family": "Stable Diffusion", "name": "Stable Diffusion 2.1", "repo": "sd2-community/stable-diffusion-2-1", "revision": "bb2154823665391b4fb29b0b9cf82a198964ee05", "model_license": "CreativeML-OpenRAIL++-M", "settings": "50 steps · guidance 7.5 · 768×768", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}

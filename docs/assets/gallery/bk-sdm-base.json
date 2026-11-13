@@ -1,0 +1,1 @@
+{"model_id": "bk-sdm-base", "family": "Stable Diffusion", "name": "BK-SDM (bk-sdm-base)", "repo": "nota-ai/bk-sdm-base", "revision": "0c03b7a0369b49f97d1acf7256d4ee55ced9b2e0", "model_license": "CreativeML-OpenRAIL-M", "settings": "50 steps · guidance 7.5 · 512×512", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}

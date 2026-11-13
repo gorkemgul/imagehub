@@ -1,0 +1,1 @@
+{"model_id": "sana-1600m-1024", "family": "Sana", "name": "Sana (sana-1600m-1024)", "repo": "Efficient-Large-Model/Sana_1600M_1024px_diffusers", "revision": "ac0da2ff55fbe434795be0dce883042e4d49e2fc", "model_license": "Apache-2.0", "settings": "20 steps · guidance 4.5 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}

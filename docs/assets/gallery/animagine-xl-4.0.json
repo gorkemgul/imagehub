@@ -1,0 +1,1 @@
+{"model_id": "animagine-xl-4.0", "family": "Stable Diffusion XL", "name": "Stable Diffusion XL (animagine-xl-4.0)", "repo": "cagliostrolab/animagine-xl-4.0", "revision": "2b7c1b397761bf5bd3cc42e5b39ec99314a75a96", "model_license": "CreativeML-OpenRAIL++-M", "settings": "50 steps · guidance 5 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-12"}

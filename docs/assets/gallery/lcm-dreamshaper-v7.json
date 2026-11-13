@@ -1,0 +1,1 @@
+{"model_id": "lcm-dreamshaper-v7", "family": "Stable Diffusion", "name": "Latent Consistency Model (LCM)", "repo": "SimianLuo/LCM_Dreamshaper_v7", "revision": "a85df6a8bd976cdd08b4fd8f3b73f229c9e54df5", "model_license": "MIT", "settings": "4 steps · guidance 8 · 768×768", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}

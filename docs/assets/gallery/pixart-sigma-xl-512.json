@@ -1,0 +1,1 @@
+{"model_id": "pixart-sigma-xl-512", "family": "PixArt", "name": "PixArt (pixart-sigma-xl-512)", "repo": "PixArt-alpha/PixArt-Sigma-XL-2-512-MS", "revision": "76fb7eb5a9314bc1e4e479d2f13447517fca9be4", "model_license": "CreativeML-OpenRAIL++-M", "settings": "20 steps · guidance 4.5 · 512×512", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}

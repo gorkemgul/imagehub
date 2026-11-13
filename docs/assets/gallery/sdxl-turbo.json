@@ -1,0 +1,1 @@
+{"model_id": "sdxl-turbo", "family": "Stable Diffusion XL", "name": "SDXL Turbo", "repo": "stabilityai/sdxl-turbo", "revision": "71153311d3dbb46851df1931d3ca6e939de83304", "model_license": "sai-nc-community", "settings": "1 step · guidance 0 · 512×512", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}

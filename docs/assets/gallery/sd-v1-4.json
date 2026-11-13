@@ -1,0 +1,1 @@
+{"model_id": "sd-v1-4", "family": "Stable Diffusion", "name": "Stable Diffusion 1.x (sd-v1-4)", "repo": "CompVis/stable-diffusion-v1-4", "revision": "133a221b8aa7292a167afc5127cb63fb5005638b", "model_license": "CreativeML-OpenRAIL-M", "settings": "50 steps · guidance 7.5 · 512×512", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-11"}
