@@ -1,0 +1,1 @@
+{"model_id": "flux2-klein-9b", "family": "FLUX.2 klein", "name": "FLUX.2 klein (flux2-klein-9b)", "repo": "black-forest-labs/FLUX.2-klein-9B", "revision": "92196c8e11f7b6cf2b7493e037d8c5345c559216", "model_license": "FLUX Non-Commercial License", "settings": "4 steps · guidance 1 · 512×512 (default 1024×1024)", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}

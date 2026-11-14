@@ -1,0 +1,1 @@
+{"model_id": "lumina-image-2.0", "family": "Lumina-Image 2.0", "name": "Lumina-Image 2.0", "repo": "Alpha-VLLM/Lumina-Image-2.0", "revision": "53504abd8178b30685b6c4c7a4cd181ff78b73e9", "model_license": "Apache-2.0", "settings": "30 steps · guidance 4 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}

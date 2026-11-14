@@ -1,0 +1,1 @@
+{"model_id": "glm-image", "family": "GLM-Image", "name": "GLM-Image", "repo": "zai-org/GLM-Image", "revision": "2c433cc0cbc293bde2ac8ca9624f279b5d23fcf4", "model_license": "MIT", "settings": "8 steps (default 50) · guidance 1.5 · 512×512 (default 1024×1024)", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}

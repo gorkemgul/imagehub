@@ -1,0 +1,1 @@
+{"model_id": "chroma1-hd", "family": "Chroma", "name": "Chroma (chroma1-hd)", "repo": "lodestones/Chroma1-HD", "revision": "0e0c60ece1e82b17cb7f77342d765ba5024c40c0", "model_license": "Apache-2.0", "settings": "8 steps (default 35) · guidance 5 · 512×512 (default 1024×1024)", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}

@@ -1,0 +1,1 @@
+{"model_id": "chroma1-flash", "family": "Chroma", "name": "Chroma (chroma1-flash)", "repo": "lodestones/Chroma1-Flash", "revision": "093c4f63b60507234aa53a073f1f9f565b3f4336", "model_license": "Apache-2.0", "settings": "4 steps · guidance 1 · 512×512 (default 1024×1024)", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}
