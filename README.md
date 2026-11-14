@@ -148,7 +148,7 @@ Every listed checkpoint is validated against its reference implementation, with 
 
 ## Documentation
 
-[Model catalog](docs/catalog.md) · [Model architecture notes](docs/models.md) · [Validation](docs/validation.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+[Documentation site](https://gorkemgul.github.io/imagehub/) · [Model catalog](docs/catalog.md) · [Model architecture notes](docs/models.md) · [Validation](docs/validation.md) · [Changelog](CHANGELOG.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 
 ## Development
 
