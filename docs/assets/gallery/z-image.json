@@ -1,0 +1,1 @@
+{"model_id": "z-image", "family": "Z-Image", "name": "Z-Image (z-image)", "repo": "Tongyi-MAI/Z-Image", "revision": "04cc4abb7c5069926f75c9bfde9ef43d49423021", "model_license": "Apache-2.0", "settings": "8 steps (default 9) · guidance 0 · 512×512 (default 1024×1024)", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}

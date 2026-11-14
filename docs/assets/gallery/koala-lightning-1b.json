@@ -1,0 +1,1 @@
+{"model_id": "koala-lightning-1b", "family": "Stable Diffusion XL", "name": "KOALA (koala-lightning-1b)", "repo": "etri-vilab/koala-lightning-1b", "revision": "b4114f7577bb08e08a6b9792eb3a3a8b34c95adb", "model_license": "Unspecified", "settings": "10 steps · guidance 3.5 · 1024×1024 · Euler, trailing timesteps", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}

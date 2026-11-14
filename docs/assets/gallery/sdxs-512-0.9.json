@@ -1,0 +1,1 @@
+{"model_id": "sdxs-512-0.9", "family": "Stable Diffusion", "name": "SDXS-512", "repo": "IDKiro/sdxs-512-0.9", "revision": "c332f05f60eb4b453de513be52c2a18c48d8cfe6", "model_license": "CreativeML-OpenRAIL++-M", "settings": "1 step · guidance 0 · 512×512 · Euler", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}

@@ -1,0 +1,1 @@
+{"model_id": "z-image-turbo", "family": "Z-Image", "name": "Z-Image (z-image-turbo)", "repo": "Tongyi-MAI/Z-Image-Turbo", "revision": "f332072aa78be7aecdf3ee76d5c247082da564a6", "model_license": "Apache-2.0", "settings": "9 steps · guidance 0 · 1024×1024", "max_pixel_diff": 0, "differing_values": 0, "date": "2026-11-14"}
